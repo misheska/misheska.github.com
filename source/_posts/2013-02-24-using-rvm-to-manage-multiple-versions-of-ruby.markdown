@@ -162,8 +162,8 @@ $ rvm list
 $ rvm use 1.9.3
 ```
 
-How to Remove RVM on Mac Linux
-==============================
+How to Remove RVM on Linux
+==========================
 Should you want to uninstall/remove RVM, it's pretty easy.  First, run
 the following commands:
 
