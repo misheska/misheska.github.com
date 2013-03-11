@@ -17,9 +17,8 @@ evaluate Sensu using the [Sensu Chef Cookbook](https://github.com/sensu/sensu-ch
 Through the magic of Oracle VirtualBox and Vagrant, combined with Chef, you
 can quickly deploy Sensu to a local virtual machine instance, and kick the
 tires on Sensu to evaluate whether or not it is a good monitoring solution
-for you.  These instructions assume you are using either Mac OS X or Linux.  As
-time permits, I will eventually update this article with instructions for
-Windows as well.
+for you.  These instructions apply to Mac OS X, Linux, and/or Windows for
+the host operating system.
 
 Install VirtualBox
 ==================
@@ -44,8 +43,8 @@ Install Vagrant
 After installing VirtualBox, next install Vagrant.  Vagrant is an automation
 framework for VirtualBox.  Grab the latest Vagrant installer for your OS from
 the [Vagrant Downloads page](http://downloads.vagrantup.com/) and run install.
-On Mac OS X, the Vagrant install will automatically add the Vagrant binaries
-to your PATH, on Linux, you will need to manually add
+On Mac OS X and Windows, the Vagrant install will automatically add the Vagrant
+binaries to your PATH, on Linux, you will need to manually add
 <code>/opt/vagrant/bin</code> per the [Getting Started with Vagrant docs](http://docs.vagrantup.com/v1/docs/getting-started/index.html).
 
 Download the sensu-chef cookbook
@@ -57,27 +56,14 @@ git clone https://github.com/sensu/sensu-chef.git
 ```
 Install Ruby & RubyGems
 =======================
-The sensu-chef cookbook requires Ruby & RubyGems.  I strongly recommend that
-you use either RVM or Rbenv to make sure that you are using the latest version
-of Ruby instead of whatever version of Ruby your system installs by default.
-See my previous articles on [RVM](http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/) or [Rbenv](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/).  NOTE: If you don't know whether or not to decide between RVM or Rbenv,
-go with RVM.
+The sensu-chef cookbook requires Ruby & RubyGems.
 
-Install the Vbguest plugin
-==========================
-To make sure that the VirtualBox Guest Additions are always in sync with
-the vagrant boxes you might download, make sure you install the
-[Vbguest plugin](https://github.com/dotless-de/vagrant-vbguest) by
-running the following command:
-```
-vagrant gem install vagrant-vbguest
-```
+On Mac OS X and Linux, I strongly recommend that you use either RVM or Rbenv
+to make sure that you are using the latest version of Ruby instead of whatever
+version of Ruby your system installs by default.
 
-After installing, the vbguest plugin will always check & install the correct
-guest additions when you run <code>vagrant up</code>
-
-For more information on why this is necessary, check out this awesome
-post by Kevin van Zonneveld [Sync VirtualBox Guest Additions](http://kvz.io/blog/2013/01/16/vagrant-tip-keep-virtualbox-guest-additions-in-sync/)
+See my previous articles on [RVM](http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/) or [Rbenv](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/).  NOTE: If you don't
+know whether or not to decide between RVM or Rbenv, go with RVM.
 
 Patch chef-sensu Vagrantfile
 ============================
@@ -108,6 +94,37 @@ Download this amended version and copy it in place of
 
 {% gist 5063291 Vagrantfile %}
 
+Install Ruby DevKit (Windows)
+=============================
+The sensu-chef recipe is dependent on the json gem.  On Windows, you will get
+the following error if you do not have the proper Ruby DevKit installed:
+
+```
+Installing json (1.7.7)
+Gem::InstallError: The 'json' native gem requires installed build tools.
+```
+
+Go to [http://rubyinstaller.org/downloads](http://rubyinstaller.org/downloads)
+and refer to the *Which Development Kit?* section of the web page about which
+DevKit you need to install.
+
+Download the appropriate DevKit toolkit, extract it and run the following
+in a Command Prompt:
+
+```
+> ruby dk.rb init
+[INFO] found RubyInstaller v1.9.3 at C:/Ruby193
+
+Initialization complete! Please review and modify the auto-generated
+'config.yml' file to ensure it contains the root directories to all
+of the installed Rubies you want enhanced by the DevKit.
+
+> ruby dk.rb install
+[INFO] Updating convenience notice gem override for 'C:/Ruby193'
+[INFO] Installing 'C:/Ruby193/lib/ruby/site_ruby/devkit.rb'
+```
+
+
 Create the sensu-chef virtual machine
 =====================================
 
@@ -115,21 +132,36 @@ Run the following commands to create the sensu-chef virtual machine:
 ```
 cd sensu-chef/examples
 gem install bundler
+# On Windows, restart the command prompt before running 'bundle install' as
+# gem install will reset the PATH
 bundle install
 librarian-chef install
 vagrant up
 ```
 
-If all goes well, the chef-solo run should have succeeded, and you should
-be able to view the Sensu dashboard by going to the following URL with
-the username <code>admin</code> and the password <code>secret</code>:
+If all goes well, the <code>chef-solo</code> run should have succeeded, and
+you should be able to view the Sensu dashboard by going to the following URL
+with the username <code>admin</code> and the password <code>secret</code>:
 [http://localhost:8080](http://localhost:8080)
 
-If this is successful, just run the following command to log in to your
-newly-created virtual machine instance:
+{% img center /images/sensudashboard.png 'Sensu Dashboard' %}
+
+If this is successful, on Mac OX and Linux, just run the following command to
+log in to your newly-created virtual machine instance:
 ```
 vagrant ssh
 ```
 
+On Windows, run the following command (or use a visual SSH client like PuTTY):
+```
+ssh vagrant@127.0.0.1 -p 2222 -i C:/Users/misheska/.vagrant.d/insecure_private_key
+```
+
 And refer to the [Sensu wiki](https://github.com/sensu/sensu/wiki) on how 
 to experiment with various configuration options.
+
+When you are done playing with the test VM, run the following command to
+destroy the VM:
+```
+vagrant destroy
+```
