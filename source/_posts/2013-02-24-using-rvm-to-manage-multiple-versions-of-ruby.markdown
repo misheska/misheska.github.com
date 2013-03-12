@@ -18,8 +18,7 @@ versions of Ruby easy.  RVM also supports partitioning of Ruby gem installs
 via a feature called gemsets in order to avoid versioning conflicts.  However,
 with the advent of [Bundler](http://gembundler.com) most developers tend to
 prefer using Bundler as the preferred way for managing gems at the
-application level, so this feature of RVM isn't of as much use as it was
-in the past.
+application level.
 
 RVM is supported on Linux and Mac OS X.  RVM doesn't work on Windows.
 For Windows, [Pik](https://github.com/vertiginous/pik) is an RVM alternative.
@@ -42,7 +41,7 @@ Run the following command to install Homebrew:
 ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 ```
 
-Next run <code>brew doctor</code> and address any issues it discovers.  When
+Run <code>brew doctor</code> and address any issues it discovers.  When
 all is well, you should see:
 
 ```
@@ -100,13 +99,13 @@ $ rvm implode
 $ gem uninstall rvm
 ```
 
-Next, just follow the instructions <code>rvm implode</code> displays.
+Then just follow the instructions from <code>rvm implode</code>:
 
-Delete the following files, if they exist:
+* Delete the following files, if they exist:
 <code>/etc/rvmrc</code>
 <code>$HOME/.rvmrc</code>
 
-Also, remove the lines sourcing RVM scripts from 
+* Also, remove the lines sourcing RVM scripts from 
 <code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and 
 <code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn't hurt
 after you do this, just to make sure).
@@ -141,12 +140,13 @@ $ sudo yum install curl
 
 With curl installed, run the RVM install with the following commands:
 ```
-$ \curl -L https://get.rvm.io | bash -s stable
+$ \curl -#L https://get.rvm.io | bash -s stable
 $ source $HOME/.rvm/scripts/rvm
 ```
 
-Next run the <code>rvm requirements</code> command to get rvm to tell us what
-other packages need to be installed for Ruby to work:
+Run the <code>rvm requirements</code> command to get rvm to display the
+commands to install the other dependent packages for compiling Ruby from
+source:
 ```
 $ rvm requirements
 ...
@@ -189,13 +189,13 @@ $ rvm implode
 $ gem uninstall rvm
 ```
 
-Next, just follow the instructions <code>rvm implode</code> displays.
+Then just follow the instructions from <code>rvm implode</code>:
 
-Delete the following files, if they exist:
+* Delete the following files, if they exist:
 <code>/etc/rvmrc</code>
 <code>$HOME/.rvmrc</code>
 
-Also, remove the lines sourcing RVM scripts from
+* Also, remove the lines sourcing RVM scripts from
 <code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and
 <code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn't hurt
 after you do this, just to make sure).

@@ -23,13 +23,13 @@ For Windows, [Pik](https://github.com/vertiginous/pik) is an Rbenv alternative.
 
 NOTE: Rbenv is incompatible with RVM because RVM overrides the
 <code>gem</code> command with a function.  If you want to switch to Rbenv,
-make sure you uninstall RVM first.  First run the following commands to
-uninstall RVM:
+make sure you uninstall RVM first.  $un the following commands to uninstall
+RVM:
 ```
 $ rvm implode
 $ gem uninstall rvm
 ```
-Next remove/comment out the RVM loader line in <code>.bash_profile</code>
+Then remove/comment out the RVM loader line in <code>.bash_profile</code>
 and/or <code>.bashrc</code>
 
 How to Install Rbenv on Mac OS X
@@ -42,10 +42,10 @@ on the *Downloads* tab.  Click on the *Install* button to download the
 Command Line Tools.
 {% img center /images/xcodecommandline.png 'Xcode Command Line Tools' %}
 
-Next, you'll need to install the Homebrew package manager to all the
-dependencies needed to compile Ruby from source.  While you could do this
-all by hand, using a package manager is a better idea, as package
-managers know how to uninstall what they install.
+Next, you'll need to install the Homebrew package manager to get all the
+dependencies needed to compile Ruby from source.  While you could manage
+these dependencies by hand, using a package manager is a better idea, as
+package managers know how to uninstall what they install.
 
 Run the following command to install Homebrew:
 
@@ -54,7 +54,7 @@ Run the following command to install Homebrew:
 ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 ```
 
-Next run <code>brew doctor</code> and address any issues it discovers.  When
+Run <code>brew doctor</code> and address any issues it discovers.  When
 all is well, you should see:
 
 ```
@@ -78,7 +78,7 @@ $HOME/.rbenv:
 $ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv
 ```
 
-Next, add $HOME/.rbenv/bin to your $PATH
+Add $HOME/.rbenv/bin to your $PATH
 ```
 $ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.bash_profile
 ```
