@@ -138,4 +138,4 @@ To uninstall/remove Rbenv, remove the following directory:
 rm -rf $HOME/.rbenv
 ```
 
-And remember to remove whatever you add to <code>$HOME/.bash_profile</code>
+And remember to remove whatever you added to <code>$HOME/.bash_profile</code>
