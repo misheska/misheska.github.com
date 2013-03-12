@@ -89,6 +89,44 @@ system 1.8.7 version, run the following command:
 rvm use 1.9.3 --default
 ```
 
+If you'd like to manage RVM with a GUI, check out [JewelryBox](http://jewelrybox.unfiniti.com/):
+
+{% img center /images/jewelrybox.png 'Jewelry Box' %}
+
+Installing Ruby 1.8.7 from source on Mac OS X
+=============================================
+For legacy GUI support, Ruby 1.8.7 has some dependencies on tcl/tk, which
+Mountain Lion no longer installs by default (now that X11 is an optional
+install).  To compile Ruby 1.8.7 without tcl/tk support, use the following
+command overrides on <code>rvm install</code>:
+
+```
+rvm install 1.8.7 --with-gcc=clang --without-tcl --without-tk
+```
+
+To compile Ruby 1.8.7 with tcl/tk support, install X11 via
+[http://xquartz.macosforge.org/landing](http://xquartz.macosforge.org/landing)
+then compile Ruby 1.8.7 with the following:
+
+```
+export CPPFLAGS=-I/opt/X11/include
+CC=/usr/local/bin/gcc-4.2 rvm install 1.8.7
+```
+
+Installing Ruby 2.0.0 from source on Mac OS X
+=============================================
+As of this writing, the current stable version of rvm (1.18.18) errors out with
+a message about not being able to validate the rubygems-2.0.3.  To fix,
+download the latest version of RVM like so:
+
+```
+# get rid of the unsuccessful installation
+$ rvm remove 2.0.0
+# download the latest version of RVM
+$ rvm get head
+$ rvm install 2.0.0
+```
+
 How to Remove RVM on Mac OS X
 =============================
 Should you want to uninstall/remove RVM, it's pretty easy.  First, run
