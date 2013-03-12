@@ -9,14 +9,14 @@ Out of the box, Ruby does not provide a mechanism to support multiple
 installed versions.  Compounding this issue, the default system-installed
 version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
 For example, even in the latest version of Mac OS X Mountain Lion, the
-system-wide version of Ruby is over a year old (ruby 1.8.7p358).  Most
+system-wide version of Ruby is over five years old (ruby 1.8.7).  Most
 developers prefer to use a newer version of Ruby installed in their home
 directory and to leave the default systemwide version of Ruby untouched.
 
 [Rbenv](https://github.com/sstephenson/rbenv/) makes managing multiple
 versions of Ruby easy.  Rbenv is a lightweight alternative to
 [Ruby Version Manager (RVM)](http://rvm.io).  Rbenv does not include
-any mechanism to install Ruby or manage gems, like with RVM.  
+any mechanism to install Ruby or manage gems, like with RVM.
 
 Rbenv is supported on Linux and Mac OS X.  Rbenv doesn't work on Windows.
 For Windows, [Pik](https://github.com/vertiginous/pik) is an Rbenv alternative.
@@ -34,38 +34,45 @@ and/or <code>.bashrc</code>
 
 How to Install Rbenv on Mac OS X
 ================================
-First you'll need to install a C compiler to build Ruby from source.
-While you might think that this is just a matter of installing the latest
-version of Xcode, which comes with a C compiler, unfortunately the Ruby
-source code is not fully compatible with either the LLVM-GCC or Clang C
-compilers shipping with Xcode 4.2 and later.  For more explanation of the
-issue, refer to this article [HERE](http://woss.name/2012/01/24/how-to-install-a-working-set-of-compilers-on-mac-os-x-10-7-lion/)
+First you'll need to install a C compiler to build Ruby from source.  Just
+download and install the latest version of Xcode from the App Store, if you
+don't have it installed already.  Also make sure you install the *Command Line
+Tools* by choosing the menu item <code>Xcode -> Preferences...</code> and click
+on the *Downloads* tab.  Click on the *Install* button to download the
+Command Line Tools.
+{% img center /images/xcodecommandline.png 'Xcode Command Line Tools' %}
 
-Run the following command to see if you have the GCC compiler installed,
-which the Ruby source requires:
+Next, you'll need to install the Homebrew package manager to all the
+dependencies needed to compile Ruby from source.  While you could do this
+all by hand, using a package manager is a better idea, as package
+managers know how to uninstall what they install.
+
+Run the following command to install Homebrew:
+
+
 ```
-$ which gcc
-/usr/bin/gcc-4.2
+ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 ```
 
-If this command does not show a path to gcc-4.2, you'll need to install
-the older OSX GCC compiler.  *Check to see if Xcode is installed first!*
-Running the osx-gcc-installer while Xcode is installed is known to cause
-various issues.  Uninstalling any recent version Xcode (version 4.2 or later)
-is easy, just delete the Xcode app from the /Applications/ folder.  You can
-reinstall it again after you run the osx-gcc-installer.  (If you have
-an older version of Xcode installed, then you don't need install the older
-OSX GCC gcc-4.2 compiler, and thus, don't need to remove Xcode [or run the
-osx-gcc-installer]).
+Next run <code>brew doctor</code> and address any issues it discovers.  When
+all is well, you should see:
 
-Download the [OSX GCC Installer](https://github.com/kennethreitz/osx-gcc-installer/downloads).
-For Mac OS X Lion and Mountain Lion, go with the [GCC-10.7-v2.pkg](https://github.com/downloads/kennethreitz/osx-gcc-installer/GCC-10.7-v2.pkg)
+```
+$ brew doctor
+Your system is raring to brew.
+```
 
-After the osx-gcc-installer completes, reinstall Xcode again.  Also install
-the command line tools, by clicking on the "Preferences" menu, then the
-"Downloads" preference pane to install the "Command Line Tools".
+Next, install the additional dependencies to compile Ruby from source:
 
-After gcc-4.2 is installed, download the rbenv source distribution to
+```
+# For update-system
+brew update
+brew tap homebrew/dupes
+# For rvm
+brew install apple-gcc42
+```
+
+After apple-gcc42 is installed, download the rbenv source distribution to
 $HOME/.rbenv:
 ```
 $ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv

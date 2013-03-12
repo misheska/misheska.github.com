@@ -34,7 +34,7 @@ on the *Downloads* tab.  Click on the *Install* button to download the
 Command Line Tools.
 {% img center /images/xcodecommandline.png 'Xcode Command Line Tools' %}
 
-First you'll need to install the Homebrew package manager.  RVM will
+Next, you'll need to install the Homebrew package manager.  RVM will
 automatically download all dependencies if a package manager is installed.
 Run the following command to install Homebrew:
 
