@@ -9,7 +9,7 @@ Out of the box, Ruby does not provide a mechanism to support multiple
 installed versions.  Compounding this issue, the default system-installed
 version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
 For example, even in the latest version of Mac OS X Mountain Lion, the
-system-wide version of Ruby is over a year old (ruby 1.8.7p358).  Most
+system-wide version of Ruby is over five years old (ruby 1.8.7).  Most
 developers prefer to use a newer version of Ruby installed in their home
 directory and to leave the default systemwide version of Ruby untouched.
 
@@ -26,41 +26,47 @@ For Windows, [Pik](https://github.com/vertiginous/pik) is an RVM alternative.
 
 How to Install RVM on Mac OS X
 ==============================
-First you'll need to install a C compiler to build Ruby from source.
-While you might think that this is just a matter of installing the latest
-version of Xcode, which comes with a C compiler, unfortunately the Ruby
-source code is not fully compatible with either the LLVM-GCC or Clang C
-compilers shipping with Xcode 4.2 and later.  For more explanation of the
-issue, refer to this article [HERE](http://woss.name/2012/01/24/how-to-install-a-working-set-of-compilers-on-mac-os-x-10-7-lion/)
+First, you'll need to install a C compiler to build Ruby from source.  Just
+download and install the latest version of Xcode from the App Store, if you
+don't have it already.  Also make sure you install the *Command Line Tools*
+by choosing the menu item <code>Xcode -> Preferences...</code> and click
+on the *Downloads* tab.  Click on the *Install* button to download the
+Command Line Tools.
+{% img center /images/xcodecommandline.png 'Xcode Command Line Tools' %}
 
-Run the following command to see if you have the GCC compiler installed,
-which the Ruby source requires:
+First you'll need to install the Homebrew package manager.  RVM will
+automatically download all dependencies if a package manager is installed.
+Run the following command to install Homebrew:
+
 ```
-$ which gcc
-/usr/bin/gcc-4.2
+ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 ```
 
-If this command does not show a path to gcc-4.2, you'll need to install
-the older OSX GCC compiler.  *Check to see if Xcode is installed first!*
-Running the osx-gcc-installer while Xcode is installed is known to cause
-various issues.  Uninstalling any recent version Xcode (version 4.2 or later)
-is easy, just delete the Xcode app from the /Applications/ folder.  You can
-reinstall it again after you run the osx-gcc-installer.  (If you have
-an older version of Xcode installed, then you don't need install the older
-OSX GCC gcc-4.2 compiler, and thus, don't need to remove Xcode [or run the
-osx-gcc-installer]).
+Next run <code>brew doctor</code> and address any issues it discovers.  When
+all is well, you should see:
 
-Download the [OSX GCC Installer](https://github.com/kennethreitz/osx-gcc-installer/downloads).
-For Mac OS X Lion and Mountain Lion, go with the [GCC-10.7-v2.pkg](https://github.com/downloads/kennethreitz/osx-gcc-installer/GCC-10.7-v2.pkg)
-
-After the osx-gcc-installer completes, reinstall Xcode again.  Also install
-the command line tools, by clicking on the "Preferences" menu, then the
-"Downloads" preference pane to install the "Command Line Tools".
-
-After gcc-4.2 is installed, you can install RVM with the following commands:
 ```
-$ \curl -L https://get.rvm.io | bash -s stable
+$ brew doctor
+Your system is raring to brew.
+```
+
+After Xcode and Homebrew are installed, you can install RVM with the following
+commands:
+
+```
+$ \curl -#L https://get.rvm.io | bash -s stable
 $ source $HOME/.rvm/scripts/rvm
+```
+
+Run <code>rvm requirements</code> and do what it says to install the additional
+dependencies.  On my system, I ran the following:
+
+```
+# For update-system
+brew update
+brew tap homebrew/dupes
+# For rvm
+brew install apple-gcc42
 ```
 
 Next, build and install the latest version of Ruby by running the following
@@ -105,6 +111,17 @@ Also, remove the lines sourcing RVM scripts from
 <code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn't hurt
 after you do this, just to make sure).
 
+To uninstall Homebrew, run the following:
+
+```
+cd `brew --prefix`
+brew install libtool
+rm -rf Cellar
+rm `git ls-files`
+rm -r Library/Homebrew Library/Aliases Library/Formula Library/Contributions
+rm -rf .git
+rm -rf ~/Library/Caches/Homebrew
+```
 
 How to Install RVM on Linux
 ===========================
