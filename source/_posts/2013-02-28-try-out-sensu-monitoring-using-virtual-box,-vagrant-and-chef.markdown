@@ -51,9 +51,9 @@ Download the sensu-chef cookbook
 ================================
 Grab the latest version of the sensu-chef cookbook from GitHub by running
 the following command:
-```
-git clone https://github.com/sensu/sensu-chef.git
-```
+
+    git clone https://github.com/sensu/sensu-chef.git
+
 Install Ruby & RubyGems
 =======================
 The sensu-chef cookbook requires Ruby & RubyGems.
@@ -67,30 +67,29 @@ know whether or not to decide between RVM or Rbenv, go with RVM.
 
 Patch chef-sensu Vagrantfile
 ============================
-As of this writing, the <code>Vagrantfile</code> included in
-<code>sensu-chef/examples</code> will not set up the VM properly and the
+As of this writing, the `Vagrantfile` included in
+`sensu-chef/examples` will not set up the VM properly and the
 Chef run will fail with the following error:
-```
-[default] Running chef-solo...
-stdin: is not a tty
-[Fri, 01 Mar 2013 08:28:06 +0000] INFO: *** Chef 0.10.8 ***
-[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Setting the run_list to ["recipe[monitor::master]", "recipe[monitor::redis]", "recipe[monitor::rabbitmq]"] from JSON
-[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List is [recipe[monitor::master], recipe[monitor::redis], recipe[monitor::rabbitmq]]
-[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List expands to [monitor::master, monitor::redis, monitor::rabbitmq]
-[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Starting Chef Run for ubuntu-1204-i386
-[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Running start handlers
-[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Start handlers complete.
-[Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Running exception handlers
-[Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Exception handlers complete
-[Fri, 01 Mar 2013 08:28:07 +0000] FATAL: Stacktrace dumped to /tmp/vagrant-chef-1/chef-stacktrace.out
-[Fri, 01 Mar 2013 08:28:07 +0000] FATAL: NoMethodError: undefined method `default_action' for #<Class:0x8decb20>
-Chef never successfully completed! Any errors should be visible in the
-output above. Please fix your recipes so that they properly complete.
-```
 
-I've created a revised <code>Vagrantfile</code> which fixes this issue.
+    [default] Running chef-solo...
+    stdin: is not a tty
+    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: *** Chef 0.10.8 ***
+    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Setting the run_list to ["recipe[monitor::master]", "recipe[monitor::redis]", "recipe[monitor::rabbitmq]"] from JSON
+    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List is [recipe[monitor::master], recipe[monitor::redis], recipe[monitor::rabbitmq]]
+    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List expands to [monitor::master, monitor::redis, monitor::rabbitmq]
+    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Starting Chef Run for ubuntu-1204-i386
+    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Running start handlers
+    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Start handlers complete.
+    [Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Running exception handlers
+    [Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Exception handlers complete
+    [Fri, 01 Mar 2013 08:28:07 +0000] FATAL: Stacktrace dumped to /tmp/vagrant-chef-1/chef-stacktrace.out
+    [Fri, 01 Mar 2013 08:28:07 +0000] FATAL: NoMethodError: undefined method `default_action' for #<Class:0x8decb20>
+    Chef never successfully completed! Any errors should be visible in the
+output above. Please fix your recipes so that they properly complete.
+
+I've created a revised `Vagrantfile` which fixes this issue.
 Download this amended version and copy it in place of
-<code>sensu-client/examples/Vagrantfile</code>
+`sensu-client/examples/Vagrantfile`
 
 {% gist 5063291 Vagrantfile %}
 
@@ -99,10 +98,8 @@ Install Ruby DevKit (Windows)
 The sensu-chef recipe is dependent on the json gem.  On Windows, you will get
 the following error if you do not have the proper Ruby DevKit installed:
 
-```
-Installing json (1.7.7)
-Gem::InstallError: The 'json' native gem requires installed build tools.
-```
+    Installing json (1.7.7)
+    Gem::InstallError: The 'json' native gem requires installed build tools.
 
 Go to [http://rubyinstaller.org/downloads](http://rubyinstaller.org/downloads)
 and refer to the *Which Development Kit?* section of the web page about which
@@ -111,57 +108,51 @@ DevKit you need to install.
 Download the appropriate DevKit toolkit, extract it and run the following
 in a Command Prompt:
 
-```
-> ruby dk.rb init
-[INFO] found RubyInstaller v1.9.3 at C:/Ruby193
+    > ruby dk.rb init
+    [INFO] found RubyInstaller v1.9.3 at C:/Ruby193
 
-Initialization complete! Please review and modify the auto-generated
-'config.yml' file to ensure it contains the root directories to all
-of the installed Rubies you want enhanced by the DevKit.
+    Initialization complete! Please review and modify the auto-generated
+    'config.yml' file to ensure it contains the root directories to all
+    of the installed Rubies you want enhanced by the DevKit.
 
-> ruby dk.rb install
-[INFO] Updating convenience notice gem override for 'C:/Ruby193'
-[INFO] Installing 'C:/Ruby193/lib/ruby/site_ruby/devkit.rb'
-```
+    > ruby dk.rb install
+    [INFO] Updating convenience notice gem override for 'C:/Ruby193'
+    [INFO] Installing 'C:/Ruby193/lib/ruby/site_ruby/devkit.rb'
 
 
 Create the sensu-chef virtual machine
 =====================================
 
 Run the following commands to create the sensu-chef virtual machine:
-```
-cd sensu-chef/examples
-gem install bundler
-# On Windows, restart the command prompt before running 'bundle install' as
-# gem install will reset the PATH
-bundle install
-librarian-chef install
-vagrant up
-```
 
-If all goes well, the <code>chef-solo</code> run should have succeeded, and
+    cd sensu-chef/examples
+    gem install bundler
+    # On Windows, restart the command prompt before running 'bundle install' as
+    # gem install will reset the PATH
+    bundle install
+    librarian-chef install
+    vagrant up
+
+If all goes well, the `chef-solo` run should have succeeded, and
 you should be able to view the Sensu dashboard by going to the following URL
-with the username <code>admin</code> and the password <code>secret</code>:
+with the username `admin` and the password `secret`:
 [http://localhost:8080](http://localhost:8080)
 
-{% img center /images/sensudashboard.png 'Sensu Dashboard' %}
+![Sensu Dashboard](/images/sensudashboard.png)
 
 If this is successful, on Mac OX and Linux, just run the following command to
 log in to your newly-created virtual machine instance:
-```
-vagrant ssh
-```
+
+    vagrant ssh
 
 On Windows, run the following command (or use a visual SSH client like PuTTY):
-```
-ssh vagrant@127.0.0.1 -p 2222 -i C:/Users/misheska/.vagrant.d/insecure_private_key
-```
+
+    ssh vagrant@127.0.0.1 -p 2222 -i C:/Users/misheska/.vagrant.d/insecure_private_key
 
 And refer to the [Sensu wiki](https://github.com/sensu/sensu/wiki) on how 
 to experiment with various configuration options.
 
 When you are done playing with the test VM, run the following command to
 destroy the VM:
-```
-vagrant destroy
-```
+
+    vagrant destroy

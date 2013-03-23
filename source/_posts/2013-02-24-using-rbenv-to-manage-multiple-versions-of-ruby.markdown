@@ -22,15 +22,15 @@ Rbenv is supported on Linux and Mac OS X.  Rbenv doesn't work on Windows.
 For Windows, [Pik](https://github.com/vertiginous/pik) is an Rbenv alternative.
 
 NOTE: Rbenv is incompatible with RVM because RVM overrides the
-<code>gem</code> command with a function.  If you want to switch to Rbenv,
-make sure you uninstall RVM first.  $un the following commands to uninstall
+`gem` command with a function.  If you want to switch to Rbenv,
+make sure you uninstall RVM first.  Run the following commands to uninstall
 RVM:
-```
-$ rvm implode
-$ gem uninstall rvm
-```
-Then remove/comment out the RVM loader line in <code>.bash_profile</code>
-and/or <code>.bashrc</code>
+
+    $ rvm implode
+    $ gem uninstall rvm
+
+Then remove/comment out the RVM loader line in `.bash_profile`
+and/or `.bashrc`
 
 How to Install Rbenv on Mac OS X
 ================================
@@ -40,7 +40,7 @@ don't have it installed already.  Also make sure you install the *Command Line
 Tools* by choosing the menu item <code>Xcode -> Preferences...</code> and click
 on the *Downloads* tab.  Click on the *Install* button to download the
 Command Line Tools.
-{% img center /images/xcodecommandline.png 'Xcode Command Line Tools' %}
+![Xcode Command Line Tools](/images/xcodecommandline.png)
 
 Next, you'll need to install the Homebrew package manager to get all the
 dependencies needed to compile Ruby from source.  While you could manage
@@ -50,80 +50,122 @@ package managers know how to uninstall what they install.
 Run the following command to install Homebrew:
 
 
-```
-ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
-```
+    ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 
-Run <code>brew doctor</code> and address any issues it discovers.  When
+Run `brew doctor` and address any issues it discovers.  When
 all is well, you should see:
 
-```
-$ brew doctor
-Your system is raring to brew.
-```
+    $ brew doctor
+    Your system is raring to brew.
 
 Next, install the additional dependencies to compile Ruby from source:
 
-```
-# For update-system
-brew update
-brew tap homebrew/dupes
-# For rvm
-brew install apple-gcc42
-```
+    # For update-system
+    brew update
+    brew tap homebrew/dupes
+    # For ruby
+    brew install apple-gcc42
 
-After apple-gcc42 is installed, download the rbenv source distribution to
-$HOME/.rbenv:
-```
-$ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv
-```
+And now install `rbenv` and the `ruby-build` plugin:
 
-Add $HOME/.rbenv/bin to your $PATH
-```
-$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.bash_profile
-```
+    brew update
+    brew install rbenv
+    brew install ruby-build
 
 Add <code>rbenv init</code> to your shell to enable shims and autocompletion:
-```
-$ echo 'eval "$(rbenv init -)"' >> $HOME/.bash_profile
-```
 
-Restart shell as a login shell so that the PATH changes take effect:
-```
-$exec $SHELL -l
-```
+    $ echo 'eval "$(rbenv init -)"' >> $HOME/.bash_profile
+    $ source ~/.bash_profile
 
-Install the <code>ruby-build</code> plugin, which provides an
-<code>rbenv install</code> command to simplify the process of compiling
-and install new Ruby versions:
-```
-$ git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
-```
+Set the latest version of ruby to be the default version of ruby
 
-Install the latest version of ruby (at the time of this writing 1.9.3-p385)
-```
-$ rbenv install 1.9.3-p385
-```
+    $ rbenv global 1.9.3-p392
 
 Rebuild the shim executable
-```
-$ rbenv rehash
-```
-You'll need to run <code>rbenv rehash</code> every time you install a new
+
+    $ rbenv rehash
+
+You'll need to run `rbenv rehash` every time you install a new
+version of Ruby or install a new gem.
+
+Verify the ruby install
+
+    $ ruby -v
+    ruby 1.9.3p392 (2013-02-22 revision 39386) [x86_64-darwin12.3.0]
+    
+
+How to Upgrade Rbenv on Mac OS X
+================================
+To upgrade rbenv via homebrew:
+
+    $ brew update
+    $ brew upgrade rbenv
+    $ brew upgrade ruby-build
+
+How to Remove Rbenv on Mac OS X
+================================
+Uninstall the packages you installed via homebrew:
+
+    brew uninstall rbenv
+    brew uninstall ruby-build
+
+And remove the following directory:
+
+    rm -rf $HOME/.rbenv
+
+And remember to remove whatever you added to `$HOME/.bash_profile`
+
+How to Install RVM on Linux
+===========================
+Make sure the prerequisite packages are installed.  For Ubuntu:
+
+    $ sudo apt-get install build-essential git
+
+Download the rbenv source distribution to
+$HOME/.rbenv:
+
+    $ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv
+
+Add $HOME/.rbenv/bin to your $PATH
+
+    $ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.bashrc
+
+
+Add `rbenv init` to your shell to enable shims and autocompletion:
+
+    $ echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
+
+Restart shell as a login shell so that the PATH changes take effect:
+
+    $ exec $SHELL -l
+
+Install the `ruby-build` plugin, which provides an
+`rbenv install` command to simplify the process of compiling
+and install new Ruby versions:
+
+    $ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
+
+Install the latest version of ruby (at the time of this writing 1.9.3-p392)
+
+    $ rbenv install 1.9.3-p392
+
+Rebuild the shim executable
+
+    $ rbenv rehash
+
+You'll need to run `rbenv rehash` every time you install a new
 version of Ruby or install a new gem.
 
 Set the latest version of ruby to be the default version of ruby
-```
-$ rbenv global 1.9.3-p385
-```
+
+    $ rbenv global 1.9.3-p392
 
 Verify the ruby install
-```
-$ ruby -v
-```
 
-How to Upgrade Rbenv
-====================
+    $ ruby -v
+    
+How to Upgrade Rbenv on Linux
+================================
 Since Rbenv is a Git repository, upgrading is just a matter of refreshing the
 source:
 ```
@@ -131,7 +173,7 @@ $ cd $HOME/.rbenv
 $ git pull
 ```
 
-How to Remove Rbenv on Mac OS X
+How to Remove Rbenv on Linux
 ================================
 To uninstall/remove Rbenv, remove the following directory:
 ```

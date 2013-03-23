@@ -31,67 +31,57 @@ don't have it already.  Also make sure you install the *Command Line Tools*
 by choosing the menu item <code>Xcode -> Preferences...</code> and click
 on the *Downloads* tab.  Click on the *Install* button to download the
 Command Line Tools.
-{% img center /images/xcodecommandline.png 'Xcode Command Line Tools' %}
+![Xcode Command Line Tools](/images/xcodecommandline.png)
+
 
 Next, you'll need to install the Homebrew package manager.  RVM will
 automatically download all dependencies if a package manager is installed.
 Run the following command to install Homebrew:
 
-```
-ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
-```
+    ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 
-Run <code>brew doctor</code> and address any issues it discovers.  When
+Run `brew doctor` and address any issues it discovers.  When
 all is well, you should see:
 
-```
-$ brew doctor
-Your system is raring to brew.
-```
+    $ brew doctor
+    Your system is raring to brew.
 
 After Xcode and Homebrew are installed, you can install RVM with the following
 commands:
 
-```
-$ \curl -#L https://get.rvm.io | bash -s stable
-$ source $HOME/.rvm/scripts/rvm
-```
+    $ \curl -#L https://get.rvm.io | bash -s stable
+    $ source $HOME/.rvm/scripts/rvm
 
-Run <code>rvm requirements</code> and do what it says to install the additional
+Run `rvm requirements` and do what it says to install the additional
 dependencies.  On my system, I ran the following:
 
-```
-# For update-system
-brew update
-brew tap homebrew/dupes
-# For rvm
-brew install apple-gcc42
-```
+    # For update-system
+    brew update
+    brew tap homebrew/dupes
+    # For rvm
+    brew install apple-gcc42
 
 Next, build and install the latest version of Ruby by running the following
 (this will take a long time):
-```
-$ rvm install 1.9.3
-$ rvm use 1.9.3
-$ rvm rubygems latest
-```
+
+    $ rvm install 1.9.3
+    $ rvm use 1.9.3
+    $ rvm rubygems latest
 
 Verify the RVM install by running the following commands:
-```
-$ rvm -h
-$ rvm list
-$ rvm use 1.9.3
-```
+
+    $ rvm -h
+    $ rvm list
+    $ rvm use 1.9.3
 
 To ensure that the newer Ruby 1.9.3 is used by default instead of the
 system 1.8.7 version, run the following command:
-```
-rvm use 1.9.3 --default
-```
+
+    $ rvm use 1.9.3 --default
 
 If you'd like to manage RVM with a GUI, check out [JewelryBox](http://jewelrybox.unfiniti.com/):
 
-{% img center /images/jewelrybox.png 'Jewelry Box' %}
+![Jewelry Box](/images/jewelrybox.png)
 
 Installing Ruby 1.8.7 from source on Mac OS X
 =============================================
@@ -100,18 +90,14 @@ Mountain Lion no longer installs by default (now that X11 is an optional
 install).  To compile Ruby 1.8.7 without tcl/tk support, use the following
 command overrides on <code>rvm install</code>:
 
-```
-rvm install 1.8.7 --with-gcc=clang --without-tcl --without-tk
-```
+    rvm install 1.8.7 --with-gcc=clang --without-tcl --without-tk
 
 To compile Ruby 1.8.7 with tcl/tk support, install X11 via
 [http://xquartz.macosforge.org/landing](http://xquartz.macosforge.org/landing)
 then compile Ruby 1.8.7 with the following:
 
-```
-export CPPFLAGS=-I/opt/X11/include
-CC=/usr/local/bin/gcc-4.2 rvm install 1.8.7
-```
+    export CPPFLAGS=-I/opt/X11/include
+    CC=/usr/local/bin/gcc-4.2 rvm install 1.8.7
 
 Installing Ruby 2.0.0 from source on Mac OS X
 =============================================
@@ -119,46 +105,40 @@ As of this writing, the current stable version of rvm (1.18.18) errors out with
 a message about not being able to validate the rubygems-2.0.3.  To fix,
 download the latest version of RVM like so:
 
-```
-# get rid of the unsuccessful installation
-$ rvm remove 2.0.0
-# download the latest version of RVM
-$ rvm get head
-$ rvm install 2.0.0
-```
+    # get rid of the unsuccessful installation
+    $ rvm remove 2.0.0
+    # download the latest version of RVM
+    $ rvm get head
+    $ rvm install 2.0.0
 
 How to Remove RVM on Mac OS X
 =============================
 Should you want to uninstall/remove RVM, it's pretty easy.  First, run
 the following commands:
 
-```
-$ rvm implode
-$ gem uninstall rvm
-```
+    $ rvm implode
+    $ gem uninstall rvm
 
-Then just follow the instructions from <code>rvm implode</code>:
+Then just follow the instructions from `rvm implode`:
 
 * Delete the following files, if they exist:
-<code>/etc/rvmrc</code>
-<code>$HOME/.rvmrc</code>
+`/etc/rvmrc`
+`$HOME/.rvmrc`
 
 * Also, remove the lines sourcing RVM scripts from 
-<code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and 
-<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn't hurt
+`$HOME/.bash_profile` `/etc/zprofile` and 
+`/etc/profile.d/rvm.sh` if they exist.  (A reboot doesn't hurt
 after you do this, just to make sure).
 
 To uninstall Homebrew, run the following:
 
-```
-cd `brew --prefix`
-brew install libtool
-rm -rf Cellar
-rm `git ls-files`
-rm -r Library/Homebrew Library/Aliases Library/Formula Library/Contributions
-rm -rf .git
-rm -rf ~/Library/Caches/Homebrew
-```
+    cd `brew --prefix`
+    brew install libtool
+    rm -rf Cellar
+    rm `git ls-files`
+    rm -r Library/Homebrew Library/Aliases Library/Formula Library/Contributions
+    rm -rf .git
+    rm -rf ~/Library/Caches/Homebrew
 
 How to Install RVM on Linux
 ===========================
@@ -168,72 +148,65 @@ designed for the GCC compiler that ships with any Linux distribution.
 First install <code>curl</code>, so that you can fetch the RVM script.
 For Ubuntu, run
 the following command:
-```
-$ sudo apt-get install curl
-```
+
+    $ sudo apt-get install curl
+
 For RedHat/CentOS:
-```
-$ sudo yum install curl
-```
+
+    $ sudo yum install curl
+
 
 With curl installed, run the RVM install with the following commands:
-```
-$ \curl -#L https://get.rvm.io | bash -s stable
-$ source $HOME/.rvm/scripts/rvm
-```
+
+    $ \curl -#L https://get.rvm.io | bash -s stable
+    $ source $HOME/.rvm/scripts/rvm
 
 Run the <code>rvm requirements</code> command to get rvm to display the
 commands to install the other dependent packages for compiling Ruby from
 source:
-```
-$ rvm requirements
-...
-# For Ruby / Ruby HEAD (MRI, Rubinius, & REE), install the following:
-ruby: /usr/bin/apt-get install build-essential openssl libreadline6 libreadline6-dev 
-curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev
-libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config
-```
+
+    $ rvm requirements
+    ...
+    # For Ruby / Ruby HEAD (MRI, Rubinius, & REE), install the following:
+    ruby: /usr/bin/apt-get install build-essential openssl libreadline6 libreadline6-dev 
+    curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev
+    libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config
 
 Run the appropriate command for your Linux distribution to install the
 prerequisite packages.  For example, on Ubuntu, you would run:
-```
-sudo apt-get install build-essential openssl libreadline6 libreadline6-dev \
-curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 \
-libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison  \
-subversion pkg-config
-```
+
+    sudo apt-get install build-essential openssl libreadline6 libreadline6-dev \
+    curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 \
+    libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison  \
+    subversion pkg-config
 
 Next build and install Ruby 1.9.3 (this will take awhile):
-```
-$ rvm install 1.9.3
-$ rvm use 1.9.3
-$ rvm rubygems latest
-```
+
+    $ rvm install 1.9.3
+    $ rvm use 1.9.3
+    $ rvm rubygems latest
 
 Verify rvm install:
-```
-$ rvm -h
-$ rvm list
-$ rvm use 1.9.3
-```
+
+    $ rvm -h
+    $ rvm list
+    $ rvm use 1.9.3
 
 How to Remove RVM on Linux
 ==========================
 Should you want to uninstall/remove RVM, it's pretty easy.  First, run
 the following commands:
 
-```
-$ rvm implode
-$ gem uninstall rvm
-```
+    $ rvm implode
+    $ gem uninstall rvm
 
 Then just follow the instructions from <code>rvm implode</code>:
 
 * Delete the following files, if they exist:
-<code>/etc/rvmrc</code>
-<code>$HOME/.rvmrc</code>
+`/etc/rvmrc`
+`$HOME/.rvmrc`
 
 * Also, remove the lines sourcing RVM scripts from
-<code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and
-<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn't hurt
+`$HOME/.bash_profile` `/etc/zprofile` and
+`/etc/profile.d/rvm.sh` if they exist.  (A reboot doesn't hurt
 after you do this, just to make sure).
