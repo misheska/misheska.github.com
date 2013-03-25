@@ -1,0 +1,446 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Try out Sensu Monitoring using Virtual Box, Vagrant and Chef - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="I&#8217;ve been using Sensu Monitoring in production for about three to four months
+now. It&#8217;s a nice, lightweight monitoring framework, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Try Out Sensu Monitoring Using Virtual Box, Vagrant and Chef</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-28T22:54:00-08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>I&#8217;ve been using Sensu Monitoring in production for about three to four months
+now.  It&#8217;s a nice, lightweight monitoring framework, designed with the cloud
+in mind and for use with modern configuration management frameworks like
+Chef and Puppet.  For more information on Sensu, check out the article
+<a href="https://github.com/sensu/sensu/wiki">Why Sonian created Sensu (by Sean Porter)</a>
+and the associated articles and links on the <a href="https://github.com/sensu/sensu/wiki">Sensu Wiki</a></p>
+
+<p>In this article, I&#8217;m going to present a quick overview on how to test and
+evaluate Sensu using the <a href="https://github.com/sensu/sensu-chef">Sensu Chef Cookbook</a>
+Through the magic of Oracle VirtualBox and Vagrant, combined with Chef, you
+can quickly deploy Sensu to a local virtual machine instance, and kick the
+tires on Sensu to evaluate whether or not it is a good monitoring solution
+for you.  These instructions apply to Mac OS X, Linux, and/or Windows for
+the host operating system.</p>
+
+<h1>Install VirtualBox</h1>
+
+<p>VirtualBox is an open source virtualization platform, similar to VMWare
+Fusion/Workstation that runs on Mac OS X, Linux and Windows (and a few more
+platforms).  While I personally prefer VMWare Fusion to VirtualBox (VirtualBox
+can be a bit flakey at times), a lot of automation around VirtualBox has been
+developed within the Chef community, which impossible to ignore.  Fortunately
+on both Mac OS X and Linux, VirtualBox can peacefully coexist with VMWare
+Fusion/Workstation (NOTE: If you use KVM virtualization on Linux, VirtualBox
+can also coexist, but you need to be careful not to run VirtualBox and KVM
+images simultaneously).</p>
+
+<p>Just download and run the VirtualBox installer from the <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox download
+page</a>.  Just download and install
+the latest 4.2.x version of VirtualBox.  Make sure you save the VirtualBox
+installer as it comes with an uninstall tool, should you wish to remove
+VirtualBox at some point in the future.</p>
+
+<h1>Install Vagrant</h1>
+
+<p>After installing VirtualBox, next install Vagrant.  Vagrant is an automation
+framework for VirtualBox.  Grab the latest Vagrant installer for your OS from
+the <a href="http://downloads.vagrantup.com/">Vagrant Downloads page</a> and run install.
+On Mac OS X and Windows, the Vagrant install will automatically add the Vagrant
+binaries to your PATH, on Linux, you will need to manually add
+<code>/opt/vagrant/bin</code> per the <a href="http://docs.vagrantup.com/v1/docs/getting-started/index.html">Getting Started with Vagrant docs</a>.</p>
+
+<h1>Download the sensu-chef cookbook</h1>
+
+<p>Grab the latest version of the sensu-chef cookbook from GitHub by running
+the following command:</p>
+
+<pre><code>git clone https://github.com/sensu/sensu-chef.git
+</code></pre>
+
+<h1>Install Ruby &amp; RubyGems</h1>
+
+<p>The sensu-chef cookbook requires Ruby &amp; RubyGems.</p>
+
+<p>On Mac OS X and Linux, I strongly recommend that you use either RVM or Rbenv
+to make sure that you are using the latest version of Ruby instead of whatever
+version of Ruby your system installs by default.</p>
+
+<p>See my previous articles on <a href="http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">RVM</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Rbenv</a>.  NOTE: If you don&#8217;t
+know whether or not to decide between RVM or Rbenv, go with RVM.</p>
+
+<h1>Patch chef-sensu Vagrantfile</h1>
+
+<p>As of this writing, the <code>Vagrantfile</code> included in
+<code>sensu-chef/examples</code> will not set up the VM properly and the
+Chef run will fail with the following error:</p>
+
+<pre><code>[default] Running chef-solo...
+stdin: is not a tty
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: *** Chef 0.10.8 ***
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Setting the run_list to ["recipe[monitor::master]", "recipe[monitor::redis]", "recipe[monitor::rabbitmq]"] from JSON
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List is [recipe[monitor::master], recipe[monitor::redis], recipe[monitor::rabbitmq]]
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List expands to [monitor::master, monitor::redis, monitor::rabbitmq]
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Starting Chef Run for ubuntu-1204-i386
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Running start handlers
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Start handlers complete.
+[Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Running exception handlers
+[Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Exception handlers complete
+[Fri, 01 Mar 2013 08:28:07 +0000] FATAL: Stacktrace dumped to /tmp/vagrant-chef-1/chef-stacktrace.out
+[Fri, 01 Mar 2013 08:28:07 +0000] FATAL: NoMethodError: undefined method `default_action' for #&lt;Class:0x8decb20&gt;
+Chef never successfully completed! Any errors should be visible in the
+</code></pre>
+
+<p>output above. Please fix your recipes so that they properly complete.</p>
+
+<p>I&#8217;ve created a revised <code>Vagrantfile</code> which fixes this issue.
+Download this amended version and copy it in place of
+<code>sensu-client/examples/Vagrantfile</code></p>
+
+<div><script src='https://gist.github.com/5063291.js?file=Vagrantfile'></script>
+<noscript><pre><code>#require 'berkshelf/vagrant'
+
+Vagrant::Config.run do |config|
+  config.vm.box = &quot;ubuntu-1204-i386&quot;
+  config.vm.box_url = &quot;http://vagrant.sensuapp.org/ubuntu-1204-i386.box&quot;
+
+  config.vm.customize [
+    &quot;modifyvm&quot;, :id,
+    &quot;--name&quot;, &quot;Sensu Stack&quot;,
+    &quot;--memory&quot;, &quot;1024&quot;
+  ]
+
+  config.vm.provision :shell, :inline =&gt; &quot;apt-get install -y curl&quot;
+  config.vm.provision :shell, :inline =&gt; &quot;curl -L https://www.opscode.com/chef/install.sh | bash&quot;
+
+  config.vm.forward_port 8080, 8080
+  config.vm.forward_port 9000, 9000
+
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = &quot;cookbooks&quot;
+    chef.data_bags_path = &quot;data_bags&quot;
+    chef.add_recipe &quot;monitor::master&quot;
+    chef.add_recipe &quot;monitor::redis&quot;
+    chef.add_recipe &quot;monitor::rabbitmq&quot;
+  end
+end
+</code></pre></noscript></div>
+
+
+<h1>Install Ruby DevKit (Windows)</h1>
+
+<p>The sensu-chef recipe is dependent on the json gem.  On Windows, you will get
+the following error if you do not have the proper Ruby DevKit installed:</p>
+
+<pre><code>Installing json (1.7.7)
+Gem::InstallError: The 'json' native gem requires installed build tools.
+</code></pre>
+
+<p>Go to <a href="http://rubyinstaller.org/downloads">http://rubyinstaller.org/downloads</a>
+and refer to the <em>Which Development Kit?</em> section of the web page about which
+DevKit you need to install.</p>
+
+<p>Download the appropriate DevKit toolkit, extract it and run the following
+in a Command Prompt:</p>
+
+<pre><code>&gt; ruby dk.rb init
+[INFO] found RubyInstaller v1.9.3 at C:/Ruby193
+
+Initialization complete! Please review and modify the auto-generated
+'config.yml' file to ensure it contains the root directories to all
+of the installed Rubies you want enhanced by the DevKit.
+
+&gt; ruby dk.rb install
+[INFO] Updating convenience notice gem override for 'C:/Ruby193'
+[INFO] Installing 'C:/Ruby193/lib/ruby/site_ruby/devkit.rb'
+</code></pre>
+
+<h1>Create the sensu-chef virtual machine</h1>
+
+<p>Run the following commands to create the sensu-chef virtual machine:</p>
+
+<pre><code>cd sensu-chef/examples
+gem install bundler
+# On Windows, restart the command prompt before running 'bundle install' as
+# gem install will reset the PATH
+bundle install
+librarian-chef install
+vagrant up
+</code></pre>
+
+<p>If all goes well, the <code>chef-solo</code> run should have succeeded, and
+you should be able to view the Sensu dashboard by going to the following URL
+with the username <code>admin</code> and the password <code>secret</code>:
+<a href="http://localhost:8080">http://localhost:8080</a></p>
+
+<p><img src="/images/sensudashboard.png" alt="Sensu Dashboard" /></p>
+
+<p>If this is successful, on Mac OX and Linux, just run the following command to
+log in to your newly-created virtual machine instance:</p>
+
+<pre><code>vagrant ssh
+</code></pre>
+
+<p>On Windows, run the following command (or use a visual SSH client like PuTTY):</p>
+
+<pre><code>ssh vagrant@127.0.0.1 -p 2222 -i C:/Users/misheska/.vagrant.d/insecure_private_key
+</code></pre>
+
+<p>And refer to the <a href="https://github.com/sensu/sensu/wiki">Sensu wiki</a> on how
+to experiment with various configuration options.</p>
+
+<p>When you are done playing with the test VM, run the following command to
+destroy the VM:</p>
+
+<pre><code>vagrant destroy
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-28T22:54:00-08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/chef/'>chef</a>, <a class='category' href='/blog/categories/ruby/'>ruby</a>, <a class='category' href='/blog/categories/vagrant/'>vagrant</a>, <a class='category' href='/blog/categories/virtual-box/'>virtual box</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/" data-via="" data-counturl="http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/" title="Previous Post: Using Rbenv to manage multiple versions of Ruby">&laquo; Using Rbenv to manage multiple versions of Ruby</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/" title="Next Post: Using pik to manage multiple versions of Ruby on Windows">Using pik to manage multiple versions of Ruby on Windows &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting started writing Chef cookbooks the Berkshelf Way</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/">Using pik to manage multiple versions of Ruby on Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">Using RVM to manage multiple versions of Ruby</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,485 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using RVM to manage multiple versions of Ruby - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Out of the box, Ruby does not provide a mechanism to support multiple
+installed versions. Compounding this issue, the default system-installed &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.github.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using RVM to Manage Multiple Versions of Ruby</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-24T19:34:00-08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Out of the box, Ruby does not provide a mechanism to support multiple
+installed versions.  Compounding this issue, the default system-installed
+version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
+For example, even in the latest version of Mac OS X Mountain Lion, the
+system-wide version of Ruby is over five years old (ruby 1.8.7).  Most
+developers prefer to use a newer version of Ruby installed in their home
+directory and to leave the default systemwide version of Ruby untouched.</p>
+
+<p><a href="http://rvm.io">Ruby Version Manager (RVM)</a>  makes installing multiple
+versions of Ruby easy.  RVM also supports partitioning of Ruby gem installs
+via a feature called gemsets in order to avoid versioning conflicts.  However,
+with the advent of <a href="http://gembundler.com">Bundler</a> most developers tend to
+prefer using Bundler as the preferred way for managing gems at the
+application level.</p>
+
+<p>RVM is supported on Linux and Mac OS X.  RVM doesn&#8217;t work on Windows.
+For Windows, <a href="https://github.com/vertiginous/pik">Pik</a> is an RVM alternative.</p>
+
+<h1>How to Install RVM on Mac OS X</h1>
+
+<p>First, you&#8217;ll need to install a C compiler to build Ruby from source.  Just
+download and install the latest version of Xcode from the App Store, if you
+don&#8217;t have it already.  Also make sure you install the <em>Command Line Tools</em>
+by choosing the menu item <code>Xcode -> Preferences...</code> and click
+on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
+Command Line Tools.
+<img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
+
+<p>Next, you&#8217;ll need to install the Homebrew package manager.  RVM will
+automatically download all dependencies if a package manager is installed.
+Run the following command to install Homebrew:</p>
+
+<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+</code></pre>
+
+<p>Run <code>brew doctor</code> and address any issues it discovers.  When
+all is well, you should see:</p>
+
+<pre><code>$ brew doctor
+Your system is raring to brew.
+</code></pre>
+
+<p>After Xcode and Homebrew are installed, you can install RVM with the following
+commands:</p>
+
+<pre><code>$ \curl -#L https://get.rvm.io | bash -s stable
+$ source $HOME/.rvm/scripts/rvm
+</code></pre>
+
+<p>Run <code>rvm requirements</code> and do what it says to install the additional
+dependencies.  On my system, I ran the following:</p>
+
+<pre><code># For update-system
+brew update
+brew tap homebrew/dupes
+# For rvm
+brew install apple-gcc42
+</code></pre>
+
+<p>Next, build and install the latest version of Ruby by running the following
+(this will take a long time):</p>
+
+<pre><code>$ rvm install 1.9.3
+$ rvm use 1.9.3
+$ rvm rubygems latest
+</code></pre>
+
+<p>Verify the RVM install by running the following commands:</p>
+
+<pre><code>$ rvm -h
+$ rvm list
+$ rvm use 1.9.3
+</code></pre>
+
+<p>To ensure that the newer Ruby 1.9.3 is used by default instead of the
+system 1.8.7 version, run the following command:</p>
+
+<pre><code>$ rvm use 1.9.3 --default
+</code></pre>
+
+<p>If you&#8217;d like to manage RVM with a GUI, check out <a href="http://jewelrybox.unfiniti.com/">JewelryBox</a>:</p>
+
+<p><img src="/images/jewelrybox.png" alt="Jewelry Box" /></p>
+
+<h1>Installing Ruby 1.8.7 from source on Mac OS X</h1>
+
+<p>For legacy GUI support, Ruby 1.8.7 has some dependencies on tcl/tk, which
+Mountain Lion no longer installs by default (now that X11 is an optional
+install).  To compile Ruby 1.8.7 without tcl/tk support, use the following
+command overrides on <code>rvm install</code>:</p>
+
+<pre><code>rvm install 1.8.7 --with-gcc=clang --without-tcl --without-tk
+</code></pre>
+
+<p>To compile Ruby 1.8.7 with tcl/tk support, install X11 via
+<a href="http://xquartz.macosforge.org/landing">http://xquartz.macosforge.org/landing</a>
+then compile Ruby 1.8.7 with the following:</p>
+
+<pre><code>export CPPFLAGS=-I/opt/X11/include
+CC=/usr/local/bin/gcc-4.2 rvm install 1.8.7
+</code></pre>
+
+<h1>Installing Ruby 2.0.0 from source on Mac OS X</h1>
+
+<p>As of this writing, the current stable version of rvm (1.18.18) errors out with
+a message about not being able to validate the rubygems-2.0.3.  To fix,
+download the latest version of RVM like so:</p>
+
+<pre><code># get rid of the unsuccessful installation
+$ rvm remove 2.0.0
+# download the latest version of RVM
+$ rvm get head
+$ rvm install 2.0.0
+</code></pre>
+
+<h1>How to Remove RVM on Mac OS X</h1>
+
+<p>Should you want to uninstall/remove RVM, it&#8217;s pretty easy.  First, run
+the following commands:</p>
+
+<pre><code>$ rvm implode
+$ gem uninstall rvm
+</code></pre>
+
+<p>Then just follow the instructions from <code>rvm implode</code>:</p>
+
+<ul>
+<li><p>Delete the following files, if they exist:
+<code>/etc/rvmrc</code>
+<code>$HOME/.rvmrc</code></p></li>
+<li><p>Also, remove the lines sourcing RVM scripts from
+<code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and
+<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn&#8217;t hurt
+after you do this, just to make sure).</p></li>
+</ul>
+
+
+<p>To uninstall Homebrew, run the following:</p>
+
+<pre><code>cd `brew --prefix`
+brew install libtool
+rm -rf Cellar
+rm `git ls-files`
+rm -r Library/Homebrew Library/Aliases Library/Formula Library/Contributions
+rm -rf .git
+rm -rf ~/Library/Caches/Homebrew
+</code></pre>
+
+<h1>How to Install RVM on Linux</h1>
+
+<p>RVM installation is more straightforward on Linux, as the Ruby source was
+designed for the GCC compiler that ships with any Linux distribution.</p>
+
+<p>First install <code>curl</code>, so that you can fetch the RVM script.
+For Ubuntu, run
+the following command:</p>
+
+<pre><code>$ sudo apt-get install curl
+</code></pre>
+
+<p>For RedHat/CentOS:</p>
+
+<pre><code>$ sudo yum install curl
+</code></pre>
+
+<p>With curl installed, run the RVM install with the following commands:</p>
+
+<pre><code>$ \curl -#L https://get.rvm.io | bash -s stable
+$ source $HOME/.rvm/scripts/rvm
+</code></pre>
+
+<p>Run the <code>rvm requirements</code> command to get rvm to display the
+commands to install the other dependent packages for compiling Ruby from
+source:</p>
+
+<pre><code>$ rvm requirements
+...
+# For Ruby / Ruby HEAD (MRI, Rubinius, &amp; REE), install the following:
+ruby: /usr/bin/apt-get install build-essential openssl libreadline6 libreadline6-dev 
+curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 libxml2-dev
+libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison subversion pkg-config
+</code></pre>
+
+<p>Run the appropriate command for your Linux distribution to install the
+prerequisite packages.  For example, on Ubuntu, you would run:</p>
+
+<pre><code>sudo apt-get install build-essential openssl libreadline6 libreadline6-dev \
+curl git-core zlib1g zlib1g-dev libssl-dev libyaml-dev libsqlite3-dev sqlite3 \
+libxml2-dev libxslt-dev autoconf libc6-dev ncurses-dev automake libtool bison  \
+subversion pkg-config
+</code></pre>
+
+<p>Next build and install Ruby 1.9.3 (this will take awhile):</p>
+
+<pre><code>$ rvm install 1.9.3
+$ rvm use 1.9.3
+$ rvm rubygems latest
+</code></pre>
+
+<p>Verify rvm install:</p>
+
+<pre><code>$ rvm -h
+$ rvm list
+$ rvm use 1.9.3
+</code></pre>
+
+<h1>How to Remove RVM on Linux</h1>
+
+<p>Should you want to uninstall/remove RVM, it&#8217;s pretty easy.  First, run
+the following commands:</p>
+
+<pre><code>$ rvm implode
+$ gem uninstall rvm
+</code></pre>
+
+<p>Then just follow the instructions from <code>rvm implode</code>:</p>
+
+<ul>
+<li><p>Delete the following files, if they exist:
+<code>/etc/rvmrc</code>
+<code>$HOME/.rvmrc</code></p></li>
+<li><p>Also, remove the lines sourcing RVM scripts from
+<code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and
+<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn&#8217;t hurt
+after you do this, just to make sure).</p></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-24T19:34:00-08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.github.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/" data-via="" data-counturl="http://misheska.github.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/" title="Next Post: Using Rbenv to manage multiple versions of Ruby">Using Rbenv to manage multiple versions of Ruby &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting started writing Chef cookbooks the Berkshelf Way</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/">Using pik to manage multiple versions of Ruby on Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">Using RVM to manage multiple versions of Ruby</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

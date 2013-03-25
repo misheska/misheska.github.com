@@ -1,0 +1,458 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using Rbenv to manage multiple versions of Ruby - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Out of the box, Ruby does not provide a mechanism to support multiple
+installed versions. Compounding this issue, the default system-installed &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.github.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.github.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using Rbenv to Manage Multiple Versions of Ruby</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-24T22:47:00-08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Out of the box, Ruby does not provide a mechanism to support multiple
+installed versions.  Compounding this issue, the default system-installed
+version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
+For example, even in the latest version of Mac OS X Mountain Lion, the
+system-wide version of Ruby is over five years old (ruby 1.8.7).  Most
+developers prefer to use a newer version of Ruby installed in their home
+directory and to leave the default systemwide version of Ruby untouched.</p>
+
+<p><a href="https://github.com/sstephenson/rbenv/">Rbenv</a> makes managing multiple
+versions of Ruby easy.  Rbenv is a lightweight alternative to
+<a href="http://rvm.io">Ruby Version Manager (RVM)</a>.  Rbenv does not include
+any mechanism to install Ruby or manage gems, like with RVM.</p>
+
+<p>Rbenv is supported on Linux and Mac OS X.  Rbenv doesn&#8217;t work on Windows.
+For Windows, <a href="https://github.com/vertiginous/pik">Pik</a> is an Rbenv alternative.</p>
+
+<p>NOTE: Rbenv is incompatible with RVM because RVM overrides the
+<code>gem</code> command with a function.  If you want to switch to Rbenv,
+make sure you uninstall RVM first.  Run the following commands to uninstall
+RVM:</p>
+
+<pre><code>$ rvm implode
+$ gem uninstall rvm
+</code></pre>
+
+<p>Then remove/comment out the RVM loader line in <code>.bash_profile</code>
+and/or <code>.bashrc</code></p>
+
+<h1>How to Install Rbenv on Mac OS X</h1>
+
+<p>First you&#8217;ll need to install a C compiler to build Ruby from source.  Just
+download and install the latest version of Xcode from the App Store, if you
+don&#8217;t have it installed already.  Also make sure you install the <em>Command Line
+Tools</em> by choosing the menu item <code>Xcode -> Preferences...</code> and click
+on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
+Command Line Tools.
+<img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
+
+<p>Next, you&#8217;ll need to install the Homebrew package manager to get all the
+dependencies needed to compile Ruby from source.  While you could manage
+these dependencies by hand, using a package manager is a better idea, as
+package managers know how to uninstall what they install.</p>
+
+<p>Run the following command to install Homebrew:</p>
+
+<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+</code></pre>
+
+<p>Run <code>brew doctor</code> and address any issues it discovers.  When
+all is well, you should see:</p>
+
+<pre><code>$ brew doctor
+Your system is raring to brew.
+</code></pre>
+
+<p>Next, install the additional dependencies to compile Ruby from source:</p>
+
+<pre><code># For update-system
+brew update
+brew tap homebrew/dupes
+# For ruby
+brew install apple-gcc42
+</code></pre>
+
+<p>And now install <code>rbenv</code> and the <code>ruby-build</code> plugin:</p>
+
+<pre><code>brew update
+brew install rbenv
+brew install ruby-build
+</code></pre>
+
+<p>Add <code>rbenv init</code> to your shell to enable shims and autocompletion:</p>
+
+<pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bash_profile
+$ source ~/.bash_profile
+</code></pre>
+
+<p>Set the latest version of ruby to be the default version of ruby</p>
+
+<pre><code>$ rbenv global 1.9.3-p392
+</code></pre>
+
+<p>Rebuild the shim executable</p>
+
+<pre><code>$ rbenv rehash
+</code></pre>
+
+<p>You&#8217;ll need to run <code>rbenv rehash</code> every time you install a new
+version of Ruby or install a new gem.</p>
+
+<p>Verify the ruby install</p>
+
+<pre><code>$ ruby -v
+ruby 1.9.3p392 (2013-02-22 revision 39386) [x86_64-darwin12.3.0]
+</code></pre>
+
+<h1>How to Upgrade Rbenv on Mac OS X</h1>
+
+<p>To upgrade rbenv via homebrew:</p>
+
+<pre><code>$ brew update
+$ brew upgrade rbenv
+$ brew upgrade ruby-build
+</code></pre>
+
+<h1>How to Remove Rbenv on Mac OS X</h1>
+
+<p>Uninstall the packages you installed via homebrew:</p>
+
+<pre><code>brew uninstall rbenv
+brew uninstall ruby-build
+</code></pre>
+
+<p>And remove the following directory:</p>
+
+<pre><code>rm -rf $HOME/.rbenv
+</code></pre>
+
+<p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
+
+<h1>How to Install RVM on Linux</h1>
+
+<p>Make sure the prerequisite packages are installed.  For Ubuntu:</p>
+
+<pre><code>$ sudo apt-get install build-essential git
+</code></pre>
+
+<p>Download the rbenv source distribution to
+$HOME/.rbenv:</p>
+
+<pre><code>$ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv
+</code></pre>
+
+<p>Add $HOME/.rbenv/bin to your $PATH</p>
+
+<pre><code>$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; $HOME/.bashrc
+</code></pre>
+
+<p>Add <code>rbenv init</code> to your shell to enable shims and autocompletion:</p>
+
+<pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bashrc
+</code></pre>
+
+<p>Restart shell as a login shell so that the PATH changes take effect:</p>
+
+<pre><code>$ exec $SHELL -l
+</code></pre>
+
+<p>Install the <code>ruby-build</code> plugin, which provides an
+<code>rbenv install</code> command to simplify the process of compiling
+and install new Ruby versions:</p>
+
+<pre><code>$ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
+</code></pre>
+
+<p>Install the latest version of ruby (at the time of this writing 1.9.3-p392)</p>
+
+<pre><code>$ rbenv install 1.9.3-p392
+</code></pre>
+
+<p>Rebuild the shim executable</p>
+
+<pre><code>$ rbenv rehash
+</code></pre>
+
+<p>You&#8217;ll need to run <code>rbenv rehash</code> every time you install a new
+version of Ruby or install a new gem.</p>
+
+<p>Set the latest version of ruby to be the default version of ruby</p>
+
+<pre><code>$ rbenv global 1.9.3-p392
+</code></pre>
+
+<p>Verify the ruby install</p>
+
+<pre><code>$ ruby -v
+</code></pre>
+
+<h1>How to Upgrade Rbenv on Linux</h1>
+
+<p>Since Rbenv is a Git repository, upgrading is just a matter of refreshing the
+source:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ cd $HOME/.rbenv
+</span><span class='line'>$ git pull</span></code></pre></td></tr></table></div></figure>
+
+
+<h1>How to Remove Rbenv on Linux</h1>
+
+<p>To uninstall/remove Rbenv, remove the following directory:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rm -rf $HOME/.rbenv</span></code></pre></td></tr></table></div></figure>
+
+
+<p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-24T22:47:00-08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.github.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/" data-via="" data-counturl="http://misheska.github.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/" title="Previous Post: Using RVM to manage multiple versions of Ruby">&laquo; Using RVM to manage multiple versions of Ruby</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/" title="Next Post: Try out Sensu Monitoring using Virtual Box, Vagrant and Chef">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting started writing Chef cookbooks the Berkshelf Way</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/">Using pik to manage multiple versions of Ruby on Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">Using RVM to manage multiple versions of Ruby</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

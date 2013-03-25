@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: virtual box | Mischa Taylor's Coding Blog]]></title>
+  <link href="http://misheska.github.com/blog/categories/virtual-box/atom.xml" rel="self"/>
+  <link href="http://misheska.github.com/"/>
+  <updated>2013-03-25T06:16:44-07:00</updated>
+  <id>http://misheska.github.com/</id>
+  <author>
+    <name><![CDATA[Mischa Taylor]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Try out Sensu Monitoring using Virtual Box, Vagrant and Chef]]></title>
+    <link href="http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/"/>
+    <updated>2013-02-28T22:54:00-08:00</updated>
+    <id>http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box,-vagrant-and-chef</id>
+    <content type="html"><![CDATA[<p>I've been using Sensu Monitoring in production for about three to four months
+now.  It's a nice, lightweight monitoring framework, designed with the cloud
+in mind and for use with modern configuration management frameworks like
+Chef and Puppet.  For more information on Sensu, check out the article
+<a href="https://github.com/sensu/sensu/wiki">Why Sonian created Sensu (by Sean Porter)</a>
+and the associated articles and links on the <a href="https://github.com/sensu/sensu/wiki">Sensu Wiki</a></p>
+
+<p>In this article, I'm going to present a quick overview on how to test and
+evaluate Sensu using the <a href="https://github.com/sensu/sensu-chef">Sensu Chef Cookbook</a>
+Through the magic of Oracle VirtualBox and Vagrant, combined with Chef, you
+can quickly deploy Sensu to a local virtual machine instance, and kick the
+tires on Sensu to evaluate whether or not it is a good monitoring solution
+for you.  These instructions apply to Mac OS X, Linux, and/or Windows for
+the host operating system.</p>
+
+<h1>Install VirtualBox</h1>
+
+<p>VirtualBox is an open source virtualization platform, similar to VMWare
+Fusion/Workstation that runs on Mac OS X, Linux and Windows (and a few more
+platforms).  While I personally prefer VMWare Fusion to VirtualBox (VirtualBox
+can be a bit flakey at times), a lot of automation around VirtualBox has been
+developed within the Chef community, which impossible to ignore.  Fortunately
+on both Mac OS X and Linux, VirtualBox can peacefully coexist with VMWare
+Fusion/Workstation (NOTE: If you use KVM virtualization on Linux, VirtualBox
+can also coexist, but you need to be careful not to run VirtualBox and KVM
+images simultaneously).</p>
+
+<p>Just download and run the VirtualBox installer from the <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox download
+page</a>.  Just download and install
+the latest 4.2.x version of VirtualBox.  Make sure you save the VirtualBox
+installer as it comes with an uninstall tool, should you wish to remove
+VirtualBox at some point in the future.</p>
+
+<h1>Install Vagrant</h1>
+
+<p>After installing VirtualBox, next install Vagrant.  Vagrant is an automation
+framework for VirtualBox.  Grab the latest Vagrant installer for your OS from
+the <a href="http://downloads.vagrantup.com/">Vagrant Downloads page</a> and run install.
+On Mac OS X and Windows, the Vagrant install will automatically add the Vagrant
+binaries to your PATH, on Linux, you will need to manually add
+<code>/opt/vagrant/bin</code> per the <a href="http://docs.vagrantup.com/v1/docs/getting-started/index.html">Getting Started with Vagrant docs</a>.</p>
+
+<h1>Download the sensu-chef cookbook</h1>
+
+<p>Grab the latest version of the sensu-chef cookbook from GitHub by running
+the following command:</p>
+
+<pre><code>git clone https://github.com/sensu/sensu-chef.git
+</code></pre>
+
+<h1>Install Ruby &amp; RubyGems</h1>
+
+<p>The sensu-chef cookbook requires Ruby &amp; RubyGems.</p>
+
+<p>On Mac OS X and Linux, I strongly recommend that you use either RVM or Rbenv
+to make sure that you are using the latest version of Ruby instead of whatever
+version of Ruby your system installs by default.</p>
+
+<p>See my previous articles on <a href="http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">RVM</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Rbenv</a>.  NOTE: If you don't
+know whether or not to decide between RVM or Rbenv, go with RVM.</p>
+
+<h1>Patch chef-sensu Vagrantfile</h1>
+
+<p>As of this writing, the <code>Vagrantfile</code> included in
+<code>sensu-chef/examples</code> will not set up the VM properly and the
+Chef run will fail with the following error:</p>
+
+<pre><code>[default] Running chef-solo...
+stdin: is not a tty
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: *** Chef 0.10.8 ***
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Setting the run_list to ["recipe[monitor::master]", "recipe[monitor::redis]", "recipe[monitor::rabbitmq]"] from JSON
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List is [recipe[monitor::master], recipe[monitor::redis], recipe[monitor::rabbitmq]]
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List expands to [monitor::master, monitor::redis, monitor::rabbitmq]
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Starting Chef Run for ubuntu-1204-i386
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Running start handlers
+[Fri, 01 Mar 2013 08:28:06 +0000] INFO: Start handlers complete.
+[Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Running exception handlers
+[Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Exception handlers complete
+[Fri, 01 Mar 2013 08:28:07 +0000] FATAL: Stacktrace dumped to /tmp/vagrant-chef-1/chef-stacktrace.out
+[Fri, 01 Mar 2013 08:28:07 +0000] FATAL: NoMethodError: undefined method `default_action' for #&lt;Class:0x8decb20&gt;
+Chef never successfully completed! Any errors should be visible in the
+</code></pre>
+
+<p>output above. Please fix your recipes so that they properly complete.</p>
+
+<p>I've created a revised <code>Vagrantfile</code> which fixes this issue.
+Download this amended version and copy it in place of
+<code>sensu-client/examples/Vagrantfile</code></p>
+
+<p><div><script src='https://gist.github.com/5063291.js?file=Vagrantfile'></script>
+<noscript><pre><code>#require 'berkshelf/vagrant'
+
+Vagrant::Config.run do |config|
+  config.vm.box = &quot;ubuntu-1204-i386&quot;
+  config.vm.box_url = &quot;http://vagrant.sensuapp.org/ubuntu-1204-i386.box&quot;
+
+  config.vm.customize [
+    &quot;modifyvm&quot;, :id,
+    &quot;--name&quot;, &quot;Sensu Stack&quot;,
+    &quot;--memory&quot;, &quot;1024&quot;
+  ]
+
+  config.vm.provision :shell, :inline =&gt; &quot;apt-get install -y curl&quot;
+  config.vm.provision :shell, :inline =&gt; &quot;curl -L https://www.opscode.com/chef/install.sh | bash&quot;
+
+  config.vm.forward_port 8080, 8080
+  config.vm.forward_port 9000, 9000
+
+  config.vm.provision :chef_solo do |chef|
+    chef.cookbooks_path = &quot;cookbooks&quot;
+    chef.data_bags_path = &quot;data_bags&quot;
+    chef.add_recipe &quot;monitor::master&quot;
+    chef.add_recipe &quot;monitor::redis&quot;
+    chef.add_recipe &quot;monitor::rabbitmq&quot;
+  end
+end
+</code></pre></noscript></div>
+</p>
+
+<h1>Install Ruby DevKit (Windows)</h1>
+
+<p>The sensu-chef recipe is dependent on the json gem.  On Windows, you will get
+the following error if you do not have the proper Ruby DevKit installed:</p>
+
+<pre><code>Installing json (1.7.7)
+Gem::InstallError: The 'json' native gem requires installed build tools.
+</code></pre>
+
+<p>Go to <a href="http://rubyinstaller.org/downloads">http://rubyinstaller.org/downloads</a>
+and refer to the <em>Which Development Kit?</em> section of the web page about which
+DevKit you need to install.</p>
+
+<p>Download the appropriate DevKit toolkit, extract it and run the following
+in a Command Prompt:</p>
+
+<pre><code>&gt; ruby dk.rb init
+[INFO] found RubyInstaller v1.9.3 at C:/Ruby193
+
+Initialization complete! Please review and modify the auto-generated
+'config.yml' file to ensure it contains the root directories to all
+of the installed Rubies you want enhanced by the DevKit.
+
+&gt; ruby dk.rb install
+[INFO] Updating convenience notice gem override for 'C:/Ruby193'
+[INFO] Installing 'C:/Ruby193/lib/ruby/site_ruby/devkit.rb'
+</code></pre>
+
+<h1>Create the sensu-chef virtual machine</h1>
+
+<p>Run the following commands to create the sensu-chef virtual machine:</p>
+
+<pre><code>cd sensu-chef/examples
+gem install bundler
+# On Windows, restart the command prompt before running 'bundle install' as
+# gem install will reset the PATH
+bundle install
+librarian-chef install
+vagrant up
+</code></pre>
+
+<p>If all goes well, the <code>chef-solo</code> run should have succeeded, and
+you should be able to view the Sensu dashboard by going to the following URL
+with the username <code>admin</code> and the password <code>secret</code>:
+<a href="http://localhost:8080">http://localhost:8080</a></p>
+
+<p><img src="/images/sensudashboard.png" alt="Sensu Dashboard" /></p>
+
+<p>If this is successful, on Mac OX and Linux, just run the following command to
+log in to your newly-created virtual machine instance:</p>
+
+<pre><code>vagrant ssh
+</code></pre>
+
+<p>On Windows, run the following command (or use a visual SSH client like PuTTY):</p>
+
+<pre><code>ssh vagrant@127.0.0.1 -p 2222 -i C:/Users/misheska/.vagrant.d/insecure_private_key
+</code></pre>
+
+<p>And refer to the <a href="https://github.com/sensu/sensu/wiki">Sensu wiki</a> on how
+to experiment with various configuration options.</p>
+
+<p>When you are done playing with the test VM, run the following command to
+destroy the VM:</p>
+
+<pre><code>vagrant destroy
+</code></pre>
+]]></content>
+  </entry>
+  
+</feed>
