@@ -389,8 +389,8 @@ myface:x:497:1001::/home/myface:/bin/bash
 <code>getent</code> command can be used to query all user databases.  In this
 case we&#8217;re looking for <code>myface</code>, and it exists!</p>
 
-<p>Note that because we are using well-defined resources that are completely
-<a href="http://en.wikipedia.org/wiki/Idempotence">idempotent</a>.  You should notice
+<p>Because we are using well-defined resources that are completely
+<a href="http://en.wikipedia.org/wiki/Idempotence">idempotent</a>, you should notice
 that if you run <code>vagrant provision</code> again, the Chef run executes more quickly
 and it does not try to re-create the user/group it already created.</p>
 
