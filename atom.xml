@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-03-25T06:31:12-07:00</updated>
+  <updated>2013-03-25T06:34:46-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -263,7 +263,7 @@ so it looks like the following:</p>
 
 
 <p>Save <code>receipes/default.rb</code> and re-run <code>vagrant provision</code> to create the
-myface user in your test virtual machine:</p>
+myface user on your test virtual machine:</p>
 
 <pre><code>$ vagrant provision
 [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130324-19145-nf292v'
