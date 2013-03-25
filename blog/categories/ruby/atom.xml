@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: ruby | Mischa Taylor's Coding Blog]]></title>
-  <link href="http://misheska.github.com/blog/categories/ruby/atom.xml" rel="self"/>
-  <link href="http://misheska.github.com/"/>
-  <updated>2013-03-25T06:16:44-07:00</updated>
-  <id>http://misheska.github.com/</id>
+  <link href="http://misheska.com/blog/categories/ruby/atom.xml" rel="self"/>
+  <link href="http://misheska.com/"/>
+  <updated>2013-03-25T06:31:12-07:00</updated>
+  <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Using pik to manage multiple versions of Ruby on Windows]]></title>
-    <link href="http://misheska.github.com/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/"/>
+    <link href="http://misheska.com/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/"/>
     <updated>2013-03-10T18:09:00-07:00</updated>
-    <id>http://misheska.github.com/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows</id>
+    <id>http://misheska.com/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows</id>
     <content type="html"><![CDATA[<p>Out of the box, Ruby does not provide a mechanism to support multiple installed
 versions.  <code>pik</code> is a third-party tool that can be used to switch
 between multiple versions of the Ruby interpreter on Windows.</p>
@@ -122,9 +122,9 @@ user or system PATH environment variable (via <code>Control Panel -&gt; System
   
   <entry>
     <title type="html"><![CDATA[Try out Sensu Monitoring using Virtual Box, Vagrant and Chef]]></title>
-    <link href="http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/"/>
+    <link href="http://misheska.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/"/>
     <updated>2013-02-28T22:54:00-08:00</updated>
-    <id>http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box,-vagrant-and-chef</id>
+    <id>http://misheska.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box,-vagrant-and-chef</id>
     <content type="html"><![CDATA[<p>I've been using Sensu Monitoring in production for about three to four months
 now.  It's a nice, lightweight monitoring framework, designed with the cloud
 in mind and for use with modern configuration management frameworks like
@@ -316,9 +316,9 @@ destroy the VM:</p>
   
   <entry>
     <title type="html"><![CDATA[Using Rbenv to manage multiple versions of Ruby]]></title>
-    <link href="http://misheska.github.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/"/>
+    <link href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/"/>
     <updated>2013-02-24T22:47:00-08:00</updated>
-    <id>http://misheska.github.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby</id>
+    <id>http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby</id>
     <content type="html"><![CDATA[<p>Out of the box, Ruby does not provide a mechanism to support multiple
 installed versions.  Compounding this issue, the default system-installed
 version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
@@ -519,9 +519,9 @@ rm -rf $HOME/.rbenv
   
   <entry>
     <title type="html"><![CDATA[Using RVM to manage multiple versions of Ruby]]></title>
-    <link href="http://misheska.github.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/"/>
+    <link href="http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/"/>
     <updated>2013-02-24T19:34:00-08:00</updated>
-    <id>http://misheska.github.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby</id>
+    <id>http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby</id>
     <content type="html"><![CDATA[<p>Out of the box, Ruby does not provide a mechanism to support multiple
 installed versions.  Compounding this issue, the default system-installed
 version of Ruby for most versions of Linux/Mac OS X tend to be quite old.

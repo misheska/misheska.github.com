@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: virtual box | Mischa Taylor's Coding Blog]]></title>
-  <link href="http://misheska.github.com/blog/categories/virtual-box/atom.xml" rel="self"/>
-  <link href="http://misheska.github.com/"/>
-  <updated>2013-03-25T06:16:44-07:00</updated>
-  <id>http://misheska.github.com/</id>
+  <link href="http://misheska.com/blog/categories/virtual-box/atom.xml" rel="self"/>
+  <link href="http://misheska.com/"/>
+  <updated>2013-03-25T06:31:12-07:00</updated>
+  <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
     
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Try out Sensu Monitoring using Virtual Box, Vagrant and Chef]]></title>
-    <link href="http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/"/>
+    <link href="http://misheska.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/"/>
     <updated>2013-02-28T22:54:00-08:00</updated>
-    <id>http://misheska.github.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box,-vagrant-and-chef</id>
+    <id>http://misheska.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box,-vagrant-and-chef</id>
     <content type="html"><![CDATA[<p>I've been using Sensu Monitoring in production for about three to four months
 now.  It's a nice, lightweight monitoring framework, designed with the cloud
 in mind and for use with modern configuration management frameworks like
