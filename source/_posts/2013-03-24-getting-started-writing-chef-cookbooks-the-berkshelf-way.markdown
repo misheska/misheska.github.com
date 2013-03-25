@@ -238,8 +238,8 @@ We use `vagrant ssh -c` to run a command on our test virtual machine.  The
 `getent` command can be used to query all user databases.  In this
 case we're looking for `myface`, and it exists!
 
-Note that because we are using well-defined resources that are completely
-[idempotent](http://en.wikipedia.org/wiki/Idempotence).  You should notice
+Because we are using well-defined resources that are completely
+[idempotent](http://en.wikipedia.org/wiki/Idempotence), you should notice
 that if you run `vagrant provision` again, the Chef run executes more quickly
 and it does not try to re-create the user/group it already created.
 
