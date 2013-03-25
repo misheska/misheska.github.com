@@ -202,7 +202,7 @@ end
 {% endcodeblock %}
 
 Save `receipes/default.rb` and re-run `vagrant provision` to create the
-myface user in your test virtual machine:
+myface user on your test virtual machine:
 
     $ vagrant provision
     [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130324-19145-nf292v'
