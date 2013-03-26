@@ -77,6 +77,14 @@ Add <code>rbenv init</code> to your shell to enable shims and autocompletion:
     $ echo 'eval "$(rbenv init -)"' >> $HOME/.bash_profile
     $ source ~/.bash_profile
 
+Restart shell as a login shell so that the PATH changes take effect:
+
+    $ exec $SHELL -l
+
+Install the latest version of ruby (at the time of this writing 1.9.3-p392)
+
+    $ rbenv install 1.9.3-p392
+
 Set the latest version of ruby to be the default version of ruby
 
     $ rbenv global 1.9.3-p392
