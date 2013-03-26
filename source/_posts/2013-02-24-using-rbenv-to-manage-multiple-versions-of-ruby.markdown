@@ -14,7 +14,9 @@ developers prefer to use a newer version of Ruby installed in their home
 directory and to leave the default systemwide version of Ruby untouched.
 
 [Rbenv](https://github.com/sstephenson/rbenv/) makes managing multiple
-versions of Ruby easy.  Rbenv is a lightweight alternative to
+versions of Ruby easy.  It's a great way to work on current development
+projects using Ruby 1.9.x and be able to switch to Ruby 2.0.x for new
+work.  Rbenv is a lightweight alternative to
 [Ruby Version Manager (RVM)](http://rvm.io).  Rbenv does not include
 any mechanism to install Ruby or manage gems, like with RVM.
 
@@ -49,8 +51,7 @@ package managers know how to uninstall what they install.
 
 Run the following command to install Homebrew:
 
-
-    ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+    $ ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 
 Run `brew doctor` and address any issues it discovers.  When
 all is well, you should see:
@@ -101,6 +102,21 @@ Verify the ruby install
     $ ruby -v
     ruby 1.9.3p392 (2013-02-22 revision 39386) [x86_64-darwin12.3.0]
     
+How to install Ruby 2.0.0 on Mac OS X
+=====================================
+As of this writing, Ruby 2.0.0-p0 is the latest version of Ruby 2.0.0.
+Use `rbenv install --list` to print out the available versions.  To install:
+
+    $ rbenv install 2.0.0-p0
+
+To verify the install:
+
+    $ rbenv local 2.0.0-p0
+    $ ruby -v
+
+If you want to make Ruby 2.0.0 the global default version of ruby:
+
+    $ rbenv global 2.0.0-p0
 
 How to Upgrade Rbenv on Mac OS X
 ================================
@@ -171,21 +187,36 @@ Set the latest version of ruby to be the default version of ruby
 Verify the ruby install
 
     $ ruby -v
+
     
+How to install Ruby 2.0.0 on Linux
+==================================
+As of this writing, Ruby 2.0.0-p0 is the latest version of Ruby 2.0.0.
+Use `rbenv install --list` to print out the available versions.  To install:
+
+    $ rbenv install 2.0.0-p0
+
+To verify the install:
+
+    $ rbenv local 2.0.0-p0
+    $ ruby -v
+
+If you want to make Ruby 2.0.0 the global default version of ruby:
+
+    $ rbenv global 2.0.0-p0
+
 How to Upgrade Rbenv on Linux
 ================================
 Since Rbenv is a Git repository, upgrading is just a matter of refreshing the
 source:
-```
-$ cd $HOME/.rbenv
-$ git pull
-```
+
+    $ cd $HOME/.rbenv
+    $ git pull
 
 How to Remove Rbenv on Linux
 ================================
 To uninstall/remove Rbenv, remove the following directory:
-```
-rm -rf $HOME/.rbenv
-```
+
+    $ rm -rf $HOME/.rbenv
 
 And remember to remove whatever you added to <code>$HOME/.bash_profile</code>
