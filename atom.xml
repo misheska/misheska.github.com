@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-03-25T06:36:34-07:00</updated>
+  <updated>2013-03-25T23:43:44-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -826,6 +826,16 @@ brew install ruby-build
 
 <pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bash_profile
 $ source ~/.bash_profile
+</code></pre>
+
+<p>Restart shell as a login shell so that the PATH changes take effect:</p>
+
+<pre><code>$ exec $SHELL -l
+</code></pre>
+
+<p>Install the latest version of ruby (at the time of this writing 1.9.3-p392)</p>
+
+<pre><code>$ rbenv install 1.9.3-p392
 </code></pre>
 
 <p>Set the latest version of ruby to be the default version of ruby</p>

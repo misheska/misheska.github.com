@@ -180,6 +180,16 @@ brew install ruby-build
 $ source ~/.bash_profile
 </code></pre>
 
+<p>Restart shell as a login shell so that the PATH changes take effect:</p>
+
+<pre><code>$ exec $SHELL -l
+</code></pre>
+
+<p>Install the latest version of ruby (at the time of this writing 1.9.3-p392)</p>
+
+<pre><code>$ rbenv install 1.9.3-p392
+</code></pre>
+
 <p>Set the latest version of ruby to be the default version of ruby</p>
 
 <pre><code>$ rbenv global 1.9.3-p392
