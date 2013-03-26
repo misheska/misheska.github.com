@@ -14,11 +14,12 @@ developers prefer to use a newer version of Ruby installed in their home
 directory and to leave the default systemwide version of Ruby untouched.
 
 [Ruby Version Manager (RVM)](http://rvm.io)  makes installing multiple
-versions of Ruby easy.  RVM also supports partitioning of Ruby gem installs
-via a feature called gemsets in order to avoid versioning conflicts.  However,
-with the advent of [Bundler](http://gembundler.com) most developers tend to
-prefer using Bundler as the preferred way for managing gems at the
-application level.
+versions of Ruby easy.  It's a great way to use Ruby 1.9.x for your current
+development while also being able to play with Ruby 2.0 for newer projects.
+RVM also supports partitioning of Ruby gem installs via a feature called
+gemsets in order to avoid versioning conflicts.  However, with the advent of
+[Bundler](http://gembundler.com) most developers tend to prefer using Bundler
+as the preferred way for managing gems at the application level.
 
 RVM is supported on Linux and Mac OS X.  RVM doesn't work on Windows.
 For Windows, [Pik](https://github.com/vertiginous/pik) is an RVM alternative.
@@ -36,7 +37,9 @@ Command Line Tools.
 
 Next, you'll need to install the Homebrew package manager.  RVM will
 automatically download all dependencies if a package manager is installed.
-Run the following command to install Homebrew:
+Also, the dependencies for installing Ruby are complicated enough that it
+is helpful to use a package manager to install them, so you can uninstall
+them easily if necessary.  Run the following command to install Homebrew:
 
     ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
 
@@ -61,18 +64,27 @@ dependencies.  On my system, I ran the following:
     # For rvm
     brew install apple-gcc42
 
+Tell rvm to automatically install dependencies via Homebrew with the following command:
+
+    $ rvm autolibs osx_brew
+
 Next, build and install the latest version of Ruby by running the following
 (this will take a long time):
 
     $ rvm install 1.9.3
-    $ rvm use 1.9.3
-    $ rvm rubygems latest
+
+You may get an error message saying "There was an error while trying to
+resolve rubygems version for 'latest'.  Halting the installation." Just
+run the install again like so to fix the issue:
+
+    $ rvm reinstall 1.9.3
 
 Verify the RVM install by running the following commands:
 
     $ rvm -h
     $ rvm list
     $ rvm use 1.9.3
+    $ rvm rubygems latest
 
 To ensure that the newer Ruby 1.9.3 is used by default instead of the
 system 1.8.7 version, run the following command:
@@ -83,8 +95,8 @@ If you'd like to manage RVM with a GUI, check out [JewelryBox](http://jewelrybox
 
 ![Jewelry Box](/images/jewelrybox.png)
 
-Installing Ruby 1.8.7 from source on Mac OS X
-=============================================
+Installing Ruby 1.8.7 on Mac OS X
+=================================
 For legacy GUI support, Ruby 1.8.7 has some dependencies on tcl/tk, which
 Mountain Lion no longer installs by default (now that X11 is an optional
 install).  To compile Ruby 1.8.7 without tcl/tk support, use the following
@@ -99,17 +111,20 @@ then compile Ruby 1.8.7 with the following:
     export CPPFLAGS=-I/opt/X11/include
     CC=/usr/local/bin/gcc-4.2 rvm install 1.8.7
 
-Installing Ruby 2.0.0 from source on Mac OS X
-=============================================
-As of this writing, the current stable version of rvm (1.18.18) errors out with
-a message about not being able to validate the rubygems-2.0.3.  To fix,
-download the latest version of RVM like so:
+Installing Ruby 2.0.0 on Mac OS X
+=================================
+Installing Ruby 2.0 is very straightforward, just run the following:
 
-    # get rid of the unsuccessful installation
-    $ rvm remove 2.0.0
-    # download the latest version of RVM
-    $ rvm get head
     $ rvm install 2.0.0
+
+Verify the Ruby 2.0 install by running the following commands:
+
+    $ rvm use 2.0.0
+    $ ruby -v
+
+If you want to make Ruby 2.0 your default version of ruby, run the following:
+
+    $ rvm use 2.0.0 --default
 
 How to Remove RVM on Mac OS X
 =============================
@@ -191,6 +206,21 @@ Verify rvm install:
     $ rvm -h
     $ rvm list
     $ rvm use 1.9.3
+
+Installing Ruby 2.0.0 on Linux
+==============================
+Installing Ruby 2.0 is very straightforward, just run the following:
+
+    $ rvm install 2.0.0
+
+Verify the Ruby 2.0 install by running the following commands:
+
+    $ rvm use 2.0.0
+    $ ruby -v
+
+If you want to make Ruby 2.0 your default version of ruby, run the following:
+
+    $ rvm use 2.0.0 --default
 
 How to Remove RVM on Linux
 ==========================
