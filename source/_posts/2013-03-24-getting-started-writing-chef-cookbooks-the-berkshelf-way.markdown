@@ -487,8 +487,8 @@ your cookbook's dependencies are made available to your virtual machine.
 Berkshelf automatically loads all your cookbook dependencies much like
 Bundler automatically loads all your gem dependencies.
 
-Where does the Berkshelf Vagrant plugin put the cookbooks it downloads?
-You can find them in `~/.berkshelf/cookbooks`
+Where does the Berkshelf put the cookbooks it downloads?  You can find them
+in `~/.berkshelf/cookbooks`
 
     /Users/misheska/.berkshelf/cookbooks
     ├── build-essential-1.3.4
