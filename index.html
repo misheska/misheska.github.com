@@ -640,271 +640,7 @@ Running chef-solo...
 [2013-03-27T06:29:43+00:00] INFO: Starting Chef Run for myface-berkshelf
 [2013-03-27T06:29:43+00:00] INFO: Running start handlers
 [2013-03-27T06:29:43+00:00] INFO: Start handlers complete.
-[2013-03-27T06:29:44+00:00] WARN: Cloning resource attributes for service[apache2] from prior resource (CHEF-3694)
-[2013-03-27T06:29:44+00:00] WARN: Previous service[apache2]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/apache2/recipes/default.rb:24:in `from_file'
-[2013-03-27T06:29:44+00:00] WARN: Current  service[apache2]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/apache2/recipes/default.rb:221:in `from_file'
-[2013-03-27T06:29:44+00:00] INFO: Processing group[myface] action create (myface::default line 10)
-[2013-03-27T06:29:44+00:00] INFO: Processing user[myface] action create (myface::default line 12)
-[2013-03-27T06:29:44+00:00] INFO: Processing package[apache2] action install (apache2::default line 20)
-[2013-03-27T06:30:26+00:00] INFO: package[apache2] installing httpd-2.2.15-26.el6.centos from base repository
-[2013-03-27T06:30:35+00:00] INFO: Processing service[apache2] action enable (apache2::default line 24)
-[2013-03-27T06:30:35+00:00] INFO: service[apache2] enabled
-[2013-03-27T06:30:35+00:00] INFO: Processing directory[/var/log/httpd] action create (apache2::default line 47)
-[2013-03-27T06:30:35+00:00] INFO: directory[/var/log/httpd] mode changed to 755
-[2013-03-27T06:30:35+00:00] INFO: Processing package[perl] action install (apache2::default line 51)
-[2013-03-27T06:30:35+00:00] INFO: Processing cookbook_file[/usr/local/bin/apache2_module_conf_generate.pl] action create (apache2::default line 53)
-[2013-03-27T06:30:36+00:00] INFO: cookbook_file[/usr/local/bin/apache2_module_conf_generate.pl] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: cookbook_file[/usr/local/bin/apache2_module_conf_generate.pl] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: cookbook_file[/usr/local/bin/apache2_module_conf_generate.pl] mode changed to 755
-[2013-03-27T06:30:36+00:00] INFO: cookbook_file[/usr/local/bin/apache2_module_conf_generate.pl] created file /usr/local/bin/apache2_module_conf_generate.pl
-[2013-03-27T06:30:36+00:00] INFO: Processing directory[/etc/httpd/sites-available] action create (apache2::default line 61)
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/sites-available] created directory /etc/httpd/sites-available
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/sites-available] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/sites-available] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/sites-available] mode changed to 755
-[2013-03-27T06:30:36+00:00] INFO: Processing directory[/etc/httpd/sites-enabled] action create (apache2::default line 61)
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/sites-enabled] created directory /etc/httpd/sites-enabled
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/sites-enabled] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/sites-enabled] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/sites-enabled] mode changed to 755
-[2013-03-27T06:30:36+00:00] INFO: Processing directory[/etc/httpd/mods-available] action create (apache2::default line 61)
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/mods-available] created directory /etc/httpd/mods-available
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/mods-available] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/mods-available] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/mods-available] mode changed to 755
-[2013-03-27T06:30:36+00:00] INFO: Processing directory[/etc/httpd/mods-enabled] action create (apache2::default line 61)
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/mods-enabled] created directory /etc/httpd/mods-enabled
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/mods-enabled] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/mods-enabled] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/mods-enabled] mode changed to 755
-[2013-03-27T06:30:36+00:00] INFO: Processing execute[generate-module-list] action nothing (apache2::default line 68)
-[2013-03-27T06:30:36+00:00] INFO: Processing template[/usr/sbin/a2ensite] action create (apache2::default line 74)
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2ensite] updated content
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2ensite] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2ensite] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2ensite] mode changed to 700
-[2013-03-27T06:30:36+00:00] INFO: Processing template[/usr/sbin/a2dissite] action create (apache2::default line 74)
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2dissite] updated content
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2dissite] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2dissite] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2dissite] mode changed to 700
-[2013-03-27T06:30:36+00:00] INFO: Processing template[/usr/sbin/a2enmod] action create (apache2::default line 74)
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2enmod] updated content
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2enmod] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2enmod] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2enmod] mode changed to 700
-[2013-03-27T06:30:36+00:00] INFO: Processing template[/usr/sbin/a2dismod] action create (apache2::default line 74)
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2dismod] updated content
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2dismod] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2dismod] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/usr/sbin/a2dismod] mode changed to 700
-[2013-03-27T06:30:36+00:00] INFO: Processing file[/etc/httpd/conf.d/proxy_ajp.conf] action delete (apache2::default line 84)
-[2013-03-27T06:30:36+00:00] INFO: Processing file[/etc/httpd/conf.d/auth_pam.conf] action delete (apache2::default line 84)
-[2013-03-27T06:30:36+00:00] INFO: Processing file[/etc/httpd/conf.d/authz_ldap.conf] action delete (apache2::default line 84)
-[2013-03-27T06:30:36+00:00] INFO: Processing file[/etc/httpd/conf.d/webalizer.conf] action delete (apache2::default line 84)
-[2013-03-27T06:30:36+00:00] INFO: Processing file[/etc/httpd/conf.d/ssl.conf] action delete (apache2::default line 84)
-[2013-03-27T06:30:36+00:00] INFO: Processing file[/etc/httpd/conf.d/welcome.conf] action delete (apache2::default line 84)
-[2013-03-27T06:30:36+00:00] INFO: file[/etc/httpd/conf.d/welcome.conf] deleted file at /etc/httpd/conf.d/welcome.conf
-[2013-03-27T06:30:36+00:00] INFO: Processing file[/etc/httpd/conf.d/README] action delete (apache2::default line 91)
-[2013-03-27T06:30:36+00:00] INFO: file[/etc/httpd/conf.d/README] deleted file at /etc/httpd/conf.d/README
-[2013-03-27T06:30:36+00:00] INFO: Processing template[/etc/httpd/mods-available/deflate.conf] action create (apache2::mod_deflate line 21)
-[2013-03-27T06:30:36+00:00] INFO: template[/etc/httpd/mods-available/deflate.conf] updated content
-[2013-03-27T06:30:36+00:00] INFO: template[/etc/httpd/mods-available/deflate.conf] mode changed to 644
-[2013-03-27T06:30:36+00:00] INFO: Processing file[/etc/httpd/mods-available/deflate.load] action create (apache2::mod_deflate line 31)
-[2013-03-27T06:30:36+00:00] INFO: entered create
-[2013-03-27T06:30:36+00:00] INFO: file[/etc/httpd/mods-available/deflate.load] mode changed to 644
-[2013-03-27T06:30:36+00:00] INFO: file[/etc/httpd/mods-available/deflate.load] created file /etc/httpd/mods-available/deflate.load
-[2013-03-27T06:30:36+00:00] INFO: Processing execute[a2enmod deflate] action run (apache2::mod_deflate line 38)
-[2013-03-27T06:30:36+00:00] INFO: execute[a2enmod deflate] ran successfully
-[2013-03-27T06:30:36+00:00] INFO: Processing directory[/etc/httpd/ssl] action create (apache2::default line 131)
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/ssl] created directory /etc/httpd/ssl
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/ssl] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/ssl] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/etc/httpd/ssl] mode changed to 755
-[2013-03-27T06:30:36+00:00] INFO: Processing directory[/etc/httpd/conf.d] action create (apache2::default line 137)
-[2013-03-27T06:30:36+00:00] INFO: Processing directory[/var/cache/httpd] action create (apache2::default line 143)
-[2013-03-27T06:30:36+00:00] INFO: directory[/var/cache/httpd] created directory /var/cache/httpd
-[2013-03-27T06:30:36+00:00] INFO: directory[/var/cache/httpd] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/var/cache/httpd] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: directory[/var/cache/httpd] mode changed to 755
-[2013-03-27T06:30:36+00:00] INFO: Processing template[/etc/sysconfig/httpd] action create (apache2::default line 150)
-[2013-03-27T06:30:36+00:00] INFO: template[/etc/sysconfig/httpd] backed up to /var/chef/backup/etc/sysconfig/httpd.chef-20130327063036
-[2013-03-27T06:30:36+00:00] INFO: template[/etc/sysconfig/httpd] updated content
-[2013-03-27T06:30:36+00:00] INFO: template[/etc/sysconfig/httpd] owner changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/etc/sysconfig/httpd] group changed to 0
-[2013-03-27T06:30:36+00:00] INFO: template[/etc/sysconfig/httpd] mode changed to 644
-[2013-03-27T06:30:36+00:00] INFO: template[/etc/sysconfig/httpd] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:36+00:00] INFO: Processing template[apache2.conf] action create (apache2::default line 159)
-[2013-03-27T06:30:37+00:00] INFO: template[apache2.conf] backed up to /var/chef/backup/etc/httpd/conf/httpd.conf.chef-20130327063037
-[2013-03-27T06:30:37+00:00] INFO: template[apache2.conf] updated content
-[2013-03-27T06:30:37+00:00] INFO: template[apache2.conf] owner changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[apache2.conf] group changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[apache2.conf] mode changed to 644
-[2013-03-27T06:30:37+00:00] INFO: template[apache2.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:37+00:00] INFO: Processing template[apache2-conf-security] action create (apache2::default line 175)
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-security] updated content
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-security] owner changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-security] group changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-security] mode changed to 644
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-security] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:37+00:00] INFO: Processing template[apache2-conf-charset] action create (apache2::default line 185)
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-charset] updated content
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-charset] owner changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-charset] group changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-charset] mode changed to 644
-[2013-03-27T06:30:37+00:00] INFO: template[apache2-conf-charset] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:37+00:00] INFO: Processing template[/etc/httpd/ports.conf] action create (apache2::default line 195)
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/ports.conf] updated content
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/ports.conf] owner changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/ports.conf] group changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/ports.conf] mode changed to 644
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/ports.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:37+00:00] INFO: Processing template[/etc/httpd/sites-available/default] action create (apache2::default line 204)
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/sites-available/default] updated content
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/sites-available/default] owner changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/sites-available/default] group changed to 0
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/sites-available/default] mode changed to 644
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/sites-available/default] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:37+00:00] INFO: Processing template[/etc/httpd/mods-available/status.conf] action create (apache2::mod_status line 21)
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/mods-available/status.conf] updated content
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/mods-available/status.conf] mode changed to 644
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/mods-available/status.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:37+00:00] INFO: Processing file[/etc/httpd/mods-available/status.load] action create (apache2::mod_status line 31)
-[2013-03-27T06:30:37+00:00] INFO: entered create
-[2013-03-27T06:30:37+00:00] INFO: file[/etc/httpd/mods-available/status.load] mode changed to 644
-[2013-03-27T06:30:37+00:00] INFO: file[/etc/httpd/mods-available/status.load] created file /etc/httpd/mods-available/status.load
-[2013-03-27T06:30:37+00:00] INFO: Processing execute[a2enmod status] action run (apache2::mod_status line 38)
-[2013-03-27T06:30:37+00:00] INFO: execute[a2enmod status] ran successfully
-[2013-03-27T06:30:37+00:00] INFO: execute[a2enmod status] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:37+00:00] INFO: Processing template[/etc/httpd/mods-available/alias.conf] action create (apache2::mod_alias line 21)
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/mods-available/alias.conf] updated content
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/mods-available/alias.conf] mode changed to 644
-[2013-03-27T06:30:37+00:00] INFO: template[/etc/httpd/mods-available/alias.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:37+00:00] INFO: Processing file[/etc/httpd/mods-available/alias.load] action create (apache2::mod_alias line 31)
-[2013-03-27T06:30:38+00:00] INFO: entered create
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/alias.load] mode changed to 644
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/alias.load] created file /etc/httpd/mods-available/alias.load
-[2013-03-27T06:30:38+00:00] INFO: Processing execute[a2enmod alias] action run (apache2::mod_alias line 38)
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod alias] ran successfully
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod alias] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:38+00:00] INFO: Processing file[/etc/httpd/mods-available/auth_basic.load] action create (apache2::mod_auth_basic line 31)
-[2013-03-27T06:30:38+00:00] INFO: entered create
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/auth_basic.load] mode changed to 644
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/auth_basic.load] created file /etc/httpd/mods-available/auth_basic.load
-[2013-03-27T06:30:38+00:00] INFO: Processing execute[a2enmod auth_basic] action run (apache2::mod_auth_basic line 38)
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod auth_basic] ran successfully
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod auth_basic] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:38+00:00] INFO: Processing file[/etc/httpd/mods-available/authn_file.load] action create (apache2::mod_authn_file line 31)
-[2013-03-27T06:30:38+00:00] INFO: entered create
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authn_file.load] mode changed to 644
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authn_file.load] created file /etc/httpd/mods-available/authn_file.load
-[2013-03-27T06:30:38+00:00] INFO: Processing execute[a2enmod authn_file] action run (apache2::mod_authn_file line 38)
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authn_file] ran successfully
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authn_file] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:38+00:00] INFO: Processing file[/etc/httpd/mods-available/authz_default.load] action create (apache2::mod_authz_default line 31)
-[2013-03-27T06:30:38+00:00] INFO: entered create
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authz_default.load] mode changed to 644
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authz_default.load] created file /etc/httpd/mods-available/authz_default.load
-[2013-03-27T06:30:38+00:00] INFO: Processing execute[a2enmod authz_default] action run (apache2::mod_authz_default line 38)
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authz_default] ran successfully
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authz_default] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:38+00:00] INFO: Processing file[/etc/httpd/mods-available/authz_groupfile.load] action create (apache2::mod_authz_groupfile line 31)
-[2013-03-27T06:30:38+00:00] INFO: entered create
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authz_groupfile.load] mode changed to 644
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authz_groupfile.load] created file /etc/httpd/mods-available/authz_groupfile.load
-[2013-03-27T06:30:38+00:00] INFO: Processing execute[a2enmod authz_groupfile] action run (apache2::mod_authz_groupfile line 38)
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authz_groupfile] ran successfully
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authz_groupfile] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:38+00:00] INFO: Processing file[/etc/httpd/mods-available/authz_host.load] action create (apache2::mod_authz_host line 31)
-[2013-03-27T06:30:38+00:00] INFO: entered create
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authz_host.load] mode changed to 644
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authz_host.load] created file /etc/httpd/mods-available/authz_host.load
-[2013-03-27T06:30:38+00:00] INFO: Processing execute[a2enmod authz_host] action run (apache2::mod_authz_host line 38)
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authz_host] ran successfully
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authz_host] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:38+00:00] INFO: Processing file[/etc/httpd/mods-available/authz_user.load] action create (apache2::mod_authz_user line 31)
-[2013-03-27T06:30:38+00:00] INFO: entered create
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authz_user.load] mode changed to 644
-[2013-03-27T06:30:38+00:00] INFO: file[/etc/httpd/mods-available/authz_user.load] created file /etc/httpd/mods-available/authz_user.load
-[2013-03-27T06:30:38+00:00] INFO: Processing execute[a2enmod authz_user] action run (apache2::mod_authz_user line 38)
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authz_user] ran successfully
-[2013-03-27T06:30:38+00:00] INFO: execute[a2enmod authz_user] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:38+00:00] INFO: Processing template[/etc/httpd/mods-available/autoindex.conf] action create (apache2::mod_autoindex line 21)
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/autoindex.conf] updated content
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/autoindex.conf] mode changed to 644
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/autoindex.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:39+00:00] INFO: Processing file[/etc/httpd/mods-available/autoindex.load] action create (apache2::mod_autoindex line 31)
-[2013-03-27T06:30:39+00:00] INFO: entered create
-[2013-03-27T06:30:39+00:00] INFO: file[/etc/httpd/mods-available/autoindex.load] mode changed to 644
-[2013-03-27T06:30:39+00:00] INFO: file[/etc/httpd/mods-available/autoindex.load] created file /etc/httpd/mods-available/autoindex.load
-[2013-03-27T06:30:39+00:00] INFO: Processing execute[a2enmod autoindex] action run (apache2::mod_autoindex line 38)
-[2013-03-27T06:30:39+00:00] INFO: execute[a2enmod autoindex] ran successfully
-[2013-03-27T06:30:39+00:00] INFO: execute[a2enmod autoindex] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:39+00:00] INFO: Processing template[/etc/httpd/mods-available/dir.conf] action create (apache2::mod_dir line 21)
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/dir.conf] updated content
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/dir.conf] mode changed to 644
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/dir.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:39+00:00] INFO: Processing file[/etc/httpd/mods-available/dir.load] action create (apache2::mod_dir line 31)
-[2013-03-27T06:30:39+00:00] INFO: entered create
-[2013-03-27T06:30:39+00:00] INFO: file[/etc/httpd/mods-available/dir.load] mode changed to 644
-[2013-03-27T06:30:39+00:00] INFO: file[/etc/httpd/mods-available/dir.load] created file /etc/httpd/mods-available/dir.load
-[2013-03-27T06:30:39+00:00] INFO: Processing execute[a2enmod dir] action run (apache2::mod_dir line 38)
-[2013-03-27T06:30:39+00:00] INFO: execute[a2enmod dir] ran successfully
-[2013-03-27T06:30:39+00:00] INFO: execute[a2enmod dir] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:39+00:00] INFO: Processing file[/etc/httpd/mods-available/env.load] action create (apache2::mod_env line 31)
-[2013-03-27T06:30:39+00:00] INFO: entered create
-[2013-03-27T06:30:39+00:00] INFO: file[/etc/httpd/mods-available/env.load] mode changed to 644
-[2013-03-27T06:30:39+00:00] INFO: file[/etc/httpd/mods-available/env.load] created file /etc/httpd/mods-available/env.load
-[2013-03-27T06:30:39+00:00] INFO: Processing execute[a2enmod env] action run (apache2::mod_env line 38)
-[2013-03-27T06:30:39+00:00] INFO: execute[a2enmod env] ran successfully
-[2013-03-27T06:30:39+00:00] INFO: execute[a2enmod env] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:39+00:00] INFO: Processing template[/etc/httpd/mods-available/mime.conf] action create (apache2::mod_mime line 21)
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/mime.conf] updated content
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/mime.conf] mode changed to 644
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/mime.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:39+00:00] INFO: Processing file[/etc/httpd/mods-available/mime.load] action create (apache2::mod_mime line 31)
-[2013-03-27T06:30:39+00:00] INFO: entered create
-[2013-03-27T06:30:39+00:00] INFO: file[/etc/httpd/mods-available/mime.load] mode changed to 644
-[2013-03-27T06:30:39+00:00] INFO: file[/etc/httpd/mods-available/mime.load] created file /etc/httpd/mods-available/mime.load
-[2013-03-27T06:30:39+00:00] INFO: Processing execute[a2enmod mime] action run (apache2::mod_mime line 38)
-[2013-03-27T06:30:39+00:00] INFO: execute[a2enmod mime] ran successfully
-[2013-03-27T06:30:39+00:00] INFO: execute[a2enmod mime] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:39+00:00] INFO: Processing template[/etc/httpd/mods-available/negotiation.conf] action create (apache2::mod_negotiation line 21)
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/negotiation.conf] updated content
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/negotiation.conf] mode changed to 644
-[2013-03-27T06:30:39+00:00] INFO: template[/etc/httpd/mods-available/negotiation.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:39+00:00] INFO: Processing file[/etc/httpd/mods-available/negotiation.load] action create (apache2::mod_negotiation line 31)
-[2013-03-27T06:30:40+00:00] INFO: entered create
-[2013-03-27T06:30:40+00:00] INFO: file[/etc/httpd/mods-available/negotiation.load] mode changed to 644
-[2013-03-27T06:30:40+00:00] INFO: file[/etc/httpd/mods-available/negotiation.load] created file /etc/httpd/mods-available/negotiation.load
-[2013-03-27T06:30:40+00:00] INFO: Processing execute[a2enmod negotiation] action run (apache2::mod_negotiation line 38)
-[2013-03-27T06:30:40+00:00] INFO: execute[a2enmod negotiation] ran successfully
-[2013-03-27T06:30:40+00:00] INFO: execute[a2enmod negotiation] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:40+00:00] INFO: Processing template[/etc/httpd/mods-available/setenvif.conf] action create (apache2::mod_setenvif line 21)
-[2013-03-27T06:30:40+00:00] INFO: template[/etc/httpd/mods-available/setenvif.conf] updated content
-[2013-03-27T06:30:40+00:00] INFO: template[/etc/httpd/mods-available/setenvif.conf] mode changed to 644
-[2013-03-27T06:30:40+00:00] INFO: template[/etc/httpd/mods-available/setenvif.conf] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:40+00:00] INFO: Processing file[/etc/httpd/mods-available/setenvif.load] action create (apache2::mod_setenvif line 31)
-[2013-03-27T06:30:40+00:00] INFO: entered create
-[2013-03-27T06:30:40+00:00] INFO: file[/etc/httpd/mods-available/setenvif.load] mode changed to 644
-[2013-03-27T06:30:40+00:00] INFO: file[/etc/httpd/mods-available/setenvif.load] created file /etc/httpd/mods-available/setenvif.load
-[2013-03-27T06:30:40+00:00] INFO: Processing execute[a2enmod setenvif] action run (apache2::mod_setenvif line 38)
-[2013-03-27T06:30:40+00:00] INFO: execute[a2enmod setenvif] ran successfully
-[2013-03-27T06:30:40+00:00] INFO: execute[a2enmod setenvif] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:40+00:00] INFO: Processing file[/etc/httpd/mods-available/log_config.load] action create (apache2::mod_log_config line 31)
-[2013-03-27T06:30:40+00:00] INFO: entered create
-[2013-03-27T06:30:40+00:00] INFO: file[/etc/httpd/mods-available/log_config.load] mode changed to 644
-[2013-03-27T06:30:40+00:00] INFO: file[/etc/httpd/mods-available/log_config.load] created file /etc/httpd/mods-available/log_config.load
-[2013-03-27T06:30:40+00:00] INFO: Processing execute[a2enmod log_config] action run (apache2::mod_log_config line 38)
-[2013-03-27T06:30:40+00:00] INFO: execute[a2enmod log_config] ran successfully
-[2013-03-27T06:30:40+00:00] INFO: execute[a2enmod log_config] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
-[2013-03-27T06:30:40+00:00] INFO: Processing file[/etc/httpd/mods-available/logio.load] action create (apache2::mod_logio line 31)
-[2013-03-27T06:30:40+00:00] INFO: entered create
-[2013-03-27T06:30:40+00:00] INFO: file[/etc/httpd/mods-available/logio.load] mode changed to 644
-[2013-03-27T06:30:40+00:00] INFO: file[/etc/httpd/mods-available/logio.load] created file /etc/httpd/mods-available/logio.load
-[2013-03-27T06:30:40+00:00] INFO: Processing execute[a2enmod logio] action run (apache2::mod_logio line 38)
-[2013-03-27T06:30:40+00:00] INFO: execute[a2enmod logio] ran successfully
-[2013-03-27T06:30:40+00:00] INFO: execute[a2enmod logio] not queuing delayed action restart on service[apache2] (delayed), as it's already been queued
+...
 [2013-03-27T06:30:40+00:00] INFO: Processing execute[a2dissite default] action run (apache2::default line 34)
 [2013-03-27T06:30:40+00:00] INFO: Processing service[apache2] action start (apache2::default line 221)
 [2013-03-27T06:30:40+00:00] INFO: service[apache2] started
@@ -959,6 +695,186 @@ in <code>~/.berkshelf/cookbooks</code></p>
 <p><code>~/.berkshelf</code> is just the default location where Berkshelf stores data
 on your local disk.  This location can be altered by setting the environment
 variable <code>BERKSHELF_PATH</code>.</p>
+
+<h1>Iteration #4 - Add Content</h1>
+
+<p>Let&#8217;s add some content to make that 404 go away.  Edit
+<code>myface/recipes/default.rb</code> as follows:</p>
+
+<figure class='code'><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
+</span><span class='line'><span class="c1"># Recipe:: default</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># disable default site</span>
+</span><span class='line'><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># create apache config</span>
+</span><span class='line'><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
+</span><span class='line'>  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># create document root</span>
+</span><span class='line'><span class="n">directory</span> <span class="s2">&quot;/srv/apache/myface&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># write siteX</span>
+</span><span class='line'><span class="n">template</span> <span class="s2">&quot;/srv/apache/myface/index.html&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">source</span> <span class="s2">&quot;index.html.erb&quot;</span>
+</span><span class='line'>  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span> <span class="c1"># forget me to create debugging exercise</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="c1"># enable myface</span>
+</span><span class='line'><span class="n">apache_site</span> <span class="s2">&quot;myface.conf&quot;</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>If you&#8217;re familiar with Chef and configuring a web app via apache2, nothing
+here should be too surprising.  But if not, spend some time reading up on
+the resource references at <a href="http://docs.opscode.com">http://docs.opscode.com</a></p>
+
+<p>With Chef, you can create config files from templates using
+<a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">ERB</a>, a
+Ruby templating system.  Create a new template file called
+<code>myface/templates/default/apache2.conf.erb</code> which will become the
+file <code>.../sites-available/myface.conf</code> on our test virtual machine
+(refer to <code>myface/recipes/default.rb</code> above):</p>
+
+<figure class='code'><figcaption><span>myface/templates/default/apache2.conf.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Managed by Chef for &lt;%= node[:hostname] %&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="no">Alias</span> <span class="o">/</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="no">Directory</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span> <span class="o">&gt;</span>
+</span><span class='line'>  <span class="no">Options</span> <span class="no">FollowSymLinks</span> <span class="o">+</span><span class="no">Indexes</span>
+</span><span class='line'>  <span class="no">Allow</span> <span class="n">from</span> <span class="no">All</span>
+</span><span class='line'><span class="o">&lt;</span><span class="sr">/Directory&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Also create our web site content as <code>myface/templates/default/index.html.erb</code>.
+While it doesn&#8217;t take advantage of ERB templating yet, it will in further
+iterations.</p>
+
+<figure class='code'><figcaption><span>myface/templates/default/index.html.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Welcome</span> <span class="n">to</span> <span class="no">MyFace</span><span class="o">!</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>After you have created these three files, run <code>vagrant provision</code> to deploy
+your changes:</p>
+
+<pre><code>$ vagrant provision
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130326-30730-144pxxn'
+[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
+[Berkshelf] Using apache2 (1.6.0)
+[default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
+Generating chef JSON and uploading...
+Running chef-solo...
+[2013-03-27T07:42:07+00:00] INFO: *** Chef 11.2.0 ***
+[2013-03-27T07:42:07+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+[2013-03-27T07:42:07+00:00] INFO: Run List is [recipe[myface::default]]
+[2013-03-27T07:42:07+00:00] INFO: Run List expands to [myface::default]
+[2013-03-27T07:42:07+00:00] INFO: Starting Chef Run for myface-berkshelf
+[2013-03-27T07:42:07+00:00] INFO: Running start handlers
+[2013-03-27T07:42:07+00:00] INFO: Start handlers complete.
+...
+[2013-03-27T07:42:10+00:00] INFO: template[/srv/apache/myface/index.html] mode changed to 644
+[2013-03-27T07:42:10+00:00] INFO: Processing execute[a2ensite myface.conf] action run (myface::default line 24)
+[2013-03-27T07:42:10+00:00] INFO: execute[a2ensite myface.conf] ran successfully
+[2013-03-27T07:42:10+00:00] INFO: execute[a2ensite myface.conf] sending restart action to service[apache2] (delayed)
+[2013-03-27T07:42:10+00:00] INFO: Processing service[apache2] action restart (apache2::default line 221)
+[2013-03-27T07:42:11+00:00] INFO: service[apache2] restarted
+[2013-03-27T07:42:11+00:00] INFO: Chef Run complete in 3.830142438 seconds
+[2013-03-27T07:42:11+00:00] INFO: Running report handlers
+[2013-03-27T07:42:11+00:00] INFO: Report handlers complete
+</code></pre>
+
+<p>If the Chef run completed successfully, if you point your web browser at your
+myface web site again:</p>
+
+<p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
+
+<p>You&#8217;ll see some lovely content!</p>
+
+<p><img src="/images/welcometomyface.png" alt="Welcome to MyFace" /></p>
 
 <h1>More to come!</h1>
 
