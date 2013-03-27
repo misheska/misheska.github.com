@@ -349,9 +349,159 @@ test virtual machine should also produce the same result:
     $ vagrant ssh -c "getent passwd myface"
     myface:x:497:1001::/home/myface:/bin/bash
 
+Iteration #3 - Install MySQL
+============================
+Myface will be storing account information in a persistent database.  Let's
+install MySQL.
+
+Modify `myface/recipes/default.rb` to include the MySQL cookbook's server
+recipe:
+
+    include_recipe "mysql::server"
+
+The resultant `myface/attributes/default.rb` file should look like so:
+
+{% codeblock myface/attributes/default.rb lang:ruby %}
+#
+# Cookbook Name:: myface
+# Recipe:: default
+#
+# Copyright (C) 2013 YOUR_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+
+group node[:myface][:group]
+
+user node[:myface][:user] do
+  group node[:myface][:group]
+  system true
+  shell "/bin/bash"
+end
+
+include_recipe "mysql::server"
+{% endcodeblock %}
+
+Since you are loading MySQL from another cookbook, you need to configure the
+dependency in your metadata.  Edit `myface/metadata.rb` and add the `mysql`
+dependency at the bottom:
+
+    depends "mysql", "~> 1.3.0"
+
+This tells Chef that the myface cookbook depends on the mysql cookbook.
+We've also specified a version constraint using the optimistic operator
+`~>` to tell our Chef that we want the latest version of the mysql cookbook
+that is greater than 1.3.0 but *not* 1.4.0 or higher.
+
+It is recommended that Chef cookbooks follow a
+[Semantic Versioning](http://semver.org/) scheme.  So if you write your
+cookbook to use the latest mysql 1.3.x cookbook, if the mysql cookbook is
+ever bumped to a 1.4.x version (or 2.x), it has some public API functionality
+that has at least been deprecated.  So you'll want to review the changes and
+test before automatically using a mysql cookbook version 1.4.x or higher.
+However, automatic use of any new 1.3.x is perfectly fine, because no
+only backwards-compatible bug fixes has been introduced.  There are no
+changes in the public APIs.
+
+Your `myface/metadata.rb` should look like this:
+
+{% codeblock myface/attributes/default.rb lang:ruby %}
+name             "myface"
+maintainer       "YOUR_NAME"
+maintainer_email "YOUR_EMAIL"
+license          "All rights reserved"
+description      "Installs/Configures myface"
+long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+version          "0.1.0"
+
+depends "mysql", "~> 1.3.0"
+{% endcodeblock %}
+
+Now when you re-run `vagrant provision` it will install MySQL on your
+test virtual machine:
+
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130325-20447-1lz0yjk'
+    [Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
+    [Berkshelf] Using mysql (1.3.0)
+    [Berkshelf] Using openssl (1.0.2)
+    [Berkshelf] Using build-essential (1.3.4)
+    [default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
+    Generating chef JSON and uploading...
+    Running chef-solo...
+    [2013-03-27T04:57:19+00:00] INFO: *** Chef 11.2.0 ***
+    [2013-03-27T04:57:20+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-03-27T04:57:20+00:00] INFO: Run List is [recipe[myface::default]]
+    [2013-03-27T04:57:20+00:00] INFO: Run List expands to [myface::default]
+    [2013-03-27T04:57:20+00:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-03-27T04:57:20+00:00] INFO: Running start handlers
+    [2013-03-27T04:57:20+00:00] INFO: Start handlers complete.
+    [2013-03-27T04:57:20+00:00] INFO: Could not find previously defined grants.sql resource
+    [2013-03-27T04:57:20+00:00] INFO: Processing group[myface] action create (myface::default line 10)
+    [2013-03-27T04:57:20+00:00] INFO: Processing user[myface] action create (myface::default line 12)
+    [2013-03-27T04:57:20+00:00] INFO: Processing package[mysql] action install (mysql::client line 46)
+    [2013-03-27T04:57:47+00:00] INFO: package[mysql] installing mysql-5.1.67-1.el6_3 from updates repository
+    [2013-03-27T04:57:56+00:00] INFO: Processing package[mysql-devel] action install (mysql::client line 46)
+    [2013-03-27T04:57:56+00:00] INFO: package[mysql-devel] installing mysql-devel-5.1.67-1.el6_3 from updates repository
+    [2013-03-27T04:58:03+00:00] INFO: Processing package[mysql-server] action install (mysql::server line 78)
+    [2013-03-27T04:58:03+00:00] INFO: package[mysql-server] installing mysql-server-5.1.67-1.el6_3 from updates repository
+    [2013-03-27T04:58:20+00:00] INFO: Processing directory[/etc/mysql/conf.d] action create (mysql::server line 85)
+    [2013-03-27T04:58:20+00:00] INFO: directory[/etc/mysql/conf.d] created directory /etc/mysql/conf.d
+    [2013-03-27T04:58:20+00:00] INFO: directory[/etc/mysql/conf.d] owner changed to 27
+    [2013-03-27T04:58:20+00:00] INFO: directory[/etc/mysql/conf.d] group changed to 27
+    [2013-03-27T04:58:20+00:00] INFO: Processing service[mysql] action nothing (mysql::server line 105)
+    [2013-03-27T04:58:20+00:00] INFO: Processing template[/etc/my.cnf] action create (mysql::server line 125)
+    [2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] backed up to /var/chef/backup/etc/my.cnf.chef-20130327045820
+    [2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] updated content
+    [2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] owner changed to 0
+    [2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] group changed to 0
+    [2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] mode changed to 644
+    [2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] sending restart action to service[mysql] (immediate)
+    [2013-03-27T04:58:20+00:00] INFO: Processing service[mysql] action restart (mysql::server line 105)
+    [2013-03-27T04:58:21+00:00] INFO: service[mysql] restarted
+    [2013-03-27T04:58:21+00:00] INFO: Processing execute[assign-root-password] action run (mysql::server line 155)
+    [2013-03-27T04:58:21+00:00] INFO: execute[assign-root-password] ran successfully
+    [2013-03-27T04:58:21+00:00] INFO: Processing template[/etc/mysql_grants.sql] action create (mysql::server line 179)
+    [2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] updated content
+    [2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] owner changed to 0
+    [2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] group changed to 0
+    [2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] mode changed to 600
+    [2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] sending run action to execute[mysql-install-privileges] (immediate)
+    [2013-03-27T04:58:22+00:00] INFO: Processing execute[mysql-install-privileges] action run (mysql::server line 195)
+    [2013-03-27T04:58:22+00:00] INFO: execute[mysql-install-privileges] ran successfully
+    [2013-03-27T04:58:22+00:00] INFO: Processing execute[mysql-install-privileges] action nothing (mysql::server line 195)
+    [2013-03-27T04:58:22+00:00] INFO: Chef Run complete in 61.995329034 seconds
+    [2013-03-27T04:58:22+00:00] INFO: Running report handlers
+    [2013-03-27T04:58:22+00:00] INFO: Report handlers complete
+
+You can also verify that MySQL was installed correctly by running the
+ following:
+
+    $ vagrant ssh -c "mysql --version"
+    mysql  Ver 14.14 Distrib 5.1.67, for redhat-linux-gnu (x86_64) using readline 5.1
+
+Wait a second, though.  You never downloaded the `mysql` cookbook, nor any
+of the dependent `openssl` and `build-essential` cookbooks.  That's the magic
+of the Berkshelf Vagrant plugin you installed earlier.  The Berkshelf Vagrant
+plugin will make sure that any changes you make to your cookbook and all of
+your cookbook's dependencies are made available to your virtual machine.
+Berkshelf automatically loads all your cookbook dependencies much like
+Bundler automatically loads all your gem dependencies.
+
+Where does the Berkshelf Vagrant plugin put the cookbooks it downloads?
+You can find them in `~/.berkshelf/cookbooks`
+
+    /Users/misheska/.berkshelf/cookbooks
+    ├── build-essential-1.3.4
+    ├── mysql-1.3.0
+    └── openssl-1.0.2
+
+`~/.berkshelf` is just the default location where Berkshelf stores data
+on your local disk.  This location can be altered by setting the environment
+variable `BERKSHELF_PATH`.
+
 More to come!
 =============
-This is just part one of a multi-part series.  So far you've gone through two
-short iteration loops as you evolve the myface cookbook.  In subsequent
+This is just part one of a multi-part series.  So far you've gone through
+severl short iteration loops as you evolve the myface cookbook.  In subsequent
 installments, we'll go through more iterations, resulting in the final
 end product: <https://github.com/reset/myface-cookbook>
