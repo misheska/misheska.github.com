@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-03-27T00:08:01-07:00</updated>
+  <updated>2013-03-27T00:09:30-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -915,7 +915,7 @@ variable <code>BERKSHELF_PATH</code>.</p>
 <h1>More to come!</h1>
 
 <p>This is just part one of a multi-part series.  So far you've gone through
-severl short iteration loops as you evolve the myface cookbook.  In subsequent
+several short iteration loops as you evolve the myface cookbook.  In subsequent
 installments, we'll go through more iterations, resulting in the final
 end product: <a href="https://github.com/reset/myface-cookbook">https://github.com/reset/myface-cookbook</a></p>
 ]]></content>
