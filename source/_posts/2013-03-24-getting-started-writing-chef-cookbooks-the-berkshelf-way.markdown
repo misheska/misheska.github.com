@@ -755,6 +755,6 @@ variable `BERKSHELF_PATH`.
 More to come!
 =============
 This is just part one of a multi-part series.  So far you've gone through
-severl short iteration loops as you evolve the myface cookbook.  In subsequent
+several short iteration loops as you evolve the myface cookbook.  In subsequent
 installments, we'll go through more iterations, resulting in the final
 end product: <https://github.com/reset/myface-cookbook>
