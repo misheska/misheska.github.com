@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-03-26T07:05:03-07:00</updated>
+  <updated>2013-03-26T22:37:33-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -436,10 +436,194 @@ test virtual machine should also produce the same result:</p>
 myface:x:497:1001::/home/myface:/bin/bash
 </code></pre>
 
+<h1>Iteration #3 - Install MySQL</h1>
+
+<p>Myface will be storing account information in a persistent database.  Let&#8217;s
+install MySQL.</p>
+
+<p>Modify <code>myface/recipes/default.rb</code> to include the MySQL cookbook&#8217;s server
+recipe:</p>
+
+<pre><code>include_recipe "mysql::server"
+</code></pre>
+
+<p>The resultant <code>myface/attributes/default.rb</code> file should look like so:</p>
+
+<figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
+</span><span class='line'><span class="c1"># Recipe:: default</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class='line'><span class="k">end</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">include_recipe</span> <span class="s2">&quot;mysql::server&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Since you are loading MySQL from another cookbook, you need to configure the
+dependency in your metadata.  Edit <code>myface/metadata.rb</code> and add the <code>mysql</code>
+dependency at the bottom:</p>
+
+<pre><code>depends "mysql", "~&gt; 1.3.0"
+</code></pre>
+
+<p>This tells Chef that the myface cookbook depends on the mysql cookbook.
+We&#8217;ve also specified a version constraint using the optimistic operator
+<code>~&gt;</code> to tell our Chef that we want the latest version of the mysql cookbook
+that is greater than 1.3.0 but <em>not</em> 1.4.0 or higher.</p>
+
+<p>It is recommended that Chef cookbooks follow a
+<a href="http://semver.org/">Semantic Versioning</a> scheme.  So if you write your
+cookbook to use the latest mysql 1.3.x cookbook, if the mysql cookbook is
+ever bumped to a 1.4.x version (or 2.x), it has some public API functionality
+that has at least been deprecated.  So you&#8217;ll want to review the changes and
+test before automatically using a mysql cookbook version 1.4.x or higher.
+However, automatic use of any new 1.3.x is perfectly fine, because no
+only backwards-compatible bug fixes has been introduced.  There are no
+changes in the public APIs.</p>
+
+<p>Your <code>myface/metadata.rb</code> should look like this:</p>
+
+<figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">name</span>             <span class="s2">&quot;myface&quot;</span>
+</span><span class='line'><span class="n">maintainer</span>       <span class="s2">&quot;YOUR_NAME&quot;</span>
+</span><span class='line'><span class="n">maintainer_email</span> <span class="s2">&quot;YOUR_EMAIL&quot;</span>
+</span><span class='line'><span class="n">license</span>          <span class="s2">&quot;All rights reserved&quot;</span>
+</span><span class='line'><span class="n">description</span>      <span class="s2">&quot;Installs/Configures myface&quot;</span>
+</span><span class='line'><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
+</span><span class='line'><span class="n">version</span>          <span class="s2">&quot;0.1.0&quot;</span>
+</span><span class='line'>
+</span><span class='line'><span class="n">depends</span> <span class="s2">&quot;mysql&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.3.0&quot;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Now when you re-run <code>vagrant provision</code> it will install MySQL on your
+test virtual machine:</p>
+
+<pre><code>[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130325-20447-1lz0yjk'
+[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
+[Berkshelf] Using mysql (1.3.0)
+[Berkshelf] Using openssl (1.0.2)
+[Berkshelf] Using build-essential (1.3.4)
+[default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
+Generating chef JSON and uploading...
+Running chef-solo...
+[2013-03-27T04:57:19+00:00] INFO: *** Chef 11.2.0 ***
+[2013-03-27T04:57:20+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+[2013-03-27T04:57:20+00:00] INFO: Run List is [recipe[myface::default]]
+[2013-03-27T04:57:20+00:00] INFO: Run List expands to [myface::default]
+[2013-03-27T04:57:20+00:00] INFO: Starting Chef Run for myface-berkshelf
+[2013-03-27T04:57:20+00:00] INFO: Running start handlers
+[2013-03-27T04:57:20+00:00] INFO: Start handlers complete.
+[2013-03-27T04:57:20+00:00] INFO: Could not find previously defined grants.sql resource
+[2013-03-27T04:57:20+00:00] INFO: Processing group[myface] action create (myface::default line 10)
+[2013-03-27T04:57:20+00:00] INFO: Processing user[myface] action create (myface::default line 12)
+[2013-03-27T04:57:20+00:00] INFO: Processing package[mysql] action install (mysql::client line 46)
+[2013-03-27T04:57:47+00:00] INFO: package[mysql] installing mysql-5.1.67-1.el6_3 from updates repository
+[2013-03-27T04:57:56+00:00] INFO: Processing package[mysql-devel] action install (mysql::client line 46)
+[2013-03-27T04:57:56+00:00] INFO: package[mysql-devel] installing mysql-devel-5.1.67-1.el6_3 from updates repository
+[2013-03-27T04:58:03+00:00] INFO: Processing package[mysql-server] action install (mysql::server line 78)
+[2013-03-27T04:58:03+00:00] INFO: package[mysql-server] installing mysql-server-5.1.67-1.el6_3 from updates repository
+[2013-03-27T04:58:20+00:00] INFO: Processing directory[/etc/mysql/conf.d] action create (mysql::server line 85)
+[2013-03-27T04:58:20+00:00] INFO: directory[/etc/mysql/conf.d] created directory /etc/mysql/conf.d
+[2013-03-27T04:58:20+00:00] INFO: directory[/etc/mysql/conf.d] owner changed to 27
+[2013-03-27T04:58:20+00:00] INFO: directory[/etc/mysql/conf.d] group changed to 27
+[2013-03-27T04:58:20+00:00] INFO: Processing service[mysql] action nothing (mysql::server line 105)
+[2013-03-27T04:58:20+00:00] INFO: Processing template[/etc/my.cnf] action create (mysql::server line 125)
+[2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] backed up to /var/chef/backup/etc/my.cnf.chef-20130327045820
+[2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] updated content
+[2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] owner changed to 0
+[2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] group changed to 0
+[2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] mode changed to 644
+[2013-03-27T04:58:20+00:00] INFO: template[/etc/my.cnf] sending restart action to service[mysql] (immediate)
+[2013-03-27T04:58:20+00:00] INFO: Processing service[mysql] action restart (mysql::server line 105)
+[2013-03-27T04:58:21+00:00] INFO: service[mysql] restarted
+[2013-03-27T04:58:21+00:00] INFO: Processing execute[assign-root-password] action run (mysql::server line 155)
+[2013-03-27T04:58:21+00:00] INFO: execute[assign-root-password] ran successfully
+[2013-03-27T04:58:21+00:00] INFO: Processing template[/etc/mysql_grants.sql] action create (mysql::server line 179)
+[2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] updated content
+[2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] owner changed to 0
+[2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] group changed to 0
+[2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] mode changed to 600
+[2013-03-27T04:58:22+00:00] INFO: template[/etc/mysql_grants.sql] sending run action to execute[mysql-install-privileges] (immediate)
+[2013-03-27T04:58:22+00:00] INFO: Processing execute[mysql-install-privileges] action run (mysql::server line 195)
+[2013-03-27T04:58:22+00:00] INFO: execute[mysql-install-privileges] ran successfully
+[2013-03-27T04:58:22+00:00] INFO: Processing execute[mysql-install-privileges] action nothing (mysql::server line 195)
+[2013-03-27T04:58:22+00:00] INFO: Chef Run complete in 61.995329034 seconds
+[2013-03-27T04:58:22+00:00] INFO: Running report handlers
+[2013-03-27T04:58:22+00:00] INFO: Report handlers complete
+</code></pre>
+
+<p>You can also verify that MySQL was installed correctly by running the
+ following:</p>
+
+<pre><code>$ vagrant ssh -c "mysql --version"
+mysql  Ver 14.14 Distrib 5.1.67, for redhat-linux-gnu (x86_64) using readline 5.1
+</code></pre>
+
+<p>Wait a second, though.  You never downloaded the <code>mysql</code> cookbook, nor any
+of the dependent <code>openssl</code> and <code>build-essential</code> cookbooks.  That&#8217;s the magic
+of the Berkshelf Vagrant plugin you installed earlier.  The Berkshelf Vagrant
+plugin will make sure that any changes you make to your cookbook and all of
+your cookbook&#8217;s dependencies are made available to your virtual machine.
+Berkshelf automatically loads all your cookbook dependencies much like
+Bundler automatically loads all your gem dependencies.</p>
+
+<p>Where does the Berkshelf Vagrant plugin put the cookbooks it downloads?
+You can find them in <code>~/.berkshelf/cookbooks</code></p>
+
+<pre><code>/Users/misheska/.berkshelf/cookbooks
+├── build-essential-1.3.4
+├── mysql-1.3.0
+└── openssl-1.0.2
+</code></pre>
+
+<p><code>~/.berkshelf</code> is just the default location where Berkshelf stores data
+on your local disk.  This location can be altered by setting the environment
+variable <code>BERKSHELF_PATH</code>.</p>
+
 <h1>More to come!</h1>
 
-<p>This is just part one of a multi-part series.  So far you&#8217;ve gone through two
-short iteration loops as you evolve the myface cookbook.  In subsequent
+<p>This is just part one of a multi-part series.  So far you&#8217;ve gone through
+severl short iteration loops as you evolve the myface cookbook.  In subsequent
 installments, we&#8217;ll go through more iterations, resulting in the final
 end product: <a href="https://github.com/reset/myface-cookbook">https://github.com/reset/myface-cookbook</a></p>
 ]]></content>
