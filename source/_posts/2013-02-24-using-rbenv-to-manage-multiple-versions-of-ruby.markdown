@@ -139,11 +139,20 @@ And remove the following directory:
 
 And remember to remove whatever you added to `$HOME/.bash_profile`
 
-How to Install RVM on Linux
-===========================
+How to Install Rbenv on Linux
+=============================
 Make sure the prerequisite packages are installed.  For Ubuntu:
 
-    $ sudo apt-get install build-essential git
+    $ sudo apt-get update
+    $ sudo apt-get install -y build-essential git
+
+For RHEL/CentOS:
+
+    $ sudo yum update
+    $ sudo yum install -y git
+    $ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
+    $ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
+    $ sudo yum install -y autoconf automake libtool bison iconv-devel
 
 Download the rbenv source distribution to
 $HOME/.rbenv:
@@ -153,7 +162,6 @@ $HOME/.rbenv:
 Add $HOME/.rbenv/bin to your $PATH
 
     $ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.bashrc
-
 
 Add `rbenv init` to your shell to enable shims and autocompletion:
 
