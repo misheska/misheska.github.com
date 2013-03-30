@@ -254,11 +254,21 @@ brew uninstall ruby-build
 
 <p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
 
-<h1>How to Install RVM on Linux</h1>
+<h1>How to Install Rbenv on Linux</h1>
 
 <p>Make sure the prerequisite packages are installed.  For Ubuntu:</p>
 
-<pre><code>$ sudo apt-get install build-essential git
+<pre><code>$ sudo apt-get update
+$ sudo apt-get install -y build-essential git
+</code></pre>
+
+<p>For RHEL/CentOS:</p>
+
+<pre><code>$ sudo yum update
+$ sudo yum install -y git
+$ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
+$ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
+$ sudo yum install -y autoconf automake libtool bison iconv-devel
 </code></pre>
 
 <p>Download the rbenv source distribution to
