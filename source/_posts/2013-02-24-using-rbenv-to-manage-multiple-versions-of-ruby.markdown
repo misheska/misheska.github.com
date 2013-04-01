@@ -153,6 +153,7 @@ For RHEL/CentOS:
     $ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
     $ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
     $ sudo yum install -y autoconf automake libtool bison iconv-devel
+    $ sudo yum install -y libxml2-devel xslt-devel libxslt-devel 
 
 Download the rbenv source distribution to
 $HOME/.rbenv:
