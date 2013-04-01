@@ -4,7 +4,7 @@
   <title><![CDATA[Category: ruby | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/ruby/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-03-30T11:55:42-07:00</updated>
+  <updated>2013-03-31T21:34:36-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -485,6 +485,7 @@ $ sudo yum install -y git
 $ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
 $ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
 $ sudo yum install -y autoconf automake libtool bison iconv-devel
+$ sudo yum install -y libxml2-devel xslt-devel libxslt-devel 
 </code></pre>
 
 <p>Download the rbenv source distribution to
