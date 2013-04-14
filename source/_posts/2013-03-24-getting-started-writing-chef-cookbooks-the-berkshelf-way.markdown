@@ -16,12 +16,15 @@ from the March 14, 2013 Bay Area Chef meetup.
 
 Getting Started
 ===============
+You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
+To set up your cookbook-writing environment, make sure you have the following
+installed:
 
 * [Install VirtualBox 4.2.x (or higher)](http://virtualbox.org)
 
 * [Install Vagrant 1.1.x](http://vagrantup.com)
 
-* Install Ruby 1.9.x via [rvm](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/) or [rbenv](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/)
+* Install Ruby 1.9.x via [Chef Omnibus Installer Ruby](http://misheska.com/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/), [rvm](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/) or [rbenv](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/)
 
 * Install Berkshelf
 
@@ -34,7 +37,7 @@ $ gem install berkshelf
 ```
 $ vagrant plugin install berkshelf-vagrant
 Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
-Installed the plugin 'berkshelf-vagrant (1.0.6)'!
+Installed the plugin 'berkshelf-vagrant (1.1.10)'!
 ```
 
 Create the MyFace Application Cookbook
@@ -87,11 +90,12 @@ at an image with Chef 10).  Your Vagrantfile should look like this:
 {% codeblock myface/Vagrantfile lang:ruby %}
 Vagrant.configure("2") do |config|
   config.vm.hostname = "myface-berkshelf"
-  config.vm.box = "opcode_centos-6.3_chef-11.2.0"
+  config.vm.box = "opscode_centos-6.3_chef-11.2.0"
   config.vm.box_url = "https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.3_chef-11.2.0.box"
   config.vm.network :private_network, ip: "33.33.33.10"
   config.ssh.max_tries = 40
   config.ssh.timeout = 120
+  config.berkshelf.enabled = true
 
   config.vm.provision :chef_solo do |chef|
     chef.json = {
