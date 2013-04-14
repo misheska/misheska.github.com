@@ -16,11 +16,18 @@ from the March 14, 2013 Bay Area Chef meetup.
 
 Getting Started
 ===============
-* Install Ruby 1.9.x via [rvm](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/) or [rbenv](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/)
 
 * [Install VirtualBox 4.2.x (or higher)](http://virtualbox.org)
 
 * [Install Vagrant 1.1.x](http://vagrantup.com)
+
+* Install Ruby 1.9.x via [rvm](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/) or [rbenv](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/)
+
+* Install Berkshelf
+
+```
+$ gem install berkshelf
+```
 
 * Install the Berkshelf Vagrant Plugin (1.0.3 or higher)
 
@@ -28,12 +35,6 @@ Getting Started
 $ vagrant plugin install berkshelf-vagrant
 Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
 Installed the plugin 'berkshelf-vagrant (1.0.6)'!
-```
-
-* Install Berkshelf
-
-```
-$ gem install berkshelf
 ```
 
 Create the MyFace Application Cookbook
