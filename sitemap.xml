@@ -28,11 +28,17 @@
         <loc>
             http://misheska.com/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/
         </loc>
-        <lastmod>2013-03-27T08:08:09-07:00</lastmod>
+        <lastmod>2013-04-13T22:28:23-07:00</lastmod>
+    </url>
+    <url>
+        <loc>
+            http://misheska.com/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/
+        </loc>
+        <lastmod>2013-04-14T02:00:53-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/blog/archives/</loc>
-        <lastmod>2013-03-31T21:33:51-07:00</lastmod>
+        <lastmod>2013-04-14T02:00:53-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/contact/</loc>
@@ -40,7 +46,7 @@
     </url>
     <url>
         <loc>http://misheska.com/</loc>
-        <lastmod>2013-03-31T21:33:51-07:00</lastmod>
+        <lastmod>2013-04-14T02:00:53-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/robots.txt</loc>

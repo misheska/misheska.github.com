@@ -116,10 +116,19 @@ from the March 14, 2013 Bay Area Chef meetup.</p>
 <h1>Getting Started</h1>
 
 <ul>
-<li><p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p></li>
 <li><p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a></p></li>
 <li><p><a href="http://vagrantup.com">Install Vagrant 1.1.x</a></p></li>
-<li><p>Install the Berkshelf Vagrant Plugin (1.0.3 or higher)</p></li>
+<li><p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p></li>
+<li><p>Install Berkshelf</p></li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ gem install berkshelf</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>Install the Berkshelf Vagrant Plugin (1.0.3 or higher)</li>
 </ul>
 
 
@@ -129,15 +138,6 @@ from the March 14, 2013 Bay Area Chef meetup.</p>
 </pre></td><td class='code'><pre><code class=''><span class='line'>$ vagrant plugin install berkshelf-vagrant
 </span><span class='line'>Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
 </span><span class='line'>Installed the plugin 'berkshelf-vagrant (1.0.6)'!</span></code></pre></td></tr></table></div></figure>
-
-
-<ul>
-<li>Install Berkshelf</li>
-</ul>
-
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ gem install berkshelf</span></code></pre></td></tr></table></div></figure>
 
 
 <h1>Create the MyFace Application Cookbook</h1>
@@ -928,6 +928,8 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
         <a class="basic-alignment left" href="/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/" title="Previous Post: Using pik to manage multiple versions of Ruby on Windows">&laquo; Using pik to manage multiple versions of Ruby on Windows</a>
       
       
+        <a class="basic-alignment right" href="/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/" title="Next Post: Use Opscode Chef Omnibus Ruby for writing cookbooks">Use Opscode Chef Omnibus Ruby for writing cookbooks &raquo;</a>
+      
     </p>
   </footer>
 </article>
@@ -939,6 +941,10 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Use Opscode Chef Omnibus Ruby for writing cookbooks</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting started writing Chef cookbooks the Berkshelf Way</a>
@@ -954,10 +960,6 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
     
       <li class="post">
         <a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">Using RVM to manage multiple versions of Ruby</a>
       </li>
     
   </ul>
