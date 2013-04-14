@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-04-14T02:03:05-07:00</updated>
+  <updated>2013-04-14T02:41:00-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -216,10 +216,14 @@ from the March 14, 2013 Bay Area Chef meetup.</p>
 
 <h1>Getting Started</h1>
 
+<p>You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
+To set up your cookbook-writing environment, make sure you have the following
+installed:</p>
+
 <ul>
 <li><p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a></p></li>
 <li><p><a href="http://vagrantup.com">Install Vagrant 1.1.x</a></p></li>
-<li><p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p></li>
+<li><p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p></li>
 <li><p>Install Berkshelf</p></li>
 </ul>
 
@@ -236,7 +240,7 @@ $ gem install berkshelf
 <p><code>
 $ vagrant plugin install berkshelf-vagrant
 Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
-Installed the plugin 'berkshelf-vagrant (1.0.6)'!
+Installed the plugin 'berkshelf-vagrant (1.1.10)'!
 </code></p>
 
 <h1>Create the MyFace Application Cookbook</h1>
@@ -313,13 +317,15 @@ at an image with Chef 10).  Your Vagrantfile should look like this:</p>
 <span class='line-number'>22</span>
 <span class='line-number'>23</span>
 <span class='line-number'>24</span>
+<span class='line-number'>25</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;opcode_centos-6.3_chef-11.2.0&quot;</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;opscode_centos-6.3_chef-11.2.0&quot;</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.3_chef-11.2.0.box&quot;</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">max_tries</span> <span class="o">=</span> <span class="mi">40</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">120</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">120</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">berkshelf</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kp">true</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="sr">&lt;p&gt;  config.vm.provision :chef_solo do |chef|&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
