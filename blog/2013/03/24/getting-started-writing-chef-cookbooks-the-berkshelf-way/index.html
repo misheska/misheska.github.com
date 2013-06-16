@@ -9,8 +9,9 @@
   <meta name="author" content="Mischa Taylor">
 
   
-  <meta name="description" content="Jamie Winsor hasn&#8217;t yet updated his guide to authoring cookbooks the Berkshelf way
-to match recent changes related to Vagrant 1.1 and Chef 11 &hellip;">
+  <meta name="description" content="Jamie Winsor hasn’t yet updated his guide to authoring cookbooks the Berkshelf way
+to match recent changes related to Vagrant 1.1 and Chef 11
+This &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -104,48 +105,50 @@ to match recent changes related to Vagrant 1.1 and Chef 11 &hellip;">
   </header>
 
 
-<div class="entry-content"><p>Jamie Winsor hasn&#8217;t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
+<div class="entry-content"><p>Jamie Winsor hasn’t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
 to match <a href="https://github.com/RiotGames/berkshelf/issues/416">recent changes related to Vagrant 1.1</a> and <a href="http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/">Chef 11</a>
 This post is an attempt to update these instructions, walking through his
-and Sean O&#8217;Meara&#8217;s example app - <a href="https://github.com/reset/myface-cookbook">MyFace</a>.
+and Sean O’Meara’s example app - <a href="https://github.com/reset/myface-cookbook">MyFace</a>.
 For more information on <a href="http://berkshelf.com/">Berkshelf</a>, check out his recent
 <a href="https://my.adobeconnect.com/_a295153/p59b87of2dp/?launcher=false&amp;fcsContent=true&amp;pbMode=normal">talk</a>
 and <a href="http://www.slideshare.net/resetexistence/the-berkshelf-way">slides</a>
 from the March 14, 2013 Bay Area Chef meetup.</p>
 
-<h1>Getting Started</h1>
-
+<h1 id="getting-started">Getting Started</h1>
 <p>You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
 To set up your cookbook-writing environment, make sure you have the following
 installed:</p>
 
 <ul>
-<li><p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a></p></li>
-<li><p><a href="http://vagrantup.com">Install Vagrant 1.1.x</a></p></li>
-<li><p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p></li>
-<li><p>Install Berkshelf</p></li>
+  <li>
+    <p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a></p>
+  </li>
+  <li>
+    <p><a href="http://vagrantup.com">Install Vagrant 1.1.x</a></p>
+  </li>
+  <li>
+    <p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p>
+  </li>
+  <li>
+    <p>Install Berkshelf</p>
+  </li>
 </ul>
 
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ gem install berkshelf</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
-<li>Install the Berkshelf Vagrant Plugin (1.0.3 or higher)</li>
+  <li>Install the Berkshelf Vagrant Plugin (1.0.3 or higher)</li>
 </ul>
 
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install berkshelf-vagrant
+</span><span class="line">Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
+</span><span class="line">Installed the plugin 'berkshelf-vagrant (1.1.10)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ vagrant plugin install berkshelf-vagrant
-</span><span class='line'>Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
-</span><span class='line'>Installed the plugin 'berkshelf-vagrant (1.1.10)'!</span></code></pre></td></tr></table></div></figure>
-
-
-<h1>Create the MyFace Application Cookbook</h1>
-
+<h1 id="create-the-myface-application-cookbook">Create the MyFace Application Cookbook</h1>
 <p>Key to the Berkshelf way is the use of the Application Cookbook Pattern.  An
 application cookbook contains the list of recipes needed to build your
 application or service.  As an example, this blog post will walk you through
@@ -183,63 +186,61 @@ necessary Gem dependencies:</p>
 $ bundle install
 </code></pre>
 
-<h1>Prepare a virtual machine for testing</h1>
-
-<p>It&#8217;s a good idea to develop your cookbook incrementally, testing
+<h1 id="prepare-a-virtual-machine-for-testing">Prepare a virtual machine for testing</h1>
+<p>It’s a good idea to develop your cookbook incrementally, testing 
 in short iterations.  Berkshelf integrates with Vagrant to deploy
-your cookbook changes to a virtual machine for testing.</p>
+your cookbook changes to a virtual machine for testing.  </p>
 
 <p>Edit the Vagrantfile generated by the <code>berks cookbook</code> command to use
 a VirtualBox template that has Chef 11 installed.  (By default Berkshelf points
 at an image with Chef 10).  Your Vagrantfile should look like this:</p>
 
-<figure class='code'><figcaption><span>myface/Vagrantfile  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;opscode_centos-6.3_chef-11.2.0&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.3_chef-11.2.0.box&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">max_tries</span> <span class="o">=</span> <span class="mi">40</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">120</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">berkshelf</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kp">true</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
-</span><span class='line'>    <span class="n">chef</span><span class="o">.</span><span class="n">json</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>      <span class="ss">:mysql</span> <span class="o">=&gt;</span> <span class="p">{</span>
-</span><span class='line'>        <span class="ss">:server_root_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;rootpass&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:server_debian_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;debpass&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:server_repl_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;replpass&#39;</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
-</span><span class='line'>      <span class="s2">&quot;recipe[myface::defult]&quot;</span>
-</span><span class='line'>    <span class="o">]</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Vagrantfile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;opscode_centos-6.3_chef-11.2.0&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.3_chef-11.2.0.box&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">max_tries</span> <span class="o">=</span> <span class="mi">40</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">120</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">berkshelf</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class="line">    <span class="n">chef</span><span class="o">.</span><span class="n">json</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">      <span class="ss">:mysql</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">        <span class="ss">:server_root_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;rootpass&#39;</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:server_debian_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;debpass&#39;</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:server_repl_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;replpass&#39;</span>
+</span><span class="line">      <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class="line">      <span class="s2">&quot;recipe[myface::defult]&quot;</span>
+</span><span class="line">    <span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Run <code>vagrant up</code> to start up the virtual machine and to test the stub MyFace
 cookbook you just created:</p>
@@ -307,10 +308,9 @@ Are you sure you want to destroy the 'default' VM? [y/N] y
 <p><strong>NOTE:</strong> If you just ran <code>vagrant destroy</code> make sure you run <code>vagrant up</code>
 before proceeding to the next section.</p>
 
-<h1>Iteration #1: Create an application user</h1>
-
-<p>For our first short iteration, let&#8217;s create a <code>myface</code> user under which
-we&#8217;ll run our application.  One best practice is to avoid running
+<h1 id="iteration-1-create-an-application-user">Iteration #1: Create an application user</h1>
+<p>For our first short iteration, let’s create a <code>myface</code> user under which
+we’ll run our application.  One best practice is to avoid running
 applications as root and create a user/group under which the application runs
 instead who has just enough rights that the app needs.</p>
 
@@ -318,41 +318,40 @@ instead who has just enough rights that the app needs.</p>
 and <a href="http://docs.opscode.com/resource_user.html">User Resource</a> for myface,
 so it looks like the following:</p>
 
-<figure class='code'><figcaption><span>myface/recipes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
-</span><span class='line'><span class="c1"># Recipe:: default</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">group</span> <span class="s2">&quot;myface&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">user</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">group</span> <span class="s2">&quot;myface&quot;</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
-</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="s2">&quot;myface&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="s2">&quot;myface&quot;</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Save <code>receipes/default.rb</code> and re-run <code>vagrant provision</code> to create the
 myface user on your test virtual machine:</p>
@@ -391,7 +390,7 @@ myface:x:497:1001::/home/myface:/bin/bash
 
 <p>We use <code>vagrant ssh -c</code> to run a command on our test virtual machine.  The
 <code>getent</code> command can be used to query all user databases.  In this
-case we&#8217;re looking for <code>myface</code>, and it exists!</p>
+case we’re looking for <code>myface</code>, and it exists!</p>
 
 <p>Because we are using well-defined resources that are completely
 <a href="http://en.wikipedia.org/wiki/Idempotence">idempotent</a>, you should notice
@@ -418,29 +417,27 @@ Running chef-solo...
 [2013-03-25T11:50:04+00:00] INFO: Report handlers complete
 </code></pre>
 
-<h1>Iteration #2 - Refactor the user name and group name into attributes</h1>
-
+<h1 id="iteration-2---refactor-the-user-name-and-group-name-into-attributes">Iteration #2 - Refactor the user name and group name into attributes</h1>
 <p>What if at some point you wanted to change the name of the <code>myface</code> user/group
 you just created to something else?  At the moment, you would need to edit
 <code>myface/recipes/default.rb</code> in three places.</p>
 
-<p>Let&#8217;s create a new file called <code>myface/attributes/default.rb</code> which
+<p>Let’s create a new file called <code>myface/attributes/default.rb</code> which
 initializes Chef <a href="http://docs.opscode.com/essentials_cookbook_attribute_files.html">attributes</a>
 defining the user name and group name under which our application will run so
-that you <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">don&#8217;t repeat yoursef</a>.</p>
+that you <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">don’t repeat yoursef</a>.</p>
 
-<figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;myface&quot;</span>
-</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;myface&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;myface&quot;</span>
+</span><span class="line"><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;myface&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>In Chef, attributes are a hash of a hash used to override the default settings
 on a node.  The first hash is the cookbook name - in our
-case we&#8217;ve named our cookbook <code>:myface</code>. The second hash is the name of
-our attribute - in this case, we&#8217;re defining two new attributes: <code>:user</code> and
+case we’ve named our cookbook <code>:myface</code>. The second hash is the name of
+our attribute - in this case, we’re defining two new attributes: <code>:user</code> and
 <code>:group</code>.</p>
 
 <p><code>default</code> implies the use of the <a href="http://docs.opscode.com/chef/essentials_node_object.html">node object</a>
@@ -453,49 +450,48 @@ noce.default[:myface][:user] = "myface"
 
 <p>Also note the use of symbols instead of strings.  It is <a href="http://www.robertsosinski.com/2009/01/11/the-difference-between-ruby-symbols-and-strings/">strongly recommended
 that you use symbols instead of strings</a>
-for hash indexes.</p>
+for hash indexes. </p>
 
-<p>Now that you&#8217;ve created your attribute definitions, edit
-<code>myface/recipes/default.rb</code> and replace all references to the &#8220;myface&#8221; user name
-with <code>node[:myface][:user]</code> and all references to the &#8220;myface&#8221; group with
+<p>Now that you’ve created your attribute definitions, edit
+<code>myface/recipes/default.rb</code> and replace all references to the “myface” user name
+with <code>node[:myface][:user]</code> and all references to the “myface” group with
 <code>node[:myface][:group]</code>.  <code>myface/recipes/default.rb</code> should now look like
 this:</p>
 
-<figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
-</span><span class='line'><span class="c1"># Recipe:: default</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
-</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Re-provision with <code>vagrant provision</code> to see how the refactor went:</p>
 
@@ -519,8 +515,8 @@ Running chef-solo...
 [2013-03-25T12:56:23+00:00] INFO: Report handlers complete
 </code></pre>
 
-<p>As long as you didn&#8217;t create any syntax errors in your refactoring file edits,
-there should be no net change on the virtual machine test node (as you&#8217;ve only
+<p>As long as you didn’t create any syntax errors in your refactoring file edits,
+there should be no net change on the virtual machine test node (as you’ve only
 just moved some strings into a node attribute).  Running  <code>getent</code> on the
 test virtual machine should also produce the same result:</p>
 
@@ -528,12 +524,11 @@ test virtual machine should also produce the same result:</p>
 myface:x:497:1001::/home/myface:/bin/bash
 </code></pre>
 
-<h1>Iteration #3 - Install the Apache2 Web Server</h1>
-
+<h1 id="iteration-3---install-the-apache2-web-server">Iteration #3 - Install the Apache2 Web Server</h1>
 <p>Our hot new social networking application, myface, is a web app, so we need
-to install a web server.  Let&#8217;s install the Apache2 web server.</p>
+to install a web server.  Let’s install the Apache2 web server.</p>
 
-<p>Modify <code>myface/recipes/default.rb</code> to include the apache2 cookbook&#8217;s default
+<p>Modify <code>myface/recipes/default.rb</code> to include the apache2 cookbook’s default
 recipe:</p>
 
 <pre><code>include_recipe "apache2"
@@ -541,45 +536,44 @@ recipe:</p>
 
 <p>The resultant <code>myface/recipes/default.rb</code> file should look like so:</p>
 
-<figure class='code'><figcaption><span>myface/recipes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
-</span><span class='line'><span class="c1"># Recipe:: default</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
-</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Since you are loading Apache2 from another cookbook, you need to configure the
 dependency in your metadata.  Edit <code>myface/metadata.rb</code> and add the <code>apache2</code>
@@ -589,7 +583,7 @@ dependency at the bottom:</p>
 </code></pre>
 
 <p>This tells Chef that the myface cookbook depends on the apache2 cookbook.
-We&#8217;ve also specified a version constraint using the optimistic operator
+We’ve also specified a version constraint using the optimistic operator
 <code>~&gt;</code> to tell our Chef that we want the latest version of the apache2 cookbook
 that is greater than 1.6.0 but <em>not</em> 1.7.0 or higher.</p>
 
@@ -597,7 +591,7 @@ that is greater than 1.6.0 but <em>not</em> 1.7.0 or higher.</p>
 <a href="http://semver.org/">Semantic Versioning</a> scheme.  So if you write your
 cookbook to use the latest apache2 1.6.x cookbook, if the apache2 cookbook is
 ever bumped to a 1.7.x version (or 2.x), it has some public API functionality
-that has at least been deprecated.  So you&#8217;ll want to review the changes and
+that has at least been deprecated.  So you’ll want to review the changes and
 test before automatically using an apache2 cookbook version 1.7.x or higher.
 However, automatic use of any new 1.6.x is perfectly fine, because no
 only backwards-compatible bug fixes has been introduced.  Semantic Versioning
@@ -605,27 +599,26 @@ guarantees there are no changes in the public APIs.</p>
 
 <p>Your <code>myface/metadata.rb</code> should look like this:</p>
 
-<figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">name</span>             <span class="s2">&quot;myface&quot;</span>
-</span><span class='line'><span class="n">maintainer</span>       <span class="s2">&quot;YOUR_NAME&quot;</span>
-</span><span class='line'><span class="n">maintainer_email</span> <span class="s2">&quot;YOUR_EMAIL&quot;</span>
-</span><span class='line'><span class="n">license</span>          <span class="s2">&quot;All rights reserved&quot;</span>
-</span><span class='line'><span class="n">description</span>      <span class="s2">&quot;Installs/Configures myface&quot;</span>
-</span><span class='line'><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
-</span><span class='line'><span class="n">version</span>          <span class="s2">&quot;0.1.0&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">depends</span> <span class="s2">&quot;apache2&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.6.0&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">name</span>             <span class="s2">&quot;myface&quot;</span>
+</span><span class="line"><span class="n">maintainer</span>       <span class="s2">&quot;YOUR_NAME&quot;</span>
+</span><span class="line"><span class="n">maintainer_email</span> <span class="s2">&quot;YOUR_EMAIL&quot;</span>
+</span><span class="line"><span class="n">license</span>          <span class="s2">&quot;All rights reserved&quot;</span>
+</span><span class="line"><span class="n">description</span>      <span class="s2">&quot;Installs/Configures myface&quot;</span>
+</span><span class="line"><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">version</span>          <span class="s2">&quot;0.1.0&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">depends</span> <span class="s2">&quot;apache2&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.6.0&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Now when you re-run <code>vagrant provision</code> it will install apache2 on your
 test virtual machine:</p>
@@ -665,16 +658,16 @@ created in your Vagrantfile:</p>
 
 <p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
 
-<p>While you will get a <code>404 Not Found</code> error because we haven&#8217;t added any
+<p>While you will get a <code>404 Not Found</code> error because we haven’t added any
 content to our web site yet, the important part is that <code>Apache Server
 at 33.33.33.10 Port 80</code> sent the response:</p>
 
 <p><img src="/images/apachewebserver.png" alt="Apache Server Response" /></p>
 
 <p>Wait a second, though.  You never downloaded the <code>apache2</code> cookbook!
-That&#8217;s the magic of the Berkshelf Vagrant plugin you installed earlier.  The
+That’s the magic of the Berkshelf Vagrant plugin you installed earlier.  The
 Berkshelf Vagrant plugin will make sure that any changes you make to your
-cookbook and all of your cookbook&#8217;s dependencies are made available to your
+cookbook and all of your cookbook’s dependencies are made available to your
 virtual machine.  Berkshelf automatically loads all your cookbook dependencies
 much like Bundler automatically loads all your gem dependencies.</p>
 
@@ -700,108 +693,106 @@ in <code>~/.berkshelf/cookbooks</code></p>
 on your local disk.  This location can be altered by setting the environment
 variable <code>BERKSHELF_PATH</code>.</p>
 
-<h1>Iteration #4 - Add Content</h1>
-
-<p>Let&#8217;s add some content to make that 404 go away.  Edit
+<h1 id="iteration-4---add-content">Iteration #4 - Add Content</h1>
+<p>Let’s add some content to make that 404 go away.  Edit
 <code>myface/recipes/default.rb</code> as follows:</p>
 
-<figure class='code'><figcaption><span>myface/recipes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
-</span><span class='line'><span class="c1"># Recipe:: default</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
-</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># disable default site</span>
-</span><span class='line'><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">enable</span> <span class="kp">false</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># create apache config</span>
-</span><span class='line'><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
-</span><span class='line'>  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># create document root</span>
-</span><span class='line'><span class="n">directory</span> <span class="s2">&quot;/srv/apache/myface&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">action</span> <span class="ss">:create</span>
-</span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># write siteX</span>
-</span><span class='line'><span class="n">template</span> <span class="s2">&quot;/srv/apache/myface/index.html&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">source</span> <span class="s2">&quot;index.html.erb&quot;</span>
-</span><span class='line'>  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span> <span class="c1"># forget me to create debugging exercise</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># enable myface</span>
-</span><span class='line'><span class="n">apache_site</span> <span class="s2">&quot;myface.conf&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">enable</span> <span class="kp">true</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s2">&quot;/srv/apache/myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write siteX</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;/srv/apache/myface/index.html&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;index.html.erb&quot;</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span> <span class="c1"># forget me to create debugging exercise</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p>If you&#8217;re familiar with Chef and configuring a web app via apache2, nothing
+<p>If you’re familiar with Chef and configuring a web app via apache2, nothing
 here should be too surprising.  But if not, spend some time reading up on
 the resource references at <a href="http://docs.opscode.com">http://docs.opscode.com</a></p>
 
@@ -812,35 +803,33 @@ Ruby templating system.  Create a new template file called
 file <code>.../sites-available/myface.conf</code> on our test virtual machine
 (refer to <code>myface/recipes/default.rb</code> above):</p>
 
-<figure class='code'><figcaption><span>myface/templates/default/apache2.conf.erb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Managed by Chef for &lt;%= node[:hostname] %&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="no">Alias</span> <span class="o">/</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="no">Directory</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span> <span class="o">&gt;</span>
-</span><span class='line'>  <span class="no">Options</span> <span class="no">FollowSymLinks</span> <span class="o">+</span><span class="no">Indexes</span>
-</span><span class='line'>  <span class="no">Allow</span> <span class="n">from</span> <span class="no">All</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/Directory&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/templates/default/apache2.conf.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Managed by Chef for &lt;%= node[:hostname] %&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="no">Alias</span> <span class="o">/</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span>
+</span><span class="line">
+</span><span class="line"><span class="o">&lt;</span><span class="no">Directory</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span> <span class="o">&gt;</span>
+</span><span class="line">	<span class="no">Options</span> <span class="no">FollowSymLinks</span> <span class="o">+</span><span class="no">Indexes</span>
+</span><span class="line">	<span class="no">Allow</span> <span class="n">from</span> <span class="no">All</span>
+</span><span class="line"><span class="o">&lt;</span><span class="sr">/Directory&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Also create our web site content as <code>myface/templates/default/index.html.erb</code>.
-While it doesn&#8217;t take advantage of ERB templating yet, it will in further
+While it doesn’t take advantage of ERB templating yet, it will in further
 iterations.</p>
 
-<figure class='code'><figcaption><span>myface/templates/default/index.html.erb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Welcome</span> <span class="n">to</span> <span class="no">MyFace</span><span class="o">!</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/templates/default/index.html.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Welcome</span> <span class="n">to</span> <span class="no">MyFace</span><span class="o">!</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>After you have created these three files, run <code>vagrant provision</code> to deploy
 your changes:</p>
@@ -876,15 +865,152 @@ myface web site again:</p>
 
 <p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
 
-<p>You&#8217;ll see some lovely content!</p>
+<p>You’ll see some lovely content!</p>
 
 <p><img src="/images/welcometomyface.png" alt="Welcome to MyFace" /></p>
 
-<h1>More to come!</h1>
+<h1 id="iteration-5---refactoring-webserver">Iteration #5 - Refactoring webserver</h1>
+<p><code>myface/recipes/default.rb</code> is getting rather large and we’ve got a lot more
+to add to our cookbook.  Let’s go through another refactoring pass.</p>
 
-<p>This is just part one of a multi-part series.  So far you&#8217;ve gone through
+<p>Let’s move all the webserver-related resources to their own file
+<code>myface/recipes/webserver.rb</code>.  Rename <code>myface/recipes/default.rb</code> to
+<code>myface/recipes/webserver.rb</code>.</p>
+
+<p>Now <code>myface/recipes/webserver.rb</code> should look like this: </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/webserver.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: webserver</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s2">&quot;/srv/apache/myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write siteX</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;/srv/apache/myface/index.html&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;index.html.erb&quot;</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Create a new <code>myface/recipes/default.rb</code> file which references <code>webserver.rb</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;myface&quot;</span><span class="ss">:webserver</span><span class="s2">&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Converge your node again to make sure there are no syntax errors:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<p>Visiting <a href="http://33.33.33.10">http://33.33.33.10</a> should produce the same result as before as you
+have made no net changes, just shuffled things around a bit.</p>
+
+<p>Now, let’s move some values from the webserver cookbook to attributes.</p>
+
+<h1 id="more-to-come">More to come!</h1>
+<p>This is just part one of a multi-part series.  So far you’ve gone through
 several short iteration loops as you evolve the myface cookbook.  In subsequent
-installments, we&#8217;ll go through more iterations, resulting in the final
+installments, we’ll go through more iterations, resulting in the final
 end product: <a href="https://github.com/reset/myface-cookbook">https://github.com/reset/myface-cookbook</a></p>
 </div>
 
@@ -949,6 +1075,10 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Use Opscode Chef Omnibus Ruby for writing cookbooks</a>
       </li>
     
@@ -962,10 +1092,6 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
     
       <li class="post">
         <a href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
       </li>
     
   </ul>

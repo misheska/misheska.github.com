@@ -8,12 +8,6 @@
     </url>
     <url>
         <loc>
-            http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/
-        </loc>
-        <lastmod>2013-03-31T21:33:51-07:00</lastmod>
-    </url>
-    <url>
-        <loc>
             http://misheska.com/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/
         </loc>
         <lastmod>2013-03-23T12:56:12-07:00</lastmod>
@@ -28,7 +22,7 @@
         <loc>
             http://misheska.com/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/
         </loc>
-        <lastmod>2013-04-14T02:40:07-07:00</lastmod>
+        <lastmod>2013-04-14T20:08:00-07:00</lastmod>
     </url>
     <url>
         <loc>
@@ -37,8 +31,14 @@
         <lastmod>2013-04-14T02:00:53-07:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/
+        </loc>
+        <lastmod>2013-06-15T23:53:35-07:00</lastmod>
+    </url>
+    <url>
         <loc>http://misheska.com/blog/archives/</loc>
-        <lastmod>2013-04-14T02:40:07-07:00</lastmod>
+        <lastmod>2013-06-15T23:53:35-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/contact/</loc>
@@ -46,7 +46,7 @@
     </url>
     <url>
         <loc>http://misheska.com/</loc>
-        <lastmod>2013-04-14T02:40:07-07:00</lastmod>
+        <lastmod>2013-06-15T23:53:35-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/robots.txt</loc>

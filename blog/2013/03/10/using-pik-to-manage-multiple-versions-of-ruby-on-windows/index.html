@@ -108,8 +108,7 @@ versions. pik is a third-party tool that can be used to switch &hellip;">
 versions.  <code>pik</code> is a third-party tool that can be used to switch
 between multiple versions of the Ruby interpreter on Windows.</p>
 
-<h1>Install Ruby</h1>
-
+<h1 id="install-ruby">Install Ruby</h1>
 <p>Install at least one Ruby interpreter environment using the RubyInstaller
 from <a href="http://rubyinstaller.org">http://rubyinstaller.org</a>.  While pik can
 install some versions of Ruby, the versions of Ruby it knows to install is
@@ -117,7 +116,7 @@ quite limited, and it is just much easier to use RubyInstaller for Windows
 to install them.</p>
 
 <p>The choice of Ruby environments to install is up to you.  I have the latest
-version of 1.9.3 installed as my main development environment, and Ruby 2.0.0
+version of 1.9.3 installed as my main development environment, and Ruby 2.0.0 
 to play around with the next generation of the language.  When you install
 Ruby, do not add the Ruby executables to your PATH or associate .rb/.rbw
 files with the Ruby installation (the default choice) - <code>pik</code> will
@@ -125,8 +124,7 @@ manage this setting:</p>
 
 <p><img src="/images/rubyinstaller.png" alt="Ruby Installer" /></p>
 
-<h1>Installing pik</h1>
-
+<h1 id="installing-pik">Installing pik</h1>
 <p>Download the latest .MSI installer from <a href="https://github.com/vertiginous/pik/downloads">pik downloads on github</a>
 (as of this writing <a href="https://github.com/downloads/vertiginous/pik/pik-0.3.0.pre.msi">0.3.0</a>) and run the Pik Setup Wizard - the default options are fine:</p>
 
@@ -140,8 +138,7 @@ pik 0.3.0.pre on Microsoft Windows [Version 6.1.7601]
 by Gordon Thiesfeld (gthiesfeld@gmail.com)
 </code></pre>
 
-<h1>Registering Ruby environments with pik</h1>
-
+<h1 id="registering-ruby-environments-with-pik">Registering Ruby environments with pik</h1>
 <p>Use the <code>pik add</code> command to register your installed ruby
 environments with pik.  For example, I have Ruby 1.8.7, 1.9.3, and 2.0.0
 installed on my Windows development box, so I typed the following in a
@@ -169,8 +166,7 @@ registered with pik:</p>
    ruby-2.0.0-p0
 </code></pre>
 
-<h1>Set a default Ruby</h1>
-
+<h1 id="set-a-default-ruby">Set a default Ruby</h1>
 <p>The <code>pik use</code> command will allow you to switch between your
 registered ruby interpreters:</p>
 
@@ -201,8 +197,8 @@ default ruby interpreter) or add one particular Ruby interpreter to your
 user or system PATH environment variable (via <code>Control Panel -&gt; System
 -&gt; Advanced -&gt; Environment Variables….</code>):</p>
 
-<p><img class="left" src="/images/environment1.png" width="350" height="394" title="'Environment control panel'" >
-<img class="right" src="/images/environment2.png" width="350" height="394" title="'User PATH'" ></p>
+<p><img class="left" src="/images/environment1.png" width="350" height="394" title="'Environment control panel'" />
+<img class="right" src="/images/environment2.png" width="350" height="394" title="'User PATH'" /></p>
 </div>
 
 
@@ -266,6 +262,10 @@ user or system PATH environment variable (via <code>Control Panel -&gt; System
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Use Opscode Chef Omnibus Ruby for writing cookbooks</a>
       </li>
     
@@ -279,10 +279,6 @@ user or system PATH environment variable (via <code>Control Panel -&gt; System
     
       <li class="post">
         <a href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
       </li>
     
   </ul>

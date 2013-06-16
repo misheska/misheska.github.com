@@ -9,8 +9,7 @@
   <meta name="author" content="Mischa Taylor">
 
   
-  <meta name="description" content="If your only use of Ruby is because you want to write cookbooks for Opscode
-Chef, rather than going through the bother of setting up a full Ruby &hellip;">
+  <meta name="description" content="Mac OS X Install Rbenv and Ruby 1.9.x - Mac OS X Install Bundler - Mac OS X Install Ruby 2.0.0 - Mac OS X Upgrade Rbenv - Mac OS X Remove Rbenv - &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -84,6 +83,365 @@ Chef, rather than going through the bother of setting up a full Ruby &hellip;">
       
   <header>
     
+      <h1 class="entry-title"><a href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to Manage Multiple Versions of Ruby</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-15T15:53:00-07:00" pubdate data-updated="true">Jun 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#mac-os-x">Mac OS X</a>    <ul>
+      <li><a href="#install-rbenv-and-ruby-19x---mac-os-x">Install Rbenv and Ruby 1.9.x - Mac OS X</a></li>
+      <li><a href="#install-bundler---mac-os-x">Install Bundler - Mac OS X</a></li>
+      <li><a href="#install-ruby-200---mac-os-x">Install Ruby 2.0.0 - Mac OS X</a></li>
+      <li><a href="#upgrade-rbenv---mac-os-x">Upgrade Rbenv - Mac OS X</a></li>
+      <li><a href="#remove-rbenv---mac-os-x">Remove Rbenv - Mac OS X</a></li>
+    </ul>
+  </li>
+  <li><a href="#linux">Linux</a>    <ul>
+      <li><a href="#install-rbenv-and-ruby-19x---linux">Install Rbenv and Ruby 1.9.x - Linux</a></li>
+      <li><a href="#install-bundler---linux">Install Bundler - Linux</a></li>
+      <li><a href="#install-ruby-200---linux">Install Ruby 2.0.0 - Linux</a></li>
+      <li><a href="#upgrade-rbenv---linux">Upgrade Rbenv - Linux</a></li>
+      <li><a href="#remove-rbenv---linux">Remove Rbenv - Linux</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Out of the box, Ruby does not provide a mechanism to support multiple
+installed versions.  Compounding this issue, the default system-installed
+version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
+For example, even in the latest version of Mac OS X Mountain Lion, the
+system-wide version of Ruby is over five years old (ruby 1.8.7).  Most
+developers prefer to use a newer version of Ruby installed in their home
+directory and to leave the default systemwide version of Ruby untouched.</p>
+
+<p><a href="https://github.com/sstephenson/rbenv/">Rbenv</a> makes managing multiple
+versions of Ruby easy.  It’s a great way to work on current development
+projects using Ruby 1.9.x and be able to switch to Ruby 2.0.x for new
+work.  Rbenv is a lightweight alternative to
+<a href="http://rvm.io">Ruby Version Manager (RVM)</a>.  Rbenv does not include
+any mechanism to install Ruby or manage gems, like with RVM.</p>
+
+<p>Rbenv is supported on Linux and Mac OS X.  Rbenv doesn’t work on Windows.
+For Windows, <a href="https://github.com/vertiginous/pik">Pik</a> is an Rbenv alternative.</p>
+
+<p>NOTE: Rbenv is incompatible with RVM because RVM overrides the
+<code>gem</code> command with a function.  If you want to switch to Rbenv,
+make sure you uninstall RVM first.  Run the following commands to uninstall
+RVM:</p>
+
+<pre><code>$ rvm implode
+$ gem uninstall rvm
+</code></pre>
+
+<p>Then remove/comment out the RVM loader line in <code>.bash_profile</code>
+and/or <code>.bashrc</code></p>
+
+<h1 id="mac-os-x">Mac OS X</h1>
+
+<h2 id="install-rbenv-and-ruby-19x---mac-os-x">Install Rbenv and Ruby 1.9.x - Mac OS X</h2>
+<p>First you’ll need to install a C compiler to build Ruby from source.  Just
+download and install the latest version of Xcode from the App Store, if you
+don’t have it installed already.  Also make sure you install the <em>Command Line
+Tools</em> by choosing the menu item <code>Xcode -&gt; Preferences...</code> and click
+on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
+Command Line Tools.
+<img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
+
+<p>Next, you’ll need to install the Homebrew package manager to get all the
+dependencies needed to compile Ruby from source.  While you could manage
+these dependencies by hand, using a package manager is a better idea, as
+package managers know how to uninstall what they install.</p>
+
+<p>Run the following command to install Homebrew:</p>
+
+<pre><code>$ ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+</code></pre>
+
+<p>Run <code>brew doctor</code> and address any issues it discovers.  When
+all is well, you should see:</p>
+
+<pre><code>$ brew doctor
+Your system is raring to brew.
+</code></pre>
+
+<p>Next, install the additional dependencies to compile Ruby from source:</p>
+
+<pre><code># For update-system
+brew update
+brew tap homebrew/dupes
+# For ruby
+brew install apple-gcc42
+</code></pre>
+
+<p>And now install <code>rbenv</code> and the <code>ruby-build</code> plugin:</p>
+
+<pre><code>brew update
+brew install rbenv
+brew install ruby-build
+</code></pre>
+
+<p>Add <code>rbenv init</code> to your shell to enable shims and autocompletion:</p>
+
+<pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bash_profile
+$ source ~/.bash_profile
+</code></pre>
+
+<p>Restart shell as a login shell so that the PATH changes take effect:</p>
+
+<pre><code>$ exec $SHELL -l
+</code></pre>
+
+<p>Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p429)</p>
+
+<pre><code>$ rbenv install 1.9.3-p429
+</code></pre>
+
+<p>Rebuild the shim executable</p>
+
+<pre><code>$ rbenv rehash
+</code></pre>
+
+<p>You’ll need to run <code>rbenv rehash</code> every time you install a new version of Ruby
+or install a new gem.</p>
+
+<p>Set the latest version of ruby to be the default version of ruby</p>
+
+<pre><code>$ rbenv global 1.9.3-p429
+</code></pre>
+
+<p>Verify the ruby install.  If everything was installed correctly, the <code>ruby -v</code>
+command should report that version 1.9.3p429 is installed.</p>
+
+<pre><code>$ ruby -v
+ruby 1.9.3p429 (2013-05-15 revision 40747) [x86_64-darwin12.4.0]
+</code></pre>
+
+<h2 id="install-bundler---mac-os-x">Install Bundler - Mac OS X</h2>
+<p>You’ll need to use <a href="http://gembundler.com/">Bundler</a> to manage gems.  Installing
+a gem is also a good way to ensure that you’ve installed most of the Ruby
+prerequisites.</p>
+
+<p>First, make sue you update to the latest version of Rubygems:</p>
+
+<pre><code>$ gem update --system
+</code></pre>
+
+<p>Then install the <code>bundler</code> gem.  If the <code>gem install</code> command reports
+<code>Successfully installed</code> you’re good to go:</p>
+
+<pre><code>$ gem install bundler
+Successfully installed bundler-1.3.5
+Parsing documentation for bundler-1.3.5
+1 gem installed
+$ rbenv rehash
+</code></pre>
+
+<h2 id="install-ruby-200---mac-os-x">Install Ruby 2.0.0 - Mac OS X</h2>
+<p>As of this writing, Ruby 2.0.0-p195 is the latest version of Ruby 2.0.0.
+Use <code>rbenv install --list</code> to print out the available versions.  Currently
+there is an <a href="https://github.com/sstephenson/ruby-build/issues/305">issue installing Ruby 2.0.0</a>
+with the OpenSSL that ruby-build downloads, so we have to set 
+<code>RUBY_CONFIGURE_OPTS</code> when calling <code>rbenv install</code> as a workaround:</p>
+
+<pre><code>$ brew install openssl
+$ CONFIGURE_OPTS="--with-out-ext=tk,tk/* --with-openssl-dir=`brew --prefix openssl`" RUBY_CONFIGURE_OPTS="--with-openssl-dir=`brew --prefix openssl`" rbenv install 2.0.0-p195
+</code></pre>
+
+<p>To verify the install:</p>
+
+<pre><code>$ rbenv local 2.0.0-p195
+$ ruby -v
+ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-darwin12.4.0]
+</code></pre>
+
+<p>If you want to make Ruby 2.0.0 the global default version of ruby:</p>
+
+<pre><code>$ rbenv global 2.0.0-p195
+</code></pre>
+
+<h2 id="upgrade-rbenv---mac-os-x">Upgrade Rbenv - Mac OS X</h2>
+<p>To upgrade rbenv via homebrew:</p>
+
+<pre><code>$ brew update
+$ brew upgrade rbenv
+$ brew upgrade ruby-build
+</code></pre>
+
+<h2 id="remove-rbenv---mac-os-x">Remove Rbenv - Mac OS X</h2>
+<p>Uninstall the packages you installed via homebrew:</p>
+
+<pre><code>brew uninstall rbenv
+brew uninstall ruby-build
+</code></pre>
+
+<p>Remove the following directory:</p>
+
+<pre><code>rm -rf $HOME/.rbenv
+</code></pre>
+
+<p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
+
+<h1 id="linux">Linux</h1>
+
+<h2 id="install-rbenv-and-ruby-19x---linux">Install Rbenv and Ruby 1.9.x - Linux</h2>
+<p>Make sure the prerequisite packages are installed.</p>
+
+<p>Ubuntu prerequisites:</p>
+
+<pre><code>$ sudo apt-get update
+$ sudo apt-get install -y build-essential git
+$ sudo apt-get install -y libxml2-dev libxslt-dev libssl-dev
+</code></pre>
+
+<p>RHEL/CentOS prerequisites:</p>
+
+<pre><code>$ sudo yum update
+$ sudo yum install -y git
+$ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
+$ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
+$ sudo yum install -y autoconf automake libtool bison
+$ sudo yum install -y libxml2-devel libxslt-devel 
+</code></pre>
+
+<p>Download the rbenv source distribution to
+$HOME/.rbenv:</p>
+
+<pre><code>$ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv
+</code></pre>
+
+<p>Add $HOME/.rbenv/bin to your $PATH</p>
+
+<pre><code>$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; $HOME/.bashrc
+</code></pre>
+
+<p>Add <code>rbenv init</code> to your shell to enable shims and autocompletion:</p>
+
+<pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bashrc
+</code></pre>
+
+<p>Restart shell as a login shell so that the PATH changes take effect:</p>
+
+<pre><code>$ exec $SHELL -l
+</code></pre>
+
+<p>Install the <code>ruby-build</code> plugin, which provides an
+<code>rbenv install</code> command to simplify the process of compiling
+and install new Ruby versions:</p>
+
+<pre><code>$ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
+</code></pre>
+
+<p>Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p429)</p>
+
+<pre><code>$ rbenv install 1.9.3-p429
+</code></pre>
+
+<p>Rebuild the shim executable</p>
+
+<pre><code>$ rbenv rehash
+</code></pre>
+
+<p>You’ll need to run <code>rbenv rehash</code> every time you install a new
+version of Ruby or install a new gem.</p>
+
+<p>Set the latest version of ruby to be the default version of ruby</p>
+
+<pre><code>$ rbenv global 1.9.3-p429
+</code></pre>
+
+<p>Verify the ruby install.  If everything was installed correctly, the
+<code>ruby -v</code> command should report that version 1.9.3p429 is installed.</p>
+
+<pre><code>$ ruby -v
+ruby 1.9.3p429 (2013-05-15 revision 40747) [x86_64-linux]
+</code></pre>
+
+<h2 id="install-bundler---linux">Install Bundler - Linux</h2>
+
+<p>You’ll need to use <a href="http://gembundler.com/">Bundler</a> to manage gems.
+Installing a gem is also a good way to ensure that you’ve installed most
+of the Ruby prerequisites.</p>
+
+<p>First, make sure you update to the latest version of Rubygems:</p>
+
+<pre><code>$ gem update --system
+</code></pre>
+
+<p>Then install the <code>bundler</code> gem.  If the <code>gem install</code> command reports
+<code>Successfully installed</code> you’re good to go:</p>
+
+<pre><code>$ gem install bundler
+Successfully installed bundler-1.3.5
+Parsing documentation for bundler-1.3.5
+1 gem installed
+$ rbenv rehash
+</code></pre>
+
+<h2 id="install-ruby-200---linux">Install Ruby 2.0.0 - Linux</h2>
+<p>As of this writing, Ruby 2.0.0-p195 is the latest version of Ruby 2.0.0.
+Use <code>rbenv install --list</code> to print out the available versions.  To install:</p>
+
+<pre><code>$ rbenv install 2.0.0-p195
+</code></pre>
+
+<p>To verify the install:</p>
+
+<pre><code>$ rbenv local 2.0.0-p195
+$ ruby -v
+ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-linux] 
+</code></pre>
+
+<p>If you want to make Ruby 2.0.0 the global default version of ruby:</p>
+
+<pre><code>$ rbenv global 2.0.0-p195
+</code></pre>
+
+<h2 id="upgrade-rbenv---linux">Upgrade Rbenv - Linux</h2>
+<p>Since Rbenv is a Git repository, upgrading is just a matter of refreshing the
+source:</p>
+
+<pre><code>$ cd $HOME/.rbenv
+$ git pull
+</code></pre>
+
+<h2 id="remove-rbenv---linux">Remove Rbenv - Linux</h2>
+<p>To uninstall/remove Rbenv, remove the following directory:</p>
+
+<pre><code>$ rm -rf $HOME/.rbenv
+</code></pre>
+
+<p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Use Opscode Chef Omnibus Ruby for Writing Cookbooks</a></h1>
     
     
@@ -113,18 +471,17 @@ development environment via <a href="http://misheska.com/blog/2013/02/24/using-r
 you can just reuse the Ruby 1.9.x environment that is bundled with the
 Opscode Omnibus Chef installer.</p>
 
-<p>In this post, I&#8217;ll cover how to configure the Ruby 1.9.x interpreter bundled
+<p>In this post, I’ll cover how to configure the Ruby 1.9.x interpreter bundled
 with the Opscode Omnibus Chef installer on Mac OS X, Linux and Windows so
 it can be used for writing cookbooks.</p>
 
-<h1>How to set up Omnibus Chef Ruby on Mac OS X</h1>
-
+<h1 id="how-to-set-up-omnibus-chef-ruby-on-mac-os-x">How to set up Omnibus Chef Ruby on Mac OS X</h1>
 <p>First install Apple Xcode, which includes a C compiler needed to build the
 tools required for cookbook development from source (like
 <a href="http://misheska.com/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Berkshelf</a> ).
 Download and install the latest version of Xcode from the App Store, if you
-don&#8217;t have it installed already.  Also make sure you install the <em>Command Line
-Tools</em> by choosing the menu item <code>Xcode -> Preferences...</code> and click
+don’t have it installed already.  Also make sure you install the <em>Command Line
+Tools</em> by choosing the menu item <code>Xcode -&gt; Preferences...</code> and click
 on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
 Command Line Tools.
 <img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
@@ -143,14 +500,14 @@ follows:</p>
 the directory <code>/opt/chef/embedded</code>.  You can also use this copy of Ruby
 for your own cookbook development.</p>
 
-<p>WARNING: Don&#8217;t try to mix and match the Chef Client&#8217;s Ruby 1.9.1 together
+<p>WARNING: Don’t try to mix and match the Chef Client’s Ruby 1.9.1 together
 with a RVM/rbenv Ruby development setup.  Choose one or the other.  If your
-Ruby needs go beyond Chef and writing Chef cookbooks, set up a &#8220;real&#8221;
+Ruby needs go beyond Chef and writing Chef cookbooks, set up a “real”
 RVM/rbenv Ruby environment.</p>
 
 <p>Now that you have a Ruby 1.9.1 environment via the Chef Client install, you
 can install any extra gem dependencies needed for writing Chef cookbooks by
-using the <code>/opt/chef/embedded/bin/gem install</code> command.  For example, here&#8217;s
+using the <code>/opt/chef/embedded/bin/gem install</code> command.  For example, here’s
 how to install Berkshelf, a popular cookbook authoring support tool:</p>
 
 <pre><code>$ sudo /opt/chef/embedded/bin/gem install berkshelf
@@ -176,11 +533,10 @@ $ berks -v
 Berkshelf (1.4.0)
 </code></pre>
 
-<p>Don&#8217;t be tempted to add <code>/opt/chef/embedded/bin</code> to your PATH.  You still want
-to keep Opscode&#8217;s Ruby install separate from your main system Ruby install.</p>
+<p>Don’t be tempted to add <code>/opt/chef/embedded/bin</code> to your PATH.  You still want
+to keep Opscode’s Ruby install separate from your main system Ruby install.</p>
 
-<h1>How to set up Omnibus Chef Ruby on Linux</h1>
-
+<h1 id="how-to-set-up-omnibus-chef-ruby-on-linux">How to set up Omnibus Chef Ruby on Linux</h1>
 <p>First, install the gcc C compiler so you can build any tools required for
 cookbook development from source (like Berkshelf):</p>
 
@@ -209,14 +565,14 @@ follows:</p>
 the directory <code>/opt/chef/embedded</code>.  You can also use this copy of Ruby
 for your own cookbook development.</p>
 
-<p>WARNING: Don&#8217;t try to mix and match the Chef Client&#8217;s Ruby 1.9.1 together
+<p>WARNING: Don’t try to mix and match the Chef Client’s Ruby 1.9.1 together
 with a RVM/rbenv Ruby development setup.  Choose one or the other.  If your
-Ruby needs go beyond Chef and writing Chef cookbooks, set up a &#8220;real&#8221;
+Ruby needs go beyond Chef and writing Chef cookbooks, set up a “real”
 RVM/rbenv Ruby environment.</p>
 
 <p>Now that you have a Ruby 1.9.1 environment via the Chef Client install, you
 can install any extra gem dependencies needed for writing Chef cookbooks by
-using the <code>/opt/chef/embedded/bin/gem install</code> command.  For example, here&#8217;s
+using the <code>/opt/chef/embedded/bin/gem install</code> command.  For example, here’s
 how to install Berkshelf, a popular cookbook authoring support tool:</p>
 
 <pre><code>$ sudo /opt/chef/embedded/bin/gem install berkshelf
@@ -239,11 +595,10 @@ $ berks -v
 Berkshelf (1.4.0)
 </code></pre>
 
-<p>Don&#8217;t be tempted to add <code>/opt/chef/embedded/bin</code> to your PATH.  You still want
-to keep Opscode&#8217;s Ruby install separate from your main system Ruby install.</p>
+<p>Don’t be tempted to add <code>/opt/chef/embedded/bin</code> to your PATH.  You still want
+to keep Opscode’s Ruby install separate from your main system Ruby install.</p>
 
-<h1>How to set up Omnibus Chef Ruby on Windows</h1>
-
+<h1 id="how-to-set-up-omnibus-chef-ruby-on-windows">How to set up Omnibus Chef Ruby on Windows</h1>
 <p>In a web browser, go to the <a href="http://www.opscode.com/chef/install">http://www.opscode.com/chef/install</a> page to
 display the instructions for installing the Chef Client via the Opscode
 Omnibus Chef installer for your distribution of Linux.</p>
@@ -256,15 +611,15 @@ Run the install, choosing the default options.</p>
 the directory <code>C:\opscode\chef\embedded</code>.  You can also use this copy of Ruby
 for your own cookbook development.</p>
 
-<p>WARNING: Don&#8217;t try to mix and match the Chef Client&#8217;s Ruby 1.9.1 together
+<p>WARNING: Don’t try to mix and match the Chef Client’s Ruby 1.9.1 together
 with a RVM/rbenv Ruby development setup.  Choose one or the other.  If your
-Ruby needs go beyond Chef and writing Chef cookbooks, set up a &#8220;real&#8221;
+Ruby needs go beyond Chef and writing Chef cookbooks, set up a “real”
 RVM/rbenv Ruby environment.</p>
 
 <p>Now that you have a Ruby 1.9.1 environment via the Chef Client install, you
 can install any extra gem dependencies needed for writing Chef cookbooks by
 using the <code>c:\opscode\chef\embedded\bin install</code> command.  For example,
-here&#8217;s how to install Berkshelf, a popular cookbook authoring support tool:</p>
+here’s how to install Berkshelf, a popular cookbook authoring support tool:</p>
 
 <pre><code>&gt; c:\opscode\chef\embedded\bin\gem install berkshelf
 Fetching: timers=1.1.0.gem (100%)
@@ -286,6 +641,7 @@ and then you can run Berkshelf:</p>
 <pre><code>&gt; berks -v
 Berkshelf (1.4.0)
 </code></pre>
+
 </div>
   
   
@@ -321,48 +677,50 @@ Berkshelf (1.4.0)
   </header>
 
 
-  <div class="entry-content"><p>Jamie Winsor hasn&#8217;t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
+  <div class="entry-content"><p>Jamie Winsor hasn’t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
 to match <a href="https://github.com/RiotGames/berkshelf/issues/416">recent changes related to Vagrant 1.1</a> and <a href="http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/">Chef 11</a>
 This post is an attempt to update these instructions, walking through his
-and Sean O&#8217;Meara&#8217;s example app - <a href="https://github.com/reset/myface-cookbook">MyFace</a>.
+and Sean O’Meara’s example app - <a href="https://github.com/reset/myface-cookbook">MyFace</a>.
 For more information on <a href="http://berkshelf.com/">Berkshelf</a>, check out his recent
 <a href="https://my.adobeconnect.com/_a295153/p59b87of2dp/?launcher=false&amp;fcsContent=true&amp;pbMode=normal">talk</a>
 and <a href="http://www.slideshare.net/resetexistence/the-berkshelf-way">slides</a>
 from the March 14, 2013 Bay Area Chef meetup.</p>
 
-<h1>Getting Started</h1>
-
+<h1 id="getting-started">Getting Started</h1>
 <p>You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
 To set up your cookbook-writing environment, make sure you have the following
 installed:</p>
 
 <ul>
-<li><p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a></p></li>
-<li><p><a href="http://vagrantup.com">Install Vagrant 1.1.x</a></p></li>
-<li><p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p></li>
-<li><p>Install Berkshelf</p></li>
+  <li>
+    <p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a></p>
+  </li>
+  <li>
+    <p><a href="http://vagrantup.com">Install Vagrant 1.1.x</a></p>
+  </li>
+  <li>
+    <p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p>
+  </li>
+  <li>
+    <p>Install Berkshelf</p>
+  </li>
 </ul>
 
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ gem install berkshelf</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
-<li>Install the Berkshelf Vagrant Plugin (1.0.3 or higher)</li>
+  <li>Install the Berkshelf Vagrant Plugin (1.0.3 or higher)</li>
 </ul>
 
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install berkshelf-vagrant
+</span><span class="line">Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
+</span><span class="line">Installed the plugin 'berkshelf-vagrant (1.1.10)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>$ vagrant plugin install berkshelf-vagrant
-</span><span class='line'>Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
-</span><span class='line'>Installed the plugin 'berkshelf-vagrant (1.1.10)'!</span></code></pre></td></tr></table></div></figure>
-
-
-<h1>Create the MyFace Application Cookbook</h1>
-
+<h1 id="create-the-myface-application-cookbook">Create the MyFace Application Cookbook</h1>
 <p>Key to the Berkshelf way is the use of the Application Cookbook Pattern.  An
 application cookbook contains the list of recipes needed to build your
 application or service.  As an example, this blog post will walk you through
@@ -400,63 +758,61 @@ necessary Gem dependencies:</p>
 $ bundle install
 </code></pre>
 
-<h1>Prepare a virtual machine for testing</h1>
-
-<p>It&#8217;s a good idea to develop your cookbook incrementally, testing
+<h1 id="prepare-a-virtual-machine-for-testing">Prepare a virtual machine for testing</h1>
+<p>It’s a good idea to develop your cookbook incrementally, testing 
 in short iterations.  Berkshelf integrates with Vagrant to deploy
-your cookbook changes to a virtual machine for testing.</p>
+your cookbook changes to a virtual machine for testing.  </p>
 
 <p>Edit the Vagrantfile generated by the <code>berks cookbook</code> command to use
 a VirtualBox template that has Chef 11 installed.  (By default Berkshelf points
 at an image with Chef 10).  Your Vagrantfile should look like this:</p>
 
-<figure class='code'><figcaption><span>myface/Vagrantfile  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;opscode_centos-6.3_chef-11.2.0&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.3_chef-11.2.0.box&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">max_tries</span> <span class="o">=</span> <span class="mi">40</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">120</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">berkshelf</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kp">true</span>
-</span><span class='line'>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
-</span><span class='line'>    <span class="n">chef</span><span class="o">.</span><span class="n">json</span> <span class="o">=</span> <span class="p">{</span>
-</span><span class='line'>      <span class="ss">:mysql</span> <span class="o">=&gt;</span> <span class="p">{</span>
-</span><span class='line'>        <span class="ss">:server_root_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;rootpass&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:server_debian_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;debpass&#39;</span><span class="p">,</span>
-</span><span class='line'>        <span class="ss">:server_repl_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;replpass&#39;</span>
-</span><span class='line'>      <span class="p">}</span>
-</span><span class='line'>    <span class="p">}</span>
-</span><span class='line'>    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
-</span><span class='line'>      <span class="s2">&quot;recipe[myface::defult]&quot;</span>
-</span><span class='line'>    <span class="o">]</span>
-</span><span class='line'>  <span class="k">end</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Vagrantfile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;opscode_centos-6.3_chef-11.2.0&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.3_chef-11.2.0.box&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">max_tries</span> <span class="o">=</span> <span class="mi">40</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">120</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">berkshelf</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class="line">    <span class="n">chef</span><span class="o">.</span><span class="n">json</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">      <span class="ss">:mysql</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">        <span class="ss">:server_root_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;rootpass&#39;</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:server_debian_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;debpass&#39;</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:server_repl_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;replpass&#39;</span>
+</span><span class="line">      <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class="line">      <span class="s2">&quot;recipe[myface::defult]&quot;</span>
+</span><span class="line">    <span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Run <code>vagrant up</code> to start up the virtual machine and to test the stub MyFace
 cookbook you just created:</p>
@@ -524,10 +880,9 @@ Are you sure you want to destroy the 'default' VM? [y/N] y
 <p><strong>NOTE:</strong> If you just ran <code>vagrant destroy</code> make sure you run <code>vagrant up</code>
 before proceeding to the next section.</p>
 
-<h1>Iteration #1: Create an application user</h1>
-
-<p>For our first short iteration, let&#8217;s create a <code>myface</code> user under which
-we&#8217;ll run our application.  One best practice is to avoid running
+<h1 id="iteration-1-create-an-application-user">Iteration #1: Create an application user</h1>
+<p>For our first short iteration, let’s create a <code>myface</code> user under which
+we’ll run our application.  One best practice is to avoid running
 applications as root and create a user/group under which the application runs
 instead who has just enough rights that the app needs.</p>
 
@@ -535,41 +890,40 @@ instead who has just enough rights that the app needs.</p>
 and <a href="http://docs.opscode.com/resource_user.html">User Resource</a> for myface,
 so it looks like the following:</p>
 
-<figure class='code'><figcaption><span>myface/recipes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
-</span><span class='line'><span class="c1"># Recipe:: default</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">group</span> <span class="s2">&quot;myface&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">user</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">group</span> <span class="s2">&quot;myface&quot;</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
-</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="s2">&quot;myface&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="s2">&quot;myface&quot;</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Save <code>receipes/default.rb</code> and re-run <code>vagrant provision</code> to create the
 myface user on your test virtual machine:</p>
@@ -608,7 +962,7 @@ myface:x:497:1001::/home/myface:/bin/bash
 
 <p>We use <code>vagrant ssh -c</code> to run a command on our test virtual machine.  The
 <code>getent</code> command can be used to query all user databases.  In this
-case we&#8217;re looking for <code>myface</code>, and it exists!</p>
+case we’re looking for <code>myface</code>, and it exists!</p>
 
 <p>Because we are using well-defined resources that are completely
 <a href="http://en.wikipedia.org/wiki/Idempotence">idempotent</a>, you should notice
@@ -635,29 +989,27 @@ Running chef-solo...
 [2013-03-25T11:50:04+00:00] INFO: Report handlers complete
 </code></pre>
 
-<h1>Iteration #2 - Refactor the user name and group name into attributes</h1>
-
+<h1 id="iteration-2---refactor-the-user-name-and-group-name-into-attributes">Iteration #2 - Refactor the user name and group name into attributes</h1>
 <p>What if at some point you wanted to change the name of the <code>myface</code> user/group
 you just created to something else?  At the moment, you would need to edit
 <code>myface/recipes/default.rb</code> in three places.</p>
 
-<p>Let&#8217;s create a new file called <code>myface/attributes/default.rb</code> which
+<p>Let’s create a new file called <code>myface/attributes/default.rb</code> which
 initializes Chef <a href="http://docs.opscode.com/essentials_cookbook_attribute_files.html">attributes</a>
 defining the user name and group name under which our application will run so
-that you <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">don&#8217;t repeat yoursef</a>.</p>
+that you <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">don’t repeat yoursef</a>.</p>
 
-<figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;myface&quot;</span>
-</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;myface&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;myface&quot;</span>
+</span><span class="line"><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span> <span class="o">=</span> <span class="s2">&quot;myface&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>In Chef, attributes are a hash of a hash used to override the default settings
 on a node.  The first hash is the cookbook name - in our
-case we&#8217;ve named our cookbook <code>:myface</code>. The second hash is the name of
-our attribute - in this case, we&#8217;re defining two new attributes: <code>:user</code> and
+case we’ve named our cookbook <code>:myface</code>. The second hash is the name of
+our attribute - in this case, we’re defining two new attributes: <code>:user</code> and
 <code>:group</code>.</p>
 
 <p><code>default</code> implies the use of the <a href="http://docs.opscode.com/chef/essentials_node_object.html">node object</a>
@@ -670,49 +1022,48 @@ noce.default[:myface][:user] = "myface"
 
 <p>Also note the use of symbols instead of strings.  It is <a href="http://www.robertsosinski.com/2009/01/11/the-difference-between-ruby-symbols-and-strings/">strongly recommended
 that you use symbols instead of strings</a>
-for hash indexes.</p>
+for hash indexes. </p>
 
-<p>Now that you&#8217;ve created your attribute definitions, edit
-<code>myface/recipes/default.rb</code> and replace all references to the &#8220;myface&#8221; user name
-with <code>node[:myface][:user]</code> and all references to the &#8220;myface&#8221; group with
+<p>Now that you’ve created your attribute definitions, edit
+<code>myface/recipes/default.rb</code> and replace all references to the “myface” user name
+with <code>node[:myface][:user]</code> and all references to the “myface” group with
 <code>node[:myface][:group]</code>.  <code>myface/recipes/default.rb</code> should now look like
 this:</p>
 
-<figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
-</span><span class='line'><span class="c1"># Recipe:: default</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
-</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Re-provision with <code>vagrant provision</code> to see how the refactor went:</p>
 
@@ -736,8 +1087,8 @@ Running chef-solo...
 [2013-03-25T12:56:23+00:00] INFO: Report handlers complete
 </code></pre>
 
-<p>As long as you didn&#8217;t create any syntax errors in your refactoring file edits,
-there should be no net change on the virtual machine test node (as you&#8217;ve only
+<p>As long as you didn’t create any syntax errors in your refactoring file edits,
+there should be no net change on the virtual machine test node (as you’ve only
 just moved some strings into a node attribute).  Running  <code>getent</code> on the
 test virtual machine should also produce the same result:</p>
 
@@ -745,12 +1096,11 @@ test virtual machine should also produce the same result:</p>
 myface:x:497:1001::/home/myface:/bin/bash
 </code></pre>
 
-<h1>Iteration #3 - Install the Apache2 Web Server</h1>
-
+<h1 id="iteration-3---install-the-apache2-web-server">Iteration #3 - Install the Apache2 Web Server</h1>
 <p>Our hot new social networking application, myface, is a web app, so we need
-to install a web server.  Let&#8217;s install the Apache2 web server.</p>
+to install a web server.  Let’s install the Apache2 web server.</p>
 
-<p>Modify <code>myface/recipes/default.rb</code> to include the apache2 cookbook&#8217;s default
+<p>Modify <code>myface/recipes/default.rb</code> to include the apache2 cookbook’s default
 recipe:</p>
 
 <pre><code>include_recipe "apache2"
@@ -758,45 +1108,44 @@ recipe:</p>
 
 <p>The resultant <code>myface/recipes/default.rb</code> file should look like so:</p>
 
-<figure class='code'><figcaption><span>myface/recipes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
-</span><span class='line'><span class="c1"># Recipe:: default</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
-</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Since you are loading Apache2 from another cookbook, you need to configure the
 dependency in your metadata.  Edit <code>myface/metadata.rb</code> and add the <code>apache2</code>
@@ -806,7 +1155,7 @@ dependency at the bottom:</p>
 </code></pre>
 
 <p>This tells Chef that the myface cookbook depends on the apache2 cookbook.
-We&#8217;ve also specified a version constraint using the optimistic operator
+We’ve also specified a version constraint using the optimistic operator
 <code>~&gt;</code> to tell our Chef that we want the latest version of the apache2 cookbook
 that is greater than 1.6.0 but <em>not</em> 1.7.0 or higher.</p>
 
@@ -814,7 +1163,7 @@ that is greater than 1.6.0 but <em>not</em> 1.7.0 or higher.</p>
 <a href="http://semver.org/">Semantic Versioning</a> scheme.  So if you write your
 cookbook to use the latest apache2 1.6.x cookbook, if the apache2 cookbook is
 ever bumped to a 1.7.x version (or 2.x), it has some public API functionality
-that has at least been deprecated.  So you&#8217;ll want to review the changes and
+that has at least been deprecated.  So you’ll want to review the changes and
 test before automatically using an apache2 cookbook version 1.7.x or higher.
 However, automatic use of any new 1.6.x is perfectly fine, because no
 only backwards-compatible bug fixes has been introduced.  Semantic Versioning
@@ -822,27 +1171,26 @@ guarantees there are no changes in the public APIs.</p>
 
 <p>Your <code>myface/metadata.rb</code> should look like this:</p>
 
-<figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">name</span>             <span class="s2">&quot;myface&quot;</span>
-</span><span class='line'><span class="n">maintainer</span>       <span class="s2">&quot;YOUR_NAME&quot;</span>
-</span><span class='line'><span class="n">maintainer_email</span> <span class="s2">&quot;YOUR_EMAIL&quot;</span>
-</span><span class='line'><span class="n">license</span>          <span class="s2">&quot;All rights reserved&quot;</span>
-</span><span class='line'><span class="n">description</span>      <span class="s2">&quot;Installs/Configures myface&quot;</span>
-</span><span class='line'><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
-</span><span class='line'><span class="n">version</span>          <span class="s2">&quot;0.1.0&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">depends</span> <span class="s2">&quot;apache2&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.6.0&quot;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">name</span>             <span class="s2">&quot;myface&quot;</span>
+</span><span class="line"><span class="n">maintainer</span>       <span class="s2">&quot;YOUR_NAME&quot;</span>
+</span><span class="line"><span class="n">maintainer_email</span> <span class="s2">&quot;YOUR_EMAIL&quot;</span>
+</span><span class="line"><span class="n">license</span>          <span class="s2">&quot;All rights reserved&quot;</span>
+</span><span class="line"><span class="n">description</span>      <span class="s2">&quot;Installs/Configures myface&quot;</span>
+</span><span class="line"><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">version</span>          <span class="s2">&quot;0.1.0&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">depends</span> <span class="s2">&quot;apache2&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.6.0&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Now when you re-run <code>vagrant provision</code> it will install apache2 on your
 test virtual machine:</p>
@@ -882,16 +1230,16 @@ created in your Vagrantfile:</p>
 
 <p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
 
-<p>While you will get a <code>404 Not Found</code> error because we haven&#8217;t added any
+<p>While you will get a <code>404 Not Found</code> error because we haven’t added any
 content to our web site yet, the important part is that <code>Apache Server
 at 33.33.33.10 Port 80</code> sent the response:</p>
 
 <p><img src="/images/apachewebserver.png" alt="Apache Server Response" /></p>
 
 <p>Wait a second, though.  You never downloaded the <code>apache2</code> cookbook!
-That&#8217;s the magic of the Berkshelf Vagrant plugin you installed earlier.  The
+That’s the magic of the Berkshelf Vagrant plugin you installed earlier.  The
 Berkshelf Vagrant plugin will make sure that any changes you make to your
-cookbook and all of your cookbook&#8217;s dependencies are made available to your
+cookbook and all of your cookbook’s dependencies are made available to your
 virtual machine.  Berkshelf automatically loads all your cookbook dependencies
 much like Bundler automatically loads all your gem dependencies.</p>
 
@@ -917,108 +1265,106 @@ in <code>~/.berkshelf/cookbooks</code></p>
 on your local disk.  This location can be altered by setting the environment
 variable <code>BERKSHELF_PATH</code>.</p>
 
-<h1>Iteration #4 - Add Content</h1>
-
-<p>Let&#8217;s add some content to make that 404 go away.  Edit
+<h1 id="iteration-4---add-content">Iteration #4 - Add Content</h1>
+<p>Let’s add some content to make that 404 go away.  Edit
 <code>myface/recipes/default.rb</code> as follows:</p>
 
-<figure class='code'><figcaption><span>myface/recipes/default.rb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-<span class='line-number'>31</span>
-<span class='line-number'>32</span>
-<span class='line-number'>33</span>
-<span class='line-number'>34</span>
-<span class='line-number'>35</span>
-<span class='line-number'>36</span>
-<span class='line-number'>37</span>
-<span class='line-number'>38</span>
-<span class='line-number'>39</span>
-<span class='line-number'>40</span>
-<span class='line-number'>41</span>
-<span class='line-number'>42</span>
-<span class='line-number'>43</span>
-<span class='line-number'>44</span>
-<span class='line-number'>45</span>
-<span class='line-number'>46</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
-</span><span class='line'><span class="c1"># Recipe:: default</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
-</span><span class='line'><span class="c1">#</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
-</span><span class='line'>  <span class="nb">system</span> <span class="kp">true</span>
-</span><span class='line'>  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># disable default site</span>
-</span><span class='line'><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">enable</span> <span class="kp">false</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># create apache config</span>
-</span><span class='line'><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
-</span><span class='line'>  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># create document root</span>
-</span><span class='line'><span class="n">directory</span> <span class="s2">&quot;/srv/apache/myface&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">action</span> <span class="ss">:create</span>
-</span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># write siteX</span>
-</span><span class='line'><span class="n">template</span> <span class="s2">&quot;/srv/apache/myface/index.html&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">source</span> <span class="s2">&quot;index.html.erb&quot;</span>
-</span><span class='line'>  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span> <span class="c1"># forget me to create debugging exercise</span>
-</span><span class='line'><span class="k">end</span>
-</span><span class='line'>
-</span><span class='line'><span class="c1"># enable myface</span>
-</span><span class='line'><span class="n">apache_site</span> <span class="s2">&quot;myface.conf&quot;</span> <span class="k">do</span>
-</span><span class='line'>  <span class="n">enable</span> <span class="kp">true</span>
-</span><span class='line'><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s2">&quot;/srv/apache/myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write siteX</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;/srv/apache/myface/index.html&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;index.html.erb&quot;</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span> <span class="c1"># forget me to create debugging exercise</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-
-<p>If you&#8217;re familiar with Chef and configuring a web app via apache2, nothing
+<p>If you’re familiar with Chef and configuring a web app via apache2, nothing
 here should be too surprising.  But if not, spend some time reading up on
 the resource references at <a href="http://docs.opscode.com">http://docs.opscode.com</a></p>
 
@@ -1029,35 +1375,33 @@ Ruby templating system.  Create a new template file called
 file <code>.../sites-available/myface.conf</code> on our test virtual machine
 (refer to <code>myface/recipes/default.rb</code> above):</p>
 
-<figure class='code'><figcaption><span>myface/templates/default/apache2.conf.erb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1"># Managed by Chef for &lt;%= node[:hostname] %&gt;</span>
-</span><span class='line'>
-</span><span class='line'><span class="no">Alias</span> <span class="o">/</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span>
-</span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="no">Directory</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span> <span class="o">&gt;</span>
-</span><span class='line'>  <span class="no">Options</span> <span class="no">FollowSymLinks</span> <span class="o">+</span><span class="no">Indexes</span>
-</span><span class='line'>  <span class="no">Allow</span> <span class="n">from</span> <span class="no">All</span>
-</span><span class='line'><span class="o">&lt;</span><span class="sr">/Directory&gt;</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/templates/default/apache2.conf.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Managed by Chef for &lt;%= node[:hostname] %&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="no">Alias</span> <span class="o">/</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span>
+</span><span class="line">
+</span><span class="line"><span class="o">&lt;</span><span class="no">Directory</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span> <span class="o">&gt;</span>
+</span><span class="line">	<span class="no">Options</span> <span class="no">FollowSymLinks</span> <span class="o">+</span><span class="no">Indexes</span>
+</span><span class="line">	<span class="no">Allow</span> <span class="n">from</span> <span class="no">All</span>
+</span><span class="line"><span class="o">&lt;</span><span class="sr">/Directory&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Also create our web site content as <code>myface/templates/default/index.html.erb</code>.
-While it doesn&#8217;t take advantage of ERB templating yet, it will in further
+While it doesn’t take advantage of ERB templating yet, it will in further
 iterations.</p>
 
-<figure class='code'><figcaption><span>myface/templates/default/index.html.erb  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Welcome</span> <span class="n">to</span> <span class="no">MyFace</span><span class="o">!</span>
-</span></code></pre></td></tr></table></div></figure>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/templates/default/index.html.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Welcome</span> <span class="n">to</span> <span class="no">MyFace</span><span class="o">!</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>After you have created these three files, run <code>vagrant provision</code> to deploy
 your changes:</p>
@@ -1093,15 +1437,152 @@ myface web site again:</p>
 
 <p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
 
-<p>You&#8217;ll see some lovely content!</p>
+<p>You’ll see some lovely content!</p>
 
 <p><img src="/images/welcometomyface.png" alt="Welcome to MyFace" /></p>
 
-<h1>More to come!</h1>
+<h1 id="iteration-5---refactoring-webserver">Iteration #5 - Refactoring webserver</h1>
+<p><code>myface/recipes/default.rb</code> is getting rather large and we’ve got a lot more
+to add to our cookbook.  Let’s go through another refactoring pass.</p>
 
-<p>This is just part one of a multi-part series.  So far you&#8217;ve gone through
+<p>Let’s move all the webserver-related resources to their own file
+<code>myface/recipes/webserver.rb</code>.  Rename <code>myface/recipes/default.rb</code> to
+<code>myface/recipes/webserver.rb</code>.</p>
+
+<p>Now <code>myface/recipes/webserver.rb</code> should look like this: </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/webserver.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: webserver</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s2">&quot;/srv/apache/myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write siteX</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;/srv/apache/myface/index.html&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;index.html.erb&quot;</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Create a new <code>myface/recipes/default.rb</code> file which references <code>webserver.rb</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;myface&quot;</span><span class="ss">:webserver</span><span class="s2">&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Converge your node again to make sure there are no syntax errors:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<p>Visiting <a href="http://33.33.33.10">http://33.33.33.10</a> should produce the same result as before as you
+have made no net changes, just shuffled things around a bit.</p>
+
+<p>Now, let’s move some values from the webserver cookbook to attributes.</p>
+
+<h1 id="more-to-come">More to come!</h1>
+<p>This is just part one of a multi-part series.  So far you’ve gone through
 several short iteration loops as you evolve the myface cookbook.  In subsequent
-installments, we&#8217;ll go through more iterations, resulting in the final
+installments, we’ll go through more iterations, resulting in the final
 end product: <a href="https://github.com/reset/myface-cookbook">https://github.com/reset/myface-cookbook</a></p>
 </div>
   
@@ -1142,8 +1623,7 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
 versions.  <code>pik</code> is a third-party tool that can be used to switch
 between multiple versions of the Ruby interpreter on Windows.</p>
 
-<h1>Install Ruby</h1>
-
+<h1 id="install-ruby">Install Ruby</h1>
 <p>Install at least one Ruby interpreter environment using the RubyInstaller
 from <a href="http://rubyinstaller.org">http://rubyinstaller.org</a>.  While pik can
 install some versions of Ruby, the versions of Ruby it knows to install is
@@ -1151,7 +1631,7 @@ quite limited, and it is just much easier to use RubyInstaller for Windows
 to install them.</p>
 
 <p>The choice of Ruby environments to install is up to you.  I have the latest
-version of 1.9.3 installed as my main development environment, and Ruby 2.0.0
+version of 1.9.3 installed as my main development environment, and Ruby 2.0.0 
 to play around with the next generation of the language.  When you install
 Ruby, do not add the Ruby executables to your PATH or associate .rb/.rbw
 files with the Ruby installation (the default choice) - <code>pik</code> will
@@ -1159,8 +1639,7 @@ manage this setting:</p>
 
 <p><img src="/images/rubyinstaller.png" alt="Ruby Installer" /></p>
 
-<h1>Installing pik</h1>
-
+<h1 id="installing-pik">Installing pik</h1>
 <p>Download the latest .MSI installer from <a href="https://github.com/vertiginous/pik/downloads">pik downloads on github</a>
 (as of this writing <a href="https://github.com/downloads/vertiginous/pik/pik-0.3.0.pre.msi">0.3.0</a>) and run the Pik Setup Wizard - the default options are fine:</p>
 
@@ -1174,8 +1653,7 @@ pik 0.3.0.pre on Microsoft Windows [Version 6.1.7601]
 by Gordon Thiesfeld (gthiesfeld@gmail.com)
 </code></pre>
 
-<h1>Registering Ruby environments with pik</h1>
-
+<h1 id="registering-ruby-environments-with-pik">Registering Ruby environments with pik</h1>
 <p>Use the <code>pik add</code> command to register your installed ruby
 environments with pik.  For example, I have Ruby 1.8.7, 1.9.3, and 2.0.0
 installed on my Windows development box, so I typed the following in a
@@ -1203,8 +1681,7 @@ registered with pik:</p>
    ruby-2.0.0-p0
 </code></pre>
 
-<h1>Set a default Ruby</h1>
-
+<h1 id="set-a-default-ruby">Set a default Ruby</h1>
 <p>The <code>pik use</code> command will allow you to switch between your
 registered ruby interpreters:</p>
 
@@ -1235,8 +1712,8 @@ default ruby interpreter) or add one particular Ruby interpreter to your
 user or system PATH environment variable (via <code>Control Panel -&gt; System
 -&gt; Advanced -&gt; Environment Variables….</code>):</p>
 
-<p><img class="left" src="/images/environment1.png" width="350" height="394" title="'Environment control panel'" >
-<img class="right" src="/images/environment2.png" width="350" height="394" title="'User PATH'" ></p>
+<p><img class="left" src="/images/environment1.png" width="350" height="394" title="'Environment control panel'" />
+<img class="right" src="/images/environment2.png" width="350" height="394" title="'User PATH'" /></p>
 </div>
   
   
@@ -1272,14 +1749,14 @@ user or system PATH environment variable (via <code>Control Panel -&gt; System
   </header>
 
 
-  <div class="entry-content"><p>I&#8217;ve been using Sensu Monitoring in production for about three to four months
-now.  It&#8217;s a nice, lightweight monitoring framework, designed with the cloud
+  <div class="entry-content"><p>I’ve been using Sensu Monitoring in production for about three to four months
+now.  It’s a nice, lightweight monitoring framework, designed with the cloud
 in mind and for use with modern configuration management frameworks like
 Chef and Puppet.  For more information on Sensu, check out the article
 <a href="https://github.com/sensu/sensu/wiki">Why Sonian created Sensu (by Sean Porter)</a>
 and the associated articles and links on the <a href="https://github.com/sensu/sensu/wiki">Sensu Wiki</a></p>
 
-<p>In this article, I&#8217;m going to present a quick overview on how to test and
+<p>In this article, I’m going to present a quick overview on how to test and
 evaluate Sensu using the <a href="https://github.com/sensu/sensu-chef">Sensu Chef Cookbook</a>
 Through the magic of Oracle VirtualBox and Vagrant, combined with Chef, you
 can quickly deploy Sensu to a local virtual machine instance, and kick the
@@ -1287,8 +1764,7 @@ tires on Sensu to evaluate whether or not it is a good monitoring solution
 for you.  These instructions apply to Mac OS X, Linux, and/or Windows for
 the host operating system.</p>
 
-<h1>Install VirtualBox</h1>
-
+<h1 id="install-virtualbox">Install VirtualBox</h1>
 <p>VirtualBox is an open source virtualization platform, similar to VMWare
 Fusion/Workstation that runs on Mac OS X, Linux and Windows (and a few more
 platforms).  While I personally prefer VMWare Fusion to VirtualBox (VirtualBox
@@ -1305,8 +1781,7 @@ the latest 4.2.x version of VirtualBox.  Make sure you save the VirtualBox
 installer as it comes with an uninstall tool, should you wish to remove
 VirtualBox at some point in the future.</p>
 
-<h1>Install Vagrant</h1>
-
+<h1 id="install-vagrant">Install Vagrant</h1>
 <p>After installing VirtualBox, next install Vagrant.  Vagrant is an automation
 framework for VirtualBox.  Grab the latest Vagrant installer for your OS from
 the <a href="http://downloads.vagrantup.com/">Vagrant Downloads page</a> and run install.
@@ -1314,27 +1789,24 @@ On Mac OS X and Windows, the Vagrant install will automatically add the Vagrant
 binaries to your PATH, on Linux, you will need to manually add
 <code>/opt/vagrant/bin</code> per the <a href="http://docs.vagrantup.com/v1/docs/getting-started/index.html">Getting Started with Vagrant docs</a>.</p>
 
-<h1>Download the sensu-chef cookbook</h1>
-
+<h1 id="download-the-sensu-chef-cookbook">Download the sensu-chef cookbook</h1>
 <p>Grab the latest version of the sensu-chef cookbook from GitHub by running
 the following command:</p>
 
 <pre><code>git clone https://github.com/sensu/sensu-chef.git
 </code></pre>
 
-<h1>Install Ruby &amp; RubyGems</h1>
-
+<h1 id="install-ruby--rubygems">Install Ruby &amp; RubyGems</h1>
 <p>The sensu-chef cookbook requires Ruby &amp; RubyGems.</p>
 
 <p>On Mac OS X and Linux, I strongly recommend that you use either RVM or Rbenv
 to make sure that you are using the latest version of Ruby instead of whatever
 version of Ruby your system installs by default.</p>
 
-<p>See my previous articles on <a href="http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">RVM</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Rbenv</a>.  NOTE: If you don&#8217;t
+<p>See my previous articles on <a href="http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/">RVM</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Rbenv</a>.  NOTE: If you don’t
 know whether or not to decide between RVM or Rbenv, go with RVM.</p>
 
-<h1>Patch chef-sensu Vagrantfile</h1>
-
+<h1 id="patch-chef-sensu-vagrantfile">Patch chef-sensu Vagrantfile</h1>
 <p>As of this writing, the <code>Vagrantfile</code> included in
 <code>sensu-chef/examples</code> will not set up the VM properly and the
 Chef run will fail with the following error:</p>
@@ -1352,16 +1824,14 @@ stdin: is not a tty
 [Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Exception handlers complete
 [Fri, 01 Mar 2013 08:28:07 +0000] FATAL: Stacktrace dumped to /tmp/vagrant-chef-1/chef-stacktrace.out
 [Fri, 01 Mar 2013 08:28:07 +0000] FATAL: NoMethodError: undefined method `default_action' for #&lt;Class:0x8decb20&gt;
-Chef never successfully completed! Any errors should be visible in the
+Chef never successfully completed! Any errors should be visible in the output above. Please fix your recipes so that they properly complete.
 </code></pre>
 
-<p>output above. Please fix your recipes so that they properly complete.</p>
-
-<p>I&#8217;ve created a revised <code>Vagrantfile</code> which fixes this issue.
+<p>I’ve created a revised <code>Vagrantfile</code> which fixes this issue.
 Download this amended version and copy it in place of
 <code>sensu-client/examples/Vagrantfile</code></p>
 
-<div><script src='https://gist.github.com/5063291.js?file=Vagrantfile'></script>
+<div><script src="https://gist.github.com/5063291.js?file=Vagrantfile"></script>
 <noscript><pre><code>#require 'berkshelf/vagrant'
 
 Vagrant::Config.run do |config|
@@ -1390,9 +1860,7 @@ Vagrant::Config.run do |config|
 end
 </code></pre></noscript></div>
 
-
-<h1>Install Ruby DevKit (Windows)</h1>
-
+<h1 id="install-ruby-devkit-windows">Install Ruby DevKit (Windows)</h1>
 <p>The sensu-chef recipe is dependent on the json gem.  On Windows, you will get
 the following error if you do not have the proper Ruby DevKit installed:</p>
 
@@ -1419,7 +1887,7 @@ of the installed Rubies you want enhanced by the DevKit.
 [INFO] Installing 'C:/Ruby193/lib/ruby/site_ruby/devkit.rb'
 </code></pre>
 
-<h1>Create the sensu-chef virtual machine</h1>
+<h1 id="create-the-sensu-chef-virtual-machine">Create the sensu-chef virtual machine</h1>
 
 <p>Run the following commands to create the sensu-chef virtual machine:</p>
 
@@ -1450,7 +1918,7 @@ log in to your newly-created virtual machine instance:</p>
 <pre><code>ssh vagrant@127.0.0.1 -p 2222 -i C:/Users/misheska/.vagrant.d/insecure_private_key
 </code></pre>
 
-<p>And refer to the <a href="https://github.com/sensu/sensu/wiki">Sensu wiki</a> on how
+<p>And refer to the <a href="https://github.com/sensu/sensu/wiki">Sensu wiki</a> on how 
 to experiment with various configuration options.</p>
 
 <p>When you are done playing with the test VM, run the following command to
@@ -1458,297 +1926,6 @@ destroy the VM:</p>
 
 <pre><code>vagrant destroy
 </code></pre>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to Manage Multiple Versions of Ruby</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-02-24T22:47:00-08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2013</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Out of the box, Ruby does not provide a mechanism to support multiple
-installed versions.  Compounding this issue, the default system-installed
-version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
-For example, even in the latest version of Mac OS X Mountain Lion, the
-system-wide version of Ruby is over five years old (ruby 1.8.7).  Most
-developers prefer to use a newer version of Ruby installed in their home
-directory and to leave the default systemwide version of Ruby untouched.</p>
-
-<p><a href="https://github.com/sstephenson/rbenv/">Rbenv</a> makes managing multiple
-versions of Ruby easy.  It&#8217;s a great way to work on current development
-projects using Ruby 1.9.x and be able to switch to Ruby 2.0.x for new
-work.  Rbenv is a lightweight alternative to
-<a href="http://rvm.io">Ruby Version Manager (RVM)</a>.  Rbenv does not include
-any mechanism to install Ruby or manage gems, like with RVM.</p>
-
-<p>Rbenv is supported on Linux and Mac OS X.  Rbenv doesn&#8217;t work on Windows.
-For Windows, <a href="https://github.com/vertiginous/pik">Pik</a> is an Rbenv alternative.</p>
-
-<p>NOTE: Rbenv is incompatible with RVM because RVM overrides the
-<code>gem</code> command with a function.  If you want to switch to Rbenv,
-make sure you uninstall RVM first.  Run the following commands to uninstall
-RVM:</p>
-
-<pre><code>$ rvm implode
-$ gem uninstall rvm
-</code></pre>
-
-<p>Then remove/comment out the RVM loader line in <code>.bash_profile</code>
-and/or <code>.bashrc</code></p>
-
-<h1>How to Install Rbenv on Mac OS X</h1>
-
-<p>First you&#8217;ll need to install a C compiler to build Ruby from source.  Just
-download and install the latest version of Xcode from the App Store, if you
-don&#8217;t have it installed already.  Also make sure you install the <em>Command Line
-Tools</em> by choosing the menu item <code>Xcode -> Preferences...</code> and click
-on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
-Command Line Tools.
-<img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
-
-<p>Next, you&#8217;ll need to install the Homebrew package manager to get all the
-dependencies needed to compile Ruby from source.  While you could manage
-these dependencies by hand, using a package manager is a better idea, as
-package managers know how to uninstall what they install.</p>
-
-<p>Run the following command to install Homebrew:</p>
-
-<pre><code>$ ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
-</code></pre>
-
-<p>Run <code>brew doctor</code> and address any issues it discovers.  When
-all is well, you should see:</p>
-
-<pre><code>$ brew doctor
-Your system is raring to brew.
-</code></pre>
-
-<p>Next, install the additional dependencies to compile Ruby from source:</p>
-
-<pre><code># For update-system
-brew update
-brew tap homebrew/dupes
-# For ruby
-brew install apple-gcc42
-</code></pre>
-
-<p>And now install <code>rbenv</code> and the <code>ruby-build</code> plugin:</p>
-
-<pre><code>brew update
-brew install rbenv
-brew install ruby-build
-</code></pre>
-
-<p>Add <code>rbenv init</code> to your shell to enable shims and autocompletion:</p>
-
-<pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bash_profile
-$ source ~/.bash_profile
-</code></pre>
-
-<p>Restart shell as a login shell so that the PATH changes take effect:</p>
-
-<pre><code>$ exec $SHELL -l
-</code></pre>
-
-<p>Install the latest version of ruby (at the time of this writing 1.9.3-p392)</p>
-
-<pre><code>$ rbenv install 1.9.3-p392
-</code></pre>
-
-<p>Set the latest version of ruby to be the default version of ruby</p>
-
-<pre><code>$ rbenv global 1.9.3-p392
-</code></pre>
-
-<p>Rebuild the shim executable</p>
-
-<pre><code>$ rbenv rehash
-</code></pre>
-
-<p>You&#8217;ll need to run <code>rbenv rehash</code> every time you install a new
-version of Ruby or install a new gem.</p>
-
-<p>Verify the ruby install</p>
-
-<pre><code>$ ruby -v
-ruby 1.9.3p392 (2013-02-22 revision 39386) [x86_64-darwin12.3.0]
-</code></pre>
-
-<h1>How to install Ruby 2.0.0 on Mac OS X</h1>
-
-<p>As of this writing, Ruby 2.0.0-p0 is the latest version of Ruby 2.0.0.
-Use <code>rbenv install --list</code> to print out the available versions.  To install:</p>
-
-<pre><code>$ rbenv install 2.0.0-p0
-</code></pre>
-
-<p>To verify the install:</p>
-
-<pre><code>$ rbenv local 2.0.0-p0
-$ ruby -v
-</code></pre>
-
-<p>If you want to make Ruby 2.0.0 the global default version of ruby:</p>
-
-<pre><code>$ rbenv global 2.0.0-p0
-</code></pre>
-
-<h1>How to Upgrade Rbenv on Mac OS X</h1>
-
-<p>To upgrade rbenv via homebrew:</p>
-
-<pre><code>$ brew update
-$ brew upgrade rbenv
-$ brew upgrade ruby-build
-</code></pre>
-
-<h1>How to Remove Rbenv on Mac OS X</h1>
-
-<p>Uninstall the packages you installed via homebrew:</p>
-
-<pre><code>brew uninstall rbenv
-brew uninstall ruby-build
-</code></pre>
-
-<p>And remove the following directory:</p>
-
-<pre><code>rm -rf $HOME/.rbenv
-</code></pre>
-
-<p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
-
-<h1>How to Install Rbenv on Linux</h1>
-
-<p>Make sure the prerequisite packages are installed.  For Ubuntu:</p>
-
-<pre><code>$ sudo apt-get update
-$ sudo apt-get install -y build-essential git
-</code></pre>
-
-<p>For RHEL/CentOS:</p>
-
-<pre><code>$ sudo yum update
-$ sudo yum install -y git
-$ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
-$ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
-$ sudo yum install -y autoconf automake libtool bison iconv-devel
-$ sudo yum install -y libxml2-devel xslt-devel libxslt-devel 
-</code></pre>
-
-<p>Download the rbenv source distribution to
-$HOME/.rbenv:</p>
-
-<pre><code>$ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv
-</code></pre>
-
-<p>Add $HOME/.rbenv/bin to your $PATH</p>
-
-<pre><code>$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; $HOME/.bashrc
-</code></pre>
-
-<p>Add <code>rbenv init</code> to your shell to enable shims and autocompletion:</p>
-
-<pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bashrc
-</code></pre>
-
-<p>Restart shell as a login shell so that the PATH changes take effect:</p>
-
-<pre><code>$ exec $SHELL -l
-</code></pre>
-
-<p>Install the <code>ruby-build</code> plugin, which provides an
-<code>rbenv install</code> command to simplify the process of compiling
-and install new Ruby versions:</p>
-
-<pre><code>$ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
-</code></pre>
-
-<p>Install the latest version of ruby (at the time of this writing 1.9.3-p392)</p>
-
-<pre><code>$ rbenv install 1.9.3-p392
-</code></pre>
-
-<p>Rebuild the shim executable</p>
-
-<pre><code>$ rbenv rehash
-</code></pre>
-
-<p>You&#8217;ll need to run <code>rbenv rehash</code> every time you install a new
-version of Ruby or install a new gem.</p>
-
-<p>Set the latest version of ruby to be the default version of ruby</p>
-
-<pre><code>$ rbenv global 1.9.3-p392
-</code></pre>
-
-<p>Verify the ruby install</p>
-
-<pre><code>$ ruby -v
-</code></pre>
-
-<h1>How to install Ruby 2.0.0 on Linux</h1>
-
-<p>As of this writing, Ruby 2.0.0-p0 is the latest version of Ruby 2.0.0.
-Use <code>rbenv install --list</code> to print out the available versions.  To install:</p>
-
-<pre><code>$ rbenv install 2.0.0-p0
-</code></pre>
-
-<p>To verify the install:</p>
-
-<pre><code>$ rbenv local 2.0.0-p0
-$ ruby -v
-</code></pre>
-
-<p>If you want to make Ruby 2.0.0 the global default version of ruby:</p>
-
-<pre><code>$ rbenv global 2.0.0-p0
-</code></pre>
-
-<h1>How to Upgrade Rbenv on Linux</h1>
-
-<p>Since Rbenv is a Git repository, upgrading is just a matter of refreshing the
-source:</p>
-
-<pre><code>$ cd $HOME/.rbenv
-$ git pull
-</code></pre>
-
-<h1>How to Remove Rbenv on Linux</h1>
-
-<p>To uninstall/remove Rbenv, remove the following directory:</p>
-
-<pre><code>$ rm -rf $HOME/.rbenv
-</code></pre>
-
-<p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
 </div>
   
   
@@ -1793,27 +1970,26 @@ developers prefer to use a newer version of Ruby installed in their home
 directory and to leave the default systemwide version of Ruby untouched.</p>
 
 <p><a href="http://rvm.io">Ruby Version Manager (RVM)</a>  makes installing multiple
-versions of Ruby easy.  It&#8217;s a great way to use Ruby 1.9.x for your current
+versions of Ruby easy.  It’s a great way to use Ruby 1.9.x for your current
 development while also being able to play with Ruby 2.0 for newer projects.
 RVM also supports partitioning of Ruby gem installs via a feature called
 gemsets in order to avoid versioning conflicts.  However, with the advent of
 <a href="http://gembundler.com">Bundler</a> most developers tend to prefer using Bundler
 as the preferred way for managing gems at the application level.</p>
 
-<p>RVM is supported on Linux and Mac OS X.  RVM doesn&#8217;t work on Windows.
+<p>RVM is supported on Linux and Mac OS X.  RVM doesn’t work on Windows.
 For Windows, <a href="https://github.com/vertiginous/pik">Pik</a> is an RVM alternative.</p>
 
-<h1>How to Install RVM on Mac OS X</h1>
-
-<p>First, you&#8217;ll need to install a C compiler to build Ruby from source.  Just
+<h1 id="how-to-install-rvm-on-mac-os-x">How to Install RVM on Mac OS X</h1>
+<p>First, you’ll need to install a C compiler to build Ruby from source.  Just
 download and install the latest version of Xcode from the App Store, if you
-don&#8217;t have it already.  Also make sure you install the <em>Command Line Tools</em>
-by choosing the menu item <code>Xcode -> Preferences...</code> and click
+don’t have it already.  Also make sure you install the <em>Command Line Tools</em>
+by choosing the menu item <code>Xcode -&gt; Preferences...</code> and click
 on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
 Command Line Tools.
 <img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
 
-<p>Next, you&#8217;ll need to install the Homebrew package manager.  RVM will
+<p>Next, you’ll need to install the Homebrew package manager.  RVM will
 automatically download all dependencies if a package manager is installed.
 Also, the dependencies for installing Ruby are complicated enough that it
 is helpful to use a package manager to install them, so you can uninstall
@@ -1857,8 +2033,8 @@ brew install apple-gcc42
 <pre><code>$ rvm install 1.9.3
 </code></pre>
 
-<p>You may get an error message saying &#8220;There was an error while trying to
-resolve rubygems version for &#8216;latest&#8217;.  Halting the installation.&#8221; Just
+<p>You may get an error message saying “There was an error while trying to
+resolve rubygems version for ‘latest’.  Halting the installation.” Just
 run the install again like so to fix the issue:</p>
 
 <pre><code>$ rvm reinstall 1.9.3
@@ -1878,12 +2054,11 @@ system 1.8.7 version, run the following command:</p>
 <pre><code>$ rvm use 1.9.3 --default
 </code></pre>
 
-<p>If you&#8217;d like to manage RVM with a GUI, check out <a href="http://jewelrybox.unfiniti.com/">JewelryBox</a>:</p>
+<p>If you’d like to manage RVM with a GUI, check out <a href="http://jewelrybox.unfiniti.com/">JewelryBox</a>:</p>
 
 <p><img src="/images/jewelrybox.png" alt="Jewelry Box" /></p>
 
-<h1>Installing Ruby 1.8.7 on Mac OS X</h1>
-
+<h1 id="installing-ruby-187-on-mac-os-x">Installing Ruby 1.8.7 on Mac OS X</h1>
 <p>For legacy GUI support, Ruby 1.8.7 has some dependencies on tcl/tk, which
 Mountain Lion no longer installs by default (now that X11 is an optional
 install).  To compile Ruby 1.8.7 without tcl/tk support, use the following
@@ -1900,8 +2075,7 @@ then compile Ruby 1.8.7 with the following:</p>
 CC=/usr/local/bin/gcc-4.2 rvm install 1.8.7
 </code></pre>
 
-<h1>Installing Ruby 2.0.0 on Mac OS X</h1>
-
+<h1 id="installing-ruby-200-on-mac-os-x">Installing Ruby 2.0.0 on Mac OS X</h1>
 <p>Installing Ruby 2.0 is very straightforward, just run the following:</p>
 
 <pre><code>$ rvm install 2.0.0
@@ -1918,9 +2092,8 @@ $ ruby -v
 <pre><code>$ rvm use 2.0.0 --default
 </code></pre>
 
-<h1>How to Remove RVM on Mac OS X</h1>
-
-<p>Should you want to uninstall/remove RVM, it&#8217;s pretty easy.  First, run
+<h1 id="how-to-remove-rvm-on-mac-os-x">How to Remove RVM on Mac OS X</h1>
+<p>Should you want to uninstall/remove RVM, it’s pretty easy.  First, run
 the following commands:</p>
 
 <pre><code>$ rvm implode
@@ -1930,15 +2103,18 @@ $ gem uninstall rvm
 <p>Then just follow the instructions from <code>rvm implode</code>:</p>
 
 <ul>
-<li><p>Delete the following files, if they exist:
+  <li>
+    <p>Delete the following files, if they exist:
 <code>/etc/rvmrc</code>
-<code>$HOME/.rvmrc</code></p></li>
-<li><p>Also, remove the lines sourcing RVM scripts from
-<code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and
-<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn&#8217;t hurt
-after you do this, just to make sure).</p></li>
+<code>$HOME/.rvmrc</code></p>
+  </li>
+  <li>
+    <p>Also, remove the lines sourcing RVM scripts from 
+<code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and 
+<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn’t hurt
+after you do this, just to make sure).</p>
+  </li>
 </ul>
-
 
 <p>To uninstall Homebrew, run the following:</p>
 
@@ -1951,8 +2127,7 @@ rm -rf .git
 rm -rf ~/Library/Caches/Homebrew
 </code></pre>
 
-<h1>How to Install RVM on Linux</h1>
-
+<h1 id="how-to-install-rvm-on-linux">How to Install RVM on Linux</h1>
 <p>RVM installation is more straightforward on Linux, as the Ruby source was
 designed for the GCC compiler that ships with any Linux distribution.</p>
 
@@ -2009,8 +2184,7 @@ $ rvm list
 $ rvm use 1.9.3
 </code></pre>
 
-<h1>Installing Ruby 2.0.0 on Linux</h1>
-
+<h1 id="installing-ruby-200-on-linux">Installing Ruby 2.0.0 on Linux</h1>
 <p>Installing Ruby 2.0 is very straightforward, just run the following:</p>
 
 <pre><code>$ rvm install 2.0.0
@@ -2027,9 +2201,8 @@ $ ruby -v
 <pre><code>$ rvm use 2.0.0 --default
 </code></pre>
 
-<h1>How to Remove RVM on Linux</h1>
-
-<p>Should you want to uninstall/remove RVM, it&#8217;s pretty easy.  First, run
+<h1 id="how-to-remove-rvm-on-linux">How to Remove RVM on Linux</h1>
+<p>Should you want to uninstall/remove RVM, it’s pretty easy.  First, run
 the following commands:</p>
 
 <pre><code>$ rvm implode
@@ -2039,15 +2212,18 @@ $ gem uninstall rvm
 <p>Then just follow the instructions from <code>rvm implode</code>:</p>
 
 <ul>
-<li><p>Delete the following files, if they exist:
+  <li>
+    <p>Delete the following files, if they exist:
 <code>/etc/rvmrc</code>
-<code>$HOME/.rvmrc</code></p></li>
-<li><p>Also, remove the lines sourcing RVM scripts from
+<code>$HOME/.rvmrc</code></p>
+  </li>
+  <li>
+    <p>Also, remove the lines sourcing RVM scripts from
 <code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and
-<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn&#8217;t hurt
-after you do this, just to make sure).</p></li>
+<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn’t hurt
+after you do this, just to make sure).</p>
+  </li>
 </ul>
-
 </div>
   
   
@@ -2068,6 +2244,10 @@ after you do this, just to make sure).</p></li>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Use Opscode Chef Omnibus Ruby for writing cookbooks</a>
       </li>
     
@@ -2081,10 +2261,6 @@ after you do this, just to make sure).</p></li>
     
       <li class="post">
         <a href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
       </li>
     
   </ul>

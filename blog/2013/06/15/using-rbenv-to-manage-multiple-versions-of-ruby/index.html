@@ -9,8 +9,7 @@
   <meta name="author" content="Mischa Taylor">
 
   
-  <meta name="description" content="Out of the box, Ruby does not provide a mechanism to support multiple
-installed versions. Compounding this issue, the default system-installed &hellip;">
+  <meta name="description" content="Mac OS X Install Rbenv and Ruby 1.9.x - Mac OS X Install Bundler - Mac OS X Install Ruby 2.0.0 - Mac OS X Upgrade Rbenv - Mac OS X Remove Rbenv - &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +18,7 @@ installed versions. Compounding this issue, the default system-installed &hellip
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">
+  <link rel="canonical" href="http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -97,14 +96,33 @@ installed versions. Compounding this issue, the default system-installed &hellip
   
 
 
-<time datetime="2013-02-24T22:47:00-08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2013</time>
+<time datetime="2013-06-15T15:53:00-07:00" pubdate data-updated="true">Jun 15<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Out of the box, Ruby does not provide a mechanism to support multiple
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#mac-os-x">Mac OS X</a>    <ul>
+      <li><a href="#install-rbenv-and-ruby-19x---mac-os-x">Install Rbenv and Ruby 1.9.x - Mac OS X</a></li>
+      <li><a href="#install-bundler---mac-os-x">Install Bundler - Mac OS X</a></li>
+      <li><a href="#install-ruby-200---mac-os-x">Install Ruby 2.0.0 - Mac OS X</a></li>
+      <li><a href="#upgrade-rbenv---mac-os-x">Upgrade Rbenv - Mac OS X</a></li>
+      <li><a href="#remove-rbenv---mac-os-x">Remove Rbenv - Mac OS X</a></li>
+    </ul>
+  </li>
+  <li><a href="#linux">Linux</a>    <ul>
+      <li><a href="#install-rbenv-and-ruby-19x---linux">Install Rbenv and Ruby 1.9.x - Linux</a></li>
+      <li><a href="#install-bundler---linux">Install Bundler - Linux</a></li>
+      <li><a href="#install-ruby-200---linux">Install Ruby 2.0.0 - Linux</a></li>
+      <li><a href="#upgrade-rbenv---linux">Upgrade Rbenv - Linux</a></li>
+      <li><a href="#remove-rbenv---linux">Remove Rbenv - Linux</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Out of the box, Ruby does not provide a mechanism to support multiple
 installed versions.  Compounding this issue, the default system-installed
 version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
 For example, even in the latest version of Mac OS X Mountain Lion, the
@@ -113,13 +131,13 @@ developers prefer to use a newer version of Ruby installed in their home
 directory and to leave the default systemwide version of Ruby untouched.</p>
 
 <p><a href="https://github.com/sstephenson/rbenv/">Rbenv</a> makes managing multiple
-versions of Ruby easy.  It&#8217;s a great way to work on current development
+versions of Ruby easy.  It’s a great way to work on current development
 projects using Ruby 1.9.x and be able to switch to Ruby 2.0.x for new
 work.  Rbenv is a lightweight alternative to
 <a href="http://rvm.io">Ruby Version Manager (RVM)</a>.  Rbenv does not include
 any mechanism to install Ruby or manage gems, like with RVM.</p>
 
-<p>Rbenv is supported on Linux and Mac OS X.  Rbenv doesn&#8217;t work on Windows.
+<p>Rbenv is supported on Linux and Mac OS X.  Rbenv doesn’t work on Windows.
 For Windows, <a href="https://github.com/vertiginous/pik">Pik</a> is an Rbenv alternative.</p>
 
 <p>NOTE: Rbenv is incompatible with RVM because RVM overrides the
@@ -134,17 +152,18 @@ $ gem uninstall rvm
 <p>Then remove/comment out the RVM loader line in <code>.bash_profile</code>
 and/or <code>.bashrc</code></p>
 
-<h1>How to Install Rbenv on Mac OS X</h1>
+<h1 id="mac-os-x">Mac OS X</h1>
 
-<p>First you&#8217;ll need to install a C compiler to build Ruby from source.  Just
+<h2 id="install-rbenv-and-ruby-19x---mac-os-x">Install Rbenv and Ruby 1.9.x - Mac OS X</h2>
+<p>First you’ll need to install a C compiler to build Ruby from source.  Just
 download and install the latest version of Xcode from the App Store, if you
-don&#8217;t have it installed already.  Also make sure you install the <em>Command Line
-Tools</em> by choosing the menu item <code>Xcode -> Preferences...</code> and click
+don’t have it installed already.  Also make sure you install the <em>Command Line
+Tools</em> by choosing the menu item <code>Xcode -&gt; Preferences...</code> and click
 on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
 Command Line Tools.
 <img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
 
-<p>Next, you&#8217;ll need to install the Homebrew package manager to get all the
+<p>Next, you’ll need to install the Homebrew package manager to get all the
 dependencies needed to compile Ruby from source.  While you could manage
 these dependencies by hand, using a package manager is a better idea, as
 package managers know how to uninstall what they install.</p>
@@ -188,14 +207,9 @@ $ source ~/.bash_profile
 <pre><code>$ exec $SHELL -l
 </code></pre>
 
-<p>Install the latest version of ruby (at the time of this writing 1.9.3-p392)</p>
+<p>Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p429)</p>
 
-<pre><code>$ rbenv install 1.9.3-p392
-</code></pre>
-
-<p>Set the latest version of ruby to be the default version of ruby</p>
-
-<pre><code>$ rbenv global 1.9.3-p392
+<pre><code>$ rbenv install 1.9.3-p429
 </code></pre>
 
 <p>Rebuild the shim executable</p>
@@ -203,36 +217,65 @@ $ source ~/.bash_profile
 <pre><code>$ rbenv rehash
 </code></pre>
 
-<p>You&#8217;ll need to run <code>rbenv rehash</code> every time you install a new
-version of Ruby or install a new gem.</p>
+<p>You’ll need to run <code>rbenv rehash</code> every time you install a new version of Ruby
+or install a new gem.</p>
 
-<p>Verify the ruby install</p>
+<p>Set the latest version of ruby to be the default version of ruby</p>
 
-<pre><code>$ ruby -v
-ruby 1.9.3p392 (2013-02-22 revision 39386) [x86_64-darwin12.3.0]
+<pre><code>$ rbenv global 1.9.3-p429
 </code></pre>
 
-<h1>How to install Ruby 2.0.0 on Mac OS X</h1>
+<p>Verify the ruby install.  If everything was installed correctly, the <code>ruby -v</code>
+command should report that version 1.9.3p429 is installed.</p>
 
-<p>As of this writing, Ruby 2.0.0-p0 is the latest version of Ruby 2.0.0.
-Use <code>rbenv install --list</code> to print out the available versions.  To install:</p>
+<pre><code>$ ruby -v
+ruby 1.9.3p429 (2013-05-15 revision 40747) [x86_64-darwin12.4.0]
+</code></pre>
 
-<pre><code>$ rbenv install 2.0.0-p0
+<h2 id="install-bundler---mac-os-x">Install Bundler - Mac OS X</h2>
+<p>You’ll need to use <a href="http://gembundler.com/">Bundler</a> to manage gems.  Installing
+a gem is also a good way to ensure that you’ve installed most of the Ruby
+prerequisites.</p>
+
+<p>First, make sue you update to the latest version of Rubygems:</p>
+
+<pre><code>$ gem update --system
+</code></pre>
+
+<p>Then install the <code>bundler</code> gem.  If the <code>gem install</code> command reports
+<code>Successfully installed</code> you’re good to go:</p>
+
+<pre><code>$ gem install bundler
+Successfully installed bundler-1.3.5
+Parsing documentation for bundler-1.3.5
+1 gem installed
+$ rbenv rehash
+</code></pre>
+
+<h2 id="install-ruby-200---mac-os-x">Install Ruby 2.0.0 - Mac OS X</h2>
+<p>As of this writing, Ruby 2.0.0-p195 is the latest version of Ruby 2.0.0.
+Use <code>rbenv install --list</code> to print out the available versions.  Currently
+there is an <a href="https://github.com/sstephenson/ruby-build/issues/305">issue installing Ruby 2.0.0</a>
+with the OpenSSL that ruby-build downloads, so we have to set 
+<code>RUBY_CONFIGURE_OPTS</code> when calling <code>rbenv install</code> as a workaround:</p>
+
+<pre><code>$ brew install openssl
+$ CONFIGURE_OPTS="--with-out-ext=tk,tk/* --with-openssl-dir=`brew --prefix openssl`" RUBY_CONFIGURE_OPTS="--with-openssl-dir=`brew --prefix openssl`" rbenv install 2.0.0-p195
 </code></pre>
 
 <p>To verify the install:</p>
 
-<pre><code>$ rbenv local 2.0.0-p0
+<pre><code>$ rbenv local 2.0.0-p195
 $ ruby -v
+ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-darwin12.4.0]
 </code></pre>
 
 <p>If you want to make Ruby 2.0.0 the global default version of ruby:</p>
 
-<pre><code>$ rbenv global 2.0.0-p0
+<pre><code>$ rbenv global 2.0.0-p195
 </code></pre>
 
-<h1>How to Upgrade Rbenv on Mac OS X</h1>
-
+<h2 id="upgrade-rbenv---mac-os-x">Upgrade Rbenv - Mac OS X</h2>
 <p>To upgrade rbenv via homebrew:</p>
 
 <pre><code>$ brew update
@@ -240,37 +283,40 @@ $ brew upgrade rbenv
 $ brew upgrade ruby-build
 </code></pre>
 
-<h1>How to Remove Rbenv on Mac OS X</h1>
-
+<h2 id="remove-rbenv---mac-os-x">Remove Rbenv - Mac OS X</h2>
 <p>Uninstall the packages you installed via homebrew:</p>
 
 <pre><code>brew uninstall rbenv
 brew uninstall ruby-build
 </code></pre>
 
-<p>And remove the following directory:</p>
+<p>Remove the following directory:</p>
 
 <pre><code>rm -rf $HOME/.rbenv
 </code></pre>
 
 <p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
 
-<h1>How to Install Rbenv on Linux</h1>
+<h1 id="linux">Linux</h1>
 
-<p>Make sure the prerequisite packages are installed.  For Ubuntu:</p>
+<h2 id="install-rbenv-and-ruby-19x---linux">Install Rbenv and Ruby 1.9.x - Linux</h2>
+<p>Make sure the prerequisite packages are installed.</p>
+
+<p>Ubuntu prerequisites:</p>
 
 <pre><code>$ sudo apt-get update
 $ sudo apt-get install -y build-essential git
+$ sudo apt-get install -y libxml2-dev libxslt-dev libssl-dev
 </code></pre>
 
-<p>For RHEL/CentOS:</p>
+<p>RHEL/CentOS prerequisites:</p>
 
 <pre><code>$ sudo yum update
 $ sudo yum install -y git
 $ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
 $ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
-$ sudo yum install -y autoconf automake libtool bison iconv-devel
-$ sudo yum install -y libxml2-devel xslt-devel libxslt-devel 
+$ sudo yum install -y autoconf automake libtool bison
+$ sudo yum install -y libxml2-devel libxslt-devel 
 </code></pre>
 
 <p>Download the rbenv source distribution to
@@ -301,9 +347,9 @@ and install new Ruby versions:</p>
 <pre><code>$ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
 </code></pre>
 
-<p>Install the latest version of ruby (at the time of this writing 1.9.3-p392)</p>
+<p>Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p429)</p>
 
-<pre><code>$ rbenv install 1.9.3-p392
+<pre><code>$ rbenv install 1.9.3-p429
 </code></pre>
 
 <p>Rebuild the shim executable</p>
@@ -311,40 +357,62 @@ and install new Ruby versions:</p>
 <pre><code>$ rbenv rehash
 </code></pre>
 
-<p>You&#8217;ll need to run <code>rbenv rehash</code> every time you install a new
+<p>You’ll need to run <code>rbenv rehash</code> every time you install a new
 version of Ruby or install a new gem.</p>
 
 <p>Set the latest version of ruby to be the default version of ruby</p>
 
-<pre><code>$ rbenv global 1.9.3-p392
+<pre><code>$ rbenv global 1.9.3-p429
 </code></pre>
 
-<p>Verify the ruby install</p>
+<p>Verify the ruby install.  If everything was installed correctly, the
+<code>ruby -v</code> command should report that version 1.9.3p429 is installed.</p>
 
 <pre><code>$ ruby -v
+ruby 1.9.3p429 (2013-05-15 revision 40747) [x86_64-linux]
 </code></pre>
 
-<h1>How to install Ruby 2.0.0 on Linux</h1>
+<h2 id="install-bundler---linux">Install Bundler - Linux</h2>
 
-<p>As of this writing, Ruby 2.0.0-p0 is the latest version of Ruby 2.0.0.
+<p>You’ll need to use <a href="http://gembundler.com/">Bundler</a> to manage gems.
+Installing a gem is also a good way to ensure that you’ve installed most
+of the Ruby prerequisites.</p>
+
+<p>First, make sure you update to the latest version of Rubygems:</p>
+
+<pre><code>$ gem update --system
+</code></pre>
+
+<p>Then install the <code>bundler</code> gem.  If the <code>gem install</code> command reports
+<code>Successfully installed</code> you’re good to go:</p>
+
+<pre><code>$ gem install bundler
+Successfully installed bundler-1.3.5
+Parsing documentation for bundler-1.3.5
+1 gem installed
+$ rbenv rehash
+</code></pre>
+
+<h2 id="install-ruby-200---linux">Install Ruby 2.0.0 - Linux</h2>
+<p>As of this writing, Ruby 2.0.0-p195 is the latest version of Ruby 2.0.0.
 Use <code>rbenv install --list</code> to print out the available versions.  To install:</p>
 
-<pre><code>$ rbenv install 2.0.0-p0
+<pre><code>$ rbenv install 2.0.0-p195
 </code></pre>
 
 <p>To verify the install:</p>
 
-<pre><code>$ rbenv local 2.0.0-p0
+<pre><code>$ rbenv local 2.0.0-p195
 $ ruby -v
+ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-linux] 
 </code></pre>
 
 <p>If you want to make Ruby 2.0.0 the global default version of ruby:</p>
 
-<pre><code>$ rbenv global 2.0.0-p0
+<pre><code>$ rbenv global 2.0.0-p195
 </code></pre>
 
-<h1>How to Upgrade Rbenv on Linux</h1>
-
+<h2 id="upgrade-rbenv---linux">Upgrade Rbenv - Linux</h2>
 <p>Since Rbenv is a Git repository, upgrading is just a matter of refreshing the
 source:</p>
 
@@ -352,8 +420,7 @@ source:</p>
 $ git pull
 </code></pre>
 
-<h1>How to Remove Rbenv on Linux</h1>
-
+<h2 id="remove-rbenv---linux">Remove Rbenv - Linux</h2>
 <p>To uninstall/remove Rbenv, remove the following directory:</p>
 
 <pre><code>$ rm -rf $HOME/.rbenv
@@ -382,7 +449,7 @@ $ git pull
   
 
 
-<time datetime="2013-02-24T22:47:00-08:00" pubdate data-updated="true">Feb 24<span>th</span>, 2013</time>
+<time datetime="2013-06-15T15:53:00-07:00" pubdate data-updated="true">Jun 15<span>th</span>, 2013</time>
       
 
 <span class="categories">
@@ -396,7 +463,7 @@ $ git pull
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/" data-via="" data-counturl="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/" data-via="" data-counturl="http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/" >Tweet</a>
   
   
   
@@ -405,10 +472,8 @@ $ git pull
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/" title="Previous Post: Using RVM to manage multiple versions of Ruby">&laquo; Using RVM to manage multiple versions of Ruby</a>
+        <a class="basic-alignment left" href="/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/" title="Previous Post: Use Opscode Chef Omnibus Ruby for writing cookbooks">&laquo; Use Opscode Chef Omnibus Ruby for writing cookbooks</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/" title="Next Post: Try out Sensu Monitoring using Virtual Box, Vagrant and Chef">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef &raquo;</a>
       
     </p>
   </footer>
@@ -421,6 +486,10 @@ $ git pull
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Use Opscode Chef Omnibus Ruby for writing cookbooks</a>
@@ -436,10 +505,6 @@ $ git pull
     
       <li class="post">
         <a href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">Try out Sensu Monitoring using Virtual Box, Vagrant and Chef</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
       </li>
     
   </ul>
