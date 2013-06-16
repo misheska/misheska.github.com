@@ -9,9 +9,7 @@
   <meta name="author" content="Mischa Taylor">
 
   
-  <meta name="description" content="Jamie Winsor hasn’t yet updated his guide to authoring cookbooks the Berkshelf way
-to match recent changes related to Vagrant 1.1 and Chef 11
-This &hellip;">
+  <meta name="description" content="Getting Started Upgrade from Berkshelf 1.x Create the MyFace Application Cookbook Prepare a virtual machine for testing Iteration #1: Create an &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +18,7 @@ This &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://misheska.com/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/">
+  <link rel="canonical" href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -98,15 +96,30 @@ This &hellip;">
   
 
 
-<time datetime="2013-03-24T09:27:00-07:00" pubdate data-updated="true">Mar 24<span>th</span>, 2013</time>
+<time datetime="2013-06-16T03:49:00-07:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Jamie Winsor hasn’t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
-to match <a href="https://github.com/RiotGames/berkshelf/issues/416">recent changes related to Vagrant 1.1</a> and <a href="http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/">Chef 11</a>
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#getting-started">Getting Started</a>    <ul>
+      <li><a href="#upgrade-from-berkshelf-1x">Upgrade from Berkshelf 1.x</a></li>
+    </ul>
+  </li>
+  <li><a href="#create-the-myface-application-cookbook">Create the MyFace Application Cookbook</a></li>
+  <li><a href="#prepare-a-virtual-machine-for-testing">Prepare a virtual machine for testing</a></li>
+  <li><a href="#iteration-1-create-an-application-user">Iteration #1: Create an application user</a></li>
+  <li><a href="#iteration-2---refactor-the-user-name-and-group-name-into-attributes">Iteration #2 - Refactor the user name and group name into attributes</a></li>
+  <li><a href="#iteration-3---install-the-apache2-web-server">Iteration #3 - Install the Apache2 Web Server</a></li>
+  <li><a href="#iteration-4---add-content">Iteration #4 - Add Content</a></li>
+  <li><a href="#iteration-5---refactoring-webserver">Iteration #5 - Refactoring webserver</a></li>
+  <li><a href="#more-to-come">More to come!</a></li>
+</ul>
+
+<p>Jamie Winsor hasn’t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
+to match <a href="https://github.com/RiotGames/berkshelf/issues/416">recent changes related to Vagrant 1.x</a> and <a href="http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/">Chef 11</a>
 This post is an attempt to update these instructions, walking through his
 and Sean O’Meara’s example app - <a href="https://github.com/reset/myface-cookbook">MyFace</a>.
 For more information on <a href="http://berkshelf.com/">Berkshelf</a>, check out his recent
@@ -124,10 +137,10 @@ installed:</p>
     <p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a></p>
   </li>
   <li>
-    <p><a href="http://vagrantup.com">Install Vagrant 1.1.x</a></p>
+    <p><a href="http://vagrantup.com">Install Vagrant 1.2.1 (or higher)</a></p>
   </li>
   <li>
-    <p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/04/13/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p>
+    <p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p>
   </li>
   <li>
     <p>Install Berkshelf</p>
@@ -135,18 +148,42 @@ installed:</p>
 </ul>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf</span></code></pre></td></tr></table></div></figure></notextile></div>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf --no-ri --no-rdoc
+</span><span class="line">$ berks -v
+</span><span class="line">Berkshelf (2.0.3)</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
-  <li>Install the Berkshelf Vagrant Plugin (1.0.3 or higher)</li>
+  <li>Install the Berkshelf Vagrant Plugin (1.2.0 or higher)</li>
 </ul>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install berkshelf-vagrant
-</span><span class="line">Installing the 'berkshelf-vagrant' plugin. This can take a few minutes...
-</span><span class="line">Installed the plugin 'berkshelf-vagrant (1.1.10)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">Installing the 'vagrant-berkshelf' plugin. This can take a few minutes...
+</span><span class="line">Installed the plugin 'vagrant-berkshelf (1.2.0)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="upgrade-from-berkshelf-1x">Upgrade from Berkshelf 1.x</h2>
+<p>NOTE: If you had a previous 1.x version of the berkshelf plugin installed,
+when it was named <code>berkshelf-vagrant</code>, which you can verify by running
+the following command:</p>
+
+<pre><code>$ vagrant plugin list
+berkshelf-vagrant (1.1.3)
+vagrant-vmware-fusion (0.6.5)
+</code></pre>
+
+<p>Make sure you fully uninstall the old <code>berkshelf-vagrant</code> plugin before
+installing the new <code>vagrant-berkshelf</code> plugin, as vagrant will get confused
+by the name change:</p>
+
+<pre><code>$ vagrant plugin uninstall berkshelf-vagrant
+Uninstalling the 'berkshelf-vagrant' plugin...
+$ vagrant plugin install vagrant-berkshelf
+Installing the 'vagrant-berkshelf' plugin.  THis can take a few minutes...
+</code></pre>
 
 <h1 id="create-the-myface-application-cookbook">Create the MyFace Application Cookbook</h1>
 <p>Key to the Berkshelf way is the use of the Application Cookbook Pattern.  An
@@ -171,13 +208,37 @@ the creation of an example service - MyFace - the next killer social web app.</p
       create  myface/LICENSE
       create  myface/README.md
       create  myface/Berksfile
+      create  myface/Thorfile
       create  myface/chefignore
       create  myface/.gitignore
          run  git init from "./myface"
       create  myface/Gemfile
+      create  .kitchen.yml
+      append  Thorfile
+      create  test/integration/default
+      append  .gitignore
+      append  .gitignore
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
       create  myface/Vagrantfile
-Using myface (0.1.0) at path: '/Users/misheska/myface'
 </code></pre>
+
+<p>Before running <code>bundle install</code> edit the <code>Gemfile</code> and add a version
+constraint for the <code>test-kitchen</code> gem, like so:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Vagrantfile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">source</span> <span class="s1">&#39;https://rubygems.org&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;berkshelf&#39;</span>
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;test-kitchen&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.0.0.alpha&#39;</span><span class="p">,</span> <span class="ss">:group</span> <span class="o">=&gt;</span> <span class="ss">:integration</span>
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;kitchen-vagrant&#39;</span><span class="p">,</span> <span class="ss">:group</span> <span class="o">=&gt;</span> <span class="ss">:integration</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Run <code>bundle install</code> in the newly created cookbook directory to install the
 necessary Gem dependencies:</p>
@@ -186,14 +247,37 @@ necessary Gem dependencies:</p>
 $ bundle install
 </code></pre>
 
+<p>If you get the following error, you forgot to add a version-constraint
+for <code>test-kitchen</code>, per above:</p>
+
+<pre><code>Bundler could not find compatible versions for gem "test-kitchen":
+  In Gemfile:
+    kitchen-vagrant (&gt;= 0) ruby depends on
+      test-kitchen (~&gt; 1.0.0.alpha.0) ruby
+
+    test-kitchen (0.5.0)
+</code></pre>
+
 <h1 id="prepare-a-virtual-machine-for-testing">Prepare a virtual machine for testing</h1>
 <p>It’s a good idea to develop your cookbook incrementally, testing 
 in short iterations.  Berkshelf integrates with Vagrant to deploy
-your cookbook changes to a virtual machine for testing.  </p>
+your cookbook changes to a virtual machine for testing.</p>
+
+<p>Install the <code>vagrant-omnibus</code> plugin.</p>
+
+<pre><code>$ vagrant plugin install vagrant-omnibus
+</code></pre>
+
+<p>The <code>vagrant-omnibus</code> plugin hooks into Vagrant and allows you to specify
+the version of the Chef Omnibus package you want installed using the
+<code>omnibus.chef_version</code> key</p>
 
 <p>Edit the Vagrantfile generated by the <code>berks cookbook</code> command to use
-a VirtualBox template that has Chef 11 installed.  (By default Berkshelf points
-at an image with Chef 10).  Your Vagrantfile should look like this:</p>
+a VirtualBox template that does not have a version of Chef provisioned.
+Then, specify that you want your image to always use the latest version
+of Chef. (By default Berkshelf points to an image with an older version
+of CentOS, Chef 11.2.0, which is also old).  Your Vagrantfile should look
+like this:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Vagrantfile  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -218,10 +302,12 @@ at an image with Chef 10).  Your Vagrantfile should look like this:</p>
 <span class="line-number">20</span>
 <span class="line-number">21</span>
 <span class="line-number">22</span>
+<span class="line-number">23</span>
 </pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;opscode_centos-6.3_chef-11.2.0&quot;</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.3_chef-11.2.0.box&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;misheska-centos-6.4&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://www.dropbox.com/s/y42egyh9cqsge24/misheska-centos-6.4.box&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">omnibus</span><span class="o">.</span><span class="n">chef_version</span> <span class="o">=</span> <span class="ss">:latest</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">max_tries</span> <span class="o">=</span> <span class="mi">40</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">timeout</span> <span class="o">=</span> <span class="mi">120</span>
@@ -247,22 +333,24 @@ cookbook you just created:</p>
 
 <pre><code>$ vagrant up
 Bringing machine 'default' up with 'virtualbox' provider...
-[default] Box 'opscode_centos-6.3_chef-11.2.0' was not found. Fetching box from specified URL for
+[default] Box 'mishesksa-centos-6.4' was not found. Fetching box from specified URL for
 the provider 'virtualbox'. Note that if the URL does not have
 a box for this provider, you should interrupt Vagrant now and add
 the box yourself. Otherwise Vagrant will attempt to download the
 full box prior to discovering this error.
-Downloading with Vagrant::Downloaders::HTTP...
-Downloading box: https://opscode-vm.s3.amazonaws.com/vagrant/opscode_centos-6.3_chef-11.2.0.box
-Extracting box...
-Cleaning up downloaded box...
-Successfully added box 'opscode_centos-6.3_chef-11.2.0' with provider 'virtualbox'!
-[default] Importing base box 'opscode_centos-6.3_chef-11.2.0'...
+Downloading or copying the box...
+Extracting box...te: 3449k/s, Estimated time remaining: 0:00:01)
+Successfully added box 'mishesksa-centos-6.4' with provider 'virtualbox'!
+[default] Importing base box 'mishesksa-centos-6.4'...
 [default] Matching MAC address for NAT networking...
 [default] Setting the name of the VM...
 [default] Clearing any previously set forwarded ports...
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130324-17246-9dysyo'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130616-17393-1q2qkbs'
+[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/xx/myface'
 [default] Creating shared folders metadata...
 [default] Clearing any previously set network interfaces...
 [default] Preparing network interfaces based on configuration...
@@ -271,24 +359,32 @@ Successfully added box 'opscode_centos-6.3_chef-11.2.0' with provider 'virtualbo
 [default] Booting VM...
 [default] Waiting for VM to boot. This can take a few minutes.
 [default] VM booted and ready for use!
+[default] Ensuring Chef is installed at requested version of 11.4.4.
+[default] Chef 11.4.4 Omnibus package is not installed...installing now.
+Downloading Chef 11.4.4 for el...
+Installing Chef 11.4.4
+warning: /tmp/tmp.Ro7kRMDB/chef-11.4.4.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+Preparing...                ##################################################
+chef                        ##################################################
+Thank you for installing Chef!
 [default] Setting hostname...
 [default] Configuring and enabling network interfaces...
 [default] Mounting shared folders...
 [default] -- /vagrant
 [default] -- /tmp/vagrant-chef-1/chef-solo-1/cookbooks
-[default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
+[default] Running provisioner: chef_solo...
 Generating chef JSON and uploading...
 Running chef-solo...
-[2013-03-24T21:21:56+00:00] INFO: *** Chef 11.2.0 ***
-[2013-03-24T21:21:57+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-[2013-03-24T21:21:57+00:00] INFO: Run List is [recipe[myface::default]]
-[2013-03-24T21:21:57+00:00] INFO: Run List expands to [myface::default]
-[2013-03-24T21:21:57+00:00] INFO: Starting Chef Run for myface-berkshelf
-[2013-03-24T21:21:57+00:00] INFO: Running start handlers
-[2013-03-24T21:21:57+00:00] INFO: Start handlers complete.
-[2013-03-24T21:21:57+00:00] INFO: Chef Run complete in 0.0256688 seconds
-[2013-03-24T21:21:57+00:00] INFO: Running report handlers
-[2013-03-24T21:21:57+00:00] INFO: Report handlers complete
+[2013-06-16T10:28:25-07:00] INFO: *** Chef 11.4.4 ***
+[2013-06-16T10:28:25-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+[2013-06-16T10:28:25-07:00] INFO: Run List is [recipe[myface::default]]
+[2013-06-16T10:28:25-07:00] INFO: Run List expands to [myface::default]
+[2013-06-16T10:28:25-07:00] INFO: Starting Chef Run for myface-berkshelf
+[2013-06-16T10:28:25-07:00] INFO: Running start handlers
+[2013-06-16T10:28:25-07:00] INFO: Start handlers complete.
+[2013-06-16T10:28:25-07:00] INFO: Chef Run complete in 0.027690068 seconds
+[2013-06-16T10:28:25-07:00] INFO: Running report handlers
+[2013-06-16T10:28:25-07:00] INFO: Report handlers complete
 </code></pre>
 
 <p>If all goes well, you should see <code>Chef Run complete</code> with no errors.</p>
@@ -357,25 +453,31 @@ so it looks like the following:</p>
 myface user on your test virtual machine:</p>
 
 <pre><code>$ vagrant provision
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130324-19145-nf292v'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
-[default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
+[default] Ensuring Chef is installed at requested version of 11.4.4.
+[default] Chef 11.4.4 Omnibus package is already installed...skipping installation.
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130616-17393-1q2qkbs'
+[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/xx/myface'
+[default] Running provisioner: chef_solo...
 Generating chef JSON and uploading...
 Running chef-solo...
-[2013-03-25T11:40:10+00:00] INFO: *** Chef 11.2.0 ***
-[2013-03-25T11:40:10+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-[2013-03-25T11:40:10+00:00] INFO: Run List is [recipe[myface::default]]
-[2013-03-25T11:40:10+00:00] INFO: Run List expands to [myface::default]
-[2013-03-25T11:40:10+00:00] INFO: Starting Chef Run for myface-berkshelf
-[2013-03-25T11:40:10+00:00] INFO: Running start handlers
-[2013-03-25T11:40:10+00:00] INFO: Start handlers complete.
-[2013-03-25T11:40:10+00:00] INFO: Processing group[myface] action create (myface::default line 10)
-[2013-03-25T11:40:10+00:00] INFO: group[myface] created
-[2013-03-25T11:40:10+00:00] INFO: Processing user[myface] action create (myface::default line 12)
-[2013-03-25T11:40:10+00:00] INFO: user[myface] created
-[2013-03-25T11:40:10+00:00] INFO: Chef Run complete in 0.085739737 seconds
-[2013-03-25T11:40:10+00:00] INFO: Running report handlers
-[2013-03-25T11:40:10+00:00] INFO: Report handlers complete
+[2013-06-16T10:36:32-07:00] INFO: *** Chef 11.4.4 ***
+[2013-06-16T10:36:32-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+[2013-06-16T10:36:32-07:00] INFO: Run List is [recipe[myface::default]]
+[2013-06-16T10:36:32-07:00] INFO: Run List expands to [myface::default]
+[2013-06-16T10:36:32-07:00] INFO: Starting Chef Run for myface-berkshelf
+[2013-06-16T10:36:32-07:00] INFO: Running start handlers
+[2013-06-16T10:36:32-07:00] INFO: Start handlers complete.
+[2013-06-16T10:36:32-07:00] INFO: Processing group[myface] action create (myface::default line 10)
+[2013-06-16T10:36:32-07:00] INFO: group[myface] created
+[2013-06-16T10:36:32-07:00] INFO: Processing user[myface] action create (myface::default line 12)
+[2013-06-16T10:36:32-07:00] INFO: user[myface] created
+[2013-06-16T10:36:32-07:00] INFO: Chef Run complete in 0.144073876 seconds
+[2013-06-16T10:36:32-07:00] INFO: Running report handlers
+[2013-06-16T10:36:32-07:00] INFO: Report handlers complete
 </code></pre>
 
 <p>Again, you should expect to see the Chef run complete with no errors.  Notice
@@ -385,7 +487,7 @@ that it also creates <code>group[myface]</code> and <code>user[myface]</code>.</
 machine by running the following:</p>
 
 <pre><code>$ vagrant ssh -c "getent passwd myface"
-myface:x:497:1001::/home/myface:/bin/bash
+myface:x:497:503::/home/myface:/bin/bash
 </code></pre>
 
 <p>We use <code>vagrant ssh -c</code> to run a command on our test virtual machine.  The
@@ -398,23 +500,29 @@ that if you run <code>vagrant provision</code> again, the Chef run executes more
 and it does not try to re-create the user/group it already created.</p>
 
 <pre><code>$ vagrant provision
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130324-19145-nf292v'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
-[default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
+[default] Ensuring Chef is installed at requested version of 11.4.4.
+[default] Chef 11.4.4 Omnibus package is already installed...skipping installation.
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130616-17393-1q2qkbs'
+[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/xx/myface'
+[default] Running provisioner: chef_solo...
 Generating chef JSON and uploading...
 Running chef-solo...
-[2013-03-25T11:50:03+00:00] INFO: *** Chef 11.2.0 ***
-[2013-03-25T11:50:04+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-[2013-03-25T11:50:04+00:00] INFO: Run List is [recipe[myface::default]]
-[2013-03-25T11:50:04+00:00] INFO: Run List expands to [myface::default]
-[2013-03-25T11:50:04+00:00] INFO: Starting Chef Run for myface-berkshelf
-[2013-03-25T11:50:04+00:00] INFO: Running start handlers
-[2013-03-25T11:50:04+00:00] INFO: Start handlers complete.
-[2013-03-25T11:50:04+00:00] INFO: Processing group[myface] action create (myface::default line 10)
-[2013-03-25T11:50:04+00:00] INFO: Processing user[myface] action create (myface::default line 12)
-[2013-03-25T11:50:04+00:00] INFO: Chef Run complete in 0.028070063 seconds
-[2013-03-25T11:50:04+00:00] INFO: Running report handlers
-[2013-03-25T11:50:04+00:00] INFO: Report handlers complete
+[2013-06-16T10:39:11-07:00] INFO: *** Chef 11.4.4 ***
+[2013-06-16T10:39:12-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+[2013-06-16T10:39:12-07:00] INFO: Run List is [recipe[myface::default]]
+[2013-06-16T10:39:12-07:00] INFO: Run List expands to [myface::default]
+[2013-06-16T10:39:12-07:00] INFO: Starting Chef Run for myface-berkshelf
+[2013-06-16T10:39:12-07:00] INFO: Running start handlers
+[2013-06-16T10:39:12-07:00] INFO: Start handlers complete.
+[2013-06-16T10:39:12-07:00] INFO: Processing group[myface] action create (myface::default line 10)
+[2013-06-16T10:39:12-07:00] INFO: Processing user[myface] action create (myface::default line 12)
+[2013-06-16T10:39:12-07:00] INFO: Chef Run complete in 0.033772034 seconds
+[2013-06-16T10:39:12-07:00] INFO: Running report handlers
+[2013-06-16T10:39:12-07:00] INFO: Report handlers complete
 </code></pre>
 
 <h1 id="iteration-2---refactor-the-user-name-and-group-name-into-attributes">Iteration #2 - Refactor the user name and group name into attributes</h1>
@@ -458,7 +566,7 @@ with <code>node[:myface][:user]</code> and all references to the “myface” gr
 <code>node[:myface][:group]</code>.  <code>myface/recipes/default.rb</code> should now look like
 this:</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
@@ -496,23 +604,6 @@ this:</p>
 <p>Re-provision with <code>vagrant provision</code> to see how the refactor went:</p>
 
 <pre><code>$ vagrant provision
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130325-20447-1lz0yjk'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
-[default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
-Generating chef JSON and uploading...
-Running chef-solo...
-[2013-03-25T12:56:23+00:00] INFO: *** Chef 11.2.0 ***
-[2013-03-25T12:56:23+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-[2013-03-25T12:56:23+00:00] INFO: Run List is [recipe[myface::default]]
-[2013-03-25T12:56:23+00:00] INFO: Run List expands to [myface::default]
-[2013-03-25T12:56:23+00:00] INFO: Starting Chef Run for myface-berkshelf
-[2013-03-25T12:56:23+00:00] INFO: Running start handlers
-[2013-03-25T12:56:23+00:00] INFO: Start handlers complete.
-[2013-03-25T12:56:23+00:00] INFO: Processing group[myface] action create (myface::default line 10)
-[2013-03-25T12:56:23+00:00] INFO: Processing user[myface] action create (myface::default line 12)
-[2013-03-25T12:56:23+00:00] INFO: Chef Run complete in 0.031634516 seconds
-[2013-03-25T12:56:23+00:00] INFO: Running report handlers
-[2013-03-25T12:56:23+00:00] INFO: Report handlers complete
 </code></pre>
 
 <p>As long as you didn’t create any syntax errors in your refactoring file edits,
@@ -521,7 +612,7 @@ just moved some strings into a node attribute).  Running  <code>getent</code> on
 test virtual machine should also produce the same result:</p>
 
 <pre><code>$ vagrant ssh -c "getent passwd myface"
-myface:x:497:1001::/home/myface:/bin/bash
+myface:x:497:503::/home/myface:/bin/bash
 </code></pre>
 
 <h1 id="iteration-3---install-the-apache2-web-server">Iteration #3 - Install the Apache2 Web Server</h1>
@@ -624,25 +715,7 @@ guarantees there are no changes in the public APIs.</p>
 test virtual machine:</p>
 
 <pre><code>$ vagrant provision
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130326-30730-144pxxn'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
-[Berkshelf] Installing apache2 (1.6.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
-[default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
-Generating chef JSON and uploading...
-Running chef-solo...
-[2013-03-27T06:29:43+00:00] INFO: *** Chef 11.2.0 ***
-[2013-03-27T06:29:43+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-[2013-03-27T06:29:43+00:00] INFO: Run List is [recipe[myface::default]]
-[2013-03-27T06:29:43+00:00] INFO: Run List expands to [myface::default]
-[2013-03-27T06:29:43+00:00] INFO: Starting Chef Run for myface-berkshelf
-[2013-03-27T06:29:43+00:00] INFO: Running start handlers
-[2013-03-27T06:29:43+00:00] INFO: Start handlers complete.
 ...
-[2013-03-27T06:30:40+00:00] INFO: Processing execute[a2dissite default] action run (apache2::default line 34)
-[2013-03-27T06:30:40+00:00] INFO: Processing service[apache2] action start (apache2::default line 221)
-[2013-03-27T06:30:40+00:00] INFO: service[apache2] started
-[2013-03-27T06:30:40+00:00] INFO: template[/etc/httpd/mods-available/deflate.conf] sending restart action to service[apache2] (delayed)
-[2013-03-27T06:30:40+00:00] INFO: Processing service[apache2] action restart (apache2::default line 221)
 [2013-03-27T06:30:41+00:00] INFO: service[apache2] restarted
 [2013-03-27T06:30:41+00:00] INFO: execute[a2enmod deflate] sending restart action to service[apache2] (delayed)
 [2013-03-27T06:30:41+00:00] INFO: Processing service[apache2] action restart (apache2::default line 24)
@@ -652,7 +725,7 @@ Running chef-solo...
 [2013-03-27T06:30:43+00:00] INFO: Report handlers complete
 </code></pre>
 
-<p>You can also verify that Apache was installed correctly by visiting the
+<p>You can verify that Apache was installed correctly by visiting the
 host-only private network address for the virtual machine that Berkshelf
 created in your Vagrantfile:</p>
 
@@ -835,29 +908,6 @@ iterations.</p>
 your changes:</p>
 
 <pre><code>$ vagrant provision
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130326-30730-144pxxn'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/git/myface'
-[Berkshelf] Using apache2 (1.6.0)
-[default] Running provisioner: VagrantPlugins::Chef::Provisioner::ChefSolo...
-Generating chef JSON and uploading...
-Running chef-solo...
-[2013-03-27T07:42:07+00:00] INFO: *** Chef 11.2.0 ***
-[2013-03-27T07:42:07+00:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-[2013-03-27T07:42:07+00:00] INFO: Run List is [recipe[myface::default]]
-[2013-03-27T07:42:07+00:00] INFO: Run List expands to [myface::default]
-[2013-03-27T07:42:07+00:00] INFO: Starting Chef Run for myface-berkshelf
-[2013-03-27T07:42:07+00:00] INFO: Running start handlers
-[2013-03-27T07:42:07+00:00] INFO: Start handlers complete.
-...
-[2013-03-27T07:42:10+00:00] INFO: template[/srv/apache/myface/index.html] mode changed to 644
-[2013-03-27T07:42:10+00:00] INFO: Processing execute[a2ensite myface.conf] action run (myface::default line 24)
-[2013-03-27T07:42:10+00:00] INFO: execute[a2ensite myface.conf] ran successfully
-[2013-03-27T07:42:10+00:00] INFO: execute[a2ensite myface.conf] sending restart action to service[apache2] (delayed)
-[2013-03-27T07:42:10+00:00] INFO: Processing service[apache2] action restart (apache2::default line 221)
-[2013-03-27T07:42:11+00:00] INFO: service[apache2] restarted
-[2013-03-27T07:42:11+00:00] INFO: Chef Run complete in 3.830142438 seconds
-[2013-03-27T07:42:11+00:00] INFO: Running report handlers
-[2013-03-27T07:42:11+00:00] INFO: Report handlers complete
 </code></pre>
 
 <p>If the Chef run completed successfully, if you point your web browser at your
@@ -994,7 +1044,7 @@ to add to our cookbook.  Let’s go through another refactoring pass.</p>
 </span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
 </span><span class="line"><span class="c1">#</span>
 </span><span class="line">
-</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;myface&quot;</span><span class="ss">:webserver</span><span class="s2">&quot;</span>
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;myface::webserver&quot;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Converge your node again to make sure there are no syntax errors:</p>
@@ -1034,7 +1084,7 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
   
 
 
-<time datetime="2013-03-24T09:27:00-07:00" pubdate data-updated="true">Mar 24<span>th</span>, 2013</time>
+<time datetime="2013-06-16T03:49:00-07:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
       
 
 <span class="categories">
@@ -1048,7 +1098,7 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/" data-via="" data-counturl="http://misheska.com/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/" data-via="" data-counturl="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/" >Tweet</a>
   
   
   
@@ -1057,10 +1107,8 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/" title="Previous Post: Using pik to manage multiple versions of Ruby on Windows">&laquo; Using pik to manage multiple versions of Ruby on Windows</a>
+        <a class="basic-alignment left" href="/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/" title="Previous Post: Use Opscode Chef Omnibus Ruby for writing cookbooks">&laquo; Use Opscode Chef Omnibus Ruby for writing cookbooks</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/" title="Next Post: Using Rbenv to manage multiple versions of Ruby">Using Rbenv to manage multiple versions of Ruby &raquo;</a>
       
     </p>
   </footer>
@@ -1075,6 +1123,10 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting started writing Chef cookbooks the Berkshelf Way</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Use Opscode Chef Omnibus Ruby for writing cookbooks</a>
       </li>
     
@@ -1084,10 +1136,6 @@ end product: <a href="https://github.com/reset/myface-cookbook">https://github.c
     
       <li class="post">
         <a href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting started writing Chef cookbooks the Berkshelf Way</a>
       </li>
     
       <li class="post">
