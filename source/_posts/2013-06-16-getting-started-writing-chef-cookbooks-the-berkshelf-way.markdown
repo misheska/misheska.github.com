@@ -13,9 +13,9 @@ to match [recent changes related to Vagrant 1.x](https://github.com/RiotGames/be
 This post is an attempt to update these instructions, walking through his
 and Sean O'Meara's example app - [MyFace](https://github.com/reset/myface-cookbook).
 For more information on [Berkshelf](http://berkshelf.com/), check out his recent
-[talk](https://my.adobeconnect.com/_a295153/p59b87of2dp/?launcher=false&fcsContent=true&pbMode=normal)
+[talk](http://www.youtube.com/watch?v=hYt0E84kYUI)
 and [slides](http://www.slideshare.net/resetexistence/the-berkshelf-way)
-from the March 14, 2013 Bay Area Chef meetup.
+from ChefConf 2013.
 
 Getting Started
 ===============
@@ -236,6 +236,11 @@ cookbook you just created:
     [2013-06-16T10:28:25-07:00] INFO: Report handlers complete
 
 If all goes well, you should see `Chef Run complete` with no errors.
+
+NOTE: The basebox URL comes from my current collection of baseboxes.  The
+following link points to a README file which provides links to all the
+vagrant baseboxes I use (which I normally update frequently):
+<https://github.com/misheska/basebox>
 
 If you would ever like to delete your test virtual machine and start over,
 you can destroy your test virtual machine with the `vagrant destroy` command:
