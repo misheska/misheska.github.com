@@ -22,7 +22,7 @@ How to set up Omnibus Chef Ruby on Mac OS X
 ===========================================
 First install Apple Xcode, which includes a C compiler needed to build the
 tools required for cookbook development from source (like
-[Berkshelf](http://misheska.com/blog/2013/03/24/getting-started-writing-chef-cookbooks-the-berkshelf-way/) ).
+[Berkshelf](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/) ).
 Download and install the latest version of Xcode from the App Store, if you
 don't have it installed already.  Also make sure you install the *Command Line
 Tools* by choosing the menu item <code>Xcode -> Preferences...</code> and click
