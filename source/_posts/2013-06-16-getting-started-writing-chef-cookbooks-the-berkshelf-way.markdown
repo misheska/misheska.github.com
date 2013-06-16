@@ -725,9 +725,6 @@ Converge your node again to make sure there are no syntax errors:
 Visiting <http://33.33.33.10> should produce the same result as before as you
 have made no net changes, just shuffled things around a bit.
 
-Now, let's move some values from the webserver cookbook to attributes.
-
-
 More to come!
 =============
 This is just part one of a multi-part series.  So far you've gone through
