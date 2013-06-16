@@ -4,7 +4,7 @@
   <title><![CDATA[Category: virtual box | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/virtual-box/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-15T23:54:34-07:00</updated>
+  <updated>2013-06-16T02:32:43-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -100,35 +100,7 @@ Chef never successfully completed! Any errors should be visible in the output ab
 Download this amended version and copy it in place of
 <code>sensu-client/examples/Vagrantfile</code></p>
 
-<p><div><script src='https://gist.github.com/5063291.js?file=Vagrantfile'></script>
-<noscript><pre><code>#require 'berkshelf/vagrant'
-
-Vagrant::Config.run do |config|
-  config.vm.box = &quot;ubuntu-1204-i386&quot;
-  config.vm.box_url = &quot;http://vagrant.sensuapp.org/ubuntu-1204-i386.box&quot;
-
-  config.vm.customize [
-    &quot;modifyvm&quot;, :id,
-    &quot;--name&quot;, &quot;Sensu Stack&quot;,
-    &quot;--memory&quot;, &quot;1024&quot;
-  ]
-
-  config.vm.provision :shell, :inline =&gt; &quot;apt-get install -y curl&quot;
-  config.vm.provision :shell, :inline =&gt; &quot;curl -L https://www.opscode.com/chef/install.sh | bash&quot;
-
-  config.vm.forward_port 8080, 8080
-  config.vm.forward_port 9000, 9000
-
-  config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = &quot;cookbooks&quot;
-    chef.data_bags_path = &quot;data_bags&quot;
-    chef.add_recipe &quot;monitor::master&quot;
-    chef.add_recipe &quot;monitor::redis&quot;
-    chef.add_recipe &quot;monitor::rabbitmq&quot;
-  end
-end
-</code></pre></noscript></div>
-</p>
+<p>{% gist 5063291 Vagrantfile %}</p>
 
 <h1 id="install-ruby-devkit-windows">Install Ruby DevKit (Windows)</h1>
 <p>The sensu-chef recipe is dependent on the json gem.  On Windows, you will get
