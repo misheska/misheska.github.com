@@ -614,6 +614,91 @@ You'll see some lovely content!
 
 ![Welcome to MyFace](/images/welcometomyface.png)
 
+Iteration #5 - Refactoring webserver
+====================================
+`myface/recipes/default.rb` is getting rather large and we've got a lot more
+to add to our cookbook.  Let's go through another refactoring pass.
+
+Let's move all the webserver-related resources to their own file
+`myface/recipes/webserver.rb`.  Rename `myface/recipes/default.rb` to
+`myface/recipes/webserver.rb`.
+
+Now `myface/recipes/webserver.rb` should look like this: 
+
+{% codeblock myface/recipes/webserver.rb lang:ruby %}
+#
+# Cookbook Name:: myface
+# Recipe:: webserver
+#
+# Copyright (C) 2013 YOUR_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+
+group node[:myface][:group]
+
+user node[:myface][:user] do
+  group node[:myface][:group]
+  system true
+  shell "/bin/bash"
+end
+
+include_recipe "apache2"
+
+# disable default site
+apache_site "000-default" do
+  enable false
+end
+
+# create apache config
+template "#{node[:apache][:dir]}/sites-available/myface.conf" do
+  source "apache2.conf.erb"
+  notifies :restart, 'service[apache2]'
+end
+
+# create document root
+directory "/srv/apache/myface" do
+  action :create
+  recursive true
+end
+
+# write siteX
+template "/srv/apache/myface/index.html" do
+  source "index.html.erb"
+  mode "0644"
+end
+
+# enable myface
+apache_site "myface.conf" do
+  enable true
+end
+{% endcodeblock %}
+
+Create a new `myface/recipes/default.rb` file which references `webserver.rb`.
+
+{% codeblock myface/recipes/default.rb lang:ruby %}
+
+# Cookbook Name:: myface
+# Recipe:: default
+#
+# Copyright (C) 2013 YOUR_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+
+include_recipe "myface":webserver"
+{% endcodeblock %}
+
+Converge your node again to make sure there are no syntax errors:
+
+    $ vagrant provision
+
+Visiting <http://33.33.33.10> should produce the same result as before as you
+have made no net changes, just shuffled things around a bit.
+
+Now, let's move some values from the webserver cookbook to attributes.
+
+
 More to come!
 =============
 This is just part one of a multi-part series.  So far you've gone through
