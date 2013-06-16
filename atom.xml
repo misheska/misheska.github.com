@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-16T11:01:01-07:00</updated>
+  <updated>2013-06-16T11:14:51-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -38,9 +38,9 @@ to match <a href="https://github.com/RiotGames/berkshelf/issues/416">recent chan
 This post is an attempt to update these instructions, walking through his
 and Sean O’Meara’s example app - <a href="https://github.com/reset/myface-cookbook">MyFace</a>.
 For more information on <a href="http://berkshelf.com/">Berkshelf</a>, check out his recent
-<a href="https://my.adobeconnect.com/_a295153/p59b87of2dp/?launcher=false&amp;fcsContent=true&amp;pbMode=normal">talk</a>
+<a href="http://www.youtube.com/watch?v=hYt0E84kYUI">talk</a>
 and <a href="http://www.slideshare.net/resetexistence/the-berkshelf-way">slides</a>
-from the March 14, 2013 Bay Area Chef meetup.</p>
+from ChefConf 2013.</p>
 
 <h1 id="getting-started">Getting Started</h1>
 <p>You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
@@ -303,6 +303,11 @@ Running chef-solo...
 </code></pre>
 
 <p>If all goes well, you should see <code>Chef Run complete</code> with no errors.</p>
+
+<p>NOTE: The basebox URL comes from my current collection of baseboxes.  The
+following link points to a README file which provides links to all the
+vagrant baseboxes I use (which I normally update frequently):
+<a href="https://github.com/misheska/basebox">https://github.com/misheska/basebox</a></p>
 
 <p>If you would ever like to delete your test virtual machine and start over,
 you can destroy your test virtual machine with the <code>vagrant destroy</code> command:</p>
