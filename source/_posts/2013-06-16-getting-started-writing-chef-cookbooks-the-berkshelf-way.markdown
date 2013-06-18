@@ -34,15 +34,23 @@ installed:
 ```
 $ gem install berkshelf --no-ri --no-rdoc
 $ berks -v
-Berkshelf (2.0.3)
+Berkshelf (2.0.4)
 ```
 
-* Install the Berkshelf Vagrant Plugin (1.2.0 or higher)
+* Install the Berkshelf Vagrant Plugin (1.3.2 or higher)
 
 ```
-$ vagrant plugin install berkshelf-vagrant
+$ vagrant plugin install vagrant-berkshelf
 Installing the 'vagrant-berkshelf' plugin. This can take a few minutes...
-Installed the plugin 'vagrant-berkshelf (1.2.0)'!
+Installed the plugin 'vagrant-berkshelf (1.3.2)'!
+```
+
+* Install the vagrant-omnibus plugin
+
+```
+$ vagrant plugin install vagrant-omnibus
+Installing the 'vagrant-omnibus' plugin.  This can take a few minutes...
+Installed the plugin 'vagrant-omnibus (1.0.2)'!
 ```
 
 Upgrade from Berkshelf 1.x
@@ -106,7 +114,7 @@ First create a new cookbook for the MyFace application using the
 Before running `bundle install` edit the `Gemfile` and add a version
 constraint for the `test-kitchen` gem, like so:
 
-{% codeblock myface/Vagrantfile lang:ruby %}
+{% codeblock myface/Gemfile lang:ruby %}
 source 'https://rubygems.org'
 
 gem 'berkshelf'
@@ -136,9 +144,12 @@ It's a good idea to develop your cookbook incrementally, testing
 in short iterations.  Berkshelf integrates with Vagrant to deploy
 your cookbook changes to a virtual machine for testing.
 
-Install the `vagrant-omnibus` plugin.
+Ensure that the `vagrant-omnibus` plugin is installed correctly.
 
-    $ vagrant plugin install vagrant-omnibus
+    $ vagrant plugin list
+    ...
+    vagrant-omnibus (1.0.2)
+    ...
 
 The `vagrant-omnibus` plugin hooks into Vagrant and allows you to specify
 the version of the Chef Omnibus package you want installed using the
