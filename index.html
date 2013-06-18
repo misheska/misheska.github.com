@@ -155,18 +155,29 @@ installed:</p>
 <span class="line-number">3</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf --no-ri --no-rdoc
 </span><span class="line">$ berks -v
-</span><span class="line">Berkshelf (2.0.3)</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">Berkshelf (2.0.4)</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
-  <li>Install the Berkshelf Vagrant Plugin (1.2.0 or higher)</li>
+  <li>Install the Berkshelf Vagrant Plugin (1.3.2 or higher)</li>
 </ul>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install berkshelf-vagrant
+</pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install vagrant-berkshelf
 </span><span class="line">Installing the 'vagrant-berkshelf' plugin. This can take a few minutes...
-</span><span class="line">Installed the plugin 'vagrant-berkshelf (1.2.0)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">Installed the plugin 'vagrant-berkshelf (1.3.2)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Install the vagrant-omnibus plugin</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install vagrant-omnibus
+</span><span class="line">Installing the 'vagrant-omnibus' plugin.  This can take a few minutes...
+</span><span class="line">Installed the plugin 'vagrant-omnibus (1.0.2)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h2 id="upgrade-from-berkshelf-1x">Upgrade from Berkshelf 1.x</h2>
 <p>NOTE: If you had a previous 1.x version of the berkshelf plugin installed,
@@ -230,7 +241,7 @@ You must run `bundle install' to fetch any new gems.
 <p>Before running <code>bundle install</code> edit the <code>Gemfile</code> and add a version
 constraint for the <code>test-kitchen</code> gem, like so:</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Vagrantfile  </span></figcaption>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Gemfile  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
@@ -266,9 +277,12 @@ for <code>test-kitchen</code>, per above:</p>
 in short iterations.  Berkshelf integrates with Vagrant to deploy
 your cookbook changes to a virtual machine for testing.</p>
 
-<p>Install the <code>vagrant-omnibus</code> plugin.</p>
+<p>Ensure that the <code>vagrant-omnibus</code> plugin is installed correctly.</p>
 
-<pre><code>$ vagrant plugin install vagrant-omnibus
+<pre><code>$ vagrant plugin list
+...
+vagrant-omnibus (1.0.2)
+...
 </code></pre>
 
 <p>The <code>vagrant-omnibus</code> plugin hooks into Vagrant and allows you to specify
