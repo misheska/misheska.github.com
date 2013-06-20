@@ -110,11 +110,26 @@
   </li>
   <li><a href="#create-the-myface-application-cookbook">Create the MyFace Application Cookbook</a></li>
   <li><a href="#prepare-a-virtual-machine-for-testing">Prepare a virtual machine for testing</a></li>
-  <li><a href="#iteration-1-create-an-application-user">Iteration #1: Create an application user</a></li>
-  <li><a href="#iteration-2---refactor-the-user-name-and-group-name-into-attributes">Iteration #2 - Refactor the user name and group name into attributes</a></li>
-  <li><a href="#iteration-3---install-the-apache2-web-server">Iteration #3 - Install the Apache2 Web Server</a></li>
-  <li><a href="#iteration-4---add-content">Iteration #4 - Add Content</a></li>
-  <li><a href="#iteration-5---refactoring-webserver">Iteration #5 - Refactoring webserver</a></li>
+  <li><a href="#iteration-1-create-an-application-user">Iteration #1: Create an application user</a>    <ul>
+      <li><a href="#testing-iteration-1">Testing Iteration #1</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-2---refactor-to-attributes">Iteration #2 - Refactor to attributes</a>    <ul>
+      <li><a href="#testing-iteration-2">Testing Iteration #2</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-3---install-the-apache2-web-server">Iteration #3 - Install the Apache2 Web Server</a>    <ul>
+      <li><a href="#testing-iteration-3">Testing Iteration #3</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-4---add-content">Iteration #4 - Add Content</a>    <ul>
+      <li><a href="#testing-iteration-4">Testing Iteration #4</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-5---refactoring-webserver">Iteration #5 - Refactoring webserver</a>    <ul>
+      <li><a href="#testing-iteration-5">Testing Iteration #5</a></li>
+    </ul>
+  </li>
   <li><a href="#more-to-come">More to come!</a></li>
 </ul>
 
@@ -499,8 +514,10 @@ Running chef-solo...
 [2013-06-16T10:36:32-07:00] INFO: Report handlers complete
 </code></pre>
 
-<p>Again, you should expect to see the Chef run complete with no errors.  Notice
+<p>You should expect to see the Chef run complete with no errors.  Notice
 that it also creates <code>group[myface]</code> and <code>user[myface]</code>.</p>
+
+<h2 id="testing-iteration-1">Testing Iteration #1</h2>
 
 <p>Verify that Chef actually created the myface user on our test virtual
 machine by running the following:</p>
@@ -544,7 +561,7 @@ Running chef-solo...
 [2013-06-16T10:39:12-07:00] INFO: Report handlers complete
 </code></pre>
 
-<h1 id="iteration-2---refactor-the-user-name-and-group-name-into-attributes">Iteration #2 - Refactor the user name and group name into attributes</h1>
+<h1 id="iteration-2---refactor-to-attributes">Iteration #2 - Refactor to attributes</h1>
 <p>What if at some point you wanted to change the name of the <code>myface</code> user/group
 you just created to something else?  At the moment, you would need to edit
 <code>myface/recipes/default.rb</code> in three places.</p>
@@ -627,8 +644,12 @@ this:</p>
 
 <p>As long as you didn’t create any syntax errors in your refactoring file edits,
 there should be no net change on the virtual machine test node (as you’ve only
-just moved some strings into a node attribute).  Running  <code>getent</code> on the
-test virtual machine should also produce the same result:</p>
+just moved some strings into a node attribute).  </p>
+
+<h2 id="testing-iteration-2">Testing Iteration #2</h2>
+
+<p>Running  <code>getent</code> on the test virtual machine should also produce the same
+result as when you validated Iteration #1:</p>
 
 <pre><code>$ vagrant ssh -c "getent passwd myface"
 myface:x:497:503::/home/myface:/bin/bash
@@ -744,9 +765,25 @@ test virtual machine:</p>
 [2013-03-27T06:30:43+00:00] INFO: Report handlers complete
 </code></pre>
 
-<p>You can verify that Apache was installed correctly by visiting the
-host-only private network address for the virtual machine that Berkshelf
-created in your Vagrantfile:</p>
+<h2 id="testing-iteration-3">Testing Iteration #3</h2>
+
+<p>You can verify that the apache2 <code>httpd</code> service is running on your berkshelf
+virtual machine with the following command:</p>
+
+<pre><code>$ vagrant ssh -c "sudo /sbin/service httpd status"
+httpd (pid 5206) is running.
+</code></pre>
+
+<p>Since this is a web server, so you can also check it out in your favorite web
+browser.  The host-only private network address for the virtual machine
+that Berkshelf created is in the <code>Vagrantfile</code>.  Display the IP address with
+the following command:</p>
+
+<pre><code>$ grep ip: Vagrantfile
+config.vm.network :private_network, ip: "33.33.33.10"
+</code></pre>
+
+<p>Check it out with your favorite web browser:</p>
 
 <p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
 
@@ -929,6 +966,8 @@ your changes:</p>
 <pre><code>$ vagrant provision
 </code></pre>
 
+<h2 id="testing-iteration-4">Testing Iteration #4</h2>
+
 <p>If the Chef run completed successfully, if you point your web browser at your
 myface web site again:</p>
 
@@ -1070,6 +1109,8 @@ to add to our cookbook.  Let’s go through another refactoring pass.</p>
 
 <pre><code>$ vagrant provision
 </code></pre>
+
+<h2 id="testing-iteration-5">Testing Iteration #5</h2>
 
 <p>Visiting <a href="http://33.33.33.10">http://33.33.33.10</a> should produce the same result as before as you
 have made no net changes, just shuffled things around a bit.</p>
