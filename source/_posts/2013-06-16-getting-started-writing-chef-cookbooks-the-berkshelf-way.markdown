@@ -327,8 +327,11 @@ myface user on your test virtual machine:
     [2013-06-16T10:36:32-07:00] INFO: Running report handlers
     [2013-06-16T10:36:32-07:00] INFO: Report handlers complete
 
-Again, you should expect to see the Chef run complete with no errors.  Notice
+You should expect to see the Chef run complete with no errors.  Notice
 that it also creates `group[myface]` and `user[myface]`.
+
+Testing Iteration #1
+--------------------
 
 Verify that Chef actually created the myface user on our test virtual
 machine by running the following:
@@ -370,8 +373,8 @@ and it does not try to re-create the user/group it already created.
     [2013-06-16T10:39:12-07:00] INFO: Running report handlers
     [2013-06-16T10:39:12-07:00] INFO: Report handlers complete
 
-Iteration #2 - Refactor the user name and group name into attributes
-====================================================================
+Iteration #2 - Refactor to attributes
+=====================================
 What if at some point you wanted to change the name of the `myface` user/group
 you just created to something else?  At the moment, you would need to edit
 `myface/recipes/default.rb` in three places.
@@ -434,8 +437,13 @@ Re-provision with `vagrant provision` to see how the refactor went:
 
 As long as you didn't create any syntax errors in your refactoring file edits,
 there should be no net change on the virtual machine test node (as you've only
-just moved some strings into a node attribute).  Running  `getent` on the
-test virtual machine should also produce the same result:
+just moved some strings into a node attribute).  
+
+Testing Iteration #2
+--------------------
+
+Running  `getent` on the test virtual machine should also produce the same
+result as when you validated Iteration #1:
 
     $ vagrant ssh -c "getent passwd myface"
     myface:x:497:503::/home/myface:/bin/bash
@@ -521,9 +529,24 @@ test virtual machine:
     [2013-03-27T06:30:43+00:00] INFO: Running report handlers
     [2013-03-27T06:30:43+00:00] INFO: Report handlers complete
 
-You can verify that Apache was installed correctly by visiting the
-host-only private network address for the virtual machine that Berkshelf
-created in your Vagrantfile:
+Testing Iteration #3
+--------------------
+
+You can verify that the apache2 `httpd` service is running on your berkshelf
+virtual machine with the following command:
+
+    $ vagrant ssh -c "sudo /sbin/service httpd status"
+    httpd (pid 5206) is running.
+
+Since this is a web server, so you can also check it out in your favorite web
+browser.  The host-only private network address for the virtual machine
+that Berkshelf created is in the `Vagrantfile`.  Display the IP address with
+the following command:
+
+    $ grep ip: Vagrantfile
+    config.vm.network :private_network, ip: "33.33.33.10"
+
+Check it out with your favorite web browser:
 
 <http://33.33.33.10>
 
@@ -650,6 +673,9 @@ your changes:
 
     $ vagrant provision
 
+Testing Iteration #4
+--------------------
+
 If the Chef run completed successfully, if you point your web browser at your
 myface web site again:
 
@@ -737,6 +763,9 @@ include_recipe "myface::webserver"
 Converge your node again to make sure there are no syntax errors:
 
     $ vagrant provision
+
+Testing Iteration #5
+--------------------
 
 Visiting <http://33.33.33.10> should produce the same result as before as you
 have made no net changes, just shuffled things around a bit.
