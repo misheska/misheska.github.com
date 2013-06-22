@@ -33,11 +33,14 @@ installed:
 
 ```
 $ gem install berkshelf --no-ri --no-rdoc
+Fetching: berkshelf-2.0.5.gem (100%)
+Successfully installed berkshelf-2.0.5
+1 gem installed
 $ berks -v
-Berkshelf (2.0.4)
+Berkshelf (2.0.5)
 ```
 
-* Install the Berkshelf Vagrant Plugin (1.3.2 or higher)
+* Install the vagrant-berkshelf Plugin (1.3.2 or higher)
 
 ```
 $ vagrant plugin install vagrant-berkshelf
@@ -45,12 +48,12 @@ Installing the 'vagrant-berkshelf' plugin. This can take a few minutes...
 Installed the plugin 'vagrant-berkshelf (1.3.2)'!
 ```
 
-* Install the vagrant-omnibus plugin
+* Install the vagrant-omnibus plugin (1.1.0 or higher)
 
 ```
 $ vagrant plugin install vagrant-omnibus
 Installing the 'vagrant-omnibus' plugin.  This can take a few minutes...
-Installed the plugin 'vagrant-omnibus (1.0.2)'!
+Installed the plugin 'vagrant-omnibus (1.1.0)'!
 ```
 
 Upgrade from Berkshelf 1.x
@@ -61,7 +64,6 @@ the following command:
 
     $ vagrant plugin list
     berkshelf-vagrant (1.1.3)
-    vagrant-vmware-fusion (0.6.5)
 
 Make sure you fully uninstall the old `berkshelf-vagrant` plugin before
 installing the new `vagrant-berkshelf` plugin, as vagrant will get confused
@@ -70,7 +72,7 @@ by the name change:
     $ vagrant plugin uninstall berkshelf-vagrant
     Uninstalling the 'berkshelf-vagrant' plugin...
     $ vagrant plugin install vagrant-berkshelf
-    Installing the 'vagrant-berkshelf' plugin.  THis can take a few minutes...
+    Installing the 'vagrant-berkshelf' plugin.  This can take a few minutes...
 
 Create the MyFace Application Cookbook
 ======================================
@@ -127,6 +129,18 @@ necessary Gem dependencies:
 
     $ cd myface
     $ bundle install
+    Fetching gem metadata from https://rubygems.org/........
+    Fetching gem metadata from https://rubygems.org/..
+    Resolving dependencies...
+    Using i18n (0.6.1)
+    Using multi_json (1.7.7)
+    Using activesupport (3.2.13)
+    . . .
+    Using test-kitchen (1.0.0.alpha.7)
+    Using kitchen-vagrant (0.10.0)
+    Using bundler (1.3.5)
+    Your bundle is complete!
+    Use `bundle show [gemname]` to see where a bundled gem is installed.
 
 If you get the following error, you forgot to add a version-constraint
 for `test-kitchen`, per above:
@@ -148,7 +162,7 @@ Ensure that the `vagrant-omnibus` plugin is installed correctly.
 
     $ vagrant plugin list
     ...
-    vagrant-omnibus (1.0.2)
+    vagrant-omnibus (1.1.0)
     ...
 
 The `vagrant-omnibus` plugin hooks into Vagrant and allows you to specify
@@ -775,4 +789,4 @@ More to come!
 This is just part one of a multi-part series.  So far you've gone through
 several short iteration loops as you evolve the myface cookbook.  In subsequent
 installments, we'll go through more iterations, resulting in the final
-end product: <https://github.com/reset/myface-cookbook>
+end product: <https://github.com/misheska/myface>
