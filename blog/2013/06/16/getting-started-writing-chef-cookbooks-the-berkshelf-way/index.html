@@ -165,12 +165,18 @@ installed:</p>
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf --no-ri --no-rdoc
+</span><span class="line">Fetching: berkshelf-2.0.5.gem (100%)
+</span><span class="line">Successfully installed berkshelf-2.0.5
+</span><span class="line">1 gem installed
 </span><span class="line">$ berks -v
-</span><span class="line">Berkshelf (2.0.4)</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">Berkshelf (2.0.5)</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
-  <li>Install the Berkshelf Vagrant Plugin (1.3.2 or higher)</li>
+  <li>Install the vagrant-berkshelf Plugin (1.3.2 or higher)</li>
 </ul>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -181,7 +187,7 @@ installed:</p>
 </span><span class="line">Installed the plugin 'vagrant-berkshelf (1.3.2)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
-  <li>Install the vagrant-omnibus plugin</li>
+  <li>Install the vagrant-omnibus plugin (1.1.0 or higher)</li>
 </ul>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -189,7 +195,7 @@ installed:</p>
 <span class="line-number">3</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install vagrant-omnibus
 </span><span class="line">Installing the 'vagrant-omnibus' plugin.  This can take a few minutes...
-</span><span class="line">Installed the plugin 'vagrant-omnibus (1.0.2)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">Installed the plugin 'vagrant-omnibus (1.1.0)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <h2 id="upgrade-from-berkshelf-1x">Upgrade from Berkshelf 1.x</h2>
 <p>NOTE: If you had a previous 1.x version of the berkshelf plugin installed,
@@ -198,7 +204,6 @@ the following command:</p>
 
 <pre><code>$ vagrant plugin list
 berkshelf-vagrant (1.1.3)
-vagrant-vmware-fusion (0.6.5)
 </code></pre>
 
 <p>Make sure you fully uninstall the old <code>berkshelf-vagrant</code> plugin before
@@ -208,7 +213,7 @@ by the name change:</p>
 <pre><code>$ vagrant plugin uninstall berkshelf-vagrant
 Uninstalling the 'berkshelf-vagrant' plugin...
 $ vagrant plugin install vagrant-berkshelf
-Installing the 'vagrant-berkshelf' plugin.  THis can take a few minutes...
+Installing the 'vagrant-berkshelf' plugin.  This can take a few minutes...
 </code></pre>
 
 <h1 id="create-the-myface-application-cookbook">Create the MyFace Application Cookbook</h1>
@@ -271,6 +276,18 @@ necessary Gem dependencies:</p>
 
 <pre><code>$ cd myface
 $ bundle install
+Fetching gem metadata from https://rubygems.org/........
+Fetching gem metadata from https://rubygems.org/..
+Resolving dependencies...
+Using i18n (0.6.1)
+Using multi_json (1.7.7)
+Using activesupport (3.2.13)
+. . .
+Using test-kitchen (1.0.0.alpha.7)
+Using kitchen-vagrant (0.10.0)
+Using bundler (1.3.5)
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
 </code></pre>
 
 <p>If you get the following error, you forgot to add a version-constraint
@@ -293,7 +310,7 @@ your cookbook changes to a virtual machine for testing.</p>
 
 <pre><code>$ vagrant plugin list
 ...
-vagrant-omnibus (1.0.2)
+vagrant-omnibus (1.1.0)
 ...
 </code></pre>
 
@@ -1119,7 +1136,7 @@ have made no net changes, just shuffled things around a bit.</p>
 <p>This is just part one of a multi-part series.  So far you’ve gone through
 several short iteration loops as you evolve the myface cookbook.  In subsequent
 installments, we’ll go through more iterations, resulting in the final
-end product: <a href="https://github.com/reset/myface-cookbook">https://github.com/reset/myface-cookbook</a></p>
+end product: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
 </div>
 
 
