@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-22T14:01:12-07:00</updated>
+  <updated>2013-06-22T14:16:44-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -67,6 +67,9 @@ For more information on <a href="http://berkshelf.com/">Berkshelf</a>, check out
 <a href="http://www.youtube.com/watch?v=hYt0E84kYUI">talk</a>
 and <a href="http://www.slideshare.net/resetexistence/the-berkshelf-way">slides</a>
 from ChefConf 2013.</p>
+
+<p>NOTE: The source code examples covered in this article can be found on
+Github: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
 
 <h1 id="getting-started">Getting Started</h1>
 <p>You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
