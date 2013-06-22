@@ -17,6 +17,9 @@ For more information on [Berkshelf](http://berkshelf.com/), check out his recent
 and [slides](http://www.slideshare.net/resetexistence/the-berkshelf-way)
 from ChefConf 2013.
 
+NOTE: The source code examples covered in this article can be found on
+Github: <https://github.com/misheska/myface>
+
 Getting Started
 ===============
 You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
