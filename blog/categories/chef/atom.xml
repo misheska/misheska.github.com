@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-23T11:23:56-07:00</updated>
+  <updated>2013-06-23T11:26:06-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -41,7 +41,7 @@
   <li><a href="#disable-default-site">disable default site</a></li>
   <li><a href="#create-apache-config">create apache config</a></li>
   <li><a href="#create-document-root">create document root</a></li>
-  <li><a href="#write-sitex">write siteX</a></li>
+  <li><a href="#write-site">write site</a></li>
   <li><a href="#enable-myface">enable myface</a>    <ul>
       <li><a href="#testing-iteration-4">Testing Iteration #4</a></li>
     </ul>
@@ -50,13 +50,13 @@
   <li><a href="#disable-default-site-1">disable default site</a></li>
   <li><a href="#create-apache-config-1">create apache config</a></li>
   <li><a href="#create-document-root-1">create document root</a></li>
-  <li><a href="#write-site">write site</a></li>
+  <li><a href="#write-site-1">write site</a></li>
   <li><a href="#enable-myface-1">enable myface</a></li>
   <li><a href="#cookbook-name-myface">Cookbook Name:: myface</a></li>
   <li><a href="#disable-default-site-2">disable default site</a></li>
   <li><a href="#create-apache-config-2">create apache config</a></li>
   <li><a href="#create-document-root-2">create document root</a></li>
-  <li><a href="#write-site-1">write site</a></li>
+  <li><a href="#write-site-2">write site</a></li>
   <li><a href="#enable-myface-2">enable myface</a>    <ul>
       <li><a href="#testing-iteration-5">Testing Iteration #5</a></li>
     </ul>
@@ -854,7 +854,7 @@ variable <code>BERKSHELF_PATH</code>.</p>
 </span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
 </span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-sitex&quot;&gt;write siteX&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-site&quot;&gt;write site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">template</span> <span class="err">“</span><span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="err">”</span> <span class="k">do</span>
 </span><span class='line'>  <span class="n">source</span> <span class="err">“</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">erb</span><span class="err">”</span>
 </span><span class='line'>  <span class="n">mode</span> <span class="err">“</span><span class="mo">0644</span><span class="err">”</span> <span class="c1"># forget me to create debugging exercise</span>
@@ -1015,7 +1015,7 @@ to add to our cookbook.  Let’s go through another refactoring pass.</p>
 </span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
 </span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-site&quot;&gt;write site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-site-1&quot;&gt;write site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">template</span> <span class="err">“</span><span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="err">”</span> <span class="k">do</span>
 </span><span class='line'>  <span class="n">source</span> <span class="err">“</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">erb</span><span class="err">”</span>
 </span><span class='line'>  <span class="n">mode</span> <span class="err">“</span><span class="mo">0644</span><span class="err">”</span>
@@ -1172,7 +1172,7 @@ to attribute references: </p>
 </span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
 </span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-site-1&quot;&gt;write site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-site-2&quot;&gt;write site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">template</span> <span class="err">“</span><span class="c1">#{node[:myface][:document_root]}/index.html” do</span>
 </span><span class='line'>  <span class="n">source</span> <span class="err">“</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">erb</span><span class="err">”</span>
 </span><span class='line'>  <span class="n">mode</span> <span class="err">“</span><span class="mo">0644</span><span class="err">”</span>
