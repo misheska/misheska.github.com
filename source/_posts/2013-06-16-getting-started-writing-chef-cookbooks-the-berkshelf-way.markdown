@@ -643,7 +643,7 @@ directory "/srv/apache/myface" do
   recursive true
 end
 
-# write siteX
+# write site
 template "/srv/apache/myface/index.html" do
   source "index.html.erb"
   mode "0644" # forget me to create debugging exercise
