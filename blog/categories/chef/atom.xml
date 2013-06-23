@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-22T14:16:44-07:00</updated>
+  <updated>2013-06-23T11:23:56-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -50,9 +50,14 @@
   <li><a href="#disable-default-site-1">disable default site</a></li>
   <li><a href="#create-apache-config-1">create apache config</a></li>
   <li><a href="#create-document-root-1">create document root</a></li>
-  <li><a href="#write-sitex-1">write siteX</a></li>
+  <li><a href="#write-site">write site</a></li>
   <li><a href="#enable-myface-1">enable myface</a></li>
-  <li><a href="#cookbook-name-myface">Cookbook Name:: myface</a>    <ul>
+  <li><a href="#cookbook-name-myface">Cookbook Name:: myface</a></li>
+  <li><a href="#disable-default-site-2">disable default site</a></li>
+  <li><a href="#create-apache-config-2">create apache config</a></li>
+  <li><a href="#create-document-root-2">create document root</a></li>
+  <li><a href="#write-site-1">write site</a></li>
+  <li><a href="#enable-myface-2">enable myface</a>    <ul>
       <li><a href="#testing-iteration-5">Testing Iteration #5</a></li>
     </ul>
   </li>
@@ -1010,7 +1015,7 @@ to add to our cookbook.  Let’s go through another refactoring pass.</p>
 </span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
 </span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-sitex-1&quot;&gt;write siteX&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-site&quot;&gt;write site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
 </span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">template</span> <span class="err">“</span><span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="err">”</span> <span class="k">do</span>
 </span><span class='line'>  <span class="n">source</span> <span class="err">“</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">erb</span><span class="err">”</span>
 </span><span class='line'>  <span class="n">mode</span> <span class="err">“</span><span class="mo">0644</span><span class="err">”</span>
@@ -1050,6 +1055,136 @@ to add to our cookbook.  Let’s go through another refactoring pass.</p>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
 <p>Converge your node again to make sure there are no syntax errors:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<p>Let’s eliminate some more of the duplication that crept in while we were
+working on things.  Edit <code>myface/attributes/default.rb</code></p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="o">=</span> <span class="err">“</span><span class="n">myface</span><span class="err">”</span>
+</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span> <span class="o">=</span> <span class="err">“</span><span class="n">myface</span><span class="err">”</span>
+</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:name</span><span class="o">]</span> <span class="o">=</span> <span class="err">“</span><span class="n">myface</span><span class="err">”</span>
+</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:config</span><span class="o">]</span> <span class="o">=</span> <span class="err">“</span><span class="n">myface</span><span class="o">.</span><span class="n">conf</span><span class="err">”</span>
+</span><span class='line'><span class="n">default</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:document_root</span><span class="o">]</span> <span class="o">=</span> <span class="err">“</span><span class="o">/</span><span class="n">srv</span><span class="o">/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="err">”</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>NOTE: With Chef 11, it is now possible to nest attributes, like so:</p>
+
+<pre><code>node.default[:app][:name] = "my_app"
+node.default[:app][:document_root] = "/srv/apache/#{node[:app][:name]}"
+</code></pre>
+
+<p>This approach is overkill for MyFace (and is frankly overkill for most
+Chef recipes).  Even though nesting is an option now with Chef 11, you should
+try to keep your attribute files as simple and straightforward to follow as
+possible.</p>
+
+<p>In <code>myface/recipes/webserver.rb</code> replace the corresponding hardcoded references
+to attribute references: </p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/recipes/webserver.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
+</span><span class='line'><span class="c1"># Recipe:: webserver</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class='line'><span class="c1">#&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;user node[:myface][:user] do</span>
+</span><span class='line'><span class="sr">  group node[:myface][:group]</span>
+</span><span class='line'><span class="sr">  system true</span>
+</span><span class='line'><span class="sr">  shell “/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="err">”</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;include_recipe “apache2”&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;disable-default-site-2&quot;</span><span class="o">&gt;</span><span class="n">disable</span> <span class="n">default</span> <span class="n">site</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'><span class="sr">&lt;p&gt;apache_site “000-default” do</span>
+</span><span class='line'><span class="sr">  enable false</span>
+</span><span class='line'><span class="sr">end&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="n">h1</span> <span class="nb">id</span><span class="o">=</span><span class="s2">&quot;create-apache-config-2&quot;</span><span class="o">&gt;</span><span class="n">create</span> <span class="n">apache</span> <span class="n">config</span><span class="o">&lt;</span><span class="sr">/h1&gt;</span>
+</span><span class='line'><span class="sr">&lt;p&gt;template “</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="sr">/si</span><span class="n">tes</span><span class="o">-</span><span class="n">available</span><span class="o">/</span><span class="c1">#{node[:myface][:config]}” do</span>
+</span><span class='line'>  <span class="n">source</span> <span class="err">“</span><span class="n">apache2</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">erb</span><span class="err">”</span>
+</span><span class='line'>  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="err">‘</span><span class="n">service</span><span class="o">[</span><span class="n">apache2</span><span class="o">]</span><span class="err">’</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;create-document-root-2&quot;&gt;create document root&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">directory</span> <span class="err">“</span><span class="c1">#{node[:myface][:document_root]}” do</span>
+</span><span class='line'>  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-site-1&quot;&gt;write site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">template</span> <span class="err">“</span><span class="c1">#{node[:myface][:document_root]}/index.html” do</span>
+</span><span class='line'>  <span class="n">source</span> <span class="err">“</span><span class="n">index</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">erb</span><span class="err">”</span>
+</span><span class='line'>  <span class="n">mode</span> <span class="err">“</span><span class="mo">0644</span><span class="err">”</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;enable-myface-2&quot;&gt;enable myface&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">apache_site</span> <span class="err">“</span><span class="c1">#{node[:myface][:config]}” do</span>
+</span><span class='line'>  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Converge your node one last time to make sure there are no syntax errors:</p>
 
 <pre><code>$ vagrant provision
 </code></pre>
