@@ -750,7 +750,7 @@ directory "/srv/apache/myface" do
   recursive true
 end
 
-# write siteX
+# write site
 template "/srv/apache/myface/index.html" do
   source "index.html.erb"
   mode "0644"
@@ -780,6 +780,84 @@ include_recipe "myface::webserver"
 Converge your node again to make sure there are no syntax errors:
 
     $ vagrant provision
+
+Let's eliminate some more of the duplication that crept in while we were
+working on things.  Edit `myface/attributes/default.rb`
+
+{% codeblock myface/attributes/default.rb lang:ruby %}
+default[:myface][:user] = "myface"
+default[:myface][:group] = "myface"
+default[:myface][:name] = "myface"
+default[:myface][:config] = "myface.conf"
+default[:myface][:document_root] = "/srv/apache/myface"
+{% endcodeblock %}
+
+NOTE: With Chef 11, it is now possible to nest attributes, like so:
+
+    node.default[:app][:name] = "my_app"
+    node.default[:app][:document_root] = "/srv/apache/#{node[:app][:name]}"
+
+This approach is overkill for MyFace (and is frankly overkill for most
+Chef recipes).  Even though nesting is an option now with Chef 11, you should
+try to keep your attribute files as simple and straightforward to follow as
+possible.
+
+In `myface/recipes/webserver.rb` replace the corresponding hardcoded references
+to attribute references: 
+
+{% codeblock myface/recipes/webserver.rb lang:ruby %}
+#
+# Cookbook Name:: myface
+# Recipe:: webserver
+#
+# Copyright (C) 2013 YOUR_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+
+group node[:myface][:group]
+
+user node[:myface][:user] do
+  group node[:myface][:group]
+  system true
+  shell "/bin/bash"
+end
+
+include_recipe "apache2"
+
+# disable default site
+apache_site "000-default" do
+  enable false
+end
+
+# create apache config
+template "#{node[:apache][:dir]}/sites-available/#{node[:myface][:config]}" do
+  source "apache2.conf.erb"
+  notifies :restart, 'service[apache2]'
+end
+
+# create document root
+directory "#{node[:myface][:document_root]}" do
+  action :create
+  recursive true
+end
+
+# write site
+template "#{node[:myface][:document_root]}/index.html" do
+  source "index.html.erb"
+  mode "0644"
+end
+
+# enable myface
+apache_site "#{node[:myface][:config]}" do
+  enable true
+end
+{% endcodeblock %}
+
+Converge your node one last time to make sure there are no syntax errors:
+
+    $ vagrant provision
+
 
 Testing Iteration #5
 --------------------
