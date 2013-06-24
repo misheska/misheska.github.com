@@ -987,7 +987,7 @@ I used to run `chef-client` on my production node:
 Testing Iteration #6
 --------------------
 
-Browsing to your production node's URL should produce the same result as when
+Browsing your production node's URL should produce the same result as when
 you tested Iteration #4.  For example, I visited <http://mischa-ubuntu> 
 
 More to Come!
