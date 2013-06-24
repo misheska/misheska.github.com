@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-23T11:26:06-07:00</updated>
+  <updated>2013-06-23T20:45:02-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -61,7 +61,15 @@
       <li><a href="#testing-iteration-5">Testing Iteration #5</a></li>
     </ul>
   </li>
-  <li><a href="#more-to-come">More to come!</a></li>
+  <li><a href="#iteration-6---version-bump-and-production-deploy">Iteration #6 - Version Bump and Production Deploy</a>    <ul>
+      <li><a href="#version-bump-to-100">Version Bump to 1.0.0</a></li>
+      <li><a href="#configure-berkshelf">Configure Berkshelf</a></li>
+      <li><a href="#upload-cookbooks">Upload cookbooks</a></li>
+      <li><a href="#converge-node">Converge node</a></li>
+      <li><a href="#testing-iteration-6">Testing Iteration #6</a></li>
+    </ul>
+  </li>
+  <li><a href="#more-to-come">More to Come!</a></li>
 </ul>
 
 <p>Jamie Winsor hasn’t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
@@ -673,9 +681,9 @@ However, automatic use of any new 1.6.x is perfectly fine, because no
 only backwards-compatible bug fixes has been introduced.  Semantic Versioning
 guarantees there are no changes in the public APIs.</p>
 
-<p>Your <code>myface/metadata.rb</code> should look like this:</p>
+<p>Your <code>myface/metadata.rb</code> file should look like this:</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/metadata.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -1194,7 +1202,141 @@ to attribute references: </p>
 <p>Visiting <a href="http://33.33.33.10">http://33.33.33.10</a> should produce the same result as before as you
 have made no net changes, just shuffled things around a bit.</p>
 
-<h1 id="more-to-come">More to come!</h1>
+<h1 id="iteration-6---version-bump-and-production-deploy">Iteration #6 - Version Bump and Production Deploy</h1>
+<p>Now that we have tested our cookbook locally and everything seems to work,
+we’re ready to finalize the cookbook and deploy it to production.</p>
+
+<h2 id="version-bump-to-100">Version Bump to 1.0.0</h2>
+
+<p>First you need to “bump” the cookbook version in the <code>metadata.rb</code> file to
+its final version 1.0.0.  As mentioned in Iteration #3, cookbooks (even the
+ones you write), should follow the
+<a href="http://semver.org/">Semantic Versioning scheme</a>.  Since this is the first
+public version of our cookbook, it’s version 1.0.0.</p>
+
+<p><code>myface/metadata.rb</code> should look like this:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/metadata.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">name</span>             <span class="err">“</span><span class="n">myface</span><span class="err">”</span>
+</span><span class='line'><span class="n">maintainer</span>       <span class="err">“</span><span class="no">YOUR_NAME</span><span class="err">”</span>
+</span><span class='line'><span class="n">maintainer_email</span> <span class="err">“</span><span class="no">YOUR_EMAIL</span><span class="err">”</span>
+</span><span class='line'><span class="n">license</span>          <span class="err">“</span><span class="no">All</span> <span class="n">rights</span> <span class="n">reserved</span><span class="err">”</span>
+</span><span class='line'><span class="n">description</span>      <span class="err">“</span><span class="no">Installs</span><span class="o">/</span><span class="no">Configures</span> <span class="n">myface</span><span class="err">”</span>
+</span><span class='line'><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="no">FILE</span><span class="o">&lt;</span><span class="sr">/strong&gt;), ‘README.md’))</span>
+</span><span class='line'><span class="sr">version          “1.0.0”&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">depends</span> <span class="err">“</span><span class="n">apache2</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="o">~&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">1</span><span class="o">.</span><span class="mi">6</span><span class="o">.</span><span class="mi">0</span><span class="err">”</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>It’s left as an exercise for the reader to fianalize the license and
+<code>README</code> before finalizing the cookbook.</p>
+
+<h2 id="configure-berkshelf">Configure Berkshelf</h2>
+
+<p>In order to deploy to your production server (instead of just locally with
+vagrant), you’ll need to add a section to your Berkshelf config file with
+your production Chef settings.  The config file is located in
+<code>$HOME/.berkshelf/config.json</code>.</p>
+
+<p>For example, I’m using hosted Chef to manage my servers, so my
+Chef settings are as follows:</p>
+
+<pre><code>Chef Server API URL endpoint: https://api.opscode.com/organizations/misheska
+Chef API validation client name: misheska-validator
+Chef API validation key path: /Users/misheska/.chef/misheska-validator.pem
+Chef API client key: /Users/misheska/.chef/misheska.pem
+Chef API node name: misheska
+</code></pre>
+
+<p>So here’s what my <code>$HOME/.berkshelf/config.json</code> file looks like:</p>
+
+<pre><code>{
+  "chef":{
+    "chef_server_url": "https://api.opscode.com/organizations/misheska",
+    "validation_client_name": "misheska-validator",
+    "validation_key_path": "/Users/mischa/.chef/misheska-validator.pem",
+    "client_key": "/Users/mischa/.chef/misheska.pem",
+    "node_name":"misheska"
+  },
+  "vagrant":{
+    "vm":{
+      "box": "misheska-centos-6.4",
+      "box_url":"https://www.dropbox.com/s/y42egyh9cqsge24/misheska-centos-6.4.box",
+      "forward_port": {
+      },
+      "network":{
+        "bridged": false,
+        "hostonly": "33.33.33.10"
+      },
+      "provision": "chef_solo"
+    }
+  },
+  "ssl": {
+    "verify":false
+  }
+}
+</code></pre>
+
+<p>I assume you have your own production Chef setup either running 
+<a href="http://www.opscode.com/hosted-chef/">Hosted Chef</a>,
+<a href="http://www.opscode.com/private-chef/">Private Chef</a>, or
+<a href="http://docs.opscode.com/chef/manage_server_open_source.html">Open Source Chef Server</a>.  If you need more help getting your .pem file values, refer to
+the <a href="https://learnchef.opscode.com/quickstart/chef-repo/">QuickStart Guide on LearnChef</a>.</p>
+
+<h2 id="upload-cookbooks">Upload cookbooks</h2>
+
+<p>Edit your <code>$HOME/.berkshelf/config.json</code> file similarly with your .pem file
+values.  Then run <code>berks upload</code> to upload your cookbooks to the chef server:</p>
+
+<pre><code>$ berks upload
+Using myface (1.0.0)
+Using apache2 (1.6.6)
+Uploading myface (1.0.0) to: 'https://api.opscode.com:443/organizations/misheska'
+Uploading apache2 (1.6.6) to: 'https://api.opscode.com:443/organizations/misheska'
+</code></pre>
+
+<p>Similarly to when you ran <code>vagrant up</code>, Berkshelf automatically uploaded all
+the cookbook dependencies.</p>
+
+<h2 id="converge-node">Converge node</h2>
+
+<p>Add the default <code>myface</code> cookbook recipe to your node’s run list.  For example,
+I used the following command to add <code>myface</code> to mine:</p>
+
+<pre><code>$ knife node run_list add mischa-ubuntu 'recipe[myface]'
+mischa-ubuntu:
+  run_list: recipe[myface]
+</code></pre>
+
+<p>Converge the node by running <code>chef-client</code> (if you don’t already have it
+setup to run chef-client automatically).  For example, here’s the command
+I used to run <code>chef-client</code> on my production node:</p>
+
+<pre><code>$ knife ssh name:mischa-ubuntu "sudo chef-client" -x misheska
+Starting Chef Client, version 11.4.4
+resolving cookbooks for run list: ["myface"]
+Synchronizing Cookbooks:
+  - myface
+  - apache2
+...
+Chef Client finished, 20 resources updated 
+</code></pre>
+
+<h2 id="testing-iteration-6">Testing Iteration #6</h2>
+
+<p>Browsing to your production node’s URL should produce the same result as when
+you tested Iteration #4.  For example, I visited <a href="http://mischa-ubuntu">http://mischa-ubuntu</a> </p>
+
+<h1 id="more-to-come">More to Come!</h1>
 <p>This is just part one of a multi-part series.  So far you’ve gone through
 several short iteration loops as you evolve the myface cookbook.  In subsequent
 installments, we’ll go through more iterations, resulting in the final
