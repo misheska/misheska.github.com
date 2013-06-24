@@ -519,9 +519,9 @@ However, automatic use of any new 1.6.x is perfectly fine, because no
 only backwards-compatible bug fixes has been introduced.  Semantic Versioning
 guarantees there are no changes in the public APIs.
 
-Your `myface/metadata.rb` should look like this:
+Your `myface/metadata.rb` file should look like this:
 
-{% codeblock myface/attributes/default.rb lang:ruby %}
+{% codeblock myface/metadata.rb lang:ruby %}
 name             "myface"
 maintainer       "YOUR_NAME"
 maintainer_email "YOUR_EMAIL"
@@ -858,14 +858,139 @@ Converge your node one last time to make sure there are no syntax errors:
 
     $ vagrant provision
 
-
 Testing Iteration #5
 --------------------
 
 Visiting <http://33.33.33.10> should produce the same result as before as you
 have made no net changes, just shuffled things around a bit.
 
-More to come!
+Iteration #6 - Version Bump and Production Deploy
+=================================================
+Now that we have tested our cookbook locally and everything seems to work,
+we're ready to finalize the cookbook and deploy it to production.
+
+Version Bump to 1.0.0
+---------------------
+
+First you need to "bump" the cookbook version in the `metadata.rb` file to
+its final version 1.0.0.  As mentioned in Iteration #3, cookbooks (even the
+ones you write), should follow the
+[Semantic Versioning scheme](http://semver.org/).  Since this is the first
+public version of our cookbook, it's version 1.0.0.
+
+`myface/metadata.rb` should look like this:
+
+{% codeblock myface/metadata.rb lang:ruby %}
+name             "myface"
+maintainer       "YOUR_NAME"
+maintainer_email "YOUR_EMAIL"
+license          "All rights reserved"
+description      "Installs/Configures myface"
+long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+version          "1.0.0"
+
+depends "apache2", "~> 1.6.0"
+{% endcodeblock %}
+
+It's left as an exercise for the reader to fianalize the license and
+`README` before finalizing the cookbook.
+
+Configure Berkshelf
+-------------------
+
+In order to deploy to your production server (instead of just locally with
+vagrant), you'll need to add a section to your Berkshelf config file with
+your production Chef settings.  The config file is located in
+`$HOME/.berkshelf/config.json`.
+
+For example, I'm using hosted Chef to manage my servers, so my
+Chef settings are as follows:
+
+    Chef Server API URL endpoint: https://api.opscode.com/organizations/misheska
+    Chef API validation client name: misheska-validator
+    Chef API validation key path: /Users/misheska/.chef/misheska-validator.pem
+    Chef API client key: /Users/misheska/.chef/misheska.pem
+    Chef API node name: misheska
+
+So here's what my `$HOME/.berkshelf/config.json` file looks like:
+
+    {
+      "chef":{
+        "chef_server_url": "https://api.opscode.com/organizations/misheska",
+        "validation_client_name": "misheska-validator",
+        "validation_key_path": "/Users/mischa/.chef/misheska-validator.pem",
+        "client_key": "/Users/mischa/.chef/misheska.pem",
+        "node_name":"misheska"
+      },
+      "vagrant":{
+        "vm":{
+          "box": "misheska-centos-6.4",
+          "box_url":"https://www.dropbox.com/s/y42egyh9cqsge24/misheska-centos-6.4.box",
+          "forward_port": {
+          },
+          "network":{
+            "bridged": false,
+            "hostonly": "33.33.33.10"
+          },
+          "provision": "chef_solo"
+        }
+      },
+      "ssl": {
+        "verify":false
+      }
+    }
+
+I assume you have your own production Chef setup either running 
+[Hosted Chef](http://www.opscode.com/hosted-chef/),
+[Private Chef](http://www.opscode.com/private-chef/), or
+[Open Source Chef Server](http://docs.opscode.com/chef/manage_server_open_source.html).  If you need more help getting your .pem file values, refer to
+the [QuickStart Guide on LearnChef](https://learnchef.opscode.com/quickstart/chef-repo/).
+
+Upload cookbooks
+----------------
+
+Edit your `$HOME/.berkshelf/config.json` file similarly with your .pem file
+values.  Then run `berks upload` to upload your cookbooks to the chef server:
+
+    $ berks upload
+    Using myface (1.0.0)
+    Using apache2 (1.6.6)
+    Uploading myface (1.0.0) to: 'https://api.opscode.com:443/organizations/misheska'
+    Uploading apache2 (1.6.6) to: 'https://api.opscode.com:443/organizations/misheska'
+
+Similarly to when you ran `vagrant up`, Berkshelf automatically uploaded all
+the cookbook dependencies.
+
+Converge node
+-------------
+
+Add the default `myface` cookbook recipe to your node's run list.  For example,
+I used the following command to add `myface` to mine:
+
+    $ knife node run_list add mischa-ubuntu 'recipe[myface]'
+    mischa-ubuntu:
+      run_list: recipe[myface]
+
+Converge the node by running `chef-client` (if you don't already have it
+setup to run chef-client automatically).  For example, here's the command
+I used to run `chef-client` on my production node:
+
+    $ knife ssh name:mischa-ubuntu "sudo chef-client" -x misheska
+    Starting Chef Client, version 11.4.4
+    resolving cookbooks for run list: ["myface"]
+    Synchronizing Cookbooks:
+      - myface
+      - apache2
+    ...
+    Chef Client finished, 20 resources updated 
+
+Testing Iteration #6
+--------------------
+
+Browsing to your production node's URL should produce the same result as when
+you tested Iteration #4.  For example, I visited <http://mischa-ubuntu> 
+
+More to Come!
 =============
 This is just part one of a multi-part series.  So far you've gone through
 several short iteration loops as you evolve the myface cookbook.  In subsequent
