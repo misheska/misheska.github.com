@@ -27,6 +27,7 @@ To set up your cookbook-writing environment, make sure you have the following
 installed:
 
 * [Install VirtualBox 4.2.x (or higher)](http://virtualbox.org)
+NOTE: Avoid VirtualBox 4.2.14, [it breaks vagrant](https://twitter.com/mitchellh/status/348886504728305664)
 
 * [Install Vagrant 1.2.1 (or higher)](http://vagrantup.com)
 
