@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-25T09:14:14-07:00</updated>
+  <updated>2013-06-25T09:18:00-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -23,7 +23,7 @@
       <li><a href="#testing-iteration-7">Testing Iteration #7</a></li>
     </ul>
   </li>
-  <li><a href="#iteration-8---user-table">Iteration #8 - User table</a>    <ul>
+  <li><a href="#iteration-8---myface-database">Iteration #8 - MyFace Database</a>    <ul>
       <li><a href="#testing-iteration-8">Testing Iteration #8</a></li>
     </ul>
   </li>
@@ -155,10 +155,10 @@ running the following command:</p>
 mysqld (pid  3582) is running...
 </code></pre>
 
-<h1 id="iteration-8---user-table">Iteration #8 - User table</h1>
+<h1 id="iteration-8---myface-database">Iteration #8 - MyFace Database</h1>
 
-<p>We’ve installed MySQL, but we don’t have a database table yet.  Now we’re going
-to create a database table to store information about our users with another
+<p>We’ve installed MySQL, but we don’t have a database yet.  Now we’re going
+to create a database to store information about our users with another
 cookbook, the <code>database</code> cookbook.</p>
 
 <p>Add the <code>database</code> cookbook as a dependency in the <code>metadata.rb</code> file:</p>
@@ -285,7 +285,7 @@ Running chef-solo...
 </code></pre>
 
 <h2 id="testing-iteration-8">Testing Iteration #8</h2>
-<p>Run <code>mysqlshow</code> on your vagrant guest to display table information, verifying
+<p>Run <code>mysqlshow</code> on your vagrant guest to display database information, verifying
 that the <code>myface</code> database was created:</p>
 
 <pre><code>$ vagrant ssh -c "mysqlshow -uroot -prootpass"
@@ -298,7 +298,6 @@ that the <code>myface</code> database was created:</p>
 | test               |
 +--------------------+
 </code></pre>
-
 ]]></content>
   </entry>
   
