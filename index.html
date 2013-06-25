@@ -373,6 +373,8 @@ Running chef-solo...
 </code></pre>
 
 <h2 id="testing-iteration-8">Testing Iteration #8</h2>
+<p>Run <code>mysqlshow</code> on your vagrant guest to display table information, verifying
+that the <code>myface</code> database was created:</p>
 
 <pre><code>$ vagrant ssh -c "mysqlshow -uroot -prootpass"
 +--------------------+

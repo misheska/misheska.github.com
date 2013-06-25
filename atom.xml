@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-25T09:09:35-07:00</updated>
+  <updated>2013-06-25T09:13:07-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -285,6 +285,8 @@ Running chef-solo...
 </code></pre>
 
 <h2 id="testing-iteration-8">Testing Iteration #8</h2>
+<p>Run <code>mysqlshow</code> on your vagrant guest to display table information, verifying
+that the <code>myface</code> database was created:</p>
 
 <pre><code>$ vagrant ssh -c "mysqlshow -uroot -prootpass"
 +--------------------+
