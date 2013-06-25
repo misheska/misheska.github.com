@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-23T20:52:19-07:00</updated>
+  <updated>2013-06-24T17:11:22-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -294,7 +294,7 @@ like this:</p>
 </span><span class="line">      <span class="p">}</span>
 </span><span class="line">    <span class="p">}</span>
 </span><span class="line">    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
-</span><span class="line">      <span class="s2">&quot;recipe[myface::defult]&quot;</span>
+</span><span class="line">      <span class="s2">&quot;recipe[myface::default]&quot;</span>
 </span><span class="line">    <span class="o">]</span>
 </span><span class="line">  <span class="k">end</span>
 </span><span class="line"><span class="k">end</span>
