@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-24T17:11:50-07:00</updated>
+  <updated>2013-06-24T23:14:43-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -75,7 +75,8 @@ installed:</p>
 
 <ul>
   <li>
-    <p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a></p>
+    <p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a>
+NOTE: Avoid VirtualBox 4.2.14, <a href="https://twitter.com/mitchellh/status/348886504728305664">it breaks vagrant</a></p>
   </li>
   <li>
     <p><a href="http://vagrantup.com">Install Vagrant 1.2.1 (or higher)</a></p>
