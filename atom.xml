@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-24T23:14:43-07:00</updated>
+  <updated>2013-06-25T09:09:35-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -12,6 +12,293 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 2]]></title>
+    <link href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/"/>
+    <updated>2013-06-23T11:37:00-07:00</updated>
+    <id>http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#iteration-7---installing-mysql">Iteration #7 - Installing MySQL</a>    <ul>
+      <li><a href="#testing-iteration-7">Testing Iteration #7</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-8---create-user-table">Iteration #8 - Create user table</a>    <ul>
+      <li><a href="#testing-iteration-8">Testing Iteration #8</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>« ROUGH DRAFT - Posted to get feedback from a few readers »</p>
+
+<p>This is a second article in a series on writing Opscode Chef cookbooks the
+Berkshelf Way.  Here’s a link to <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>.</p>
+
+<p>In this article, part 2, we’re going to create a new <code>database</code> recipe.  In
+Part1 MyFace is just a web application serving up a static page.  In Part 2,
+we’re going to enhance MyFace so that it stores account information in a
+persistent database.  We’re going to use MySQL for the database.</p>
+
+<h1 id="iteration-7---installing-mysql">Iteration #7 - Installing MySQL</h1>
+
+<p>Edit <code>myface/metadata.rb</code> and add a reference to the <code>mysql</code> cookbook.  Also
+bump the version to 2.0.0 because we know that there will be incompatible API
+changes, moving to MySQL, per <a href="http://semver.org/">Semantic Versioning</a>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/metadata.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">name</span>             <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">maintainer</span>       <span class="s1">&#39;YOUR_NAME&#39;</span>
+</span><span class="line"><span class="n">maintainer_email</span> <span class="s1">&#39;YOUR_EMAIL&#39;</span>
+</span><span class="line"><span class="n">license</span>          <span class="s1">&#39;All rights reserved&#39;</span>
+</span><span class="line"><span class="n">description</span>      <span class="s1">&#39;Installs/Configures myface&#39;</span>
+</span><span class="line"><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">version</span>          <span class="s1">&#39;2.0.0&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">depends</span> <span class="s2">&quot;apache2&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.6.0&quot;</span>
+</span><span class="line"><span class="n">depends</span> <span class="s2">&quot;mysql&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.0.0&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Create a new recipe called <code>database</code> which includes the MySQL cookbook’s
+server recipe:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/database.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: database</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2012 YOUR_NAME</span>
+</span><span class="line"><span class="c1"># </span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;mysql::server&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Wire the <code>database</code> recipe into the MyFace cookbook by adding an
+<code>include_recipe</code> reference to <code>default.rb</code>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;myface::database&quot;</span>
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;myface::webserver&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Run <code>vagrant provision</code> to converge.</p>
+
+<pre><code>$ vagrant provision
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130625-7983-1erh5t8-default'
+[Berkshelf] Using myface (2.0.0)
+[Berkshelf] Using apache2 (1.6.6)
+[Berkshelf] Using mysql (3.0.2)
+[Berkshelf] Using openssl (1.0.2)
+[Berkshelf] Using build-essential (1.4.0)
+[default] Chef 11.4.4 Omnibus package is already installed.
+[default] Running provisioner: chef_solo...
+Generating chef JSON and uploading...
+Running chef-solo...
+[2013-06-25T00:45:13-07:00] INFO: *** Chef 11.4.4 ***
+[2013-06-25T00:45:14-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+...
+[2013-06-25T00:44:48-07:00] INFO: Processing service[apache2] action restart (apache2::default line 221)
+[2013-06-25T00:44:49-07:00] INFO: service[apache2] restarted
+[2013-06-25T00:44:49-07:00] INFO: Chef Run complete in 108.933639105 seconds
+[2013-06-25T00:44:49-07:00] INFO: Running report handlers
+[2013-06-25T00:44:49-07:00] INFO: Report handlers complete
+</code></pre>
+
+<h2 id="testing-iteration-7">Testing Iteration #7</h2>
+<p>Verify that the <code>mysqld</code> service is running on your vagrant guest by
+running the following command:</p>
+
+<pre><code>$ vagrant ssh -c "sudo /sbin/service mysqld status"
+mysqld (pid  3582) is running...
+</code></pre>
+
+<h1 id="iteration-8---create-user-table">Iteration #8 - Create user table</h1>
+
+<p>We’ve installed MySQL, but we don’t have a database table yet.  Now we’re going
+to create a database table to store information about our users with another
+cookbook, the <code>database</code> cookbook.</p>
+
+<p>Add the <code>database</code> cookbook as a dependency in the <code>metadata.rb</code> file:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/metadata.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">name</span>             <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">maintainer</span>       <span class="s1">&#39;YOUR_NAME&#39;</span>
+</span><span class="line"><span class="n">maintainer_email</span> <span class="s1">&#39;YOUR_EMAIL&#39;</span>
+</span><span class="line"><span class="n">license</span>          <span class="s1">&#39;All rights reserved&#39;</span>
+</span><span class="line"><span class="n">description</span>      <span class="s1">&#39;Installs/Configures myface&#39;</span>
+</span><span class="line"><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">version</span>          <span class="s1">&#39;2.0.0&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">depends</span> <span class="s2">&quot;apache2&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.6.0&quot;</span>
+</span><span class="line"><span class="n">depends</span> <span class="s2">&quot;mysql&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.0.0&quot;</span>
+</span><span class="line"><span class="n">depends</span> <span class="s2">&quot;database&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.3.0&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Berkshelf automatically populates MySQL passwords for you.  They were
+configured in the <code>Vagrantfile</code> when you ran <code>berks cookbook</code> in Part 1:</p>
+
+<pre><code>...
+config.vm.provision :chef_solo do |chef|
+  chef.json = {
+    :mysql =&gt; {
+      :server_root_password =&gt; 'rootpass',
+      :server_debian_password =&gt; 'debpass',
+      :server_repl_password =&gt; "replpass'
+    }
+  }
+  ...
+end
+...
+</code></pre>
+
+<p>You can refer to these passwords in your Chef recipes, which we will do when
+we describe the database.</p>
+
+<p>Describe a database to be created for our application in <code>recipes/database.rb</code>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/database.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: database</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2012 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;mysql::server&quot;</span>
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;database::mysql&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">mysql_database</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">connection</span><span class="p">(</span>
+</span><span class="line">    <span class="ss">:host</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:username</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">node</span><span class="o">[</span><span class="ss">:mysql</span><span class="o">][</span><span class="ss">:server_root_password</span><span class="o">]</span>
+</span><span class="line">  <span class="p">)</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Converge with <code>vagrant provision</code>:</p>
+
+<pre><code>$ vagrant provision
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130625-7983-1erh5t8-default'
+[Berkshelf] Using myface (2.0.0)
+[Berkshelf] Using apache2 (1.6.6)
+[Berkshelf] Using mysql (3.0.2)
+[Berkshelf] Using openssl (1.0.2)
+[Berkshelf] Using build-essential (1.4.0)
+[Berkshelf] Using database (1.3.12)
+[Berkshelf] Using postgresql (3.0.2)
+[Berkshelf] Using apt (2.0.0)
+[Berkshelf] Using aws (0.101.2)
+[Berkshelf] Using xfs (1.1.0)
+[default] Chef 11.4.4 Omnibus package is already installed.
+[default] Running provisioner: chef_solo...
+Generating chef JSON and uploading...
+Running chef-solo...
+[2013-06-25T00:56:36-07:00] INFO: *** Chef 11.4.4 ***
+[2013-06-25T00:56:36-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+...
+[2013-06-25T00:57:43-07:00] INFO: Processing execute[a2ensite myface.conf] action run (myface::webserver line 24)
+[2013-06-25T00:57:43-07:00] INFO: Chef Run complete in 66.405200417 seconds
+[2013-06-25T00:57:43-07:00] INFO: Running report handlers
+[2013-06-25T00:57:43-07:00] INFO: Report handlers complete
+</code></pre>
+
+<h2 id="testing-iteration-8">Testing Iteration #8</h2>
+
+<pre><code>$ vagrant ssh -c "mysqlshow -uroot -prootpass"
++--------------------+
+|     Databases      |
++--------------------+
+| information_schema |
+| myface             |
+| mysql              |
+| test               |
++--------------------+
+</code></pre>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Getting started writing Chef cookbooks the Berkshelf Way]]></title>
