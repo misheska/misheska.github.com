@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Getting started writing Chef cookbooks the Berkshelf Way"
+title: "Getting started writing Chef cookbooks the Berkshelf Way, Part 1"
 date: 2013-06-16 03:49
 comments: true
 categories: chef
@@ -994,6 +994,10 @@ you tested Iteration #4.  For example, I visited <http://mischa-ubuntu>
 More to Come!
 =============
 This is just part one of a multi-part series.  So far you've gone through
-several short iteration loops as you evolve the myface cookbook.  In subsequent
-installments, we'll go through more iterations, resulting in the final
-end product: <https://github.com/misheska/myface>
+several short iteration loops as you evolve the myface cookbook web
+application.  In [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/),
+we'll wire up a database to the myface application and exlore the use of
+the `mysql` and `database cookbooks.
+
+If you want to see the full source for myface, check out the following
+GitHub link: <https://github.com/misheska/myface>
