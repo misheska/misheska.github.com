@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-06-25T09:18:00-07:00</updated>
+  <updated>2013-06-30T22:09:59-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Getting started writing Chef cookbooks the Berkshelf Way]]></title>
+    <title type="html"><![CDATA[Getting started writing Chef cookbooks the Berkshelf Way, Part 1]]></title>
     <link href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/"/>
     <updated>2013-06-16T03:49:00-07:00</updated>
     <id>http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way</id>
@@ -1339,9 +1339,13 @@ you tested Iteration #4.  For example, I visited <a href="http://mischa-ubuntu">
 
 <h1 id="more-to-come">More to Come!</h1>
 <p>This is just part one of a multi-part series.  So far you’ve gone through
-several short iteration loops as you evolve the myface cookbook.  In subsequent
-installments, we’ll go through more iterations, resulting in the final
-end product: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
+several short iteration loops as you evolve the myface cookbook web
+application.  In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>,
+we’ll wire up a database to the myface application and exlore the use of
+the <code>mysql</code> and `database cookbooks.</p>
+
+<p>If you want to see the full source for myface, check out the following
+GitHub link: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
 ]]></content>
   </entry>
   

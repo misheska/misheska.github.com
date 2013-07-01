@@ -9,7 +9,7 @@
   <meta name="author" content="Mischa Taylor">
 
   
-  <meta name="description" content="Iteration #7 - Installing MySQL Testing Iteration #7 Iteration #8 - MyFace Database Testing Iteration #8 « ROUGH DRAFT - Posted to get feedback from &hellip;">
+  <meta name="description" content="Iteration #7 - Install MySQL Testing Iteration #7 Iteration #8 - Create the MyFace Database Testing Iteration #8 Iteration #9 - Create a MySQL user &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -107,29 +107,47 @@
 
 
   <div class="entry-content"><ul id="markdown-toc">
-  <li><a href="#iteration-7---installing-mysql">Iteration #7 - Installing MySQL</a>    <ul>
+  <li><a href="#iteration-7---install-mysql">Iteration #7 - Install MySQL</a>    <ul>
       <li><a href="#testing-iteration-7">Testing Iteration #7</a></li>
     </ul>
   </li>
-  <li><a href="#iteration-8---myface-database">Iteration #8 - MyFace Database</a>    <ul>
+  <li><a href="#iteration-8---create-the-myface-database">Iteration #8 - Create the MyFace Database</a>    <ul>
       <li><a href="#testing-iteration-8">Testing Iteration #8</a></li>
     </ul>
   </li>
+  <li><a href="#iteration-9---create-a-mysql-user">Iteration #9 - Create a MySQL user</a>    <ul>
+      <li><a href="#testing-iteration-9">Testing Iteration #9</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-10---create-a-table-for-users">Iteration #10 - Create a table for users</a>    <ul>
+      <li><a href="#testing-iteration-10">Testing Iteration #10</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-11---install-php">Iteration #11 - Install PHP</a>    <ul>
+      <li><a href="#test-iteration-11">Test Iteration #11</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-12">Iteration #12</a>    <ul>
+      <li><a href="#testing-iteration-12">Testing Iteration #12</a></li>
+    </ul>
+  </li>
+  <li><a href="#more-to-come">More to Come!</a></li>
 </ul>
 
-<p>« ROUGH DRAFT - Posted to get feedback from a few readers »</p>
-
 <p>This is a second article in a series on writing Opscode Chef cookbooks the
-Berkshelf Way.  Here’s a link to <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>.</p>
+Berkshelf Way.  Here’s a link to <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>.  The source code
+examples covered in this article can be found on Github:
+<a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
 
-<p>In this article, part 2, we’re going to create a new <code>database</code> recipe.  In
-Part1 MyFace is just a web application serving up a static page.  In Part 2,
-we’re going to enhance MyFace so that it stores account information in a
-persistent database.  We’re going to use MySQL for the database.</p>
+<p>In this installment, <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>,
+ we’re going to create a new <code>database</code> recipe.  In <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part1</a>
+MyFace is just a web application serving up a static page.  Now we’re going to
+enhance MyFace so that it stores account information in a persistent 
+MySQL database.</p>
 
-<h1 id="iteration-7---installing-mysql">Iteration #7 - Installing MySQL</h1>
+<h1 id="iteration-7---install-mysql">Iteration #7 - Install MySQL</h1>
 
-<p>Edit <code>myface/metadata.rb</code> and add a reference to the <code>mysql</code> cookbook.  Also
+<p>Edit <code>metadata.rb</code> and add a reference to the <code>mysql</code> cookbook.  Also
 bump the version to 2.0.0 because we know that there will be incompatible API
 changes, moving to MySQL, per <a href="http://semver.org/">Semantic Versioning</a>:</p>
 
@@ -156,8 +174,10 @@ changes, moving to MySQL, per <a href="http://semver.org/">Semantic Versioning</
 </span><span class="line"><span class="n">depends</span> <span class="s2">&quot;mysql&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 3.0.0&quot;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Create a new recipe called <code>database</code> which includes the MySQL cookbook’s
-server recipe:</p>
+<p>Create a new recipe called <code>recipes/database.rb</code> which includes the MySQL
+cookbook’s server recipe (this is a similar abstraction to what you created in
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>
+with <code>recipes/webserver.rb</code>):</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/database.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -183,7 +203,7 @@ server recipe:</p>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Wire the <code>database</code> recipe into the MyFace cookbook by adding an
-<code>include_recipe</code> reference to <code>default.rb</code>:</p>
+<code>include_recipe</code> reference to <code>recipes/default.rb</code>:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -208,7 +228,7 @@ server recipe:</p>
 </span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;myface::webserver&quot;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Run <code>vagrant provision</code> to converge.</p>
+<p>Run <code>vagrant provision</code> to converge your changes.</p>
 
 <pre><code>$ vagrant provision
 [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
@@ -240,10 +260,20 @@ Running chef-solo...
 running the following command:</p>
 
 <pre><code>$ vagrant ssh -c "sudo /sbin/service mysqld status"
-mysqld (pid  3582) is running...
+mysqld (pid  4279) is running...
 </code></pre>
 
-<h1 id="iteration-8---myface-database">Iteration #8 - MyFace Database</h1>
+<p>Also check that MySQL is enabled to start on boot:</p>
+
+<pre><code>$ vagrant ssh -c "sudo /sbin/chkconfig --list | grep mysqld"
+mysqld         	0:off	1:off	2:on	3:on	4:on	5:on	6:off
+</code></pre>
+
+<p>If the service is set to be activated at runlevels 3 and 5, then MySQL is
+enabled to run under full multi-user text mode and full multi-user graphical
+mode, which is exactly the desired behavior.</p>
+
+<h1 id="iteration-8---create-the-myface-database">Iteration #8 - Create the MyFace Database</h1>
 
 <p>We’ve installed MySQL, but we don’t have a database yet.  Now we’re going
 to create a database to store information about our users with another
@@ -277,7 +307,8 @@ cookbook, the <code>database</code> cookbook.</p>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Berkshelf automatically populates MySQL passwords for you.  They were
-configured in the <code>Vagrantfile</code> when you ran <code>berks cookbook</code> in Part 1:</p>
+configured in the <code>Vagrantfile</code> when you ran <code>berks cookbook</code> in
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/#create-the-myface-application-cookbook">Part 1</a>:</p>
 
 <pre><code>...
 config.vm.provision :chef_solo do |chef|
@@ -293,10 +324,10 @@ end
 ...
 </code></pre>
 
-<p>You can refer to these passwords in your Chef recipes, which we will do when
-we describe the database.</p>
+<p>You can reference these passwords as variables in your Chef recipes, which we
+will do when we describe the database.</p>
 
-<p>Describe a database to be created for our application in <code>recipes/database.rb</code>:</p>
+<p>Describe the database to be created for MyFace in <code>recipes/database.rb</code>:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/database.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -341,7 +372,7 @@ we describe the database.</p>
 </span><span class="line"><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Converge with <code>vagrant provision</code>:</p>
+<p>Converge the changes with <code>vagrant provision</code>:</p>
 
 <pre><code>$ vagrant provision
 [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
@@ -386,6 +417,1067 @@ that the <code>myface</code> database was created:</p>
 | test               |
 +--------------------+
 </code></pre>
+
+<p>Note that <code>myface</code> is listed as a database name - success!</p>
+
+<h1 id="iteration-9---create-a-mysql-user">Iteration #9 - Create a MySQL user</h1>
+
+<p>It’s a good idea to create a user in MySQL that has the ability to only
+manipulate the application’s database and has no MySQL administrative
+privileges.</p>
+
+<p>Edit <code>recipes/database.rb</code> and describe the MySQL database user:</p>
+
+<pre><code>...
+  )
+  action :create
+end
+
+mysql_database_user "myface" do
+  connection(
+    :host =&gt; "localhost",
+    :username =&gt; "root",
+    :password =&gt; node[:mysql][:server_root_password]
+  )
+  password "supersecret"
+  database_name "myface"
+  host "localhost"
+  action [:create, :grant]
+end
+</code></pre>
+
+<p>After editing <code>recipes/database.rb</code> should look like the following:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/database.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: database</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2012 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;mysql::server&quot;</span>
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;database::mysql&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">mysql_database</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">connection</span><span class="p">(</span>
+</span><span class="line">    <span class="ss">:host</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:username</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">node</span><span class="o">[</span><span class="ss">:mysql</span><span class="o">][</span><span class="ss">:server_root_password</span><span class="o">]</span>
+</span><span class="line">  <span class="p">)</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">mysql_database_user</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">connection</span><span class="p">(</span>
+</span><span class="line">    <span class="ss">:host</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:username</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">node</span><span class="o">[</span><span class="ss">:mysql</span><span class="o">][</span><span class="ss">:server_root_password</span><span class="o">]</span>
+</span><span class="line">  <span class="p">)</span>
+</span><span class="line">  <span class="n">password</span> <span class="s2">&quot;supersecret&quot;</span>
+</span><span class="line">  <span class="n">database_name</span> <span class="s2">&quot;myface&quot;</span>
+</span><span class="line">  <span class="n">host</span> <span class="s2">&quot;localhost&quot;</span>
+</span><span class="line">  <span class="n">action</span> <span class="o">[</span><span class="ss">:create</span><span class="p">,</span> <span class="ss">:grant</span><span class="o">]</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Converge the node to apply the changes:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<h2 id="testing-iteration-9">Testing Iteration #9</h2>
+
+<p>Check to see if the <code>myface</code> user is enabled as a local user by running the
+following mysql command:</p>
+
+<pre><code>$ vagrant ssh -c 'mysql -uroot -prootpass -e "select user,host from mysql.user;"'
+user	host
+repl	%
+root	127.0.0.1
+     	localhost
+myface	localhost
+root	localhost
+    	myface-berkshelf
+</code></pre>
+
+<p>As you can see above, the <code>myface@localhost</code> user exists, so our cookbook
+did what was expected.</p>
+
+<p>Also check to see that the <code>myface</code> user only has rights on the myface databse:</p>
+
+<pre><code>$ vagrant ssh -c 'mysql -uroot -prootpass -e "show grants for 'myface'@'localhost';"'
+Grants for myface@localhost
+GRANT USAGE ON *.* TO 'myface'@'localhost' IDENTIFIED BY PASSWORD '*90BA3AC0BFDE07AE334CA523CB27167AE33825B9'
+GRANT ALL PRIVILEGES ON `myface`.* TO 'myface'@'localhost'
+</code></pre>
+
+<h1 id="iteration-10---create-a-table-for-users">Iteration #10 - Create a table for users</h1>
+
+<p>Let’s create a SQL script to create a table modeling MyFace users and
+populate it with some initial data.  Create a directory under
+<code>myface/files/default</code> to hold the script file:</p>
+
+<pre><code>$ mkdir -p files/default 
+</code></pre>
+
+<p>Then create a file <code>files/default/myface-create.sql</code> with the following
+contents:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/files/default/myface-create.sql  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="cm">/* A table for myface users */</span>
+</span><span class="line">
+</span><span class="line"><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">users</span><span class="p">(</span>
+</span><span class="line">  <span class="n">id</span> <span class="nb">CHAR</span> <span class="p">(</span><span class="mi">32</span><span class="p">)</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+</span><span class="line">  <span class="k">PRIMARY</span> <span class="k">KEY</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+</span><span class="line">  <span class="n">user_name</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span>
+</span><span class="line">  <span class="n">url</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">256</span><span class="p">),</span>
+</span><span class="line">  <span class="n">email</span> <span class="nb">VARCHAR</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span>
+</span><span class="line">  <span class="n">neck_beard</span> <span class="nb">INTEGER</span>
+</span><span class="line"><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="cm">/* Initial records */</span>
+</span><span class="line"><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">users</span> <span class="p">(</span> <span class="n">id</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">neck_beard</span> <span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span> <span class="n">uuid</span><span class="p">(),</span> <span class="s1">&#39;jtimberman&#39;</span><span class="p">,</span> <span class="s1">&#39;http:// jtimberman.housepub.org&#39;</span><span class="p">,</span> <span class="s1">&#39;joshua@opscode.com&#39;</span><span class="p">,</span> <span class="mi">4</span> <span class="p">);</span>
+</span><span class="line"><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">users</span> <span class="p">(</span> <span class="n">id</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">neck_beard</span> <span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span> <span class="n">uuid</span><span class="p">(),</span> <span class="s1">&#39;someara&#39;</span><span class="p">,</span> <span class="s1">&#39;http:// blog.afistfulofservers.net/&#39;</span><span class="p">,</span> <span class="s1">&#39;someara@opscode.com&#39;</span><span class="p">,</span> <span class="mi">5</span> <span class="p">);</span>
+</span><span class="line"><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">users</span> <span class="p">(</span> <span class="n">id</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">neck_beard</span> <span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span> <span class="n">uuid</span><span class="p">(),</span> <span class="s1">&#39;jwinsor&#39;</span><span class="p">,</span> <span class="s1">&#39;http:// vialstudios.com&#39;</span><span class="p">,</span> <span class="s1">&#39;jamie@vialstudios.com&#39;</span><span class="p">,</span> <span class="mi">4</span> <span class="p">);</span>
+</span><span class="line"><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">users</span> <span class="p">(</span> <span class="n">id</span><span class="p">,</span> <span class="n">user_name</span><span class="p">,</span> <span class="n">url</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">neck_beard</span> <span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span> <span class="n">uuid</span><span class="p">(),</span> <span class="s1">&#39;cjohnson&#39;</span><span class="p">,</span> <span class="s1">&#39;http:// www.chipadeedoodah.com/&#39;</span><span class="p">,</span> <span class="s1">&#39;charles@opscode.com&#39;</span><span class="p">,</span> <span class="mi">4</span> <span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Modify <code>recipes/database.rb</code> so that the cookbook transfers the SQL script
+to the guest node and so that the SQL script executes.  As you learned in
+Part 1, <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/#testing-iteration-1">recipes should be idempotent</a>,
+so you will need to add a <code>not_if</code> statement which ensures that the command
+is only executed when necessary.</p>
+
+<pre><code>...
+  host "localhost"
+  action [:create, :grant]
+end
+
+cookbook_file "/tmp/myface-create.sql" do
+  source "myface-create.sql"
+  owner "root"
+  group "root"
+  mode "0644"
+end
+
+execute "initialize myface database" do
+  command "mysql -hlocalhost -umyface -psupersecret -Dmyface &lt; /tmp/myface-create.sql"
+  not_if "mysql -hlocalhost -umyface -psupersecret -Dmyface -e 'describe users;'"
+end
+</code></pre>
+
+<p>Once you have made these changes, <code>recipes/database.rb</code> should look like so:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/database.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: database</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2012 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;mysql::server&quot;</span>
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;database::mysql&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">mysql_database</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">connection</span><span class="p">(</span>
+</span><span class="line">    <span class="ss">:host</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:username</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">node</span><span class="o">[</span><span class="ss">:mysql</span><span class="o">][</span><span class="ss">:server_root_password</span><span class="o">]</span>
+</span><span class="line">  <span class="p">)</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">mysql_database_user</span> <span class="s2">&quot;myface&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">connection</span><span class="p">(</span>
+</span><span class="line">    <span class="ss">:host</span> <span class="o">=&gt;</span> <span class="s2">&quot;localhost&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:username</span> <span class="o">=&gt;</span> <span class="s2">&quot;root&quot;</span><span class="p">,</span>
+</span><span class="line">    <span class="ss">:password</span> <span class="o">=&gt;</span> <span class="n">node</span><span class="o">[</span><span class="ss">:mysql</span><span class="o">][</span><span class="ss">:server_root_password</span><span class="o">]</span>
+</span><span class="line">  <span class="p">)</span>
+</span><span class="line">  <span class="n">password</span> <span class="s2">&quot;supersecret&quot;</span>
+</span><span class="line">  <span class="n">database_name</span> <span class="s2">&quot;myface&quot;</span>
+</span><span class="line">  <span class="n">host</span> <span class="s2">&quot;localhost&quot;</span>
+</span><span class="line">  <span class="n">action</span> <span class="o">[</span><span class="ss">:create</span><span class="p">,</span> <span class="ss">:grant</span><span class="o">]</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">cookbook_file</span> <span class="s2">&quot;/tmp/myface-create.sql&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;myface-create.sql&quot;</span>
+</span><span class="line">  <span class="n">owner</span> <span class="s2">&quot;root&quot;</span>
+</span><span class="line">  <span class="n">group</span> <span class="s2">&quot;root&quot;</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">execute</span> <span class="s2">&quot;initialize myface database&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">command</span> <span class="s2">&quot;mysql -hlocalhost -umyface -psupersecret -Dmyface &lt; /tmp/myface-create.sql&quot;</span>
+</span><span class="line">  <span class="n">not_if</span> <span class="s2">&quot;mysql -hlocalhost -umyface -psupersecret -Dmyface -e &#39;describe users;&#39;&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Run <code>vagrant provision</code> to converge your changes:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<h2 id="testing-iteration-10">Testing Iteration #10</h2>
+
+<p>Run the following mysql command to dump the contents of the <code>users</code> table:</p>
+
+<pre><code>$ vagrant ssh -c 'mysql -hlocalhost -umyface -psupersecret -Dmyface -e "select id,user_name from users;"'
+id	user_name
+997f3192-e1a3-11e2-b7b5-0800273d	jtimberman
+997f38ea-e1a3-11e2-b7b5-0800273d	someara
+997f3c1e-e1a3-11e2-b7b5-0800273d	jwinsor
+997f3f20-e1a3-11e2-b7b5-0800273d	cjohnson
+</code></pre>
+
+<p>The output should look similar to what you see above - the data from the
+<code>INSERT INTO</code> statemens in the SQL script.</p>
+
+<h1 id="iteration-11---install-php">Iteration #11 - Install PHP</h1>
+
+<p>Let’s add some PHP scripting sizzle to sell the steak of the database we
+just created.  We’re going to install Apache 2 <code>mod_php5</code> module and the
+<code>php-mysql</code> package to support our PHP script.</p>
+
+<p>Edit <code>recipes/webserver.rb</code> and add the following:</p>
+
+<pre><code>...
+include_recipe "apache2"
+include_recipe "apache2::mod_php5"
+
+package "php-mysql" do
+  action :install
+  notifies :restart, "service[apache2]"
+end
+</code></pre>
+
+<p>This will use the apache2 cookbook’s <code>mod_php5</code> module to install PHP5
+and install the <code>php-mysql</code> support package.  After editing,
+<code>recipes/webserver.rb</code> should look like this:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/webserver.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: webserver</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2::mod_php5&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">package</span> <span class="s2">&quot;php-mysql&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:install</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s2">&quot;service[apache2]&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:config</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:document_root</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write site</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:document_root</span><span class="o">]</span><span class="si">}</span><span class="s2">/index.html&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;index.html.erb&quot;</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:config</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Run <code>vagrant provision</code> to converge your changes:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<h2 id="test-iteration-11">Test Iteration #11</h2>
+
+<p>Run the following command to verify that the php5_module was successfully
+installed:</p>
+
+<pre><code>$ vagrant ssh -c "sudo /usr/sbin/httpd -M | grep php5"
+httpd: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1 for ServerName
+[Sun Jun 30 09:58:35 2013] [warn] NameVirtualHost *:80 has no VirtualHosts
+Syntax OK
+ php5_module (shared)
+</code></pre>
+
+<h1 id="iteration-12">Iteration #12</h1>
+
+<p>It’s the last iteration, get ready to see the PHP sizzle!  First modify
+<code>templates/default/apache2.conf.erb</code> as follows:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/templates/default/apache2.conf.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Managed by Chef for &lt;%= node[:hostname] %&gt;</span>
+</span><span class="line"><span class="o">&lt;</span><span class="no">VirtualHost</span> <span class="o">*</span><span class="p">:</span><span class="mi">80</span><span class="o">&gt;</span>
+</span><span class="line">    <span class="no">ServerAdmin</span> <span class="o">&lt;</span><span class="sx">%= node[:apache][:contact] %&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="sx">    DocumentRoot /srv/apache/myface</span>
+</span><span class="line"><span class="sx">    &lt;Directory /&gt;</span>
+</span><span class="line"><span class="sx">        Options FollowSymLinks</span>
+</span><span class="line"><span class="sx">        AllowOverride None</span>
+</span><span class="line"><span class="sx">    &lt;/Directory&gt;</span>
+</span><span class="line"><span class="sx">    &lt;Directory /srv/apache/myface&gt;</span>
+</span><span class="line"><span class="sx">        Options Indexes FollowSymLinks MultiViews</span>
+</span><span class="line"><span class="sx">        AllowOverride None</span>
+</span><span class="line"><span class="sx">        Order allow,deny</span>
+</span><span class="line"><span class="sx">        allow from all</span>
+</span><span class="line"><span class="sx">    &lt;/Directory&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="sx">    ErrorLog &lt;%=</span> <span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:log_dir</span><span class="o">]</span> <span class="sx">%&gt;/error.log</span>
+</span><span class="line">
+</span><span class="line"><span class="sx">    LogLevel warn</span>
+</span><span class="line">
+</span><span class="line"><span class="sx">    CustomLog &lt;%= node[:apache][:log_dir] %&gt;</span><span class="sr">/access.log combined</span>
+</span><span class="line"><span class="sr">    ServerSignature Off</span>
+</span><span class="line"><span class="sr">&lt;/</span><span class="no">VirtualHost</span><span class="o">&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Next delete <code>templates/default/index.html.erb</code> with the following command:</p>
+
+<pre><code>$ rm templates/default/index.html.erb`
+</code></pre>
+
+<p>You’ll be replacing it with the following parametized PHP script as
+<code>templates/default/index.php.erb</code>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/templates/default/index.php.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+<span class="line-number">69</span>
+<span class="line-number">70</span>
+<span class="line-number">71</span>
+<span class="line-number">72</span>
+<span class="line-number">73</span>
+<span class="line-number">74</span>
+<span class="line-number">75</span>
+<span class="line-number">76</span>
+<span class="line-number">77</span>
+<span class="line-number">78</span>
+<span class="line-number">79</span>
+<span class="line-number">80</span>
+<span class="line-number">81</span>
+<span class="line-number">82</span>
+<span class="line-number">83</span>
+<span class="line-number">84</span>
+<span class="line-number">85</span>
+<span class="line-number">86</span>
+<span class="line-number">87</span>
+<span class="line-number">88</span>
+<span class="line-number">89</span>
+<span class="line-number">90</span>
+<span class="line-number">91</span>
+<span class="line-number">92</span>
+<span class="line-number">93</span>
+<span class="line-number">94</span>
+<span class="line-number">95</span>
+<span class="line-number">96</span>
+<span class="line-number">97</span>
+<span class="line-number">98</span>
+<span class="line-number">99</span>
+<span class="line-number">100</span>
+<span class="line-number">101</span>
+<span class="line-number">102</span>
+<span class="line-number">103</span>
+<span class="line-number">104</span>
+<span class="line-number">105</span>
+<span class="line-number">106</span>
+<span class="line-number">107</span>
+<span class="line-number">108</span>
+<span class="line-number">109</span>
+<span class="line-number">110</span>
+<span class="line-number">111</span>
+<span class="line-number">112</span>
+<span class="line-number">113</span>
+<span class="line-number">114</span>
+<span class="line-number">115</span>
+<span class="line-number">116</span>
+<span class="line-number">117</span>
+<span class="line-number">118</span>
+<span class="line-number">119</span>
+<span class="line-number">120</span>
+<span class="line-number">121</span>
+<span class="line-number">122</span>
+<span class="line-number">123</span>
+<span class="line-number">124</span>
+<span class="line-number">125</span>
+<span class="line-number">126</span>
+<span class="line-number">127</span>
+<span class="line-number">128</span>
+<span class="line-number">129</span>
+<span class="line-number">130</span>
+<span class="line-number">131</span>
+<span class="line-number">132</span>
+<span class="line-number">133</span>
+<span class="line-number">134</span>
+<span class="line-number">135</span>
+<span class="line-number">136</span>
+<span class="line-number">137</span>
+<span class="line-number">138</span>
+<span class="line-number">139</span>
+<span class="line-number">140</span>
+<span class="line-number">141</span>
+<span class="line-number">142</span>
+<span class="line-number">143</span>
+<span class="line-number">144</span>
+<span class="line-number">145</span>
+<span class="line-number">146</span>
+<span class="line-number">147</span>
+<span class="line-number">148</span>
+<span class="line-number">149</span>
+<span class="line-number">150</span>
+<span class="line-number">151</span>
+<span class="line-number">152</span>
+<span class="line-number">153</span>
+<span class="line-number">154</span>
+<span class="line-number">155</span>
+<span class="line-number">156</span>
+<span class="line-number">157</span>
+<span class="line-number">158</span>
+<span class="line-number">159</span>
+<span class="line-number">160</span>
+<span class="line-number">161</span>
+<span class="line-number">162</span>
+<span class="line-number">163</span>
+<span class="line-number">164</span>
+<span class="line-number">165</span>
+<span class="line-number">166</span>
+<span class="line-number">167</span>
+<span class="line-number">168</span>
+<span class="line-number">169</span>
+<span class="line-number">170</span>
+<span class="line-number">171</span>
+<span class="line-number">172</span>
+<span class="line-number">173</span>
+<span class="line-number">174</span>
+<span class="line-number">175</span>
+<span class="line-number">176</span>
+<span class="line-number">177</span>
+<span class="line-number">178</span>
+<span class="line-number">179</span>
+<span class="line-number">180</span>
+<span class="line-number">181</span>
+<span class="line-number">182</span>
+<span class="line-number">183</span>
+<span class="line-number">184</span>
+<span class="line-number">185</span>
+<span class="line-number">186</span>
+<span class="line-number">187</span>
+<span class="line-number">188</span>
+<span class="line-number">189</span>
+<span class="line-number">190</span>
+<span class="line-number">191</span>
+<span class="line-number">192</span>
+<span class="line-number">193</span>
+<span class="line-number">194</span>
+<span class="line-number">195</span>
+<span class="line-number">196</span>
+<span class="line-number">197</span>
+<span class="line-number">198</span>
+<span class="line-number">199</span>
+<span class="line-number">200</span>
+<span class="line-number">201</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="o">&lt;!--</span>
+</span><span class="line"><span class="no">Copyright</span> <span class="mi">2013</span><span class="p">,</span> <span class="no">Opscode</span><span class="p">,</span> <span class="no">Inc</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line"><span class="no">Licensed</span> <span class="n">under</span> <span class="n">the</span> <span class="no">Apache</span> <span class="no">License</span><span class="p">,</span> <span class="no">Version</span> <span class="mi">2</span><span class="o">.</span><span class="mi">0</span> <span class="p">(</span><span class="n">the</span> <span class="s2">&quot;License&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="n">you</span> <span class="n">may</span> <span class="ow">not</span> <span class="n">use</span> <span class="n">this</span> <span class="n">file</span> <span class="n">except</span> <span class="k">in</span> <span class="n">compliance</span> <span class="n">with</span> <span class="n">the</span> <span class="no">License</span><span class="o">.</span>
+</span><span class="line"><span class="no">You</span> <span class="n">may</span> <span class="n">obtain</span> <span class="n">a</span> <span class="n">copy</span> <span class="n">of</span> <span class="n">the</span> <span class="no">License</span> <span class="n">at</span>
+</span><span class="line">
+</span><span class="line">    <span class="ss">http</span><span class="p">:</span><span class="sr">//</span><span class="n">www</span><span class="o">.</span><span class="n">apache</span><span class="o">.</span><span class="n">org</span><span class="o">/</span><span class="n">licenses</span><span class="o">/</span><span class="no">LICENSE</span><span class="o">-</span><span class="mi">2</span><span class="o">.</span><span class="mi">0</span>
+</span><span class="line"><span class="no">Unless</span> <span class="n">required</span> <span class="n">by</span> <span class="n">applicable</span> <span class="n">law</span> <span class="ow">or</span> <span class="n">agreed</span> <span class="n">to</span> <span class="k">in</span> <span class="n">writing</span><span class="p">,</span> <span class="n">software</span>
+</span><span class="line"><span class="n">distributed</span> <span class="n">under</span> <span class="n">the</span> <span class="no">License</span> <span class="n">is</span> <span class="n">distributed</span> <span class="n">on</span> <span class="n">an</span> <span class="s2">&quot;AS IS&quot;</span> <span class="no">BASIS</span><span class="p">,</span>
+</span><span class="line"><span class="no">WITHOUT</span> <span class="no">WARRANTIES</span> <span class="no">OR</span> <span class="no">CONDITIONS</span> <span class="no">OF</span> <span class="no">ANY</span> <span class="no">KIND</span><span class="p">,</span> <span class="n">either</span> <span class="n">express</span> <span class="ow">or</span> <span class="n">implied</span><span class="o">.</span>
+</span><span class="line"><span class="no">See</span> <span class="n">the</span> <span class="no">License</span> <span class="k">for</span> <span class="n">the</span> <span class="n">specific</span> <span class="n">language</span> <span class="n">governing</span> <span class="n">permissions</span> <span class="ow">and</span>
+</span><span class="line"><span class="n">limitations</span> <span class="n">under</span> <span class="n">the</span> <span class="no">License</span><span class="o">.</span>
+</span><span class="line">
+</span><span class="line"><span class="o">--&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="o">&lt;</span><span class="p">?</span><span class="n">php</span>
+</span><span class="line"><span class="vg">$db_host</span> <span class="o">=</span> <span class="s1">&#39;localhost&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="vg">$db_user</span> <span class="o">=</span> <span class="s1">&#39;myface&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="vg">$db_pwd</span> <span class="o">=</span> <span class="s1">&#39;supersecret&#39;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line"><span class="vg">$database</span> <span class="o">=</span> <span class="s1">&#39;myface&#39;</span><span class="p">;</span>
+</span><span class="line"><span class="vg">$table</span> <span class="o">=</span> <span class="s1">&#39;users&#39;</span><span class="p">;</span>
+</span><span class="line">
+</span><span class="line"><span class="sr">//</span> <span class="no">UTILITY</span> <span class="no">FUNCTIONS</span>
+</span><span class="line"><span class="n">function</span> <span class="n">create_gravatar_hash</span><span class="p">(</span><span class="vg">$email</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">return</span> <span class="n">md5</span><span class="p">(</span> <span class="n">strtolower</span><span class="p">(</span> <span class="n">trim</span><span class="p">(</span> <span class="vg">$email</span> <span class="p">)</span> <span class="p">)</span> <span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">function</span> <span class="n">gravatar_img</span><span class="p">(</span><span class="vg">$email</span><span class="o">=</span><span class="n">null</span><span class="p">,</span> <span class="vg">$name</span><span class="o">=</span><span class="n">null</span><span class="p">,</span> <span class="vg">$size</span><span class="o">=</span><span class="n">null</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="o">!</span><span class="vg">$email</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="vg">$url</span> <span class="o">=</span>  <span class="s1">&#39;http://www.gravatar.com/avatar/&#39;</span><span class="p">;</span>
+</span><span class="line">  <span class="vg">$url</span> <span class="o">.</span><span class="n">=</span> <span class="n">create_gravatar_hash</span><span class="p">(</span><span class="vg">$email</span><span class="p">);</span>
+</span><span class="line">  <span class="k">if</span><span class="p">(</span><span class="vg">$size</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="vg">$url</span> <span class="o">.</span><span class="n">=</span> <span class="s2">&quot;?s={$size}&quot;</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">return</span> <span class="nb">sprintf</span><span class="p">(</span><span class="s1">&#39;&lt;img src=&quot;%s&quot; alt=&quot;%s&quot; /&gt;&#39;</span><span class="p">,</span> <span class="vg">$url</span><span class="p">,</span> <span class="vg">$name</span> <span class="p">?</span> <span class="vg">$name</span> <span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">function</span> <span class="n">neckbeard</span><span class="p">(</span><span class="vg">$rating</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="vg">$ratings</span> <span class="o">=</span> <span class="n">array</span><span class="p">(</span>
+</span><span class="line">    <span class="s1">&#39;Puberty awaits!&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s1">&#39;Peach fuzz&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s1">&#39;Solid week&amp;#39;s growth&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s1">&#39;Lumberjacks would be proud&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="s1">&#39;Makes dwarves weep&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="p">);</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">return</span> <span class="vg">$ratings</span><span class="o">[</span><span class="p">(</span><span class="n">int</span><span class="p">)</span> <span class="vg">$rating</span> <span class="o">-</span> <span class="mi">1</span><span class="o">]</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="sr">//</span> <span class="no">Fire</span> <span class="n">up</span> <span class="n">the</span> <span class="n">database</span>
+</span><span class="line"><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">mysql_connect</span><span class="p">(</span><span class="vg">$db_host</span><span class="p">,</span> <span class="vg">$db_user</span><span class="p">,</span> <span class="vg">$db_pwd</span><span class="p">))</span>
+</span><span class="line">    <span class="n">die</span><span class="p">(</span><span class="s2">&quot;Can&#39;t connect to database&quot;</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="n">mysql_select_db</span><span class="p">(</span><span class="vg">$database</span><span class="p">))</span>
+</span><span class="line">    <span class="n">die</span><span class="p">(</span><span class="s2">&quot;Can&#39;t select database&quot;</span><span class="p">);</span>
+</span><span class="line">
+</span><span class="line"><span class="sr">//</span> <span class="n">sending</span> <span class="n">query</span>
+</span><span class="line"><span class="vg">$result</span> <span class="o">=</span> <span class="n">mysql_query</span><span class="p">(</span><span class="s2">&quot;SELECT * FROM {$table}&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="vg">$result</span><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">die</span><span class="p">(</span><span class="s2">&quot;Query to show fields from table failed&quot;</span><span class="p">);</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="vg">$fields_num</span> <span class="o">=</span> <span class="n">mysql_num_fields</span><span class="p">(</span><span class="vg">$result</span><span class="p">);</span>
+</span><span class="line"><span class="sc">?&gt;</span>
+</span><span class="line"><span class="o">&lt;!</span><span class="no">DOCTYPE</span> <span class="n">html</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">html</span> <span class="n">lang</span><span class="o">=</span><span class="s2">&quot;en&quot;</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">head</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="o">&lt;</span><span class="n">title</span><span class="o">&gt;</span><span class="no">MyFace</span> <span class="no">Users</span><span class="o">&lt;</span><span class="sr">/title&gt;</span>
+</span><span class="line"><span class="sr">  &lt;style&gt;</span>
+</span><span class="line"><span class="sr">  * {</span>
+</span><span class="line"><span class="sr">    -webkit-box-sizing: border-box;</span>
+</span><span class="line"><span class="sr">    -moz-box-sizing: border-box;</span>
+</span><span class="line"><span class="sr">    box-sizing: border-box;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  html, body {</span>
+</span><span class="line"><span class="sr">    margin: 0;</span>
+</span><span class="line"><span class="sr">    padding: 0;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  html {</span>
+</span><span class="line"><span class="sr">    background: #999;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  body {</span>
+</span><span class="line"><span class="sr">    max-width: 480px;</span>
+</span><span class="line"><span class="sr">    margin: 0 auto;</span>
+</span><span class="line"><span class="sr">    font-family: Arial, Helvetica, sans-serif;</span>
+</span><span class="line"><span class="sr">    color: #222;</span>
+</span><span class="line"><span class="sr">    padding: 20px;</span>
+</span><span class="line"><span class="sr">    border: 1px solid #666;</span>
+</span><span class="line"><span class="sr">    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.3);</span>
+</span><span class="line"><span class="sr">    -moz-box-shadow: 0 0 5px rgba(0,0,0,0.3);</span>
+</span><span class="line"><span class="sr">    box-shadow: 0 0 5px rgba(0,0,0,0.3);</span>
+</span><span class="line"><span class="sr">    background: #FFF;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">    </span>
+</span><span class="line"><span class="sr">  a:link {</span>
+</span><span class="line"><span class="sr">    text-decoration: none;</span>
+</span><span class="line"><span class="sr">    color: #777;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  a:hover,</span>
+</span><span class="line"><span class="sr">  a:focus {</span>
+</span><span class="line"><span class="sr">    text-decoration: underline;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  h1 {</span>
+</span><span class="line"><span class="sr">    text-align: center;</span>
+</span><span class="line"><span class="sr">    margin-top: 0;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">    </span>
+</span><span class="line"><span class="sr">  h1 span {</span>
+</span><span class="line"><span class="sr">    color: #00C;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  h2 {</span>
+</span><span class="line"><span class="sr">    font-size: 24px;</span>
+</span><span class="line"><span class="sr">    line-height: 1.0;</span>
+</span><span class="line"><span class="sr">    margin: 0 0 10px;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  p {</span>
+</span><span class="line"><span class="sr">    font-size: 14px;</span>
+</span><span class="line"><span class="sr">    line-height: 18px;</span>
+</span><span class="line"><span class="sr">    margin: 10px 0;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  p:last-child {</span>
+</span><span class="line"><span class="sr">    margin-bottom: 0;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  .email {</span>
+</span><span class="line"><span class="sr">    display: block;</span>
+</span><span class="line"><span class="sr">    overflow: hidden;</span>
+</span><span class="line"><span class="sr">    text-overflow: ellipsis;</span>
+</span><span class="line"><span class="sr">    white-space: nowrap;</span>
+</span><span class="line"><span class="sr">  }</span>
+</span><span class="line"><span class="sr">  </span>
+</span><span class="line"><span class="sr">  /</span><span class="o">*</span> <span class="no">Adapted</span> <span class="n">from</span> <span class="no">OOCSS</span>
+</span><span class="line">    <span class="o">*</span> <span class="n">mod</span> <span class="n">object</span> <span class="p">(</span><span class="ss">https</span><span class="p">:</span><span class="sr">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">stubbornella</span><span class="o">/</span><span class="n">oocss</span><span class="o">/</span><span class="n">blob</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">module</span><span class="o">/</span><span class="n">mod</span><span class="o">.</span><span class="n">css</span><span class="p">)</span>
+</span><span class="line">    <span class="o">*</span> <span class="n">media</span> <span class="n">object</span> <span class="p">(</span><span class="ss">https</span><span class="p">:</span><span class="sr">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">stubbornella</span><span class="o">/</span><span class="n">oocss</span><span class="o">/</span><span class="n">blob</span><span class="o">/</span><span class="n">master</span><span class="o">/</span><span class="n">core</span><span class="o">/</span><span class="n">media</span><span class="o">/</span><span class="n">media</span><span class="o">.</span><span class="n">css</span><span class="p">)</span>
+</span><span class="line">  <span class="o">*/</span>
+</span><span class="line">  <span class="n">article</span> <span class="p">{</span>
+</span><span class="line">    <span class="nb">display</span><span class="p">:</span> <span class="n">block</span><span class="p">;</span>
+</span><span class="line">    <span class="ss">overflow</span><span class="p">:</span> <span class="n">hidden</span><span class="p">;</span>
+</span><span class="line">    <span class="n">margin</span><span class="o">-</span><span class="ss">bottom</span><span class="p">:</span> <span class="mi">20</span><span class="n">px</span><span class="p">;</span>
+</span><span class="line">    <span class="ss">border</span><span class="p">:</span> <span class="mi">1</span><span class="n">px</span> <span class="n">solid</span> <span class="c1">#CCC;</span>
+</span><span class="line">    <span class="ss">background</span><span class="p">:</span> <span class="c1">#EEE;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">border</span><span class="o">-</span><span class="ss">radius</span><span class="p">:</span> <span class="mi">4</span><span class="n">px</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">border</span><span class="o">-</span><span class="ss">radius</span><span class="p">:</span> <span class="mi">4</span><span class="n">px</span><span class="p">;</span>
+</span><span class="line">    <span class="n">border</span><span class="o">-</span><span class="ss">radius</span><span class="p">:</span> <span class="mi">4</span><span class="n">px</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="ss">shadow</span><span class="p">:</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">1</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="o">.</span><span class="mi">3</span><span class="p">)</span> <span class="n">inset</span><span class="p">;</span>
+</span><span class="line">    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="ss">shadow</span><span class="p">:</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">1</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="o">.</span><span class="mi">3</span><span class="p">)</span> <span class="n">inset</span><span class="p">;</span>
+</span><span class="line">    <span class="n">box</span><span class="o">-</span><span class="ss">shadow</span><span class="p">:</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">1</span><span class="n">px</span> <span class="mi">1</span><span class="n">px</span> <span class="n">rgba</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="o">.</span><span class="mi">3</span><span class="p">)</span> <span class="n">inset</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">article</span> <span class="o">.</span><span class="n">img</span> <span class="p">{</span>
+</span><span class="line">    <span class="ss">float</span><span class="p">:</span> <span class="n">left</span><span class="p">;</span>
+</span><span class="line">    <span class="n">margin</span><span class="o">-</span><span class="ss">right</span><span class="p">:</span> <span class="mi">10</span><span class="n">px</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">article</span> <span class="o">.</span><span class="n">img</span> <span class="n">img</span> <span class="p">{</span>
+</span><span class="line">    <span class="nb">display</span><span class="p">:</span> <span class="n">block</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">article</span> <span class="o">.</span><span class="n">imgExt</span> <span class="p">{</span>
+</span><span class="line">    <span class="ss">float</span><span class="p">:</span> <span class="n">right</span><span class="p">;</span>
+</span><span class="line">    <span class="n">margin</span><span class="o">-</span><span class="ss">left</span><span class="p">:</span> <span class="mi">10</span><span class="n">px</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">article</span> <span class="o">.</span><span class="n">bd</span> <span class="p">{</span>
+</span><span class="line">    <span class="ss">overflow</span><span class="p">:</span> <span class="n">hidden</span><span class="p">;</span>
+</span><span class="line">    <span class="ss">padding</span><span class="p">:</span> <span class="mi">10</span><span class="n">px</span> <span class="mi">0</span><span class="p">;</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">  <span class="o">&lt;</span><span class="sr">/style&gt;</span>
+</span><span class="line"><span class="sr">&lt;/</span><span class="n">head</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">body</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="no">Welcome</span> <span class="n">to</span> <span class="no">My</span><span class="o">&lt;</span><span class="n">span</span><span class="o">&gt;</span><span class="no">Face</span><span class="o">&lt;</span><span class="sr">/span&gt;!&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class="line">
+</span><span class="line">  <span class="o">&lt;</span><span class="p">?</span><span class="n">php</span> <span class="k">while</span><span class="p">(</span><span class="vg">$row</span> <span class="o">=</span> <span class="n">mysql_fetch_object</span><span class="p">(</span><span class="vg">$result</span><span class="p">)):</span> <span class="sc">?&gt;</span>
+</span><span class="line">  <span class="o">&lt;</span><span class="n">article</span><span class="o">&gt;</span>
+</span><span class="line">    <span class="o">&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;&lt;?php echo $row-&gt;url ?&gt;&quot;</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;img&quot;</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;_blank&quot;</span><span class="o">&gt;</span>
+</span><span class="line">      <span class="o">&lt;</span><span class="p">?</span><span class="n">php</span> <span class="n">echo</span> <span class="n">gravatar_img</span><span class="p">(</span><span class="vg">$row</span><span class="o">-&gt;</span><span class="n">email</span><span class="p">,</span> <span class="vg">$row</span><span class="o">-&gt;</span><span class="n">user_name</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span> <span class="sc">?&gt;</span>
+</span><span class="line">    <span class="o">&lt;</span><span class="sr">/a&gt;</span>
+</span><span class="line"><span class="sr">    &lt;div class=&quot;bd&quot;&gt;</span>
+</span><span class="line"><span class="sr">      &lt;h2&gt;&lt;?php echo $row-&gt;user_name ?&gt;&lt;/</span><span class="n">h2</span><span class="o">&gt;</span>
+</span><span class="line">      <span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;&lt;</span><span class="n">a</span> <span class="n">href</span><span class="o">=</span><span class="s2">&quot;&lt;?php echo $row-&gt;url ?&gt;&quot;</span> <span class="n">target</span><span class="o">=</span><span class="s2">&quot;_blank&quot;</span> <span class="n">class</span><span class="o">=</span><span class="s2">&quot;email&quot;</span><span class="o">&gt;&lt;</span><span class="p">?</span><span class="n">php</span> <span class="n">echo</span> <span class="vg">$row</span><span class="o">-&gt;</span><span class="n">url</span> <span class="sc">?&gt;</span><span class="o">&lt;</span><span class="sr">/a&gt;&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class="line">      <span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="no">Neckbeard</span> <span class="ss">rating</span><span class="p">:</span> <span class="o">&lt;</span><span class="p">?</span><span class="n">php</span> <span class="n">echo</span> <span class="n">neckbeard</span><span class="p">(</span><span class="vg">$row</span><span class="o">-&gt;</span><span class="n">neck_beard</span><span class="p">)</span> <span class="sc">?&gt;</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class="line"><span class="sr">    &lt;/</span><span class="n">div</span><span class="o">&gt;</span>
+</span><span class="line">  <span class="o">&lt;</span><span class="sr">/article&gt;</span>
+</span><span class="line"><span class="sr">  &lt;?php endwhile; ?&gt;</span>
+</span><span class="line"><span class="sr">&lt;/</span><span class="n">body</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&lt;</span><span class="sr">/html&gt;</span>
+</span><span class="line"><span class="sr">&lt;?php mysql_free_result($result); ?&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Finally modify <code>recipes/webserver.rb</code> to use <code>index.php.erb</code> template to 
+generate a new <code>index.php</code> document root: </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/webserver.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: webserver</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:user</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s2">&quot;/bin/bash&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2&quot;</span>
+</span><span class="line"><span class="n">include_recipe</span> <span class="s2">&quot;apache2::mod_php5&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">package</span> <span class="s2">&quot;php-mysql&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:install</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s2">&quot;service[apache2]&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;000-default&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:apache</span><span class="o">][</span><span class="ss">:dir</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:config</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;apache2.conf.erb&quot;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:document_root</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s2">&quot;0755&quot;</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write site</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:document_root</span><span class="o">]</span><span class="si">}</span><span class="s2">/index.php&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s2">&quot;index.php.erb&quot;</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s2">&quot;0644&quot;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:config</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Since we changed the document root and our recipe contains no statements to
+remove the old <code>index.html</code> document root, we’ll need to destroy our vagrant
+test node and do a full <code>vagrant up</code> again, otherwise if we visit
+<a href="http://33.33.33.10">http://33.33.33.10</a> again, we’ll just see the old document root:</p>
+
+<pre><code>$ vagrant destroy -f
+$ vagrant up
+</code></pre>
+
+<h2 id="testing-iteration-12">Testing Iteration #12</h2>
+
+<p>Visit <a href="http://33.33.10">http://33.33.10</a>  Now you should see the lovely new PHP version of
+Myface.</p>
+
+<p><img src="/images/myfacephp.png" alt="myfacephp" /></p>
+
+<h1 id="more-to-come">More to Come!</h1>
+
+<p>In Part 3, we’ll introduce a new tool <code>test-kitchen</code> and show you how to
+automate all the tests you’ve been doing manually to test each iteration.</p>
+
+<p>If you want to see the full source for MyFace, check out the following
+GitHub link: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
 </div>
   
   
@@ -398,7 +1490,7 @@ that the <code>myface</code> database was created:</p>
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting Started Writing Chef Cookbooks the Berkshelf Way</a></h1>
+      <h1 class="entry-title"><a href="/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 1</a></h1>
     
     
       <p class="meta">
@@ -1728,9 +2820,13 @@ you tested Iteration #4.  For example, I visited <a href="http://mischa-ubuntu">
 
 <h1 id="more-to-come">More to Come!</h1>
 <p>This is just part one of a multi-part series.  So far you’ve gone through
-several short iteration loops as you evolve the myface cookbook.  In subsequent
-installments, we’ll go through more iterations, resulting in the final
-end product: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
+several short iteration loops as you evolve the myface cookbook web
+application.  In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>,
+we’ll wire up a database to the myface application and exlore the use of
+the <code>mysql</code> and `database cookbooks.</p>
+
+<p>If you want to see the full source for myface, check out the following
+GitHub link: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
 </div>
   
   
@@ -3002,7 +4098,7 @@ destroy the VM:</p>
       </li>
     
       <li class="post">
-        <a href="/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting started writing Chef cookbooks the Berkshelf Way</a>
+        <a href="/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Getting started writing Chef cookbooks the Berkshelf Way, Part 1</a>
       </li>
     
       <li class="post">
