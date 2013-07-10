@@ -8,6 +8,9 @@ categories: ruby
 * list element with functor item
 {:toc}
 
+*Updated July 9th, 2013 bumping ruby version to 1.9.3p448 and removing
+openssl workaround for compiling ruby 2.0.0 on Mac OS Xas this has been fixed*
+
 Out of the box, Ruby does not provide a mechanism to support multiple
 installed versions.  Compounding this issue, the default system-installed
 version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
@@ -88,9 +91,9 @@ Restart shell as a login shell so that the PATH changes take effect:
 
     $ exec $SHELL -l
 
-Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p429)
+Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p448)
 
-    $ rbenv install 1.9.3-p429
+    $ rbenv install 1.9.3-p448
 
 Rebuild the shim executable
 
@@ -101,13 +104,13 @@ or install a new gem.
 
 Set the latest version of ruby to be the default version of ruby
 
-    $ rbenv global 1.9.3-p429
+    $ rbenv global 1.9.3-p448
 
 Verify the ruby install.  If everything was installed correctly, the `ruby -v`
-command should report that version 1.9.3p429 is installed.
+command should report that version 1.9.3p448 is installed.
 
     $ ruby -v
-    ruby 1.9.3p429 (2013-05-15 revision 40747) [x86_64-darwin12.4.0]
+    ruby 1.9.3p448 (2013-06-27 revision 41675) [x86_64-darwin12.0.0]
 
 Install Bundler - Mac OS X
 --------------------------
@@ -115,7 +118,7 @@ You'll need to use [Bundler](http://gembundler.com/) to manage gems.  Installing
 a gem is also a good way to ensure that you've installed most of the Ruby
 prerequisites.
 
-First, make sue you update to the latest version of Rubygems:
+First, make sure you update to the latest version of Rubygems:
 
     $ gem update --system
 
@@ -130,24 +133,20 @@ Then install the `bundler` gem.  If the `gem install` command reports
  
 Install Ruby 2.0.0 - Mac OS X
 -------------------------------------
-As of this writing, Ruby 2.0.0-p195 is the latest version of Ruby 2.0.0.
-Use `rbenv install --list` to print out the available versions.  Currently
-there is an [issue installing Ruby 2.0.0](https://github.com/sstephenson/ruby-build/issues/305)
-with the OpenSSL that ruby-build downloads, so we have to set 
-`RUBY_CONFIGURE_OPTS` when calling `rbenv install` as a workaround:
+As of this writing, Ruby 2.0.0-p247 is the latest version of Ruby 2.0.0.
+Use `rbenv install --list` to print out the available versions.  To install:
 
-    $ brew install openssl
-    $ CONFIGURE_OPTS="--with-out-ext=tk,tk/* --with-openssl-dir=`brew --prefix openssl`" RUBY_CONFIGURE_OPTS="--with-openssl-dir=`brew --prefix openssl`" rbenv install 2.0.0-p195
+    $ rbenv install 2.0.0-p247
 
 To verify the install:
 
-    $ rbenv local 2.0.0-p195
+    $ rbenv local 2.0.0-p247
     $ ruby -v
-    ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-darwin12.4.0]
+    ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-darwin12.0.0]
 
 If you want to make Ruby 2.0.0 the global default version of ruby:
 
-    $ rbenv global 2.0.0-p195
+    $ rbenv global 2.0.0-p247
 
 Upgrade Rbenv - Mac OS X
 ------------------------
