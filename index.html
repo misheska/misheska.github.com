@@ -145,6 +145,9 @@ MyFace is just a web application serving up a static page.  Now we’re going to
 enhance MyFace so that it stores account information in a persistent 
 MySQL database.</p>
 
+<p>Thanks go out to the Opscode Advanced Chef Cookbook Authoring class and specifically 
+<a href="https://github.com/someara">Sean OMeara</a> for the PHP code used in this article.</p>
+
 <h1 id="iteration-7---install-mysql">Iteration #7 - Install MySQL</h1>
 
 <p>Edit <code>metadata.rb</code> and add a reference to the <code>mysql</code> cookbook.  Also
@@ -526,13 +529,13 @@ end
 following mysql command:</p>
 
 <pre><code>$ vagrant ssh -c 'mysql -uroot -prootpass -e "select user,host from mysql.user;"'
-user	host
-repl	%
-root	127.0.0.1
-     	localhost
+user	  host
+repl	  %
+root	  127.0.0.1
+     	  localhost
 myface	localhost
-root	localhost
-    	myface-berkshelf
+root	  localhost
+    	   myface-berkshelf
 </code></pre>
 
 <p>As you can see above, the <code>myface@localhost</code> user exists, so our cookbook
@@ -1466,7 +1469,7 @@ $ vagrant up
 
 <h2 id="testing-iteration-12">Testing Iteration #12</h2>
 
-<p>Visit <a href="http://33.33.10">http://33.33.10</a>  Now you should see the lovely new PHP version of
+<p>Visit <a href="http://33.33.33.10">http://33.33.33.10</a>  Now you should see the lovely new PHP version of
 Myface.</p>
 
 <p><img src="/images/myfacephp.png" alt="myfacephp" /></p>
@@ -1551,6 +1554,15 @@ GitHub link: <a href="https://github.com/misheska/myface">https://github.com/mis
   <li><a href="#more-to-come">More to Come!</a></li>
 </ul>
 
+<p><em>Updated July 9th, 2013</em></p>
+
+<ul>
+  <li><em>Bumped vagrant from version 1.2.2 to 1.2.3</em></li>
+  <li><em>Bumped berkshelf from version 2.0.5 to 2.0.6</em></li>
+  <li><em>Bumped VirtualBox from version 4.2.12 to 4.2.16</em></li>
+  <li><em>Berkshelf 2.0.6 no longer needs the version constraint for test-kitchen - removed</em></li>
+</ul>
+
 <p>Jamie Winsor hasn’t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
 to match <a href="https://github.com/RiotGames/berkshelf/issues/416">recent changes related to Vagrant 1.x</a> and <a href="http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/">Chef 11</a>
 This post is an attempt to update these instructions, walking through his
@@ -1571,10 +1583,11 @@ installed:</p>
 <ul>
   <li>
     <p><a href="http://virtualbox.org">Install VirtualBox 4.2.x (or higher)</a>
-NOTE: Avoid VirtualBox 4.2.14, <a href="https://twitter.com/mitchellh/status/348886504728305664">it breaks vagrant</a></p>
+NOTE: Avoid VirtualBox 4.2.14, <a href="https://twitter.com/mitchellh/status/348886504728305664">it breaks vagrant</a>.  VirtualBox 4.2.16 was tested for
+this post.</p>
   </li>
   <li>
-    <p><a href="http://vagrantup.com">Install Vagrant 1.2.1 (or higher)</a></p>
+    <p><a href="http://vagrantup.com">Install Vagrant 1.2.1 (or higher, version 1.2.3 recommended)</a></p>
   </li>
   <li>
     <p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p>
@@ -1591,11 +1604,11 @@ NOTE: Avoid VirtualBox 4.2.14, <a href="https://twitter.com/mitchellh/status/348
 <span class="line-number">5</span>
 <span class="line-number">6</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf --no-ri --no-rdoc
-</span><span class="line">Fetching: berkshelf-2.0.5.gem (100%)
-</span><span class="line">Successfully installed berkshelf-2.0.5
+</span><span class="line">Fetching: berkshelf-2.0.6.gem (100%)
+</span><span class="line">Successfully installed berkshelf-2.0.6
 </span><span class="line">1 gem installed
 </span><span class="line">$ berks -v
-</span><span class="line">Berkshelf (2.0.5)</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">Berkshelf (2.0.6)</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
   <li>Install the vagrant-berkshelf Plugin (1.3.2 or higher)</li>
@@ -1666,32 +1679,8 @@ the creation of an example service - MyFace - the next killer social web app.</p
       create  myface/.gitignore
          run  git init from "./myface"
       create  myface/Gemfile
-      create  .kitchen.yml
-      append  Thorfile
-      create  test/integration/default
-      append  .gitignore
-      append  .gitignore
-      append  Gemfile
-      append  Gemfile
-You must run `bundle install' to fetch any new gems.
       create  myface/Vagrantfile
 </code></pre>
-
-<p>Before running <code>bundle install</code> edit the <code>Gemfile</code> and add a version
-constraint for the <code>test-kitchen</code> gem, like so:</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Gemfile  </span></figcaption>
- <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">source</span> <span class="s1">&#39;https://rubygems.org&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;berkshelf&#39;</span>
-</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;test-kitchen&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.0.0.alpha&#39;</span><span class="p">,</span> <span class="ss">:group</span> <span class="o">=&gt;</span> <span class="ss">:integration</span>
-</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;kitchen-vagrant&#39;</span><span class="p">,</span> <span class="ss">:group</span> <span class="o">=&gt;</span> <span class="ss">:integration</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Run <code>bundle install</code> in the newly created cookbook directory to install the
 necessary Gem dependencies:</p>
@@ -1705,22 +1694,10 @@ Using i18n (0.6.1)
 Using multi_json (1.7.7)
 Using activesupport (3.2.13)
 . . .
-Using test-kitchen (1.0.0.alpha.7)
-Using kitchen-vagrant (0.10.0)
+Using berkshelf (2.0.6)
 Using bundler (1.3.5)
 Your bundle is complete!
 Use `bundle show [gemname]` to see where a bundled gem is installed.
-</code></pre>
-
-<p>If you get the following error, you forgot to add a version-constraint
-for <code>test-kitchen</code>, per above:</p>
-
-<pre><code>Bundler could not find compatible versions for gem "test-kitchen":
-  In Gemfile:
-    kitchen-vagrant (&gt;= 0) ruby depends on
-      test-kitchen (~&gt; 1.0.0.alpha.0) ruby
-
-    test-kitchen (0.5.0)
 </code></pre>
 
 <h1 id="prepare-a-virtual-machine-for-testing">Prepare a virtual machine for testing</h1>
@@ -1975,14 +1952,13 @@ that if you run <code>vagrant provision</code> again, the Chef run executes more
 and it does not try to re-create the user/group it already created.</p>
 
 <pre><code>$ vagrant provision
-[default] Ensuring Chef is installed at requested version of 11.4.4.
-[default] Chef 11.4.4 Omnibus package is already installed...skipping installation.
 [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
 [Berkshelf] You should check for a newer version of vagrant-berkshelf.
 [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
 [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
 [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130616-17393-1q2qkbs'
 [Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/xx/myface'
+[default] Chef 11.4.4 Omnibus package is already installed.
 [default] Running provisioner: chef_solo...
 Generating chef JSON and uploading...
 Running chef-solo...
