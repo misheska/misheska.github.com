@@ -8,8 +8,11 @@ categories: ruby
 * list element with functor item
 {:toc}
 
-*Updated July 9th, 2013 bumping ruby version to 1.9.3p448 and removing
-openssl workaround for compiling ruby 2.0.0 on Mac OS Xas this has been fixed*
+_Updated July 9th, 2013:_
+
+* _Bumped ruby 1.9.3 version from 1.9.3p429 to 1.9.3p448_
+* _Bumped ruby 2.0.0 version from 2.0.0p195 to 2.0.0p247_
+* _Removed openssl workaround for compiling ruby 2.0.0 on Mac OS X - this has been fixed_
 
 Out of the box, Ruby does not provide a mechanism to support multiple
 installed versions.  Compounding this issue, the default system-installed
@@ -214,9 +217,9 @@ and install new Ruby versions:
 
     $ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
 
-Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p429)
+Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p448)
 
-    $ rbenv install 1.9.3-p429
+    $ rbenv install 1.9.3-p448
 
 Rebuild the shim executable
 
@@ -227,13 +230,13 @@ version of Ruby or install a new gem.
 
 Set the latest version of ruby to be the default version of ruby
 
-    $ rbenv global 1.9.3-p429
+    $ rbenv global 1.9.3-p448
 
 Verify the ruby install.  If everything was installed correctly, the
-`ruby -v` command should report that version 1.9.3p429 is installed.
+`ruby -v` command should report that version 1.9.3p448 is installed.
 
     $ ruby -v
-    ruby 1.9.3p429 (2013-05-15 revision 40747) [x86_64-linux]
+    ruby 1.9.3p448 (2013-06-27 revision 41675) [x86_64-linux]
 
 Install Bundler - Linux
 -----------------------
@@ -257,20 +260,20 @@ Then install the `bundler` gem.  If the `gem install` command reports
     
 Install Ruby 2.0.0 - Linux
 --------------------------
-As of this writing, Ruby 2.0.0-p195 is the latest version of Ruby 2.0.0.
+As of this writing, Ruby 2.0.0-p247 is the latest version of Ruby 2.0.0.
 Use `rbenv install --list` to print out the available versions.  To install:
 
-    $ rbenv install 2.0.0-p195
+    $ rbenv install 2.0.0-p247
 
 To verify the install:
 
-    $ rbenv local 2.0.0-p195
+    $ rbenv local 2.0.0-p247
     $ ruby -v
-    ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-linux] 
+    ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux] 
 
 If you want to make Ruby 2.0.0 the global default version of ruby:
 
-    $ rbenv global 2.0.0-p195
+    $ rbenv global 2.0.0-p247
 
 Upgrade Rbenv - Linux
 ---------------------
