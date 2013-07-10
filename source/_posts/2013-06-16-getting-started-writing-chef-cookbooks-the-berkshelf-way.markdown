@@ -8,6 +8,13 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated July 9th, 2013_
+
+* _Bumped vagrant from version 1.2.2 to 1.2.3_
+* _Bumped berkshelf from version 2.0.5 to 2.0.6_
+* _Bumped VirtualBox from version 4.2.12 to 4.2.16_
+* _Berkshelf 2.0.6 no longer needs the version constraint for test-kitchen - removed_
+
 Jamie Winsor hasn't yet updated his [guide to authoring cookbooks the Berkshelf way](http://vialstudios.com/guide-authoring-cookbooks.html)
 to match [recent changes related to Vagrant 1.x](https://github.com/RiotGames/berkshelf/issues/416) and [Chef 11](http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/)
 This post is an attempt to update these instructions, walking through his
@@ -27,9 +34,10 @@ To set up your cookbook-writing environment, make sure you have the following
 installed:
 
 * [Install VirtualBox 4.2.x (or higher)](http://virtualbox.org)
-NOTE: Avoid VirtualBox 4.2.14, [it breaks vagrant](https://twitter.com/mitchellh/status/348886504728305664)
+NOTE: Avoid VirtualBox 4.2.14, [it breaks vagrant](https://twitter.com/mitchellh/status/348886504728305664).  VirtualBox 4.2.16 was tested for
+this post.
 
-* [Install Vagrant 1.2.1 (or higher)](http://vagrantup.com)
+* [Install Vagrant 1.2.1 (or higher, version 1.2.3 recommended)](http://vagrantup.com)
 
 * Install Ruby 1.9.x via [Chef Omnibus Installer Ruby](http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/), [rvm](http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/) or [rbenv](http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/)
 
@@ -37,11 +45,11 @@ NOTE: Avoid VirtualBox 4.2.14, [it breaks vagrant](https://twitter.com/mitchellh
 
 ```
 $ gem install berkshelf --no-ri --no-rdoc
-Fetching: berkshelf-2.0.5.gem (100%)
-Successfully installed berkshelf-2.0.5
+Fetching: berkshelf-2.0.6.gem (100%)
+Successfully installed berkshelf-2.0.6
 1 gem installed
 $ berks -v
-Berkshelf (2.0.5)
+Berkshelf (2.0.6)
 ```
 
 * Install the vagrant-berkshelf Plugin (1.3.2 or higher)
@@ -107,26 +115,7 @@ First create a new cookbook for the MyFace application using the
           create  myface/.gitignore
              run  git init from "./myface"
           create  myface/Gemfile
-          create  .kitchen.yml
-          append  Thorfile
-          create  test/integration/default
-          append  .gitignore
-          append  .gitignore
-          append  Gemfile
-          append  Gemfile
-    You must run `bundle install' to fetch any new gems.
           create  myface/Vagrantfile
-
-Before running `bundle install` edit the `Gemfile` and add a version
-constraint for the `test-kitchen` gem, like so:
-
-{% codeblock myface/Gemfile lang:ruby %}
-source 'https://rubygems.org'
-
-gem 'berkshelf'
-gem 'test-kitchen', '~> 1.0.0.alpha', :group => :integration
-gem 'kitchen-vagrant', :group => :integration
-{% endcodeblock %}
 
 Run `bundle install` in the newly created cookbook directory to install the
 necessary Gem dependencies:
@@ -140,21 +129,11 @@ necessary Gem dependencies:
     Using multi_json (1.7.7)
     Using activesupport (3.2.13)
     . . .
-    Using test-kitchen (1.0.0.alpha.7)
-    Using kitchen-vagrant (0.10.0)
+    Using berkshelf (2.0.6)
     Using bundler (1.3.5)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
 
-If you get the following error, you forgot to add a version-constraint
-for `test-kitchen`, per above:
-
-    Bundler could not find compatible versions for gem "test-kitchen":
-      In Gemfile:
-        kitchen-vagrant (>= 0) ruby depends on
-          test-kitchen (~> 1.0.0.alpha.0) ruby
-
-        test-kitchen (0.5.0)
 
 Prepare a virtual machine for testing
 =====================================
@@ -367,14 +346,13 @@ that if you run `vagrant provision` again, the Chef run executes more quickly
 and it does not try to re-create the user/group it already created.
 
     $ vagrant provision
-    [default] Ensuring Chef is installed at requested version of 11.4.4.
-    [default] Chef 11.4.4 Omnibus package is already installed...skipping installation.
     [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
     [Berkshelf] You should check for a newer version of vagrant-berkshelf.
     [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
     [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
     [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130616-17393-1q2qkbs'
     [Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/xx/myface'
+    [default] Chef 11.4.4 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...

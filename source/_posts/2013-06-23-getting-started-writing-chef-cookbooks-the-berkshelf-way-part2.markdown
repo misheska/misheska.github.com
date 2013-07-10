@@ -19,6 +19,9 @@ MyFace is just a web application serving up a static page.  Now we're going to
 enhance MyFace so that it stores account information in a persistent 
 MySQL database.
 
+Thanks go out to the Opscode Advanced Chef Cookbook Authoring class and specifically 
+[Sean OMeara](https://github.com/someara) for the PHP code used in this article.
+
 Iteration #7 - Install MySQL
 ============================
 
@@ -305,13 +308,13 @@ Check to see if the `myface` user is enabled as a local user by running the
 following mysql command:
 
     $ vagrant ssh -c 'mysql -uroot -prootpass -e "select user,host from mysql.user;"'
-    user	host
-    repl	%
-    root	127.0.0.1
-         	localhost
+    user	  host
+    repl	  %
+    root	  127.0.0.1
+         	  localhost
     myface	localhost
-    root	localhost
-        	myface-berkshelf
+    root	  localhost
+        	   myface-berkshelf
 
 As you can see above, the `myface@localhost` user exists, so our cookbook
 did what was expected.
@@ -851,7 +854,7 @@ test node and do a full `vagrant up` again, otherwise if we visit
 Testing Iteration #12
 ---------------------
 
-Visit <http://33.33.10>  Now you should see the lovely new PHP version of
+Visit <http://33.33.33.10>  Now you should see the lovely new PHP version of
 Myface.
 
 ![myfacephp](/images/myfacephp.png)
