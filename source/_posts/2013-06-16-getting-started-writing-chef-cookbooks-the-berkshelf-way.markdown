@@ -25,7 +25,7 @@ and [slides](http://www.slideshare.net/resetexistence/the-berkshelf-way)
 from ChefConf 2013.
 
 NOTE: The source code examples covered in this article can be found on
-Github: <https://github.com/misheska/myface>
+GitHub: <https://github.com/misheska/myface>
 
 Getting Started
 ===============
@@ -294,7 +294,7 @@ user "myface" do
 end
 {% endcodeblock %}
 
-Save `receipes/default.rb` and re-run `vagrant provision` to create the
+Save `recipes/default.rb` and re-run `vagrant provision` to create the
 myface user on your test virtual machine:
 
     $ vagrant provision
@@ -378,7 +378,7 @@ you just created to something else?  At the moment, you would need to edit
 Let's create a new file called `myface/attributes/default.rb` which
 initializes Chef [attributes](http://docs.opscode.com/essentials_cookbook_attribute_files.html)
 defining the user name and group name under which our application will run so
-that you [don't repeat yoursef](http://en.wikipedia.org/wiki/Don't_repeat_yourself).
+that you [don't repeat yourself](http://en.wikipedia.org/wiki/Don't_repeat_yourself).
 
 {% codeblock myface/attributes/default.rb lang:ruby %}
 default[:myface][:user] = "myface"
@@ -396,7 +396,7 @@ our attribute - in this case, we're defining two new attributes: `:user` and
 equivalent definitions to the ones above:
 
     node.default[:myface][:user] = "myface"
-    noce.default[:myface][:user] = "myface"
+    node.default[:myface][:user] = "myface"
 
 Also note the use of symbols instead of strings.  It is [strongly recommended
 that you use symbols instead of strings](http://www.robertsosinski.com/2009/01/11/the-difference-between-ruby-symbols-and-strings/)
@@ -871,7 +871,7 @@ version          "1.0.0"
 depends "apache2", "~> 1.6.0"
 {% endcodeblock %}
 
-It's left as an exercise for the reader to fianalize the license and
+It's left as an exercise for the reader to finalize the license and
 `README` before finalizing the cookbook.
 
 Configure Berkshelf
@@ -974,8 +974,8 @@ More to Come!
 This is just part one of a multi-part series.  So far you've gone through
 several short iteration loops as you evolve the myface cookbook web
 application.  In [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/),
-we'll wire up a database to the myface application and exlore the use of
-the `mysql` and `database cookbooks.
+we'll wire up a database to the myface application and explore the use of
+the `mysql` and `database` cookbooks.
 
 If you want to see the full source for myface, check out the following
 GitHub link: <https://github.com/misheska/myface>
