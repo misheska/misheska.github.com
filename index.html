@@ -1573,7 +1573,7 @@ and <a href="http://www.slideshare.net/resetexistence/the-berkshelf-way">slides<
 from ChefConf 2013.</p>
 
 <p>NOTE: The source code examples covered in this article can be found on
-Github: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
+GitHub: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
 
 <h1 id="getting-started">Getting Started</h1>
 <p>You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
@@ -1899,7 +1899,7 @@ so it looks like the following:</p>
 </span><span class="line"><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Save <code>receipes/default.rb</code> and re-run <code>vagrant provision</code> to create the
+<p>Save <code>recipes/default.rb</code> and re-run <code>vagrant provision</code> to create the
 myface user on your test virtual machine:</p>
 
 <pre><code>$ vagrant provision
@@ -1984,7 +1984,7 @@ you just created to something else?  At the moment, you would need to edit
 <p>Let’s create a new file called <code>myface/attributes/default.rb</code> which
 initializes Chef <a href="http://docs.opscode.com/essentials_cookbook_attribute_files.html">attributes</a>
 defining the user name and group name under which our application will run so
-that you <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">don’t repeat yoursef</a>.</p>
+that you <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">don’t repeat yourself</a>.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -2004,7 +2004,7 @@ our attribute - in this case, we’re defining two new attributes: <code>:user</
 equivalent definitions to the ones above:</p>
 
 <pre><code>node.default[:myface][:user] = "myface"
-noce.default[:myface][:user] = "myface"
+node.default[:myface][:user] = "myface"
 </code></pre>
 
 <p>Also note the use of symbols instead of strings.  It is <a href="http://www.robertsosinski.com/2009/01/11/the-difference-between-ruby-symbols-and-strings/">strongly recommended
@@ -2695,7 +2695,7 @@ public version of our cookbook, it’s version 1.0.0.</p>
 </span><span class="line"><span class="n">depends</span> <span class="s2">&quot;apache2&quot;</span><span class="p">,</span> <span class="s2">&quot;~&gt; 1.6.0&quot;</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>It’s left as an exercise for the reader to fianalize the license and
+<p>It’s left as an exercise for the reader to finalize the license and
 <code>README</code> before finalizing the cookbook.</p>
 
 <h2 id="configure-berkshelf">Configure Berkshelf</h2>
@@ -2798,8 +2798,8 @@ you tested Iteration #4.  For example, I visited <a href="http://mischa-ubuntu">
 <p>This is just part one of a multi-part series.  So far you’ve gone through
 several short iteration loops as you evolve the myface cookbook web
 application.  In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>,
-we’ll wire up a database to the myface application and exlore the use of
-the <code>mysql</code> and `database cookbooks.</p>
+we’ll wire up a database to the myface application and explore the use of
+the <code>mysql</code> and <code>database</code> cookbooks.</p>
 
 <p>If you want to see the full source for myface, check out the following
 GitHub link: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
