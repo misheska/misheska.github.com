@@ -8,6 +8,10 @@ categories:
 * list element with functor item
 {:toc}
 
+_Updated July 23rd, 2013_
+
+* _Referenced Sean OMeara's & Charles Johnson's latest myface example app_
+
 This is a second article in a series on writing Opscode Chef cookbooks the
 Berkshelf Way.  Here's a link to [Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/).  The source code
 examples covered in this article can be found on Github:
@@ -20,7 +24,7 @@ enhance MyFace so that it stores account information in a persistent
 MySQL database.
 
 Thanks go out to the Opscode Advanced Chef Cookbook Authoring class and specifically 
-[Sean OMeara](https://github.com/someara) for the PHP code used in this article.
+[Sean OMeara and Charles Johnson](https://github.com/someara/myface-cookbook) for the database and PHP code used in this article.
 
 Iteration #7 - Install MySQL
 ============================
@@ -79,11 +83,7 @@ include_recipe "myface::webserver"
 Run `vagrant provision` to converge your changes.
 
     $ vagrant provision
-    [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
-    [Berkshelf] You should check for a newer version of vagrant-berkshelf.
-    [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
-    [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130625-7983-1erh5t8-default'
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130722-92068-1y18eun-default'
     [Berkshelf] Using myface (2.0.0)
     [Berkshelf] Using apache2 (1.6.6)
     [Berkshelf] Using mysql (3.0.2)
@@ -93,14 +93,15 @@ Run `vagrant provision` to converge your changes.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-06-25T00:45:13-07:00] INFO: *** Chef 11.4.4 ***
-    [2013-06-25T00:45:14-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-07-22T23:20:39-07:00] INFO: *** Chef 11.4.4 ***
+    [2013-07-22T23:20:39-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
     ...
-    [2013-06-25T00:44:48-07:00] INFO: Processing service[apache2] action restart (apache2::default line 221)
-    [2013-06-25T00:44:49-07:00] INFO: service[apache2] restarted
-    [2013-06-25T00:44:49-07:00] INFO: Chef Run complete in 108.933639105 seconds
-    [2013-06-25T00:44:49-07:00] INFO: Running report handlers
-    [2013-06-25T00:44:49-07:00] INFO: Report handlers complete
+    [2013-07-22T23:22:15-07:00] INFO: Processing directory[/srv/apache/myface] action create (myface::webserver line 32)
+    [2013-07-22T23:22:15-07:00] INFO: Processing template[/srv/apache/myface/index.html] action create (myface::webserver line 38)
+    [2013-07-22T23:22:15-07:00] INFO: Processing execute[a2ensite myface.conf] action run (myface::webserver line 24)
+    [2013-07-22T23:22:15-07:00] INFO: Chef Run complete in 95.633444455 seconds
+    [2013-07-22T23:22:15-07:00] INFO: Running report handlers
+    [2013-07-22T23:22:15-07:00] INFO: Report handlers complete
 
 Testing Iteration #7
 --------------------
@@ -108,7 +109,7 @@ Verify that the `mysqld` service is running on your vagrant guest by
 running the following command:
 
     $ vagrant ssh -c "sudo /sbin/service mysqld status"
-    mysqld (pid  4279) is running...
+    mysqld (pid  7702) is running...
 
 Also check that MySQL is enabled to start on boot:
 
@@ -160,7 +161,21 @@ configured in the `Vagrantfile` when you ran `berks cookbook` in
     ...
 
 You can reference these passwords as variables in your Chef recipes, which we
-will do when we describe the database.
+will do when we add some data attributes.  Add the following attributes to
+`attributes/default.rb` so it looks like so:
+
+{% codeblock myface/attributes/default.rb lang:ruby %}
+default[:myface][:user] = "myface"
+default[:myface][:group] = "myface"
+default[:myface][:name] = "myface"
+default[:myface][:config] = "myface.conf"
+default[:myface][:document_root] = "/srv/apache/myface"
+
+default[:myface][:database][:host] = 'localhost'
+default[:myface][:database][:username] = 'root'
+default[:myface][:database][:password] = node[:mysql][:server_root_password]
+default[:myface][:database][:dbname] = 'myface'
+{% endcodeblock %}
 
 Describe the database to be created for MyFace in `recipes/database.rb`:
 
@@ -177,11 +192,11 @@ Describe the database to be created for MyFace in `recipes/database.rb`:
 include_recipe "mysql::server"
 include_recipe "database::mysql"
 
-mysql_database "myface" do
+mysql_database node[:myface][:database][:dbname] do
   connection(
-    :host => "localhost",
-    :username => "root",
-    :password => node[:mysql][:server_root_password]
+    :host => node[:myface][:database][:host],
+    :username => node[:myface][:database][:username],
+    :password => node[:myface][:database][:password]
   )
   action :create
 end
@@ -190,11 +205,7 @@ end
 Converge the changes with `vagrant provision`:
 
     $ vagrant provision
-    [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
-    [Berkshelf] You should check for a newer version of vagrant-berkshelf.
-    [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
-    [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130625-7983-1erh5t8-default'
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130722-92068-1y18eun-default'
     [Berkshelf] Using myface (2.0.0)
     [Berkshelf] Using apache2 (1.6.6)
     [Berkshelf] Using mysql (3.0.2)
@@ -237,9 +248,32 @@ Note that `myface` is listed as a database name - success!
 Iteration #9 - Create a MySQL user
 ==================================
 
-It's a good idea to create a user in MySQL that has the ability to only
-manipulate the application's database and has no MySQL administrative
-privileges.
+It's a good idea to create a user in MySQL for each one of your applications
+that has the ability to only manipulate the application's database and has 
+no MySQL administrative privileges.
+
+Add some attributes to `attributes/default.rb` for your app user:
+
+    default[:myface][:database][:app][:username] = 'myface_app'
+    default[:myface][:database][:app][:password] = 'supersecret'
+
+`attributes/default.rb` should look like so:
+{% codeblock myface/attributes/default.rb lang:ruby %}
+default[:myface][:user] = "myface"
+default[:myface][:group] = "myface"
+default[:myface][:name] = "myface"
+default[:myface][:config] = "myface.conf"
+default[:myface][:document_root] = "/srv/apache/myface"
+
+default[:myface][:database][:host] = 'localhost'
+default[:myface][:database][:username] = 'root'
+default[:myface][:database][:password] = node[:mysql][:server_root_password]
+default[:myface][:database][:dbname] = 'myface'
+
+default[:myface][:database][:app][:username] = 'myface_app'
+default[:myface][:database][:app][:password] = 'supersecret'
+{% endcodeblock %}
+
 
 Edit `recipes/database.rb` and describe the MySQL database user:
 
@@ -248,15 +282,15 @@ Edit `recipes/database.rb` and describe the MySQL database user:
       action :create
     end
 
-    mysql_database_user "myface" do
+    mysql_database_user node[:myface][:database][:app][:username] do
       connection(
-        :host => "localhost",
-        :username => "root",
-        :password => node[:mysql][:server_root_password]
+        :host => node[:myface][:database][:host],
+        :username => node[:myface][:database][:username],
+        :password => node[:myface][:database][:password]
       )
-      password "supersecret"
-      database_name "myface"
-      host "localhost"
+      password node[:myface][:database][:app][:password]
+      database_name node[:myface][:database][:dbname]
+      host default[:myface][:database][:host]
       action [:create, :grant]
     end
 
@@ -275,24 +309,24 @@ After editing `recipes/database.rb` should look like the following:
 include_recipe "mysql::server"
 include_recipe "database::mysql"
 
-mysql_database "myface" do
+mysql_database node[:myface][:database][:dbname] do
   connection(
-    :host => "localhost",
-    :username => "root",
-    :password => node[:mysql][:server_root_password]
+    :host => node[:myface][:database][:host],
+    :username => node[:myface][:database][:username],
+    :password => node[:myface][:database][:password]
   )
   action :create
 end
 
-mysql_database_user "myface" do
+mysql_database_user node[:myface][:database][:app][:username] do
   connection(
-    :host => "localhost",
-    :username => "root",
-    :password => node[:mysql][:server_root_password]
+    :host => node[:myface][:database][:host],
+    :username => node[:myface][:database][:username],
+    :password => node[:myface][:database][:password]
   )
-  password "supersecret"
-  database_name "myface"
-  host "localhost"
+  password node[:myface][:database][:app][:password]
+  database_name node[:myface][:database][:dbname]
+  host node[:myface][:database][:host]
   action [:create, :grant]
 end
 {% endcodeblock %}
@@ -304,7 +338,7 @@ Converge the node to apply the changes:
 Testing Iteration #9
 --------------------
 
-Check to see if the `myface` user is enabled as a local user by running the
+Check to see if the `myface-app` user is enabled as a local user by running the
 following mysql command:
 
     $ vagrant ssh -c 'mysql -uroot -prootpass -e "select user,host from mysql.user;"'
@@ -312,49 +346,70 @@ following mysql command:
     repl	  %
     root	  127.0.0.1
          	  localhost
-    myface	localhost
+    myface	  localhost
+    myface_app    localhost
     root	  localhost
         	   myface-berkshelf
 
-As you can see above, the `myface@localhost` user exists, so our cookbook
+As you can see above, the `myface_app@localhost` user exists, so our cookbook
 did what was expected.
 
-Also check to see that the `myface` user only has rights on the myface databse:
+Also check to see that the `myface_app` user only has rights on the myface databse:
 
-    $ vagrant ssh -c 'mysql -uroot -prootpass -e "show grants for 'myface'@'localhost';"'
-    Grants for myface@localhost
-    GRANT USAGE ON *.* TO 'myface'@'localhost' IDENTIFIED BY PASSWORD '*90BA3AC0BFDE07AE334CA523CB27167AE33825B9'
-    GRANT ALL PRIVILEGES ON `myface`.* TO 'myface'@'localhost'
+    $ vagrant ssh -c 'mysql -uroot -prootpass -e "show grants for 'myface_app'@'localhost';"'
+    Grants for myface_app@localhost
+    GRANT USAGE ON *.* TO 'myface_app'@'localhost' IDENTIFIED BY PASSWORD '*90BA3AC0BFDE07AE334CA523CB27167AE33825B9'
+    GRANT ALL PRIVILEGES ON `myface`.* TO 'myface_app'@'localhost'
 
 Iteration #10 - Create a table for users
 ========================================
 
 Let's create a SQL script to create a table modeling MyFace users and
-populate it with some initial data.  Create a directory under
-`myface/files/default` to hold the script file:
-
-    $ mkdir -p files/default 
-
-Then create a file `files/default/myface-create.sql` with the following
-contents:
+populate it with some initial data.  Create a file 
+`files/default/myface-create.sql` with the following content:
 
 {% codeblock myface/files/default/myface-create.sql lang:sql %}
 /* A table for myface users */
-
+ 
 CREATE TABLE users(
-  id CHAR (32) NOT NULL,
-  PRIMARY KEY(id),
-  user_name VARCHAR(64),
-  url VARCHAR(256),
-  email VARCHAR(128),
-  neck_beard INTEGER
+ id CHAR (32) NOT NULL,
+ PRIMARY KEY(id),
+ user_name VARCHAR(64),
+ url VARCHAR(256),
+ email VARCHAR(128),
+ neck_beard INTEGER
 );
-
+ 
 /* Initial records */
-INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'jtimberman', 'http:// jtimberman.housepub.org', 'joshua@opscode.com', 4 );
-INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'someara', 'http:// blog.afistfulofservers.net/', 'someara@opscode.com', 5 );
-INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'jwinsor', 'http:// vialstudios.com', 'jamie@vialstudios.com', 4 );
-INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'cjohnson', 'http:// www.chipadeedoodah.com/', 'charles@opscode.com', 4 );
+INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'jtimberman', 'http://jtimberman.housepub.org', 'joshua@opscode.com', 4 );
+INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'someara', 'http://blog.afistfulofservers.net/', 'someara@opscode.com', 5 );
+INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'jwinsor', 'http://vialstudios.com', 'jamie@vialstudios.com', 4 );
+INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'cjohnson', 'http://www.chipadeedoodah.com/', 'charles@opscode.com', 3 );
+INSERT INTO users ( id, user_name, url, email, neck_beard ) VALUES ( uuid(), 'mbower', 'http://www.webbower.com/', 'matt@webbower.com', 4 );
+{% endcodeblock %}
+
+Add an attribute for the temporary location used for the SQL script we just
+created:
+
+    default[:myface][:database][:seed_file] = '/tmp/myface-create.sql'
+
+The resultant `attributes/default.rb` should resemble the following:
+{% codeblock myface/attributes/default.rb lang:ruby %}
+default[:myface][:user] = "myface"
+default[:myface][:group] = "myface"
+default[:myface][:name] = "myface"
+default[:myface][:config] = "myface.conf"
+default[:myface][:document_root] = "/srv/apache/myface"
+
+default[:myface][:database][:host] = 'localhost'
+default[:myface][:database][:username] = 'root'
+default[:myface][:database][:password] = node[:mysql][:server_root_password]
+default[:myface][:database][:dbname] = 'myface'
+
+default[:myface][:database][:app][:username] = 'myface_app'
+default[:myface][:database][:app][:password] = 'supersecret'
+
+default[:myface][:database][:seed_file] = '/tmp/myface-create.sql'
 {% endcodeblock %}
 
 Modify `recipes/database.rb` so that the cookbook transfers the SQL script
@@ -368,16 +423,18 @@ is only executed when necessary.
       action [:create, :grant]
     end
 
-    cookbook_file "/tmp/myface-create.sql" do
-      source "myface-create.sql"
+    # Write schema seed file to filesystem
+    cookbook_file node[:myface][:database][:seed_file] do
+      source "myface-init.sql"
       owner "root"
       group "root"
-      mode "0644"
+      mode "0600"
     end
 
+    # Seed database with test data
     execute "initialize myface database" do
-      command "mysql -hlocalhost -umyface -psupersecret -Dmyface < /tmp/myface-create.sql"
-      not_if "mysql -hlocalhost -umyface -psupersecret -Dmyface -e 'describe users;'"
+      command "mysql -h #{node[:myface][:database][:host]} -u #{node[:myface][:database][:app][:username]} -p#{node[:myface][:database][:app][:password]} -D #{node[:myface][:database][:dbname]} < #{node[:myface][:database][:seed_file]}"
+      not_if  "mysql -h #{node[:myface][:database][:host]} -u #{node[:myface][:database][:app][:username]} -p#{node[:myface][:database][:app][:password]} -D #{node[:myface][:database][:dbname]} -e 'describe users;'"
     end
 
 Once you have made these changes, `recipes/database.rb` should look like so:
@@ -395,37 +452,39 @@ Once you have made these changes, `recipes/database.rb` should look like so:
 include_recipe "mysql::server"
 include_recipe "database::mysql"
 
-mysql_database "myface" do
+mysql_database node[:myface][:database][:dbname] do
   connection(
-    :host => "localhost",
-    :username => "root",
-    :password => node[:mysql][:server_root_password]
+    :host => node[:myface][:database][:host],
+    :username => node[:myface][:database][:username],
+    :password => node[:myface][:database][:password]
   )
   action :create
 end
 
-mysql_database_user "myface" do
+mysql_database_user node[:myface][:database][:app][:username] do
   connection(
-    :host => "localhost",
-    :username => "root",
-    :password => node[:mysql][:server_root_password]
+    :host => node[:myface][:database][:host],
+    :username => node[:myface][:database][:username],
+    :password => node[:myface][:database][:password]
   )
-  password "supersecret"
-  database_name "myface"
-  host "localhost"
+  password node[:myface][:database][:app][:password]
+  database_name node[:myface][:database][:dbname]
+  host node[:myface][:database][:host]
   action [:create, :grant]
 end
 
-cookbook_file "/tmp/myface-create.sql" do
+# Write schema seed file to filesystem
+cookbook_file node[:myface][:database][:seed_file] do
   source "myface-create.sql"
   owner "root"
   group "root"
-  mode "0644"
+  mode "0600"
 end
 
+# Seed database with test data
 execute "initialize myface database" do
-  command "mysql -hlocalhost -umyface -psupersecret -Dmyface < /tmp/myface-create.sql"
-  not_if "mysql -hlocalhost -umyface -psupersecret -Dmyface -e 'describe users;'"
+  command "mysql -h #{node[:myface][:database][:host]} -u #{node[:myface][:database][:app][:username]} -p#{node[:myface][:database][:app][:password]} -D #{node[:myface][:database][:dbname]} < #{node[:myface][:database][:seed_file]}"
+  not_if  "mysql -h #{node[:myface][:database][:host]} -u #{node[:myface][:database][:app][:username]} -p#{node[:myface][:database][:app][:password]} -D #{node[:myface][:database][:dbname]} -e 'describe users;'"
 end
 {% endcodeblock %}
 
@@ -440,10 +499,11 @@ Run the following mysql command to dump the contents of the `users` table:
 
     $ vagrant ssh -c 'mysql -hlocalhost -umyface -psupersecret -Dmyface -e "select id,user_name from users;"'
     id	user_name
-    997f3192-e1a3-11e2-b7b5-0800273d	jtimberman
-    997f38ea-e1a3-11e2-b7b5-0800273d	someara
-    997f3c1e-e1a3-11e2-b7b5-0800273d	jwinsor
-    997f3f20-e1a3-11e2-b7b5-0800273d	cjohnson
+    53971762-f36e-11e2-b889-080027cf	jtimberman
+    539720d6-f36e-11e2-b889-080027cf	someara
+    53972464-f36e-11e2-b889-080027cf	jwinsor
+    539727a2-f36e-11e2-b889-080027cf	cjohnson
+    53972ad6-f36e-11e2-b889-080027cf	mbower
 
 The output should look similar to what you see above - the data from the
 `INSERT INTO` statemens in the SQL script.
@@ -541,35 +601,35 @@ installed:
     Syntax OK
      php5_module (shared)
 
-Iteration #12
-=============
+Iteration #12 - Add PHP Sizzle
+==============================
 
 It's the last iteration, get ready to see the PHP sizzle!  First modify
 `templates/default/apache2.conf.erb` as follows:
 
 {% codeblock myface/templates/default/apache2.conf.erb lang:ruby %}
-# Managed by Chef for <%= node[:hostname] %>
+# Managed by Chef for <%= node['hostname'] %>
 <VirtualHost *:80>
-    ServerAdmin <%= node[:apache][:contact] %>
+        ServerAdmin <%= node['apache']['contact'] %>
 
-    DocumentRoot /srv/apache/myface
-    <Directory />
-        Options FollowSymLinks
-        AllowOverride None
-    </Directory>
-    <Directory /srv/apache/myface>
-        Options Indexes FollowSymLinks MultiViews
-        AllowOverride None
-        Order allow,deny
-        allow from all
-    </Directory>
+        DocumentRoot /srv/apache/myface
+        <Directory />
+                Options FollowSymLinks
+                AllowOverride None
+        </Directory>
+        <Directory /srv/apache/myface>
+                Options Indexes FollowSymLinks MultiViews
+                AllowOverride None
+                Order allow,deny
+                allow from all
+        </Directory>
 
-    ErrorLog <%= node[:apache][:log_dir] %>/error.log
+        ErrorLog <%= node['apache']['log_dir'] %>/error.log
 
-    LogLevel warn
+        LogLevel warn
 
-    CustomLog <%= node[:apache][:log_dir] %>/access.log combined
-    ServerSignature Off
+        CustomLog <%= node['apache']['log_dir'] %>/access.log combined
+        ServerSignature Off
 </VirtualHost>
 {% endcodeblock %}
 
@@ -599,41 +659,41 @@ limitations under the License.
  
 <?php
 $db_host = 'localhost';
-$db_user = 'myface';
-$db_pwd = 'supersecret';
+$db_user = 'root';
+$db_pwd = '<%= node['mysql']['server_root_password'] %>';
  
 $database = 'myface';
 $table = 'users';
  
 // UTILITY FUNCTIONS
 function create_gravatar_hash($email) {
-  return md5( strtolower( trim( $email ) ) );
+	return md5( strtolower( trim( $email ) ) );
 }
  
 function gravatar_img($email=null, $name=null, $size=null) {
-  if(!$email) {
-    return '';
-  }
-  
-  $url =  'http://www.gravatar.com/avatar/';
-  $url .= create_gravatar_hash($email);
-  if($size) {
-    $url .= "?s={$size}";
-  }
-  
-  return sprintf('<img src="%s" alt="%s" />', $url, $name ? $name : '');
+	if(!$email) {
+		return '';
+	}
+	
+	$url =  'http://www.gravatar.com/avatar/';
+	$url .= create_gravatar_hash($email);
+	if($size) {
+		$url .= "?s={$size}";
+	}
+	
+	return sprintf('<img src="%s" alt="%s" />', $url, $name ? $name : '');
 }
  
 function neckbeard($rating) {
-  $ratings = array(
-    'Puberty awaits!',
-    'Peach fuzz',
-    'Solid week&#39;s growth',
-    'Lumberjacks would be proud',
-    'Makes dwarves weep',
-  );
-  
-  return $ratings[(int) $rating - 1];
+	$ratings = array(
+		'Puberty awaits!',
+		'Peach fuzz',
+		'Solid week&#39;s growth',
+		'Lumberjacks would be proud',
+		'Makes dwarves weep',
+	);
+	
+	return $ratings[(int) $rating - 1];
 }
  
 // Fire up the database
@@ -654,131 +714,131 @@ $fields_num = mysql_num_fields($result);
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>MyFace Users</title>
-  <style>
-  * {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-  }
-  
-  html, body {
-    margin: 0;
-    padding: 0;
-  }
-  
-  html {
-    background: #999;
-  }
-  
-  body {
-    max-width: 480px;
-    margin: 0 auto;
-    font-family: Arial, Helvetica, sans-serif;
-    color: #222;
-    padding: 20px;
-    border: 1px solid #666;
-    -webkit-box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    -moz-box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    background: #FFF;
-  }
-    
-  a:link {
-    text-decoration: none;
-    color: #777;
-  }
-  
-  a:hover,
-  a:focus {
-    text-decoration: underline;
-  }
-  
-  h1 {
-    text-align: center;
-    margin-top: 0;
-  }
-    
-  h1 span {
-    color: #00C;
-  }
-  
-  h2 {
-    font-size: 24px;
-    line-height: 1.0;
-    margin: 0 0 10px;
-  }
-  
-  p {
-    font-size: 14px;
-    line-height: 18px;
-    margin: 10px 0;
-  }
-  
-  p:last-child {
-    margin-bottom: 0;
-  }
-  
-  .email {
-    display: block;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  
-  /* Adapted from OOCSS
-    * mod object (https://github.com/stubbornella/oocss/blob/master/core/module/mod.css)
-    * media object (https://github.com/stubbornella/oocss/blob/master/core/media/media.css)
-  */
-  article {
-    display: block;
-    overflow: hidden;
-    margin-bottom: 20px;
-    border: 1px solid #CCC;
-    background: #EEE;
-    -webkit-border-radius: 4px;
-    -moz-border-radius: 4px;
-    border-radius: 4px;
-    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.3) inset;
-    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.3) inset;
-    box-shadow: 1px 1px 1px rgba(0,0,0,0.3) inset;
-  }
+	<title>MyFace Users</title>
+	<style>
+	* {
+		-webkit-box-sizing: border-box;
+		-moz-box-sizing: border-box;
+		box-sizing: border-box;
+	}
+	
+	html, body {
+		margin: 0;
+		padding: 0;
+	}
+	
+	html {
+		background: #999;
+	}
+	
+	body {
+		max-width: 480px;
+		margin: 0 auto;
+		font-family: Arial, Helvetica, sans-serif;
+		color: #222;
+		padding: 20px;
+		border: 1px solid #666;
+		-webkit-box-shadow: 0 0 5px rgba(0,0,0,0.3);
+		-moz-box-shadow: 0 0 5px rgba(0,0,0,0.3);
+		box-shadow: 0 0 5px rgba(0,0,0,0.3);
+		background: #FFF;
+	}
+		
+	a:link {
+		text-decoration: none;
+		color: #777;
+	}
+	
+	a:hover,
+	a:focus {
+		text-decoration: underline;
+	}
+	
+	h1 {
+		text-align: center;
+		margin-top: 0;
+	}
+		
+	h1 span {
+		color: #00C;
+	}
+	
+	h2 {
+		font-size: 24px;
+		line-height: 1.0;
+		margin: 0 0 10px;
+	}
+	
+	p {
+		font-size: 14px;
+		line-height: 18px;
+		margin: 10px 0;
+	}
+	
+	p:last-child {
+		margin-bottom: 0;
+	}
+	
+	.email {
+		display: block;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	
+	/* Adapted from OOCSS
+		* mod object (https://github.com/stubbornella/oocss/blob/master/core/module/mod.css)
+		* media object (https://github.com/stubbornella/oocss/blob/master/core/media/media.css)
+	*/
+	article {
+		display: block;
+		overflow: hidden;
+		margin-bottom: 20px;
+		border: 1px solid #CCC;
+		background: #EEE;
+		-webkit-border-radius: 4px;
+		-moz-border-radius: 4px;
+		border-radius: 4px;
+		-webkit-box-shadow: 1px 1px 1px rgba(0,0,0,0.3) inset;
+		-moz-box-shadow: 1px 1px 1px rgba(0,0,0,0.3) inset;
+		box-shadow: 1px 1px 1px rgba(0,0,0,0.3) inset;
+	}
  
-  article .img {
-    float: left;
-    margin-right: 10px;
-  }
-  
-  article .img img {
-    display: block;
-  }
-  
-  article .imgExt {
-    float: right;
-    margin-left: 10px;
-  }
+	article .img {
+		float: left;
+		margin-right: 10px;
+	}
+	
+	article .img img {
+		display: block;
+	}
+	
+	article .imgExt {
+		float: right;
+		margin-left: 10px;
+	}
  
-  article .bd {
-    overflow: hidden;
-    padding: 10px 0;
-  }
-  </style>
+	article .bd {
+		overflow: hidden;
+		padding: 10px 0;
+	}
+	</style>
 </head>
 <body>
-  <h1>Welcome to My<span>Face</span>!</h1>
+	<h1>Welcome to My<span>Face</span>!</h1>
  
-  <?php while($row = mysql_fetch_object($result)): ?>
-  <article>
-    <a href="<?php echo $row->url ?>" class="img" target="_blank">
-      <?php echo gravatar_img($row->email, $row->user_name, 150) ?>
-    </a>
-    <div class="bd">
-      <h2><?php echo $row->user_name ?></h2>
-      <p><a href="<?php echo $row->url ?>" target="_blank" class="email"><?php echo $row->url ?></a></p>
-      <p>Neckbeard rating: <?php echo neckbeard($row->neck_beard) ?></p>
-    </div>
-  </article>
-  <?php endwhile; ?>
+	<?php while($row = mysql_fetch_object($result)): ?>
+	<article>
+		<a href="<?php echo $row->url ?>" class="img" target="_blank">
+			<?php echo gravatar_img($row->email, $row->user_name, 150) ?>
+		</a>
+		<div class="bd">
+			<h2><?php echo $row->user_name ?></h2>
+			<p><a href="<?php echo $row->url ?>" target="_blank" class="email"><?php echo $row->url ?></a></p>
+			<p>Neckbeard rating: <?php echo neckbeard($row->neck_beard) ?></p>
+		</div>
+	</article>
+	<?php endwhile; ?>
 </body>
 </html>
 <?php mysql_free_result($result); ?>
