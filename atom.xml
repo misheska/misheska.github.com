@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-07-19T01:16:47-07:00</updated>
+  <updated>2013-07-22T23:12:43-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -1439,6 +1439,14 @@ GitHub link: <a href="https://github.com/misheska/myface">https://github.com/mis
   <li><a href="#more-to-come">More to Come!</a></li>
 </ul>
 
+<p><em>Updated July 22nd, 2013</em></p>
+
+<ul>
+  <li><em>Bumped vagrant from version 1.2.3 to 1.2.4</em></li>
+  <li><em>Bumped berkshelf from version 2.0.6 to 2.0.7</em></li>
+  <li><em>Referenced Sean O’Meara’s &amp; Charles Johnson’s latest myface example app</em></li>
+</ul>
+
 <p><em>Updated July 9th, 2013</em></p>
 
 <ul>
@@ -1451,7 +1459,7 @@ GitHub link: <a href="https://github.com/misheska/myface">https://github.com/mis
 <p>Jamie Winsor hasn’t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
 to match <a href="https://github.com/RiotGames/berkshelf/issues/416">recent changes related to Vagrant 1.x</a> and <a href="http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/">Chef 11</a>
 This post is an attempt to update these instructions, walking through his
-and Sean O’Meara’s example app - <a href="https://github.com/reset/myface-cookbook">MyFace</a>.
+and Sean O’Meara’s example app - <a href="https://github.com/someara/myface-cookbook">MyFace</a>.
 For more information on <a href="http://berkshelf.com/">Berkshelf</a>, check out his recent
 <a href="http://www.youtube.com/watch?v=hYt0E84kYUI">talk</a>
 and <a href="http://www.slideshare.net/resetexistence/the-berkshelf-way">slides</a>
@@ -1472,7 +1480,7 @@ NOTE: Avoid VirtualBox 4.2.14, <a href="https://twitter.com/mitchellh/status/348
 this post.</p>
   </li>
   <li>
-    <p><a href="http://vagrantup.com">Install Vagrant 1.2.1 (or higher, version 1.2.3 recommended)</a></p>
+    <p><a href="http://vagrantup.com">Install Vagrant 1.2.1 (or higher, version 1.2.4 recommended)</a></p>
   </li>
   <li>
     <p>Install Ruby 1.9.x via <a href="http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Chef Omnibus Installer Ruby</a>, <a href="http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a></p>
@@ -1488,15 +1496,31 @@ this post.</p>
 <span class="line-number">4</span>
 <span class="line-number">5</span>
 <span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf --no-ri --no-rdoc
-</span><span class="line">Fetching: berkshelf-2.0.6.gem (100%)
-</span><span class="line">Successfully installed berkshelf-2.0.6
+</span><span class="line">Fetching: berkshelf-2.0.7.gem (100%)
+</span><span class="line">Successfully installed berkshelf-2.0.7
 </span><span class="line">1 gem installed
 </span><span class="line">$ berks -v
-</span><span class="line">Berkshelf (2.0.6)</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">Berkshelf (2.0.7)
+</span><span class="line">
+</span><span class="line">Copyright 2012-2013 Riot Games
+</span><span class="line">
+</span><span class="line">    Jamie Winsor (&lt;jamie@vialstudios.com&gt;)
+</span><span class="line">    Josiah Kiehl (&lt;jkiehl@riotgames.com&gt;)
+</span><span class="line">    Michael Ivey (&lt;michael.ivey@riotgames.com&gt;)
+</span><span class="line">    Justin Campbell (&lt;justin.campbell@riotgames.com&gt;)
+</span><span class="line">    Seth Vargo (&lt;sethvargo@gmail.com&gt;)</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
-  <li>Install the vagrant-berkshelf Plugin (1.3.2 or higher)</li>
+  <li>Install the vagrant-berkshelf Plugin (1.3.3 or higher)</li>
 </ul>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -1504,7 +1528,7 @@ this post.</p>
 <span class="line-number">3</span>
 </pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install vagrant-berkshelf
 </span><span class="line">Installing the 'vagrant-berkshelf' plugin. This can take a few minutes...
-</span><span class="line">Installed the plugin 'vagrant-berkshelf (1.3.2)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
+</span><span class="line">Installed the plugin 'vagrant-berkshelf (1.3.3)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <ul>
   <li>Install the vagrant-omnibus plugin (1.1.0 or higher)</li>
@@ -1575,11 +1599,11 @@ $ bundle install
 Fetching gem metadata from https://rubygems.org/........
 Fetching gem metadata from https://rubygems.org/..
 Resolving dependencies...
-Using i18n (0.6.1)
+Using i18n (0.6.4)
 Using multi_json (1.7.7)
-Using activesupport (3.2.13)
+Using activesupport (3.2.14)
 . . .
-Using berkshelf (2.0.6)
+Using berkshelf (2.0.7)
 Using bundler (1.3.5)
 Your bundle is complete!
 Use `bundle show [gemname]` to see where a bundled gem is installed.
@@ -1606,7 +1630,7 @@ the version of the Chef Omnibus package you want installed using the
 a VirtualBox template that does not have a version of Chef provisioned.
 Then, specify that you want your image to always use the latest version
 of Chef. (By default Berkshelf points to an image with an older version
-of CentOS, Chef 11.2.0, which is also old).  Your Vagrantfile should look
+of CentOS and Chef 11.2.0, which is also old).  Your Vagrantfile should look
 like this:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Vagrantfile  </span></figcaption>
@@ -1635,8 +1659,8 @@ like this:</p>
 <span class="line-number">23</span>
 </pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;misheska-centos-6.4&quot;</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://www.dropbox.com/s/y42egyh9cqsge24/misheska-centos-6.4.box&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;misheska-centos6.4&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://www.dropbox.com/s/y733o4ifkowc1w0/misheska-centos64.box&quot;</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">omnibus</span><span class="o">.</span><span class="n">chef_version</span> <span class="o">=</span> <span class="ss">:latest</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">ssh</span><span class="o">.</span><span class="n">max_tries</span> <span class="o">=</span> <span class="mi">40</span>
@@ -1663,29 +1687,25 @@ cookbook you just created:</p>
 
 <pre><code>$ vagrant up
 Bringing machine 'default' up with 'virtualbox' provider...
-[default] Box 'mishesksa-centos-6.4' was not found. Fetching box from specified URL for
+[default] Box 'mishesksa-centos64' was not found. Fetching box from specified URL for
 the provider 'virtualbox'. Note that if the URL does not have
 a box for this provider, you should interrupt Vagrant now and add
 the box yourself. Otherwise Vagrant will attempt to download the
 full box prior to discovering this error.
 Downloading or copying the box...
-Extracting box...te: 3449k/s, Estimated time remaining: 0:00:01)
-Successfully added box 'mishesksa-centos-6.4' with provider 'virtualbox'!
-[default] Importing base box 'mishesksa-centos-6.4'...
+Extracting box...te: 3542k/s, Estimated time remaining: 0:00:01)
+Successfully added box 'mishesksa-centos64' with provider 'virtualbox'!
+[default] Importing base box 'mishesksa-centos64'...
 [default] Matching MAC address for NAT networking...
 [default] Setting the name of the VM...
 [default] Clearing any previously set forwarded ports...
-[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
-[Berkshelf] You should check for a newer version of vagrant-berkshelf.
-[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
-[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130616-17393-1q2qkbs'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/xx/myface'
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130722-92068-1y18eun-default'
+[Berkshelf] Using myface (0.1.0)
 [default] Creating shared folders metadata...
 [default] Clearing any previously set network interfaces...
 [default] Preparing network interfaces based on configuration...
 [default] Forwarding ports...
-[default] -- 22 =&gt; 2222 (adapter 1)
+[default] -- 22 =&gt; 2200 (adapter 1)
 [default] Booting VM...
 [default] Waiting for VM to boot. This can take a few minutes.
 [default] VM booted and ready for use!
@@ -1722,7 +1742,7 @@ Running chef-solo...
 <p>NOTE: The basebox URL comes from my current collection of baseboxes.  The
 following link points to a README file which provides links to all the
 vagrant baseboxes I use (which I normally update frequently):
-<a href="https://github.com/misheska/basebox">https://github.com/misheska/basebox</a></p>
+<a href="https://github.com/misheska/basebox-packer">https://github.com/misheska/basebox-packer</a></p>
 
 <p>If you would ever like to delete your test virtual machine and start over,
 you can destroy your test virtual machine with the <code>vagrant destroy</code> command:</p>
@@ -1788,14 +1808,9 @@ so it looks like the following:</p>
 myface user on your test virtual machine:</p>
 
 <pre><code>$ vagrant provision
-[default] Ensuring Chef is installed at requested version of 11.4.4.
-[default] Chef 11.4.4 Omnibus package is already installed...skipping installation.
-[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
-[Berkshelf] You should check for a newer version of vagrant-berkshelf.
-[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
-[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130616-17393-1q2qkbs'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/xx/myface'
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130722-92068-1y18eun-default'
+[Berkshelf] Using myface (0.1.0)
+[default] Chef 11.4.4 Omnibus package is already installed.
 [default] Running provisioner: chef_solo...
 Generating chef JSON and uploading...
 Running chef-solo...
@@ -1837,12 +1852,8 @@ that if you run <code>vagrant provision</code> again, the Chef run executes more
 and it does not try to re-create the user/group it already created.</p>
 
 <pre><code>$ vagrant provision
-[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
-[Berkshelf] You should check for a newer version of vagrant-berkshelf.
-[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
-[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/vagrant/berkshelf-20130616-17393-1q2qkbs'
-[Berkshelf] Using myface (0.1.0) at path: '/Users/misheska/xx/myface'
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130722-92068-1y18eun-default'
+[Berkshelf] Using myface (0.1.0)
 [default] Chef 11.4.4 Omnibus package is already installed.
 [default] Running provisioner: chef_solo...
 Generating chef JSON and uploading...
@@ -2056,13 +2067,13 @@ test virtual machine:</p>
 
 <pre><code>$ vagrant provision
 ...
-[2013-03-27T06:30:41+00:00] INFO: service[apache2] restarted
-[2013-03-27T06:30:41+00:00] INFO: execute[a2enmod deflate] sending restart action to service[apache2] (delayed)
-[2013-03-27T06:30:41+00:00] INFO: Processing service[apache2] action restart (apache2::default line 24)
-[2013-03-27T06:30:43+00:00] INFO: service[apache2] restarted
-[2013-03-27T06:30:43+00:00] INFO: Chef Run complete in 59.309557362 seconds
-[2013-03-27T06:30:43+00:00] INFO: Running report handlers
-[2013-03-27T06:30:43+00:00] INFO: Report handlers complete
+[2013-07-22T22:46:24-07:00] INFO: service[apache2] started
+[2013-07-22T22:46:24-07:00] INFO: template[/etc/httpd/mods-available/deflate.conf] sending restart action to service[apache2] (delayed)
+[2013-07-22T22:46:24-07:00] INFO: Processing service[apache2] action restart (apache2::default line 221)
+[2013-07-22T22:46:25-07:00] INFO: service[apache2] restarted
+[2013-07-22T22:46:25-07:00] INFO: Chef Run complete in 58.358137105 seconds
+[2013-07-22T22:46:25-07:00] INFO: Running report handlers
+[2013-07-22T22:46:25-07:00] INFO: Report handlers complete
 </code></pre>
 
 <h2 id="testing-iteration-3">Testing Iteration #3</h2>
@@ -2071,7 +2082,7 @@ test virtual machine:</p>
 virtual machine with the following command:</p>
 
 <pre><code>$ vagrant ssh -c "sudo /sbin/service httpd status"
-httpd (pid 5206) is running.
+httpd (pid  4790) is running.
 </code></pre>
 
 <p>Since this is a web server, so you can also check it out in your favorite web
@@ -2104,7 +2115,7 @@ much like Bundler automatically loads all your gem dependencies.</p>
 in <code>~/.berkshelf/cookbooks</code></p>
 
 <pre><code>Users/misheska/.berkshelf/cookbooks
-└── apache2-1.6.0
+└── apache2-1.6.6
     ├── attributes
     ├── definitions
     ├── files
@@ -2245,7 +2256,7 @@ file <code>.../sites-available/myface.conf</code> on our test virtual machine
 </span><span class="line">
 </span><span class="line"><span class="no">Alias</span> <span class="o">/</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span>
 </span><span class="line">
-</span><span class="line"><span class="o">&lt;</span><span class="no">Directory</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span> <span class="o">&gt;</span>
+</span><span class="line"><span class="o">&lt;</span><span class="no">Directory</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">&gt;</span>
 </span><span class="line">	<span class="no">Options</span> <span class="no">FollowSymLinks</span> <span class="o">+</span><span class="no">Indexes</span>
 </span><span class="line">	<span class="no">Allow</span> <span class="n">from</span> <span class="no">All</span>
 </span><span class="line"><span class="o">&lt;</span><span class="sr">/Directory&gt;</span>
