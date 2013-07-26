@@ -43,8 +43,14 @@
         <lastmod>2013-07-23T01:23:05-07:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://misheska.com/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/
+        </loc>
+        <lastmod>2013-07-26T03:16:20-07:00</lastmod>
+    </url>
+    <url>
         <loc>http://misheska.com/blog/archives/</loc>
-        <lastmod>2013-07-23T01:23:05-07:00</lastmod>
+        <lastmod>2013-07-26T03:16:20-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/contact/</loc>
@@ -52,7 +58,7 @@
     </url>
     <url>
         <loc>http://misheska.com/</loc>
-        <lastmod>2013-07-23T01:23:05-07:00</lastmod>
+        <lastmod>2013-07-26T03:16:20-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/robots.txt</loc>

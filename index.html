@@ -9,7 +9,7 @@
   <meta name="author" content="Mischa Taylor">
 
   
-  <meta name="description" content="Iteration #7 - Install MySQL Testing Iteration #7 Iteration #8 - Create the MyFace Database Testing Iteration #8 Iteration #9 - Create a MySQL user &hellip;">
+  <meta name="description" content="Disabling the language settings dialog Disabling the Select Operating System dialog Disabling the EULA dialog Disabling the Disk Allocation dialog &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,275 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/">Windows Server 2008 R2 Automated Install Settings</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-25T23:20:00-07:00" pubdate data-updated="true">Jul 25<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#disabling-the-language-settings-dialog">Disabling the language settings dialog</a></li>
+  <li><a href="#disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</a></li>
+  <li><a href="#disabling-the-eula-dialog">Disabling the EULA dialog</a></li>
+  <li><a href="#disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</a></li>
+  <li><a href="#disabling-the-administrator-password-prompt">Disabling the Administrator password prompt</a></li>
+  <li><a href="#set-up-vagrant-autologin">Set up vagrant autologin</a></li>
+  <li><a href="#disable-initial-configuration-dialog">Disable Initial Configuration Dialog</a></li>
+  <li><a href="#do-not-show-server-manager-at-logon">Do not show Server Manager at logon</a></li>
+  <li><a href="#disable-user-account-control-uac">Disable User Account Control (UAC)</a></li>
+  <li><a href="#disable-internet-explorer-enhanced-security-configuration">Disable Internet Explorer Enhanced Security Configuration</a></li>
+  <li><a href="#disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</a></li>
+  <li><a href="#replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</a></li>
+</ul>
+
+<p>I just recently revised all my automated install XML files for the Windows
+System Preparation Tool (Sysprep) that I use for my Windows development
+testbed.  For this go around, I’m documenting the XML answer file settings
+for each version of Microsoft Windows.  This article covers the XML answer
+files settings needed to automate a Windows Server 2008 R2 (64-bit) base
+OS install.</p>
+
+<p>You’ll need to use the Windows System Image Manager tool to edit Sysprep
+XML answer files.  The Windows System Image Manager is packaged with the
+<a href="http://www.microsoft.com/en-us/download/details.aspx?id=30652">Windows Assessment and Deployment Kit</a>
+tool suite.  Download and install the Windows Assessment and Deployment Kit
+to install the Windows System Image Manager (WSIM).</p>
+
+<h1 id="disabling-the-language-settings-dialog">Disabling the language settings dialog</h1>
+
+<p><img src="/images/sysprep/win2008R2x64/language.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component 
+<em>amd64_Microsoft-Windows-International-Core-WinPE_6.1.7600.16385_neutral</em>,
+right-click and choose <em>Add Setting to Pass 1 windowsPE</em>.  Using the
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/languagesettings.png" /></p>
+
+<h1 id="disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</h1>
+
+<p><img src="/images/sysprep/win2008R2x64/operatingsystem.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>ImageInstall/OSImage/InstallFrom/Metadata</em> and choose
+<em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/operatingsystemsettings.png" /></p>
+
+<h1 id="disabling-the-eula-dialog">Disabling the EULA dialog</h1>
+
+<p><img src="/images/sysprep/win2008R2x64/eula.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>UserData</em> and choose
+<em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/eulasettings.png" /></p>
+
+<h1 id="disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</h1>
+
+<p><img src="/images/sysprep/win2008R2x64/diskallocation.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>DiskConfiguration</em> and choose
+<em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/diskconfigurationsettings.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>DiskConfiguration/Disk</em> and choose
+<em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/disksettings.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>DiskConfiguration/Disk/CreatePartitions/CreatePartition</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/createpartitionsettings.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>DiskConfiguration/Disk/ModifyPartitions/ModifyPartition</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/modifypartitionsettings.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>ImageInstall/OSImage/InstallTo</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/installtosettings.png" /></p>
+
+<h1 id="disabling-the-administrator-password-prompt">Disabling the Administrator password prompt</h1>
+
+<p><img src="/images/sysprep/win2008R2x64/setadministratorpassword.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>UserAccounts/AdministratorPassword</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/setadministratorpasswordsettings.png" /></p>
+
+<h1 id="set-up-vagrant-autologin">Set up vagrant autologin</h1>
+
+<p><img src="/images/sysprep/win2008R2x64/ctrlaltdel.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>UserAccounts/LocalAccounts/LocalAccount</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/vagrantaccount.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>UserAccounts/LocalAccounts/LocalAccount/Password</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/vagrantpassword.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>AutoLogon</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/vagrantautologon.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>AutoLogon/Password</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/vagrantpassword.png" /></p>
+
+<h1 id="disable-initial-configuration-dialog">Disable Initial Configuration Dialog</h1>
+
+<p><img src="/images/sysprep/win2008R2x64/initialconfiguration.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-OutOfBoxExperience_6.1.7600.16385_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/initialconfigurationsettings.png" /></p>
+
+<h1 id="do-not-show-server-manager-at-logon">Do not show Server Manager at logon</h1>
+
+<p><img src="/images/sysprep/win2008R2x64/disableservermanageratlogon.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-ServerManager-SvrMgrNc_6.1.7600.16385_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/disableservermanageratlogonsettings.png" /></p>
+
+<h1 id="disable-user-account-control-uac">Disable User Account Control (UAC)</h1>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-LUA-Settings_6.1.7600.16385_neutral</em>,
+right-click and choose <em>Add Setting to Pass 2 offlineServicing</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/uacsettings.png" /></p>
+
+<h1 id="disable-internet-explorer-enhanced-security-configuration">Disable Internet Explorer Enhanced Security Configuration</h1>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-IE-ESC_8.0.7601.17514_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/ieescsettings.png" /></p>
+
+<h1 id="disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</h1>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-IE-InternetExplorer_8.0.7600.16385_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/iefirstrunsettings.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>wow64_Microsoft-Windows-IE-InternetExplorer_8.0.7601.17514_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/iefirstrunsettings.png" /></p>
+
+<h1 id="replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</h1>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-IE-InternetExplorer_8.0.7600.16385_neutral</em>,
+right-click on <em>SearchScopes/Scope</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/googlesearchsettings.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>wow64_Microsoft-Windows-IE-InternetExplorer_8.0.7601.17514_neutral</em>,
+right-click on <em>SearchScopes/Scope</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win2008R2x64/googlesearchsettings.png" /></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -4190,6 +4459,10 @@ destroy the VM:</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/">Windows Server 2008 R2 automated install settings</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 2</a>
       </li>
     
@@ -4203,10 +4476,6 @@ destroy the VM:</p>
     
       <li class="post">
         <a href="/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/">Using RVM to manage multiple versions of Ruby</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to manage multiple versions of Ruby</a>
       </li>
     
   </ul>
