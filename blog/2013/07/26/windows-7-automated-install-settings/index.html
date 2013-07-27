@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Windows Server 2008 R2 automated install settings - Mischa Taylor's Coding Blog</title>
+  <title>Windows 7 Automated Install Settings - Mischa Taylor's Coding Blog</title>
   <meta name="author" content="Mischa Taylor">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://misheska.com/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/">
+  <link rel="canonical" href="http://misheska.com/blog/2013/07/26/windows-7-automated-install-settings/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <script src="/javascripts/modernizr-2.0.js"></script>
@@ -80,7 +80,7 @@
   
   <header>
     
-      <h1 class="entry-title">Windows Server 2008 R2 Automated Install Settings</h1>
+      <h1 class="entry-title">Windows 7 Automated Install Settings</h1>
     
     
       <p class="meta">
@@ -96,7 +96,7 @@
   
 
 
-<time datetime="2013-07-25T23:20:00-07:00" pubdate data-updated="true">Jul 25<span>th</span>, 2013</time>
+<time datetime="2013-07-26T10:48:00-07:00" pubdate data-updated="true">Jul 26<span>th</span>, 2013</time>
         
       </p>
     
@@ -108,21 +108,23 @@
   <li><a href="#disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</a></li>
   <li><a href="#disabling-the-eula-dialog">Disabling the EULA dialog</a></li>
   <li><a href="#disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</a></li>
-  <li><a href="#disabling-the-administrator-password-prompt">Disabling the Administrator password prompt</a></li>
-  <li><a href="#set-up-vagrant-autologin">Set up vagrant autologin</a></li>
-  <li><a href="#disable-initial-configuration-dialog">Disable Initial Configuration Dialog</a></li>
-  <li><a href="#do-not-show-server-manager-at-logon">Do not show Server Manager at logon</a></li>
+  <li><a href="#disabling-the-account-and-computer-name-dialog">Disabling the account and computer name dialog</a></li>
+  <li><a href="#disable-computer-name-dialog">Disable Computer Name dialog</a></li>
+  <li><a href="#disable-protect-computer-dialog">Disable Protect Computer dialog</a></li>
   <li><a href="#disable-user-account-control-uac">Disable User Account Control (UAC)</a></li>
-  <li><a href="#disable-internet-explorer-enhanced-security-configuration">Disable Internet Explorer Enhanced Security Configuration</a></li>
   <li><a href="#disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</a></li>
   <li><a href="#replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</a></li>
+  <li><a href="#enable-remote-desktop">Enable Remote Desktop</a></li>
+  <li><a href="#really-disable-set-network-location-prompt">(Really) Disable Set Network Location Prompt</a></li>
+  <li><a href="#turn-off-computer-password">Turn off computer password</a></li>
+  <li><a href="#turn-off-all-power-saving-and-timeouts">Turn off all power saving and timeouts</a></li>
 </ul>
 
 <p>I just recently revised all my automated install XML files for the Windows
 System Preparation Tool (Sysprep) that I use for my Windows development
 testbed.  For this go around, I’m documenting the XML answer file settings
 for each version of Microsoft Windows.  This article covers the XML answer
-files settings needed to automate a Windows Server 2008 R2 (64-bit) base
+files settings needed to automate a Windows 7 (64-bit) base
 OS install.</p>
 
 <p>You’ll need to use the Windows System Image Manager tool to edit Sysprep
@@ -131,20 +133,27 @@ XML answer files.  The Windows System Image Manager is packaged with the
 tool suite.  Download and install the Windows Assessment and Deployment Kit
 to install the Windows System Image Manager (WSIM).</p>
 
+<p><a href="http://technet.microsoft.com/en-us/library/dd744272(v=ws.10).aspx">Settings to Use for an Unattended Installation</a></p>
+
+<p><a href="http://technet.microsoft.com/en-us/library/dd744547(WS.10).aspx">Automate Windows Welcome</a></p>
+
+<p>Link to <a href="https://raw.github.com/misheska/basebox-packer/master/template/misheska-win7x64/floppy/Autounattend.xml">Autounattend.xml</a>
+with all the settings in this article.</p>
+
 <h1 id="disabling-the-language-settings-dialog">Disabling the language settings dialog</h1>
 
-<p><img src="/images/sysprep/win2008R2x64/language.png" /></p>
+<p><img src="/images/sysprep/win7x64/language.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component 
 <em>amd64_Microsoft-Windows-International-Core-WinPE_6.1.7600.16385_neutral</em>,
 right-click and choose <em>Add Setting to Pass 1 windowsPE</em>.  Using the
 Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/languagesettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/languagesettings.png" /></p>
 
 <h1 id="disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</h1>
 
-<p><img src="/images/sysprep/win2008R2x64/operatingsystem.png" /></p>
+<p><img src="/images/sysprep/win7x64/operatingsystem.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -152,11 +161,11 @@ right-click on <em>ImageInstall/OSImage/InstallFrom/Metadata</em> and choose
 <em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/operatingsystemsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/operatingsystemsettings.png" /></p>
 
 <h1 id="disabling-the-eula-dialog">Disabling the EULA dialog</h1>
 
-<p><img src="/images/sysprep/win2008R2x64/eula.png" /></p>
+<p><img src="/images/sysprep/win7x64/eula.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -164,11 +173,11 @@ right-click on <em>UserData</em> and choose
 <em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/eulasettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/eulasettings.png" /></p>
 
 <h1 id="disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</h1>
 
-<p><img src="/images/sysprep/win2008R2x64/diskallocation.png" /></p>
+<p><img src="/images/sysprep/win7x64/diskallocation.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -176,7 +185,7 @@ right-click on <em>DiskConfiguration</em> and choose
 <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/diskconfigurationsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/diskconfigurationsettings.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -184,7 +193,7 @@ right-click on <em>DiskConfiguration/Disk</em> and choose
 <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/disksettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/disksettings.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -192,7 +201,7 @@ right-click on <em>DiskConfiguration/Disk/CreatePartitions/CreatePartition</em> 
 choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/createpartitionsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/createpartitionsettings.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -200,7 +209,7 @@ right-click on <em>DiskConfiguration/Disk/ModifyPartitions/ModifyPartition</em> 
 choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/modifypartitionsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/modifypartitionsettings.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -208,23 +217,11 @@ right-click on <em>ImageInstall/OSImage/InstallTo</em> and
 choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/installtosettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/installtosettings.png" /></p>
 
-<h1 id="disabling-the-administrator-password-prompt">Disabling the Administrator password prompt</h1>
+<h1 id="disabling-the-account-and-computer-name-dialog">Disabling the account and computer name dialog</h1>
 
-<p><img src="/images/sysprep/win2008R2x64/setadministratorpassword.png" /></p>
-
-<p>In the <em>Windows Image</em> pane, select the component
-<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
-right-click on <em>UserAccounts/AdministratorPassword</em> and choose
-<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
-<em>Settings</em> panes, configure the following settings:</p>
-
-<p><img src="/images/sysprep/win2008R2x64/setadministratorpasswordsettings.png" /></p>
-
-<h1 id="set-up-vagrant-autologin">Set up vagrant autologin</h1>
-
-<p><img src="/images/sysprep/win2008R2x64/ctrlaltdel.png" /></p>
+<p><img src="/images/sysprep/win7x64/account.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -232,7 +229,7 @@ right-click on <em>UserAccounts/LocalAccounts/LocalAccount</em> and choose
 <em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/vagrantaccount.png" /></p>
+<p><img src="/images/sysprep/win7x64/vagrantaccount.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -240,7 +237,7 @@ right-click on <em>UserAccounts/LocalAccounts/LocalAccount/Password</em> and cho
 <em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/vagrantpassword.png" /></p>
+<p><img src="/images/sysprep/win7x64/vagrantpassword.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -248,7 +245,7 @@ right-click on <em>AutoLogon</em> and choose
 <em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/vagrantautologon.png" /></p>
+<p><img src="/images/sysprep/win7x64/vagrantautologon.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -256,31 +253,31 @@ right-click on <em>AutoLogon/Password</em> and choose
 <em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/vagrantpassword.png" /></p>
+<p><img src="/images/sysprep/win7x64/vagrantpassword.png" /></p>
 
-<h1 id="disable-initial-configuration-dialog">Disable Initial Configuration Dialog</h1>
+<h1 id="disable-computer-name-dialog">Disable Computer Name dialog</h1>
 
-<p><img src="/images/sysprep/win2008R2x64/initialconfiguration.png" /></p>
-
-<p>In the <em>Windows Image</em> pane, select the component
-<em>amd64_Microsoft-Windows-OutOfBoxExperience_6.1.7600.16385_neutral</em>,
-right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
-Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
-settings:</p>
-
-<p><img src="/images/sysprep/win2008R2x64/initialconfigurationsettings.png" /></p>
-
-<h1 id="do-not-show-server-manager-at-logon">Do not show Server Manager at logon</h1>
-
-<p><img src="/images/sysprep/win2008R2x64/disableservermanageratlogon.png" /></p>
+<p><img src="/images/sysprep/win7x64/computername.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
-<em>amd64_Microsoft-Windows-ServerManager-SvrMgrNc_6.1.7600.16385_neutral</em>,
-right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
-Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
-settings:</p>
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/disableservermanageratlogonsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/computernamesettings.png" /></p>
+
+<h1 id="disable-protect-computer-dialog">Disable Protect Computer dialog</h1>
+
+<p><img src="/images/sysprep/win7x64/protect.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>OOBE</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/protectsettings.png" /></p>
 
 <h1 id="disable-user-account-control-uac">Disable User Account Control (UAC)</h1>
 
@@ -290,17 +287,7 @@ right-click and choose <em>Add Setting to Pass 2 offlineServicing</em>.  Using t
 Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
 settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/uacsettings.png" /></p>
-
-<h1 id="disable-internet-explorer-enhanced-security-configuration">Disable Internet Explorer Enhanced Security Configuration</h1>
-
-<p>In the <em>Windows Image</em> pane, select the component
-<em>amd64_Microsoft-Windows-IE-ESC_8.0.7601.17514_neutral</em>,
-right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
-Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
-settings:</p>
-
-<p><img src="/images/sysprep/win2008R2x64/ieescsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/uacsettings.png" /></p>
 
 <h1 id="disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</h1>
 
@@ -310,7 +297,7 @@ right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the
 Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
 settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/iefirstrunsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/iefirstrunsettings.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>wow64_Microsoft-Windows-IE-InternetExplorer_8.0.7601.17514_neutral</em>,
@@ -318,7 +305,7 @@ right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the
 Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
 settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/iefirstrunsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/iefirstrunsettings.png" /></p>
 
 <h1 id="replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</h1>
 
@@ -328,7 +315,7 @@ right-click on <em>SearchScopes/Scope</em> and choose
 <em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/googlesearchsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/googlesearchsettings.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>wow64_Microsoft-Windows-IE-InternetExplorer_8.0.7601.17514_neutral</em>,
@@ -336,7 +323,81 @@ right-click on <em>SearchScopes/Scope</em> and choose
 <em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win2008R2x64/googlesearchsettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/googlesearchsettings.png" /></p>
+
+<h1 id="enable-remote-desktop">Enable Remote Desktop</h1>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-TerminalServices-LocalSessionManager_6.1.7601.17514_neutral</em>,
+right-click and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/tsconnectionsettings.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Networking-MPSSVC-Svc_6.1.7601.175414_neutral</em>,
+right-click on <em>FirewallGroups/FirewallGroup</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/firewallgroupsettings.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-TerminalServices-RDP-WinStationExtensions_6.1.7601.17514_neutral</em>,
+right-click and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/rdpsecuritysettings.png" /></p>
+
+<h1 id="really-disable-set-network-location-prompt">(Really) Disable Set Network Location Prompt</h1>
+
+<p><img src="/images/sysprep/win7x64/networklocation.png" /></p>
+
+<pre><code>REG ADD "HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"
+</code></pre>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click <em>FirstLogonCommands/SynchronousCommand” and choose
+_Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/networklocationsettings.png" /></p>
+
+<h1 id="turn-off-computer-password">Turn off computer password</h1>
+
+<p>Prevent the image from changing its computer account password,
+so you can restore old snapshots without being dropped from a domain</p>
+
+<pre><code>REG ADD "HKLM\System\CurrentControlSet\Services\Netlogon\Parameters" /v DisablePasswordChange /t REG_DWORD /d 1 /f
+</code></pre>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click <em>FirstLogonCommands/SynchronousCommand” and choose
+_Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/disablepassworchangesettings.png" /></p>
+
+<h1 id="turn-off-all-power-saving-and-timeouts">Turn off all power saving and timeouts</h1>
+
+<pre><code>REM Set power configuration to High Performance
+powercfg -setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
+REM Monitor timeout
+powercfg -Change -monitor-timeout-ac 0
+powercfg -Change -monitor-timeout-dc 0
+</code></pre>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click <em>FirstLogonCommands/SynchronousCommand” and choose
+_Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/powerconfigsettings.png" /></p>
 </div>
 
 
@@ -359,7 +420,7 @@ and <em>Settings</em> panes, configure the following settings:</p>
   
 
 
-<time datetime="2013-07-25T23:20:00-07:00" pubdate data-updated="true">Jul 25<span>th</span>, 2013</time>
+<time datetime="2013-07-26T10:48:00-07:00" pubdate data-updated="true">Jul 26<span>th</span>, 2013</time>
       
 
 
@@ -367,7 +428,7 @@ and <em>Settings</em> panes, configure the following settings:</p>
     
       <div class="sharing">
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/" data-via="" data-counturl="http://misheska.com/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/" >Tweet</a>
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/07/26/windows-7-automated-install-settings/" data-via="" data-counturl="http://misheska.com/blog/2013/07/26/windows-7-automated-install-settings/" >Tweet</a>
   
   
   
@@ -376,10 +437,8 @@ and <em>Settings</em> panes, configure the following settings:</p>
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/" title="Previous Post: Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 2">&laquo; Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 2</a>
+        <a class="basic-alignment left" href="/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/" title="Previous Post: Windows Server 2008 R2 automated install settings">&laquo; Windows Server 2008 R2 automated install settings</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2013/07/26/windows-7-automated-install-settings/" title="Next Post: Windows 7 Automated Install Settings">Windows 7 Automated Install Settings &raquo;</a>
       
     </p>
   </footer>
