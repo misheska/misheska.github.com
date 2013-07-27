@@ -26,6 +26,9 @@ to install the Windows System Image Manager (WSIM).
 
 [Automate Windows Welcome](http://technet.microsoft.com/en-us/library/dd744547(WS.10).aspx)
 
+Link to [Autounattend.xml](https://raw.github.com/misheska/basebox-packer/master/template/misheska-win7x64/floppy/Autounattend.xml)
+with all the settings in this article.
+
 Disabling the language settings dialog
 ======================================
 
