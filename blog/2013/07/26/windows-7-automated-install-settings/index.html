@@ -144,16 +144,27 @@ with all the settings in this article.</p>
 
 <p><img src="/images/sysprep/win7x64/language.png" /></p>
 
+<p><img src="/images/sysprep/win7x64/languagecomponents.png" /></p>
+
 <p>In the <em>Windows Image</em> pane, select the component 
 <em>amd64_Microsoft-Windows-International-Core-WinPE_6.1.7600.16385_neutral</em>,
 right-click and choose <em>Add Setting to Pass 1 windowsPE</em>.  Using the
 Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/languagesettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/languagesettings.png" /></p>
+
+<ul>
+  <li>InputLocale = <strong>en-US</strong></li>
+  <li>SystemLocale = <strong>en-US</strong></li>
+  <li>UILanguage = <strong>en-US</strong></li>
+  <li>UserLocale = <strong>en-US</strong></li>
+</ul>
 
 <h1 id="disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</h1>
 
 <p><img src="/images/sysprep/win7x64/operatingsystem.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/operatingsystemcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -161,11 +172,18 @@ right-click on <em>ImageInstall/OSImage/InstallFrom/Metadata</em> and choose
 <em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/operatingsystemsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/operatingsystemsettings.png" /></p>
+
+<ul>
+  <li>Key = <strong>/IMAGE/NAME</strong></li>
+  <li>Value = <strong>Windows 7 ENTERPRISE</strong></li>
+</ul>
 
 <h1 id="disabling-the-eula-dialog">Disabling the EULA dialog</h1>
 
 <p><img src="/images/sysprep/win7x64/eula.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/eulacomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -173,11 +191,17 @@ right-click on <em>UserData</em> and choose
 <em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/eulasettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/eulasettings.png" /></p>
+
+<ul>
+  <li>AcceptEula = <strong>true</strong></li>
+</ul>
 
 <h1 id="disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</h1>
 
 <p><img src="/images/sysprep/win7x64/diskallocation.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/diskconfigurationcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -185,7 +209,13 @@ right-click on <em>DiskConfiguration</em> and choose
 <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/diskconfigurationsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/diskconfigurationsettings.png" /></p>
+
+<ul>
+  <li>WillShowUI = <strong>OnError</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/diskcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -193,7 +223,14 @@ right-click on <em>DiskConfiguration/Disk</em> and choose
 <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/disksettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/disksettings.png" /></p>
+
+<ul>
+  <li>DiskID = <strong>0</strong></li>
+  <li>WillWipDisk = <strong>true</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/createpartitioncomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -201,7 +238,20 @@ right-click on <em>DiskConfiguration/Disk/CreatePartitions/CreatePartition</em> 
 choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/createpartitionsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/createpartitionsettings.png" /></p>
+
+<ul>
+  <li>Extend = <strong>false</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>Size = <strong>10000</strong></li>
+  <li>Type = <strong>Primary</strong></li>
+</ul>
+
+<p>NOTE: Don’t worry about getting the size exact - just set it to a
+reasonable minimum.  In the next setting, we will extend the partition
+to fill all remaining disk space on the drive.</p>
+
+<p><img src="/images/sysprep/win7x64/modifypartitioncomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -209,7 +259,18 @@ right-click on <em>DiskConfiguration/Disk/ModifyPartitions/ModifyPartition</em> 
 choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/modifypartitionsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/modifypartitionsettings.png" /></p>
+
+<ul>
+  <li>Active = <strong>true</strong></li>
+  <li>Extend = <strong>true</strong></li>
+  <li>Format = <strong>NTFS</strong></li>
+  <li>Letter = <strong>C</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>PartitionID = <strong>1</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/installtocomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
@@ -217,11 +278,18 @@ right-click on <em>ImageInstall/OSImage/InstallTo</em> and
 choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/installtosettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/installtosettings.png" /></p>
+
+<ul>
+  <li>DiskID = <strong>0</strong></li>
+  <li>PartitionID = <strong>1</strong></li>
+</ul>
 
 <h1 id="disabling-the-account-and-computer-name-dialog">Disabling the account and computer name dialog</h1>
 
 <p><img src="/images/sysprep/win7x64/account.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/vagrantaccountcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -229,7 +297,16 @@ right-click on <em>UserAccounts/LocalAccounts/LocalAccount</em> and choose
 <em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/vagrantaccount.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/vagrantaccount.png" /></p>
+
+<ul>
+  <li>Description = <strong>Vagrant User</strong></li>
+  <li>DisplayName = <strong>vagrant</strong></li>
+  <li>Group = <strong>Administrators</strong></li>
+  <li>Name = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/vagrantpasswordcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -237,7 +314,13 @@ right-click on <em>UserAccounts/LocalAccounts/LocalAccount/Password</em> and cho
 <em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/vagrantpassword.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/vagrantpassword.png" /></p>
+
+<ul>
+  <li>Value = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/vagrantautologoncomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -245,7 +328,14 @@ right-click on <em>AutoLogon</em> and choose
 <em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/vagrantautologon.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/vagrantautologon.png" /></p>
+
+<ul>
+  <li>Enabled = <strong>true</strong></li>
+  <li>Username = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/vagrantimagepasswordcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -253,11 +343,17 @@ right-click on <em>AutoLogon/Password</em> and choose
 <em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
 <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/vagrantpassword.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/vagrantpassword.png" /></p>
+
+<ul>
+  <li>Value = <strong>vagrant</strong></li>
+</ul>
 
 <h1 id="disable-computer-name-dialog">Disable Computer Name dialog</h1>
 
 <p><img src="/images/sysprep/win7x64/computername.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/computernamecomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -267,9 +363,16 @@ right-click and choose
 
 <p><img src="/images/sysprep/win7x64/computernamesettings.png" /></p>
 
+<ul>
+  <li>Value - <strong>vagrant-win7</strong></li>
+  <li>TimeZone = <strong>Pacific Standard Time</strong></li>
+</ul>
+
 <h1 id="disable-protect-computer-dialog">Disable Protect Computer dialog</h1>
 
 <p><img src="/images/sysprep/win7x64/protect.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/protectcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -279,7 +382,14 @@ right-click on <em>OOBE</em> and choose
 
 <p><img src="/images/sysprep/win7x64/protectsettings.png" /></p>
 
+<ul>
+  <li>NetworkLocation = <strong>Work</strong></li>
+  <li>ProtectYourPC = <strong>3</strong></li>
+</ul>
+
 <h1 id="disable-user-account-control-uac">Disable User Account Control (UAC)</h1>
+
+<p><img src="/images/sysprep/win7x64/uaccomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-LUA-Settings_6.1.7600.16385_neutral</em>,
@@ -287,17 +397,31 @@ right-click and choose <em>Add Setting to Pass 2 offlineServicing</em>.  Using t
 Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
 settings:</p>
 
-<p><img src="/images/sysprep/win7x64/uacsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/uacsettings.png" /></p>
+
+<ul>
+  <li>EnableLUA = <strong>false</strong></li>
+</ul>
 
 <h1 id="disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</h1>
 
+<p><img src="/images/sysprep/win7x64/iefirstruncomponents.png" /></p>
+
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-IE-InternetExplorer_8.0.7600.16385_neutral</em>,
 right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
 Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
 settings:</p>
 
-<p><img src="/images/sysprep/win7x64/iefirstrunsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/iefirstrunsettings.png" /></p>
+
+<ul>
+  <li>DisableAccelerators = <strong>true</strong></li>
+  <li>DisableFirstRunWizard = <strong>true</strong></li>
+  <li>Home_Page = <strong>about:blank</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/iefirstrunwowcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>wow64_Microsoft-Windows-IE-InternetExplorer_8.0.7601.17514_neutral</em>,
@@ -305,17 +429,35 @@ right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the
 Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
 settings:</p>
 
-<p><img src="/images/sysprep/win7x64/iefirstrunsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/iefirstrunsettings.png" /></p>
+
+<ul>
+  <li>DisableAccelerators = <strong>true</strong></li>
+  <li>DisableFirstRunWizard = <strong>true</strong></li>
+  <li>Home_Page = <strong>about:blank</strong></li>
+</ul>
 
 <h1 id="replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</h1>
 
+<p><img src="/images/sysprep/win7x64/googlesearchcomponents.png" /></p>
+
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-IE-InternetExplorer_8.0.7600.16385_neutral</em>,
 right-click on <em>SearchScopes/Scope</em> and choose
 <em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/googlesearchsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/googlesearchsettings.png" /></p>
+
+<ul>
+  <li>ScopeDefault = <strong>true</strong></li>
+  <li>ScopeDisplayName = <strong>Google</strong></li>
+  <li>ScopeKey = <strong>Google</strong></li>
+  <li>ScopeUrl = <strong>http://www.google.com/search?q={searchTerms}</strong></li>
+  <li>ShowSearchSuggestions = <strong>true</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/googlesearchwowcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>wow64_Microsoft-Windows-IE-InternetExplorer_8.0.7601.17514_neutral</em>,
@@ -323,9 +465,19 @@ right-click on <em>SearchScopes/Scope</em> and choose
 <em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/googlesearchsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/googlesearchsettings.png" /></p>
+
+<ul>
+  <li>ScopeDefault = <strong>true</strong></li>
+  <li>ScopeDisplayName = <strong>Google</strong></li>
+  <li>ScopeKey = <strong>Google</strong></li>
+  <li>ScopeUrl = <strong>http://www.google.com/search?q={searchTerms}</strong></li>
+  <li>ShowSearchSuggestions = <strong>true</strong></li>
+</ul>
 
 <h1 id="enable-remote-desktop">Enable Remote Desktop</h1>
+
+<p><img src="/images/sysprep/win7x64/tsconnectioncomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-TerminalServices-LocalSessionManager_6.1.7601.17514_neutral</em>,
@@ -333,7 +485,13 @@ right-click and choose
 <em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/tsconnectionsettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/tsconnectionsettings.png" /></p>
+
+<ul>
+  <li>fDenyTSConnections = <strong>false</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/firewallgroupcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Networking-MPSSVC-Svc_6.1.7601.175414_neutral</em>,
@@ -343,13 +501,27 @@ and <em>Settings</em> panes, configure the following settings:</p>
 
 <p><img src="/images/sysprep/win7x64/firewallgroupsettings.png" /></p>
 
+<ul>
+  <li>Active = <strong>true</strong></li>
+  <li>Group = <strong>Remote Desktop</strong></li>
+  <li>Key = <strong>RemoteDesktop</strong></li>
+  <li>Profile = <strong>all</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/rdpsecuritycomponents.png" /></p>
+
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-TerminalServices-RDP-WinStationExtensions_6.1.7601.17514_neutral</em>,
 right-click and choose
 <em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/rdpsecuritysettings.png" /></p>
+<p><img class="right" src="/images/sysprep/win7x64/rdpsecuritysettings.png" /></p>
+
+<ul>
+  <li>SecurityLayer = <strong>1</strong></li>
+  <li>UserAuthentication = <strong>0</strong></li>
+</ul>
 
 <h1 id="really-disable-set-network-location-prompt">(Really) Disable Set Network Location Prompt</h1>
 
@@ -357,6 +529,8 @@ and <em>Settings</em> panes, configure the following settings:</p>
 
 <pre><code>REG ADD "HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"
 </code></pre>
+
+<p><img src="/images/sysprep/win7x64/networklocationcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -366,6 +540,13 @@ and <em>Settings</em> panes, configure the following settings:</p>
 
 <p><img src="/images/sysprep/win7x64/networklocationsettings.png" /></p>
 
+<ul>
+  <li>CommandLine = <strong>REG ADD “HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff”</strong></li>
+  <li>Description = <strong>Disable Set Network Location Prompt</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>RequiresUserInput <strong>true</strong></li>
+</ul>
+
 <h1 id="turn-off-computer-password">Turn off computer password</h1>
 
 <p>Prevent the image from changing its computer account password,
@@ -374,22 +555,39 @@ so you can restore old snapshots without being dropped from a domain</p>
 <pre><code>REG ADD "HKLM\System\CurrentControlSet\Services\Netlogon\Parameters" /v DisablePasswordChange /t REG_DWORD /d 1 /f
 </code></pre>
 
+<p><img src="/images/sysprep/win7x64/disablepasswordchangecomponents.png" /></p>
+
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
 right-click <em>FirstLogonCommands/SynchronousCommand” and choose
 _Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
 and <em>Settings</em> panes, configure the following settings:</p>
 
-<p><img src="/images/sysprep/win7x64/disablepassworchangesettings.png" /></p>
+<p><img src="/images/sysprep/win7x64/disablepasswordchangesettings.png" /></p>
+
+<ul>
+  <li>CommandLine = <strong>REG ADD “HKLM\System\CurrentControlSet\Services\Netlogon\Parameters” /v DisablePasswordChange /t REG_DWORD /d 2 /f</strong></li>
+  <li>Description = <strong>Disable computer password change</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>RequiresUserInput <strong>true</strong></li>
+</ul>
 
 <h1 id="turn-off-all-power-saving-and-timeouts">Turn off all power saving and timeouts</h1>
 
-<pre><code>REM Set power configuration to High Performance
-powercfg -setactive 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c
-REM Monitor timeout
-powercfg -Change -monitor-timeout-ac 0
-powercfg -Change -monitor-timeout-dc 0
-</code></pre>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>set-power-config.bat </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="c">REM Set power configuration to High Performance</span>
+</span><span class="line">powercfg -setactive <span class="m">8</span>c<span class="m">5</span>e<span class="m">7</span>fda-e<span class="m">8</span>bf<span class="m">-4</span>a<span class="m">96-9</span>a<span class="m">85</span>-a<span class="m">6</span>e<span class="m">23</span>a<span class="m">8</span>c<span class="m">635</span>c
+</span><span class="line"><span class="c">REM Monitor timeout</span>
+</span><span class="line">powercfg -Change -monitor-timeout-ac <span class="m">0</span>
+</span><span class="line">powercfg -Change -monitor-timeout-dc <span class="m">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><img src="/images/sysprep/win7x64/powerconfigcomponents.png" /></p>
 
 <p>In the <em>Windows Image</em> pane, select the component
 <em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
@@ -398,6 +596,13 @@ _Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</e
 and <em>Settings</em> panes, configure the following settings:</p>
 
 <p><img src="/images/sysprep/win7x64/powerconfigsettings.png" /></p>
+
+<ul>
+  <li>CommandLine = <strong>cmd.exe /c a:set-power-config.bat</strong></li>
+  <li>Description = <strong>Turn off all power saving and timeouts</strong></li>
+  <li>Order = <strong>3</strong></li>
+  <li>RequiresUserInput = <strong>true</strong></li>
+</ul>
 </div>
 
 
