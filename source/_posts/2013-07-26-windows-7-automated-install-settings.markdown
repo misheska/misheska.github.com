@@ -79,7 +79,7 @@ right-click on _UserData_ and choose
 _Add Setting to Pass 1 windowsPE_.  Using the Answer File _Properties_ and
 _Settings_ panes, configure the following settings:
 
-{% img right /images/sysprep/win7x64/eulasettings.png %}
+{% img /images/sysprep/win7x64/eulasettings.png %}
 
 * AcceptEula = **true**
 
@@ -281,7 +281,7 @@ right-click and choose _Add Setting to Pass 4 specialize_.  Using the
 Answer File _Properties_ and _Settings_ panes, configure the following
 settings:
 
-{% img right /images/sysprep/win7x64/iefirstrunsettings.png %}
+{% img /images/sysprep/win7x64/iefirstrunsettings.png %}
 
 * DisableAccelerators = **true**
 * DisableFirstRunWizard = **true**
@@ -295,7 +295,7 @@ right-click and choose _Add Setting to Pass 4 specialize_.  Using the
 Answer File _Properties_ and _Settings_ panes, configure the following
 settings:
 
-{% img right /images/sysprep/win7x64/iefirstrunsettings.png %}
+{% img /images/sysprep/win7x64/iefirstrunsettings.png %}
 
 * DisableAccelerators = **true**
 * DisableFirstRunWizard = **true**
