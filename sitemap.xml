@@ -57,8 +57,14 @@
         <lastmod>2013-07-27T23:21:22-07:00</lastmod>
     </url>
     <url>
+        <loc>
+            http://misheska.com/blog/2013/07/28/windows-server-2012-automated-install-settings/
+        </loc>
+        <lastmod>2013-07-28T22:35:07-07:00</lastmod>
+    </url>
+    <url>
         <loc>http://misheska.com/blog/archives/</loc>
-        <lastmod>2013-07-27T23:21:22-07:00</lastmod>
+        <lastmod>2013-07-28T22:35:07-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/contact/</loc>
@@ -66,7 +72,7 @@
     </url>
     <url>
         <loc>http://misheska.com/</loc>
-        <lastmod>2013-07-27T23:21:22-07:00</lastmod>
+        <lastmod>2013-07-28T22:35:07-07:00</lastmod>
     </url>
     <url>
         <loc>http://misheska.com/robots.txt</loc>

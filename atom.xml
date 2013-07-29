@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-07-27T23:24:40-07:00</updated>
+  <updated>2013-07-28T22:36:39-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -12,6 +12,532 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Windows Server 2012 Automated Install Settings]]></title>
+    <link href="http://misheska.com/blog/2013/07/28/windows-server-2012-automated-install-settings/"/>
+    <updated>2013-07-28T20:20:00-07:00</updated>
+    <id>http://misheska.com/blog/2013/07/28/windows-server-2012-automated-install-settings</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#disabling-the-language-settings-dialog">Disabling the language settings dialog</a></li>
+  <li><a href="#disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</a></li>
+  <li><a href="#disabling-the-eula-dialog">Disabling the EULA dialog</a></li>
+  <li><a href="#disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</a></li>
+  <li><a href="#disabling-the-administrator-password-prompt">Disabling the Administrator password prompt</a></li>
+  <li><a href="#set-up-vagrant-autologin">Set up vagrant autologin</a></li>
+  <li><a href="#do-not-show-server-manager-at-logon">Do not show Server Manager at logon</a></li>
+  <li><a href="#disable-user-account-control-uac">Disable User Account Control (UAC)</a></li>
+  <li><a href="#disable-internet-explorer-enhanced-security-configuration">Disable Internet Explorer Enhanced Security Configuration</a></li>
+  <li><a href="#disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</a></li>
+  <li><a href="#replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</a></li>
+  <li><a href="#enable-remote-desktop">Enable Remote Desktop</a></li>
+  <li><a href="#turn-off-computer-password">Turn off computer password</a></li>
+  <li><a href="#turn-off-all-power-saving-and-timeouts">Turn off all power saving and timeouts</a></li>
+</ul>
+
+<p>I just recently revised all my automated install XML files for the Windows
+System Preparation Tool (Sysprep) that I use for my Windows development
+testbed.  For this go around, I’m documenting the XML answer file settings
+for each version of Microsoft Windows.  This article covers the XML answer
+files settings needed to automate a Windows Server 2012 (64-bit) base
+OS install.</p>
+
+<p>You’ll need to use the Windows System Image Manager tool to edit Sysprep
+XML answer files.  The Windows System Image Manager is packaged with the
+<a href="http://www.microsoft.com/en-us/download/details.aspx?id=30652">Windows Assessment and Deployment Kit</a>
+tool suite.  Download and install the Windows Assessment and Deployment Kit
+to install the Windows System Image Manager (WSIM).</p>
+
+<p>Link to <a href="https://raw.github.com/misheska/basebox-packer/master/template/misheska-win2012x64/floppy/Autounattend.xml">Autounattend.xml</a>
+with all the settings in this article.</p>
+
+<h1 id="disabling-the-language-settings-dialog">Disabling the language settings dialog</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/language.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/languagecomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component 
+<em>amd64_Microsoft-Windows-International-Core-WinPE_6.2.9200.16384_neutral</em>,
+right-click and choose <em>Add Setting to Pass 1 windowsPE</em>.  Using the
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/languagesettings.png" /></p>
+
+<ul>
+  <li>InputLocale = <strong>en-US</strong></li>
+  <li>SystemLocale = <strong>en-US</strong></li>
+  <li>UILanguage = <strong>en-US</strong></li>
+  <li>UserLocale = <strong>en-US</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/productkeycomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component 
+<em>amd64_Microsoft-Windows-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>UserData/ProductKey</em> and choose <em>Add Setting to Pass 1 windowsPE</em>.  Using the
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/productkeysettings.png" /></p>
+
+<ul>
+  <li>Key = **<_your_product_key_>**</_your_product_key_></li>
+  <li>WillShowUI = <strong>OnError</strong></li>
+</ul>
+
+<h1 id="disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/operatingsystem.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/operatingsystemcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>ImageInstall/OSImage/InstallFrom/Metadata</em> and choose
+<em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/operatingsystemsettings.png" /></p>
+
+<ul>
+  <li>Key = <strong>/IMAGE/NAME</strong></li>
+  <li>Value = <strong>Windows Server 2012 SERVERDATACENTER</strong></li>
+</ul>
+
+<p>NOTE: Make sure the <code>/IMAGE/NAME</code> value matches the Windows Server 2012
+Image flavor you selected.  Possible values are:</p>
+
+<ul>
+  <li>Windows Server 2012 SERVERDATACENTER</li>
+  <li>Windows Server 2012 SERVERDATACENTERCORE</li>
+  <li>Windows Server 2012 SERVERSTANDARD</li>
+  <li>Windows Server 2012 SERVERSTANDARDCORE</li>
+</ul>
+
+<h1 id="disabling-the-eula-dialog">Disabling the EULA dialog</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/eula.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/eulacomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>UserData</em> and choose
+<em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/eulasettings.png" /></p>
+
+<ul>
+  <li>AcceptEula = <strong>true</strong></li>
+</ul>
+
+<h1 id="disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/diskallocation.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/diskconfigurationcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>DiskConfiguration</em> and choose
+<em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/diskconfigurationsettings.png" /></p>
+
+<ul>
+  <li>WillShowUI = <strong>OnError</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/diskcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>DiskConfiguration/Disk</em> and choose
+<em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/disksettings.png" /></p>
+
+<ul>
+  <li>DiskID = <strong>0</strong></li>
+  <li>WillWipDisk = <strong>true</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/createpartitioncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>DiskConfiguration/Disk/CreatePartitions/CreatePartition</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/createpartitionsettings.png" /></p>
+
+<ul>
+  <li>Extend = <strong>false</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>Size = <strong>10000</strong></li>
+  <li>Type = <strong>Primary</strong></li>
+</ul>
+
+<p>NOTE: Don’t worry about getting the size exact - just set it to a
+reasonable minimum.  In the next setting, we will extend the partition
+to fill all remaining disk space on the drive.</p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/modifypartitioncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>DiskConfiguration/Disk/ModifyPartitions/ModifyPartition</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/modifypartitionsettings.png" /></p>
+
+<ul>
+  <li>Active = <strong>true</strong></li>
+  <li>Extend = <strong>true</strong></li>
+  <li>Format = <strong>NTFS</strong></li>
+  <li>Letter = <strong>C</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>PartitionID = <strong>1</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/installtocomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>ImageInstall/OSImage/InstallTo</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/installtosettings.png" /></p>
+
+<ul>
+  <li>DiskID = <strong>0</strong></li>
+  <li>PartitionID = <strong>1</strong></li>
+</ul>
+
+<h1 id="disabling-the-administrator-password-prompt">Disabling the Administrator password prompt</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/setadministratorpassword.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/setadministratorpasswordcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>UserAccounts/AdministratorPassword</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/setadministratorpasswordsettings.png" /></p>
+
+<ul>
+  <li>Value = <strong>vagrant</strong></li>
+</ul>
+
+<h1 id="set-up-vagrant-autologin">Set up vagrant autologin</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/ctrlaltdel.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/vagrantaccountcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>UserAccounts/LocalAccounts/LocalAccount</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/vagrantaccount.png" /></p>
+
+<ul>
+  <li>Description = <strong>Vagrant User</strong></li>
+  <li>DisplayName = <strong>vagrant</strong></li>
+  <li>Group = <strong>Administrators</strong></li>
+  <li>Name = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/vagrantpasswordcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>UserAccounts/LocalAccounts/LocalAccount/Password</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/vagrantpassword.png" /></p>
+
+<ul>
+  <li>Value = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/vagrantautologoncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.9200.16384_neutral</em>,
+right-click on <em>AutoLogon</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/vagrantautologon.png" /></p>
+
+<ul>
+  <li>Enabled = <strong>true</strong></li>
+  <li>Username = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/vagrantimagepasswordcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.2.9200.16384_neutral</em>,
+right-click on <em>AutoLogon/Password</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/vagrantpassword.png" /></p>
+
+<ul>
+  <li>Value = <strong>vagrant</strong></li>
+</ul>
+
+<h1 id="do-not-show-server-manager-at-logon">Do not show Server Manager at logon</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/servermanager.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/disableservermanageratlogoncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-ServerManager-SvrMgrNc_6.2.9200.16384_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/disableservermanageratlogonsettings.png" /></p>
+
+<ul>
+  <li>DoNotOpenServerManagerAtLogon = <strong>true</strong></li>
+</ul>
+
+<h1 id="disable-user-account-control-uac">Disable User Account Control (UAC)</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/uac.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/uaccomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-LUA-Settings_6.2.9200.16384_neutral</em>,
+right-click and choose <em>Add Setting to Pass 2 offlineServicing</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/uacsettings.png" /></p>
+
+<ul>
+  <li>EnableLUA = <strong>false</strong></li>
+</ul>
+
+<h1 id="disable-internet-explorer-enhanced-security-configuration">Disable Internet Explorer Enhanced Security Configuration</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/ieesc.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/ieesccomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-IE-ESC_10.0.9200.16384_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/ieescsettings.png" /></p>
+
+<ul>
+  <li>IEHardenAdmin = <strong>false</strong></li>
+  <li>IEHardenUser = <strong>false</strong></li>
+</ul>
+
+<h1 id="disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/iefirstrun.png" /></p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/iefirstruncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-IE-InternetExplorer_10.0.9200.16384_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/iefirstrunsettings.png" /></p>
+
+<ul>
+  <li>DisableAccelerators = <strong>true</strong></li>
+  <li>DisableFirstRunWizard = <strong>true</strong></li>
+  <li>Home_Page = <strong>about:blank</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/iefirstrunwowcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>wow64_Microsoft-Windows-IE-InternetExplorer_10.0.9200.16384_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/iefirstrunsettings.png" /></p>
+
+<ul>
+  <li>DisableAccelerators = <strong>true</strong></li>
+  <li>DisableFirstRunWizard = <strong>true</strong></li>
+  <li>Home_Page = <strong>about:blank</strong></li>
+</ul>
+
+<h1 id="replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/googlesearchcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-IE-InternetExplorer_10.0.9200.16384_neutral</em>,
+right-click on <em>SearchScopes/Scope</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/googlesearchsettings.png" /></p>
+
+<ul>
+  <li>ScopeDefault = <strong>true</strong></li>
+  <li>ScopeDisplayName = <strong>Google</strong></li>
+  <li>ScopeKey = <strong>Google</strong></li>
+  <li>ScopeUrl = <strong>http://www.google.com/search?q={searchTerms}</strong></li>
+  <li>ShowSearchSuggestions = <strong>true</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/googlesearchwowcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>wow64_Microsoft-Windows-IE-InternetExplorer_10.0.9200.16384_neutral</em>,
+right-click on <em>SearchScopes/Scope</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/googlesearchsettings.png" /></p>
+
+<ul>
+  <li>ScopeDefault = <strong>true</strong></li>
+  <li>ScopeDisplayName = <strong>Google</strong></li>
+  <li>ScopeKey = <strong>Google</strong></li>
+  <li>ScopeUrl = <strong>http://www.google.com/search?q={searchTerms}</strong></li>
+  <li>ShowSearchSuggestions = **true</li>
+</ul>
+
+<h1 id="enable-remote-desktop">Enable Remote Desktop</h1>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/tsconnectioncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-TerminalServices-LocalSessionManager_6.2.9200.16384_neutral</em>,
+right-click and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/tsconnectionsettings.png" /></p>
+
+<ul>
+  <li>fDenyTSConnections = <strong>false</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/firewallgroupcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Networking-MPSSVC-Svc_6.2.9200.16384_neutral</em>,
+right-click on <em>FirewallGroups/FirewallGroup</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/firewallgroupsettings.png" /></p>
+
+<ul>
+  <li>Active = <strong>true</strong></li>
+  <li>Group = <strong>Remote Desktop</strong></li>
+  <li>Key = <strong>RemoteDesktop</strong></li>
+  <li>Profile = <strong>all</strong></li>
+</ul>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/rdpsecuritycomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-TerminalServices-RDP-WinStationExtensions_6.2.9200.16384_neutral</em>,
+right-click and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="http://misheska.com/images/sysprep/win2012x64/rdpsecuritysettings.png" /></p>
+
+<ul>
+  <li>SecurityLayer = <strong>1</strong></li>
+  <li>UserAuthentication = <strong>0</strong></li>
+</ul>
+
+<h1 id="turn-off-computer-password">Turn off computer password</h1>
+
+<p>Prevent the image from changing its computer account password,
+so you can restore old snapshots without being dropped from a domain</p>
+
+<pre><code>REG ADD "HKLM\System\CurrentControlSet\Services\Netlogon\Parameters" /v DisablePasswordChange /t REG_DWORD /d 1 /f
+</code></pre>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/disablepasswordchangecomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.2.9200.16384_neutral</em>,
+right-click <em>FirstLogonCommands/SynchronousCommand” and choose
+_Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/disablepasswordchangesettings.png" /></p>
+
+<ul>
+  <li>CommandLine = <strong>REG ADD “HKLM\System\CurrentControlSet\Services\Netlogon\Parameters” /v DisablePasswordChange /t REG_DWORD /d 2 /f</strong></li>
+  <li>Description = <strong>Disable computer password change</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>RequiresUserInput <strong>true</strong></li>
+</ul>
+
+<h1 id="turn-off-all-power-saving-and-timeouts">Turn off all power saving and timeouts</h1>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>set-power-config.bat </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="c">REM Set power configuration to High Performance</span>
+</span><span class="line">powercfg -setactive <span class="m">8</span>c<span class="m">5</span>e<span class="m">7</span>fda-e<span class="m">8</span>bf<span class="m">-4</span>a<span class="m">96-9</span>a<span class="m">85</span>-a<span class="m">6</span>e<span class="m">23</span>a<span class="m">8</span>c<span class="m">635</span>c
+</span><span class="line"><span class="c">REM Monitor timeout</span>
+</span><span class="line">powercfg -Change -monitor-timeout-ac <span class="m">0</span>
+</span><span class="line">powercfg -Change -monitor-timeout-dc <span class="m">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/powerconfigcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.2.9200.16384_neutral</em>,
+right-click <em>FirstLogonCommands/SynchronousCommand” and choose
+_Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="http://misheska.com/images/sysprep/win2012x64/powerconfigsettings.png" /></p>
+
+<ul>
+  <li>CommandLine = <strong>cmd.exe /c a:set-power-config.bat</strong></li>
+  <li>Description = <strong>Turn off all power saving and timeouts</strong></li>
+  <li>Order = <strong>2</strong></li>
+  <li>RequiresUserInput = <strong>true</strong></li>
+</ul>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Windows 8 Automated Install Settings]]></title>
