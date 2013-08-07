@@ -160,7 +160,7 @@ gem 'kitchen-vagrant', :group => :integration
 As of this writing, if you do not add the version constraint for `test-kitchen`,
 You will get this mysterious error when you run `bundle install`:
 
-   Bundler could not find compatible versions for gem "test-kitchen":
+    Bundler could not find compatible versions for gem "test-kitchen":
       In Gemfile:
         kitchen-vagrant (>= 0) ruby depends on
           test-kitchen (~> 1.0.0.alpha.0) ruby
