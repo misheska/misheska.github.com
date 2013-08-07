@@ -157,8 +157,8 @@ gem 'test-kitchen', '~> 1.0.0.beta.2', :group => :integration
 gem 'kitchen-vagrant', :group => :integration
 {% endcodeblock %}
 
-As of this writing, if you do not add the version constraint for `test-kitchen`,
-You will get this mysterious error when you run `bundle install`:
+As of this writing, if you do not add the version constraint for `test-kitchen`
+you will get this mysterious error when you run `bundle install`:
 
     Bundler could not find compatible versions for gem "test-kitchen":
       In Gemfile:
