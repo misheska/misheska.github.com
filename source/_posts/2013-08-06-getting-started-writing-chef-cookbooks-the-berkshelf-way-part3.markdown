@@ -8,6 +8,8 @@ categories: chef
 * list element with functor item
 {:toc}
 
+NOTE: Preview for beta testers to review...
+
 This is the third article in a series on writing Opscode Chef cookbooks the
 Berkshelf Way.  Here's a link to [Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/) and
 [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/).  The source code examples covered in this
@@ -124,8 +126,8 @@ driver_config:
 platforms:
 - name: centos-6.4
   driver_config:
-    box: opscode-centos-6.4
-    box_url: https://opscode-vm-bento.s3.amazonaws.com/vagrant/opscode_centos-6.4_provisionerless.box
+    box: misheska-centos64
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
 
 suites:
 - name: default
@@ -163,10 +165,10 @@ Test Kitchen YAML file format finds acceptable.
 Testing Iteration #14 - Provision with Test Kitchen
 ---------------------------------------------------
 
-You can do everything that you were doing with vagrant just using Test Kitchen.
-The Test Kitchen equivalent of the `vagrant up` command is `kitchen setup`.
-Try running the `kitchen setup` command now to verify that your
-`.kitchen.yml` file is valid.  When you run `kitchen setup` it will
+You can do nearly everything that you were doing with vagrant just using Test
+Kitchen.  The Test Kitchen equivalent of the `vagrant up` command is 
+`kitchen setup`.  Try running the `kitchen setup` command now to verify that
+your `.kitchen.yml` file is valid.  When you run `kitchen setup` it will
 spin up a CentOS 6.4 vagrant test node instance and use Chef Solo to provision
 the MyFace cookbook on the test node:
 
@@ -175,7 +177,7 @@ the MyFace cookbook on the test node:
     -----> Creating <default-centos-64>
            [kitchen::driver::vagrant command] BEGIN (vagrant up --no-provision)
            Bringing machine 'default' up with 'virtualbox' provider...
-           [default] Importing base box 'opscode-centos-6.4'...
+           [default] Importing base box 'misheska-centos64'...
            [default] Matching MAC address for NAT networking...
            [default] Setting the name of the VM...
            [default] Clearing any previously set forwarded ports...
