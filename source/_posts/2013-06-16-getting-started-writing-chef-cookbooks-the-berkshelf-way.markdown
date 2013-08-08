@@ -222,7 +222,7 @@ of Chef.  (By default Berkshelf points to an image with an older version of Cent
 {% codeblock myface/Vagrantfile lang:ruby %}
 Vagrant.configure("2") do |config|
   config.vm.hostname = "myface-berkshelf"
-  config.vm.box = "misheska-centos6.4"
+  config.vm.box = "misheska-centos64"
   config.vm.box_url = "https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box"
   config.omnibus.chef_version = :latest
   config.vm.network :private_network, ip: "33.33.33.10"
@@ -953,8 +953,8 @@ So here's what my `$HOME/.berkshelf/config.json` file looks like:
       },
       "vagrant":{
         "vm":{
-          "box": "misheska-centos-6.4",
-          "box_url":"https://www.dropbox.com/s/y42egyh9cqsge24/misheska-centos-6.4.box",
+          "box": "misheska-centos64",
+          "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box",
           "forward_port": {
           },
           "network":{
