@@ -1,0 +1,555 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3 - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Iteration #13 - Install Test Kitchen Testing Iteration #13 - Show the Test Kitchen version Iteration #14 - Create a Kitchen YAML file Testing &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-06T12:46:00-07:00" pubdate data-updated="true">Aug 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#iteration-13---install-test-kitchen">Iteration #13 - Install Test Kitchen</a>    <ul>
+      <li><a href="#testing-iteration-13---show-the-test-kitchen-version">Testing Iteration #13 - Show the Test Kitchen version</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-14---create-a-kitchen-yaml-file">Iteration #14 - Create a Kitchen YAML file</a>    <ul>
+      <li><a href="#testing-iteration-14---provision-with-test-kitchen">Testing Iteration #14 - Provision with Test Kitchen</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>NOTE: Preview for beta testers to review…</p>
+
+<p>This is the third article in a series on writing Opscode Chef cookbooks the
+Berkshelf Way.  Here’s a link to <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a> and
+<a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>.  The source code examples covered in this
+article can be found on Github: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
+
+<p>In this installment, we’re going to learn how to use Test Kitchen to 
+automate all the verification steps we did by hand for each iteration in
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a> and
+<a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>.  If not anything else, it’s worth learning
+Test Kitchen because OpsCode, the company that makes Chef, has encouraged the
+use of Test Kitchen to verify community cookbooks.</p>
+
+<p>Test Kitchen is built on top of vagrant and supplements the <code>Vagrantfile</code> file
+you have been using so far in this series to do local automated testing.  The
+main benefit to Test Kitchen is that it makes it easy to run tests on multiple
+platforms in parallel, which is more difficult to do with just a <code>Vagrantfile</code>.
+We’ll be showcasing this aspect of Test Kitchen by ensuring that Myface works
+on both the CentOS 6.4 and Ubuntu 12.04 Linux distributions.</p>
+
+<h1 id="iteration-13---install-test-kitchen">Iteration #13 - Install Test Kitchen</h1>
+<p>Edit <code>myface/Gemfile</code> and add the following line to load the
+Test Kitchen gem:</p>
+
+<pre><code>gem 'test-kitchen', '~&gt; 1.0.0.beta.2'
+</code></pre>
+
+<p>Your <code>myface/Gemfile</code> should look like the following after editing:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Gemfile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">source</span> <span class="s1">&#39;https://rubygems.org&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;berkshelf&#39;</span>
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;test-kitchen&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.0.0.beta.2&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Test Kitchen is in beta release and is still evolving rapidly.  The
+1.0.0.beta.2 version constraint will ensure that you are using the latest
+stable prerelease version.</p>
+
+<p>After you have updated the <code>Gemfile</code> run <code>bundle install</code> to download the
+test-kitchen gem and all its dependencies:</p>
+
+<pre><code>$ bundle install
+Fetching gem metadata from https://rubygems.org/........
+Fetching gem metadata from https://rubygems.org/..
+Resolving dependencies...
+Using i18n (0.6.4)
+Using multi_json (1.7.8)
+Using activesupport (3.2.14)
+...
+Installing test-kitchen (1.0.0.beta.2)
+Using bundler (1.3.5)
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
+</code></pre>
+
+<h2 id="testing-iteration-13---show-the-test-kitchen-version">Testing Iteration #13 - Show the Test Kitchen version</h2>
+
+<p>If everything worked properly you should be able to run the <code>kitchen --version</code>
+command to see your installed Test Kitchen’s version information</p>
+
+<pre><code>$ kitchen --version
+Test Kitchen version 1.0.0.beta.2
+</code></pre>
+
+<h1 id="iteration-14---create-a-kitchen-yaml-file">Iteration #14 - Create a Kitchen YAML file</h1>
+<p>In order to use Test Kitchen on a cookbook, first you need to add a few more
+dependencies and create a template Kitchen YAML file.  Test Kitchen makes this
+easy by providing the <code>kitchen init</code> command to perform all these
+initialization steps automatically </p>
+
+<pre><code>$ kitchen init
+      create  .kitchen.yml
+      append  Thorfile
+      create  test/integration/default
+      append  .gitignore
+      append  .gitignore
+      append  Gemfile
+You must run 'bundle install' to fetch any new gems.
+</code></pre>
+
+<p>Since <code>kitchen init</code> modified your Gemfile, you need to re-run <code>bundle install</code>
+(as suggested above) to pick up the new gem dependencies:</p>
+
+<pre><code>$ bundle install
+Fetching gem metadata from https://rubygems.org/........
+Fetching gem metadata from https://rubygems.org/..
+Resolving dependencies...
+Using i18n (0.6.4)
+Using multi_json (1.7.8)
+Using activesupport (3.2.14)
+...
+Using safe_yaml (0.9.5)
+Using test-kitchen (1.0.0.beta.2)
+Installing kitchen-vagrant (0.11.0)
+Using bundler (1.3.5)
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
+</code></pre>
+
+<p>Most importantly, this new <code>bundle install</code> pass installed the
+<code>kitchen-vagrant</code> vagrant driver for Test Kitchen.</p>
+
+<p>Now that you have created a <code>.kitchen.yml</code> Kitchen YAML file and loaded all
+the necessary gems, let’s customize the file so that we’ll use 
+to verify that the Myface cookbook works on CentOS 6.4, like we were doing in
+the previous installments with the <code>Vagrantfile</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/.kitchen.yml </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="nn">---</span>
+</span><span class="line"><span class="l-Scalar-Plain">driver_plugin</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vagrant</span>
+</span><span class="line"><span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">require_chef_omnibus</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos-6.4</span>
+</span><span class="line">  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">misheska-centos64</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">suites</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
+</span><span class="line">  <span class="l-Scalar-Plain">run_list</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;recipe[myface]&quot;</span><span class="p-Indicator">]</span>
+</span><span class="line">  <span class="l-Scalar-Plain">attributes</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span> <span class="nv">mysql</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span> <span class="nv">server_root_password</span><span class="p-Indicator">:</span> <span class="s">&quot;rootpass&quot;</span><span class="p-Indicator">,</span> <span class="nv">server_debian_password</span><span class="p-Indicator">:</span> <span class="s">&quot;debpass&quot;</span><span class="p-Indicator">,</span> <span class="nv">server_repl_password</span><span class="p-Indicator">:</span> <span class="s">&quot;replpass&quot;</span> <span class="p-Indicator">}</span> <span class="p-Indicator">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Everything in the YAML file should be straightforward to understand, except
+perhaps the <code>attributes</code> item in the <code>suites</code> stanza.  These values 
+came from the <code>Vagrantfile</code> we used in the previous installments of this
+series.  Here’s an excerpt from the <code>Vagrantfile</code> - at the end are some
+values that Berkshelf initialzed (which we used in
+<a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>).</p>
+
+<pre><code>...
+  config.vm.provision :chef_solo do |chef|
+    chef.json = {
+      :mysql =&gt; {
+        :server_root_password =&gt; 'rootpass',
+        :server_debian_password =&gt; 'debpass',
+        :server_repl_password =&gt; 'replpass'
+      }
+    }
+
+   chef.run_list = [
+        "recipe[myface::default]"
+    ]
+  end
+end
+</code></pre>
+
+<p>Those <code>Vagrantfile</code> attributes were just converted into a format that the
+Test Kitchen YAML file format finds acceptable.</p>
+
+<h2 id="testing-iteration-14---provision-with-test-kitchen">Testing Iteration #14 - Provision with Test Kitchen</h2>
+
+<p>You can do nearly everything that you were doing with vagrant just using Test
+Kitchen.  The Test Kitchen equivalent of the <code>vagrant up</code> command is 
+<code>kitchen setup</code>.  Try running the <code>kitchen setup</code> command now to verify that
+your <code>.kitchen.yml</code> file is valid.  When you run <code>kitchen setup</code> it will
+spin up a CentOS 6.4 vagrant test node instance and use Chef Solo to provision
+the MyFace cookbook on the test node:</p>
+
+<pre><code>$ kitchen setup
+-----&gt; Starting Kitchen (v1.0.0.beta.2)
+-----&gt; Creating &lt;default-centos-64&gt;
+       [kitchen::driver::vagrant command] BEGIN (vagrant up --no-provision)
+       Bringing machine 'default' up with 'virtualbox' provider...
+       [default] Importing base box 'misheska-centos64'...
+       [default] Matching MAC address for NAT networking...
+       [default] Setting the name of the VM...
+       [default] Clearing any previously set forwarded ports...
+       [Berkshelf] Skipping Berkshelf with --no-provision
+       [default] Fixed port collision for 22 =&gt; 2222. Now on port 2200.
+       [default] Creating shared folders metadata...
+       [default] Clearing any previously set network interfaces...
+       [default] Preparing network interfaces based on configuration...
+       [default] Forwarding ports...
+       [default] -- 22 =&gt; 2200 (adapter 1)
+       [default] Running 'pre-boot' VM customizations...
+       [default] Booting VM...
+       [default] Waiting for VM to boot. This can take a few minutes.
+       [default] VM booted and ready for use!
+       [default] Setting hostname...
+       [default] Mounting shared folders...
+       [default] -- /vagrant
+       [kitchen::driver::vagrant command] END (0m39.38s)
+       [kitchen::driver::vagrant command] BEGIN (vagrant ssh-config)
+       [kitchen::driver::vagrant command] END (0m2.85s)
+       Vagrant instance &lt;default-centos-64&gt; created.
+       Finished creating &lt;default-centos-64&gt; (0m46.19s).
+-----&gt; Converging &lt;default-centos-64&gt;
+-----&gt; Installing Chef Omnibus (true)
+       --2013-08-07 07:25:35--  https://www.opscode.com/chef/install.sh
+Resolving www.opscode.com...        184.106.28.82
+       Connecting to www.opscode.com|184.106.28.82|:443...
+       connected.
+HTTP request sent, awaiting response...        200 OK
+       Length: 6790 (6.6K) [application/x-sh]
+       Saving to: “STDOUT”
+
+ 0% [                                       ] 0           --.-K/s
+100%[======================================&gt;] 6,790       --.-K/s   in 0s
+ 
+       2013-08-07 07:25:40 (461 MB/s) - written to stdout [6790/6790]
+
+       Downloading Chef  for el...
+       Installing Chef
+       warning: /tmp/tmp.wAJrUjYo/chef-.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+Preparing...                #####  ########################################### [100%]
+   1:chef                          ########################################### [100%]
+       Thank you for installing Chef!
+       Resolving cookbook dependencies with Berkshelf
+Using myface (2.0.0)
+...
+       Recipe: apache2::default
+         * service[apache2] action restart[2013-08-07T07:28:54+00:00] INFO: Processing service[apache2] action restart (apache2::default line 221)
+       [2013-08-07T07:28:55+00:00] INFO: service[apache2] restarted
+
+           - restart service service[apache2]
+
+       [2013-08-07T07:28:55+00:00] INFO: Chef Run complete in 162.083058446 seconds
+       [2013-08-07T07:28:55+00:00] INFO: Running report handlers
+       [2013-08-07T07:28:55+00:00] INFO: Report handlers complete
+       Chef Client finished, 97 resources updated
+       Finished converging &lt;default-centos-64&gt; (3m20.62s).
+-----&gt; Setting up &lt;default-centos-64&gt;
+       Finished setting up &lt;default-centos-64&gt; (0m0.00s).
+-----&gt; Kitchen is finished. (4m11.93s)
+</code></pre>
+
+<p>To display the results of the Chef Run, type in the <code>kitchen list</code> command:</p>
+
+<pre><code>$ kitchen list
+Instance           Driver   Provisioner  Last Action
+default-centos-64  Vagrant  Chef Solo    Set Up
+</code></pre>
+
+<p>If the run succeeded, it should display <code>Set Up</code> in the <code>Last Action</code> field.</p>
+
+<p>The Test Kitchen equivalent of the <code>vagrant ssh</code> command is <code>kitchen login</code>.
+Since Test Kitchen supports multiple instances, you will need to pass in
+the instance name for which you wish to login as a parameter (which you can
+get from the <code>kitchen list</code> output).  We want to login to the CentOS 6.4
+instance (the only instance for now), so type in the command
+<code>kitchen login default-centos-64</code> to login:</p>
+
+<pre><code>$ kitchen login default-centos-64
+Last login: Wed Aug  7 07:39:31 2013 from 10.0.2.2
+[vagrant@default-centos-64 ~]$
+</code></pre>
+
+<p>Now you can poke around in the image the same way you did with <code>vagrant ssh</code>,
+for example, verifying that the httpd server is running:</p>
+
+<pre><code>[vagrant@default-centos-64 ~]$ sudo /sbin/service httpd status
+httpd (pid  3737) is running...
+</code></pre>
+
+<p>After you are done working in the test instance, make sure to run the
+<code>exit</code> command to log out so that you return back to your host prompt:</p>
+
+<pre><code>[vagrant@default-centos-64 ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-06T12:46:00-07:00" pubdate data-updated="true">Aug 6<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/chef/'>chef</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/" data-via="" data-counturl="http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/28/windows-server-2012-automated-install-settings/" title="Previous Post: Windows Server 2012 Automated Install Settings">&laquo; Windows Server 2012 Automated Install Settings</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/28/windows-server-2012-automated-install-settings/">Windows Server 2012 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/27/windows-8-automated-install-settings/">Windows 8 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/26/windows-7-automated-install-settings/">Windows 7 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/">Windows Server 2008 R2 automated install settings</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2013 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
