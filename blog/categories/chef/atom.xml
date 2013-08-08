@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-08T08:44:00-07:00</updated>
+  <updated>2013-08-08T09:01:42-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -597,6 +597,31 @@ is now in the <code>Set Up</code> state as well, showing that there were no erro
 <pre><code>Instance             Driver   Provisioner  Last Action
 default-centos-64    Vagrant  Chef Solo    Set Up
 default-ubuntu-1204  Vagrant  Chef Solo    Set Up
+</code></pre>
+
+<p>You just fixed an error with the MyFace cookbook that prevented deployment to
+Ubuntu 12.04, and verified that the cookbook correctly deploys to both 
+Ubuntu 12.04 and Centos 6.4.</p>
+
+<p>Use the <code>kitchen login</code> command to ssh into each instance and poke around
+if you like.  You now have two local vagrant VMs instantiated to play with!</p>
+
+<pre><code>$ kitchen login default-ubuntu-1204
+Welcome to Ubuntu 12.04.2 LTS (GNU/Linux 3.5.0-23-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Thu Aug  8 08:40:50 2013 from 10.0.2.2
+$ [...poke around, run some commands...]
+$ exit
+Connection to 127.0.0.1 closed.
+
+$ kitchen login default-centos-64
+Last login: Thu Aug  8 08:54:44 2013 from 10.0.2.2
+Welcome to your Packer-built virtual machine.
+[vagrant@default-centos-64 ~]$ [...poke around, run some commands...]
+[vagrant@default-centos-64 ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
 </code></pre>
 ]]></content>
   </entry>
@@ -2373,7 +2398,7 @@ You must run `bundle install' to fetch any new gems.
 for the <code>test-kitchen</code> gem so that Bundler can resolve all the dependencies
 properly:</p>
 
-<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/Vagrantfile  </span></figcaption>
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/Gemfile  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
 <span class='line-number'>3</span>
@@ -2474,7 +2499,7 @@ of Chef.  (By default Berkshelf points to an image with an older version of Cent
 <span class='line-number'>23</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="err">“</span><span class="mi">2</span><span class="err">”</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="err">“</span><span class="n">myface</span><span class="o">-</span><span class="n">berkshelf</span><span class="err">”</span>
-</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="err">“</span><span class="n">misheska</span><span class="o">-</span><span class="n">centos6</span><span class="o">.</span><span class="mi">4</span><span class="err">”</span>
+</span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="err">“</span><span class="n">misheska</span><span class="o">-</span><span class="n">centos64</span><span class="err">”</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="err">“</span><span class="ss">https</span><span class="p">:</span><span class="sr">//s</span><span class="mi">3</span><span class="o">-</span><span class="n">us</span><span class="o">-</span><span class="n">west</span><span class="o">-</span><span class="mi">2</span><span class="o">.</span><span class="n">amazonaws</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">misheska</span><span class="o">/</span><span class="n">vagrant</span><span class="o">/</span><span class="n">virtualbox</span><span class="o">/</span><span class="n">misheska</span><span class="o">-</span><span class="n">centos64</span><span class="o">.</span><span class="n">box</span><span class="err">”</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">omnibus</span><span class="o">.</span><span class="n">chef_version</span> <span class="o">=</span> <span class="ss">:latest</span>
 </span><span class='line'>  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="err">“</span><span class="mi">33</span><span class="o">.</span><span class="mi">33</span><span class="o">.</span><span class="mi">33</span><span class="o">.</span><span class="mi">10</span><span class="err">”</span>
@@ -3445,8 +3470,8 @@ Chef API node name: misheska
   },
   "vagrant":{
     "vm":{
-      "box": "misheska-centos-6.4",
-      "box_url":"https://www.dropbox.com/s/y42egyh9cqsge24/misheska-centos-6.4.box",
+      "box": "misheska-centos64",
+      "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box",
       "forward_port": {
       },
       "network":{

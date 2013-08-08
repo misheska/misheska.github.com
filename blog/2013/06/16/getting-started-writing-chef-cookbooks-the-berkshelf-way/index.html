@@ -315,7 +315,7 @@ You must run `bundle install' to fetch any new gems.
 for the <code>test-kitchen</code> gem so that Bundler can resolve all the dependencies
 properly:</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Vagrantfile  </span></figcaption>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Gemfile  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
@@ -416,7 +416,7 @@ of Chef.  (By default Berkshelf points to an image with an older version of Cent
 <span class="line-number">23</span>
 </pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;misheska-centos6.4&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;misheska-centos64&quot;</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box&quot;</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">omnibus</span><span class="o">.</span><span class="n">chef_version</span> <span class="o">=</span> <span class="ss">:latest</span>
 </span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
@@ -1383,8 +1383,8 @@ Chef API node name: misheska
   },
   "vagrant":{
     "vm":{
-      "box": "misheska-centos-6.4",
-      "box_url":"https://www.dropbox.com/s/y42egyh9cqsge24/misheska-centos-6.4.box",
+      "box": "misheska-centos64",
+      "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box",
       "forward_port": {
       },
       "network":{
