@@ -3,10 +3,14 @@ layout: post
 title: "Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 2"
 date: 2013-06-23 11:37
 comments: true
-categories: 
+categories: chef
 ---
 * list element with functor item
 {:toc}
+
+_Updated August 7, 2013_
+
+* Fixed error in Iteration #10 test per Jeff Thomas *
 
 _Updated July 23rd, 2013_
 
@@ -35,12 +39,12 @@ changes, moving to MySQL, per [Semantic Versioning](http://semver.org/):
 
 {% codeblock myface/metadata.rb lang:ruby %}
 name             'myface'
-maintainer       'YOUR_NAME'
-maintainer_email 'YOUR_EMAIL'
-license          'All rights reserved'
+maintainer       'Mischa Taylor'
+maintainer_email 'mischa@misheska.com'
+license          'Apache 2.0'
 description      'Installs/Configures myface'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '2.0.0'
+version          '1.0.0'
 
 depends "apache2", "~> 1.6.0"
 depends "mysql", "~> 3.0.0"
@@ -83,25 +87,63 @@ include_recipe "myface::webserver"
 Run `vagrant provision` to converge your changes.
 
     $ vagrant provision
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130722-92068-1y18eun-default'
-    [Berkshelf] Using myface (2.0.0)
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
+    [Berkshelf] Using myface (1.0.0)
     [Berkshelf] Using apache2 (1.6.6)
     [Berkshelf] Using mysql (3.0.2)
     [Berkshelf] Using openssl (1.0.2)
     [Berkshelf] Using build-essential (1.4.0)
-    [default] Chef 11.4.4 Omnibus package is already installed.
+    [default] Chef 11.6.0 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-07-22T23:20:39-07:00] INFO: *** Chef 11.4.4 ***
-    [2013-07-22T23:20:39-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    ...
-    [2013-07-22T23:22:15-07:00] INFO: Processing directory[/srv/apache/myface] action create (myface::webserver line 32)
-    [2013-07-22T23:22:15-07:00] INFO: Processing template[/srv/apache/myface/index.html] action create (myface::webserver line 38)
-    [2013-07-22T23:22:15-07:00] INFO: Processing execute[a2ensite myface.conf] action run (myface::webserver line 24)
-    [2013-07-22T23:22:15-07:00] INFO: Chef Run complete in 95.633444455 seconds
-    [2013-07-22T23:22:15-07:00] INFO: Running report handlers
-    [2013-07-22T23:22:15-07:00] INFO: Report handlers complete
+    [2013-08-07T21:18:50-07:00] INFO: Forking chef instance to converge...
+    [2013-08-07T21:18:50-07:00] INFO: *** Chef 11.6.0 ***
+    [2013-08-07T21:18:50-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-08-07T21:18:50-07:00] INFO: Run List is [recipe[myface::default]]
+    [2013-08-07T21:18:50-07:00] INFO: Run List expands to [myface::default]
+    [2013-08-07T21:18:50-07:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-08-07T21:18:50-07:00] INFO: Running start handlers
+    [2013-08-07T21:18:50-07:00] INFO: Start handlers complete.
+    [2013-08-07T21:18:51-07:00] WARN: Cloning resource attributes for directory[/var/lib/mysql] from prior resource (CHEF-3694)
+    [2013-08-07T21:18:51-07:00] WARN: Previous directory[/var/lib/mysql]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/mysql/recipes/server.rb:108:in `block in from_file'
+    [2013-08-07T21:18:51-07:00] WARN: Current  directory[/var/lib/mysql]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/mysql/recipes/server.rb:108:in `block in from_file'
+    [2013-08-07T21:18:51-07:00] INFO: Could not find previously defined grants.sql resource
+    [2013-08-07T21:18:51-07:00] WARN: Cloning resource attributes for service[mysql] from prior resource (CHEF-3694)
+    [2013-08-07T21:18:51-07:00] WARN: Previous service[mysql]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/mysql/recipes/server.rb:154:in `from_file'
+    [2013-08-07T21:18:51-07:00] WARN: Current  service[mysql]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/mysql/recipes/server.rb:218:in `from_file'
+    [2013-08-07T21:18:51-07:00] WARN: Cloning resource attributes for service[apache2] from prior resource (CHEF-3694)
+    [2013-08-07T21:18:51-07:00] WARN: Previous service[apache2]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/apache2/recipes/default.rb:24:in `from_file'
+    [2013-08-07T21:18:51-07:00] WARN: Current  service[apache2]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/apache2/recipes/default.rb:221:in `from_file'
+    [2013-08-07T21:18:52-07:00] INFO: package[mysql] installing mysql-5.1.69-1.el6_4 from updates repository
+    [2013-08-07T21:19:01-07:00] INFO: package[mysql-devel] installing mysql-devel-5.1.69-1.el6_4 from updates repository
+    [2013-08-07T21:19:24-07:00] INFO: package[mysql-server] installing mysql-server-5.1.69-1.el6_4 from updates repository
+    [2013-08-07T21:19:42-07:00] INFO: package[mysql-server] sending start action to service[mysql] (immediate)
+    [2013-08-07T21:19:43-07:00] INFO: service[mysql] started
+    [2013-08-07T21:19:43-07:00] INFO: directory[/var/log/mysql] created directory /var/log/mysql
+    [2013-08-07T21:19:43-07:00] INFO: directory[/var/log/mysql] owner changed to 27
+    [2013-08-07T21:19:43-07:00] INFO: directory[/var/log/mysql] group changed to 27
+    [2013-08-07T21:19:43-07:00] INFO: directory[/etc] owner changed to 27
+    [2013-08-07T21:19:43-07:00] INFO: directory[/etc] group changed to 27
+    [2013-08-07T21:19:43-07:00] INFO: directory[/etc/mysql/conf.d] created directory /etc/mysql/conf.d
+    [2013-08-07T21:19:43-07:00] INFO: directory[/etc/mysql/conf.d] owner changed to 27
+    [2013-08-07T21:19:43-07:00] INFO: directory[/etc/mysql/conf.d] group changed to 27
+    [2013-08-07T21:19:43-07:00] INFO: service[mysql] enabled
+    [2013-08-07T21:19:43-07:00] INFO: execute[assign-root-password] ran successfully
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/mysql_grants.sql] created file /etc/mysql_grants.sql
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/mysql_grants.sql] updated file contents /etc/mysql_grants.sql
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/mysql_grants.sql] owner changed to 0
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/mysql_grants.sql] group changed to 0
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/mysql_grants.sql] mode changed to 600
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/mysql_grants.sql] sending run action to execute[mysql-install-privileges] (immediate)
+    [2013-08-07T21:19:43-07:00] INFO: execute[mysql-install-privileges] ran successfully
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/my.cnf] backed up to /var/chef/backup/etc/my.cnf.chef-20130807211943
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/my.cnf] updated file contents /etc/my.cnf
+    [2013-08-07T21:19:43-07:00] INFO: template[/etc/my.cnf] sending restart action to service[mysql] (immediate)
+    [2013-08-07T21:19:49-07:00] INFO: service[mysql] restarted
+    [2013-08-07T21:19:50-07:00] INFO: Chef Run complete in 59.147486543 seconds
+    [2013-08-07T21:19:50-07:00] INFO: Running report handlers
+    [2013-08-07T21:19:50-07:00] INFO: Report handlers complete
 
 Testing Iteration #7
 --------------------
@@ -109,7 +151,7 @@ Verify that the `mysqld` service is running on your vagrant guest by
 running the following command:
 
     $ vagrant ssh -c "sudo /sbin/service mysqld status"
-    mysqld (pid  7702) is running...
+    mysqld (pid  8525) is running...
 
 Also check that MySQL is enabled to start on boot:
 
@@ -205,28 +247,46 @@ end
 Converge the changes with `vagrant provision`:
 
     $ vagrant provision
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130722-92068-1y18eun-default'
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
     [Berkshelf] Using myface (2.0.0)
     [Berkshelf] Using apache2 (1.6.6)
     [Berkshelf] Using mysql (3.0.2)
     [Berkshelf] Using openssl (1.0.2)
     [Berkshelf] Using build-essential (1.4.0)
-    [Berkshelf] Using database (1.3.12)
-    [Berkshelf] Using postgresql (3.0.2)
-    [Berkshelf] Using apt (2.0.0)
-    [Berkshelf] Using aws (0.101.2)
-    [Berkshelf] Using xfs (1.1.0)
-    [default] Chef 11.4.4 Omnibus package is already installed.
+    [Berkshelf] Installing database (1.3.12) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Installing postgresql (3.0.2) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Installing apt (2.0.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Installing aws (0.101.2) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Installing xfs (1.1.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [default] Chef 11.6.0 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-06-25T00:56:36-07:00] INFO: *** Chef 11.4.4 ***
-    [2013-06-25T00:56:36-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    ...
-    [2013-06-25T00:57:43-07:00] INFO: Processing execute[a2ensite myface.conf] action run (myface::webserver line 24)
-    [2013-06-25T00:57:43-07:00] INFO: Chef Run complete in 66.405200417 seconds
-    [2013-06-25T00:57:43-07:00] INFO: Running report handlers
-    [2013-06-25T00:57:43-07:00] INFO: Report handlers complete
+    [2013-08-07T21:26:11-07:00] INFO: Forking chef instance to converge...
+    [2013-08-07T21:26:11-07:00] INFO: *** Chef 11.6.0 ***
+    [2013-08-07T21:26:12-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-08-07T21:26:12-07:00] INFO: Run List is [recipe[myface::default]]
+    [2013-08-07T21:26:12-07:00] INFO: Run List expands to [myface::default]
+    [2013-08-07T21:26:12-07:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-08-07T21:26:12-07:00] INFO: Running start handlers
+    [2013-08-07T21:26:12-07:00] INFO: Start handlers complete.
+    [2013-08-07T21:26:12-07:00] WARN: Cloning resource attributes for directory[/var/lib/mysql] from prior resource (CHEF-3694)
+    [2013-08-07T21:26:12-07:00] WARN: Previous directory[/var/lib/mysql]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/mysql/recipes/server.rb:108:in `block in from_file'
+    [2013-08-07T21:26:12-07:00] WARN: Current  directory[/var/lib/mysql]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/mysql/recipes/server.rb:108:in `block in from_file'
+    [2013-08-07T21:26:12-07:00] INFO: Could not find previously defined grants.sql resource
+    [2013-08-07T21:26:12-07:00] WARN: Cloning resource attributes for service[mysql] from prior resource (CHEF-3694)
+    [2013-08-07T21:26:12-07:00] WARN: Previous service[mysql]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/mysql/recipes/server.rb:154:in `from_file'
+    [2013-08-07T21:26:12-07:00] WARN: Current  service[mysql]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/mysql/recipes/server.rb:218:in `from_file'
+    [2013-08-07T21:26:14-07:00] INFO: package[autoconf] installing autoconf-2.63-5.1.el6 from base repository
+    [2013-08-07T21:26:22-07:00] INFO: package[bison] installing bison-2.4.1-5.el6 from base repository
+    [2013-08-07T21:26:29-07:00] INFO: package[flex] installing flex-2.5.35-8.el6 from base repository
+    [2013-08-07T21:26:36-07:00] INFO: package[gcc-c++] installing gcc-c++-4.4.7-3.el6 from base repository
+    [2013-08-07T21:27:30-07:00] WARN: Cloning resource attributes for service[apache2] from prior resource (CHEF-3694)
+    [2013-08-07T21:27:30-07:00] WARN: Previous service[apache2]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/apache2/recipes/default.rb:24:in `from_file'
+    [2013-08-07T21:27:30-07:00] WARN: Current  service[apache2]: /tmp/vagrant-chef-1/chef-solo-1/cookbooks/apache2/recipes/default.rb:221:in `from_file'
+    [2013-08-07T21:27:31-07:00] INFO: Chef Run complete in 78.857442041 seconds
+    [2013-08-07T21:27:31-07:00] INFO: Running report handlers
+    [2013-08-07T21:27:31-07:00] INFO: Report handlers complete
 
 Testing Iteration #8
 --------------------
@@ -497,13 +557,13 @@ Testing Iteration #10
 
 Run the following mysql command to dump the contents of the `users` table:
 
-    $ vagrant ssh -c 'mysql -hlocalhost -umyface -psupersecret -Dmyface -e "select id,user_name from users;"'
-    id	user_name
-    53971762-f36e-11e2-b889-080027cf	jtimberman
-    539720d6-f36e-11e2-b889-080027cf	someara
-    53972464-f36e-11e2-b889-080027cf	jwinsor
-    539727a2-f36e-11e2-b889-080027cf	cjohnson
-    53972ad6-f36e-11e2-b889-080027cf	mbower
+    $ vagrant ssh -c 'mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"'
+    id                                  user_name
+    216e03c2-ffe4-11e2-b1ad-080027c8	jtimberman
+    216e0890-ffe4-11e2-b1ad-080027c8	someara
+    216e0bce-ffe4-11e2-b1ad-080027c8	jwinsor
+    216e0eda-ffe4-11e2-b1ad-080027c8	cjohnson
+    216e11e6-ffe4-11e2-b1ad-080027c8	mbower
 
 The output should look similar to what you see above - the data from the
 `INSERT INTO` statemens in the SQL script.
@@ -597,7 +657,7 @@ installed:
 
     $ vagrant ssh -c "sudo /usr/sbin/httpd -M | grep php5"
     httpd: Could not reliably determine the server's fully qualified domain name, using 127.0.0.1 for ServerName
-    [Sun Jun 30 09:58:35 2013] [warn] NameVirtualHost *:80 has no VirtualHosts
+    [Wed Aug 07 21:42:03 2013] [warn] NameVirtualHost *:80 has no VirtualHosts
     Syntax OK
      php5_module (shared)
 
@@ -635,7 +695,7 @@ It's the last iteration, get ready to see the PHP sizzle!  First modify
 
 Next delete `templates/default/index.html.erb` with the following command:
 
-    $ rm templates/default/index.html.erb`
+    $ rm templates/default/index.html.erb
 
 You'll be replacing it with the following parametized PHP script as
 `templates/default/index.php.erb`:
