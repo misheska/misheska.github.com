@@ -10,7 +10,7 @@ categories: chef
 
 _Updated August 7, 2013_
 
-* Fixed error in Iteration #10 test per Jeff Thomas *
+* _Fixed error in Iteration #10 test per Jeff Thomas_
 
 _Updated July 23rd, 2013_
 
