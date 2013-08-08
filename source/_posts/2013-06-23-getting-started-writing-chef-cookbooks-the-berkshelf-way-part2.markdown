@@ -982,7 +982,8 @@ Myface.
 More to Come!
 =============
 
-In Part 3, we'll introduce a new tool `test-kitchen` and show you how to
+In [Part 3](http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/),
+ we'll introduce a new tool `test-kitchen` and show you how to
 automate all the tests you've been doing manually to test each iteration.
 
 If you want to see the full source for MyFace, check out the following
