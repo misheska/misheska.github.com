@@ -445,3 +445,27 @@ is now in the `Set Up` state as well, showing that there were no errors:
     Instance             Driver   Provisioner  Last Action
     default-centos-64    Vagrant  Chef Solo    Set Up
     default-ubuntu-1204  Vagrant  Chef Solo    Set Up
+
+You just fixed an error with the MyFace cookbook that prevented deployment to
+Ubuntu 12.04, and verified that the cookbook correctly deploys to both 
+Ubuntu 12.04 and Centos 6.4.
+
+Use the `kitchen login` command to ssh into each instance and poke around
+if you like.  You now have two local vagrant VMs instantiated to play with!
+
+    $ kitchen login default-ubuntu-1204
+    Welcome to Ubuntu 12.04.2 LTS (GNU/Linux 3.5.0-23-generic x86_64)
+    
+     * Documentation:  https://help.ubuntu.com/
+    Last login: Thu Aug  8 08:40:50 2013 from 10.0.2.2
+    $ [...poke around, run some commands...]
+    $ exit
+    Connection to 127.0.0.1 closed.
+
+    $ kitchen login default-centos-64
+    Last login: Thu Aug  8 08:54:44 2013 from 10.0.2.2
+    Welcome to your Packer-built virtual machine.
+    [vagrant@default-centos-64 ~]$ [...poke around, run some commands...]
+    [vagrant@default-centos-64 ~]$ exit
+    logout
+    Connection to 127.0.0.1 closed.
