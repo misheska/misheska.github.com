@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-07T22:11:32-07:00</updated>
+  <updated>2013-08-08T08:44:00-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -25,6 +25,15 @@
   </li>
   <li><a href="#iteration-14---create-a-kitchen-yaml-file">Iteration #14 - Create a Kitchen YAML file</a>    <ul>
       <li><a href="#testing-iteration-14---provision-with-test-kitchen">Testing Iteration #14 - Provision with Test Kitchen</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-15---provisioning-on-ubuntu">Iteration #15 - Provisioning on Ubuntu</a></li>
+  <li><a href="#disable-default-site">disable default site</a></li>
+  <li><a href="#create-apache-config">create apache config</a></li>
+  <li><a href="#create-document-root">create document root</a></li>
+  <li><a href="#write-site">write site</a></li>
+  <li><a href="#enable-myface">enable myface</a>    <ul>
+      <li><a href="#testing-iteration-15---deploy-locally-to-ubuntu-1204">Testing Iteration #15 - Deploy locally to Ubuntu 12.04</a></li>
     </ul>
   </li>
 </ul>
@@ -101,6 +110,7 @@ Test Kitchen version 1.0.0.beta.2
 </code></pre>
 
 <h1 id="iteration-14---create-a-kitchen-yaml-file">Iteration #14 - Create a Kitchen YAML file</h1>
+
 <p>In order to use Test Kitchen on a cookbook, first you need to add a few more
 dependencies and create a template Kitchen YAML file.  Test Kitchen makes this
 easy by providing the <code>kitchen init</code> command to perform all these
@@ -322,6 +332,271 @@ httpd (pid  3737) is running...
 <pre><code>[vagrant@default-centos-64 ~]$ exit
 logout
 Connection to 127.0.0.1 closed.
+</code></pre>
+
+<p>Should you need it, the Test Kitchen equivalent of <code>vagrant destroy</code> is
+<code>kitchen destroy</code>.</p>
+
+<h1 id="iteration-15---provisioning-on-ubuntu">Iteration #15 - Provisioning on Ubuntu</h1>
+
+<p>We haven’t really made use of any unique Test Kitchen features yet, let’s
+start now.  We’ll also deploy our cookbook locally to Ubuntu 12.04 for
+testing, in addition to CentOS 6.4.</p>
+
+<p>Edit <code>.kitchen.yml</code> and add a reference to a Ubuntu 12.04 basebox alongside
+the existing CentOS 6.4 basebox in the <code>platforms</code> stanza:</p>
+
+<pre><code>-name: ubuntu-12.04
+ driver_config:
+   box: misheska-ubuntu1204
+   box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+</code></pre>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/.kitchen.yml </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+</pre></td><td class='code'><pre><code class='yaml'><span class='line'><span class="l-Scalar-Plain">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;hr /&gt;</span>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;p&gt;driver_plugin</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vagrant</span>
+</span><span class='line'><span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">require_chef_omnibus</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;p&gt;platforms</span><span class="p-Indicator">:</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos-6.4</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">misheska-centos64</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-12.04</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">misheska-ubuntu1204</span>
+</span><span class='line'>    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;p&gt;suites</span><span class="p-Indicator">:</span>
+</span><span class='line'><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">run_list</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="nv">“recipe</span><span class="p-Indicator">[</span><span class="nv">myface</span><span class="p-Indicator">]</span><span class="nv">”</span><span class="p-Indicator">]</span>
+</span><span class='line'>  <span class="l-Scalar-Plain">attributes</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span> <span class="nv">mysql</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span> <span class="nv">server_root_password</span><span class="p-Indicator">:</span> <span class="nv">“rootpass”</span><span class="p-Indicator">,</span> <span class="nv">server_debian_password</span><span class="p-Indicator">:</span> <span class="nv">“debpass”</span><span class="p-Indicator">,</span> <span class="nv">server_repl_password</span><span class="p-Indicator">:</span> <span class="nv">“replpass”</span> <span class="p-Indicator">}</span> <span class="p-Indicator">}</span><span class="l-Scalar-Plain">&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="l-Scalar-Plain">&lt;p&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Before we run <code>kitchen setup</code> to do a Chef run, we need to fix our cookbook
+so it will run successfully on Ubuntu 12.04.  If you tried to deploy now you
+would notice that the MyFace cookbook would fail to deploy to Ubuntu 12.04
+successfully due to a reference to the <code>php-mysql</code> package in 
+<code>myface/receipes/webserver.rb</code>.</p>
+
+<pre><code>... 
+include_recipe "apache2"
+include_recipe "apache2::mod_php5"
+
+package "php-mysql" do
+  action :install
+  notifies :restart, "service[apache2]"
+end
+...
+</code></pre>
+
+<p>On Ubuntu the package name should be <code>php5-mysql</code> instead of <code>php-mysql</code>.</p>
+
+<p>As with most issues in the Chef world, there’s a cookbook for that!
+The Opscode <code>php</code> cookbook has conditionals to reference the correct name
+for the <code>php-mysql</code> package on a number of platforms.</p>
+
+<p>Edit <code>myface/metadata.rb</code> and add a reference to the latest version of the
+<code>php</code> cookbook (currently 1.2.3):</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/metadata.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="nb">name</span>             <span class="err">‘</span><span class="n">myface</span><span class="err">’</span>
+</span><span class='line'><span class="n">maintainer</span>       <span class="err">‘</span><span class="no">Mischa</span> <span class="no">Taylor</span><span class="err">’</span>
+</span><span class='line'><span class="n">maintainer_email</span> <span class="err">‘</span><span class="n">mischa</span><span class="vi">@misheska</span><span class="o">.</span><span class="n">com</span><span class="err">’</span>
+</span><span class='line'><span class="n">license</span>          <span class="err">‘</span><span class="no">Apache</span> <span class="mi">2</span><span class="o">.</span><span class="mi">0</span><span class="err">’</span>
+</span><span class='line'><span class="n">description</span>      <span class="err">‘</span><span class="no">Installs</span><span class="o">/</span><span class="no">Configures</span> <span class="n">myface</span><span class="err">’</span>
+</span><span class='line'><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="o">&lt;</span><span class="n">strong</span><span class="o">&gt;</span><span class="no">FILE</span><span class="o">&lt;</span><span class="sr">/strong&gt;), ‘README.md’))</span>
+</span><span class='line'><span class="sr">version          ‘2.0.0’&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">depends</span> <span class="err">“</span><span class="n">apache2</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="o">~&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">1</span><span class="o">.</span><span class="mi">6</span><span class="o">.</span><span class="mi">0</span><span class="err">”</span>
+</span><span class='line'><span class="n">depends</span> <span class="err">“</span><span class="n">mysql</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="o">~&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">3</span><span class="o">.</span><span class="mi">0</span><span class="o">.</span><span class="mi">0</span><span class="err">”</span>
+</span><span class='line'><span class="n">depends</span> <span class="err">“</span><span class="n">database</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="o">~&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">1</span><span class="o">.</span><span class="mi">3</span><span class="o">.</span><span class="mi">0</span><span class="err">”</span>
+</span><span class='line'><span class="n">depends</span> <span class="err">“</span><span class="n">php</span><span class="err">”</span><span class="p">,</span> <span class="err">“</span><span class="o">~&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="mi">1</span><span class="o">.</span><span class="mi">2</span><span class="o">.</span><span class="mi">0</span><span class="err">”</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>In <code>myface/recipes/webserver.rb</code> replace the <code>package "php-mysql" do ... end</code>
+block with the following reference:</p>
+
+<pre><code>include_recipe "php::module_mysql"
+</code></pre>
+
+<p>After editing, <code>myface/recipes/webserver.rb</code> should look like this:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/recipes/metadata.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+<span class='line-number'>31</span>
+<span class='line-number'>32</span>
+<span class='line-number'>33</span>
+<span class='line-number'>34</span>
+<span class='line-number'>35</span>
+<span class='line-number'>36</span>
+<span class='line-number'>37</span>
+<span class='line-number'>38</span>
+<span class='line-number'>39</span>
+<span class='line-number'>40</span>
+<span class='line-number'>41</span>
+<span class='line-number'>42</span>
+<span class='line-number'>43</span>
+<span class='line-number'>44</span>
+<span class='line-number'>45</span>
+<span class='line-number'>46</span>
+<span class='line-number'>47</span>
+<span class='line-number'>48</span>
+<span class='line-number'>49</span>
+<span class='line-number'>50</span>
+</pre></td><td class='code'><pre><code class='rb'><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># Cookbook Name:: myface</span>
+</span><span class='line'><span class="c1"># Recipe:: webserver</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class='line'><span class="c1">#</span>
+</span><span class='line'><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class='line'><span class="c1">#&lt;/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="ss">:myface</span><span class="o">][</span><span class="ss">:group</span><span class="o">]&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;user node[:myface][:user] do</span>
+</span><span class='line'><span class="sr">  group node[:myface][:group]</span>
+</span><span class='line'><span class="sr">  system true</span>
+</span><span class='line'><span class="sr">  shell “/</span><span class="n">bin</span><span class="o">/</span><span class="n">bash</span><span class="err">”</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;include_recipe “apache2”</span>
+</span><span class='line'><span class="sr">include_recipe “apache2::mod_php5”&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">include_recipe</span> <span class="err">“</span><span class="ss">php</span><span class="p">:</span><span class="ss">:module_mysql</span><span class="err">”</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;disable-default-site&quot;&gt;disable default site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">apache_site</span> <span class="err">“</span><span class="mo">000</span><span class="o">-</span><span class="n">default</span><span class="err">”</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;create-apache-config&quot;&gt;create apache config&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">template</span> <span class="err">“</span><span class="c1">#{node[:apache][:dir]}/sites-available/#{node[:myface][:config]}” do</span>
+</span><span class='line'>  <span class="n">source</span> <span class="err">“</span><span class="n">apache2</span><span class="o">.</span><span class="n">conf</span><span class="o">.</span><span class="n">erb</span><span class="err">”</span>
+</span><span class='line'>  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="err">‘</span><span class="n">service</span><span class="o">[</span><span class="n">apache2</span><span class="o">]</span><span class="err">’</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;create-document-root&quot;&gt;create document root&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">directory</span> <span class="err">“</span><span class="c1">#{node[:myface][:document_root]}” do</span>
+</span><span class='line'>  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class='line'>  <span class="n">mode</span> <span class="err">“</span><span class="mo">0755</span><span class="err">”</span>
+</span><span class='line'>  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;write-site&quot;&gt;write site&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">template</span> <span class="err">“</span><span class="c1">#{node[:myface][:document_root]}/index.php” do</span>
+</span><span class='line'>  <span class="n">source</span> <span class="err">“</span><span class="n">index</span><span class="o">.</span><span class="n">php</span><span class="o">.</span><span class="n">erb</span><span class="err">”</span>
+</span><span class='line'>  <span class="n">mode</span> <span class="err">“</span><span class="mo">0644</span><span class="err">”</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;h1 id=&quot;enable-myface&quot;&gt;enable myface&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">apache_site</span> <span class="err">“</span><span class="c1">#{node[:myface][:config]}” do</span>
+</span><span class='line'>  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<h2 id="testing-iteration-15---deploy-locally-to-ubuntu-1204">Testing Iteration #15 - Deploy locally to Ubuntu 12.04</h2>
+
+<p>Now that we’ve fixed up our cookbook to work on Ubuntu 12.04, let’s test it
+out!  Run <code>kitchen list</code> to display the list of Test Kitchen instances:</p>
+
+<pre><code>Instance             Driver   Provisioner  Last Action
+default-centos-64    Vagrant  Chef Solo    Set Up
+default-ubuntu-1204  Vagrant  Chef Solo    &lt;Not Created&gt;
+</code></pre>
+
+<p>Notice that after editing the <code>.kitchen.yml</code> we now have an Ubuntu 12.04
+instance called <code>default-ubuntu-1204</code> and it is in the <code>&lt;Not Created&gt;</code>
+state.</p>
+
+<p>Go ahead setup the Ubuntu 12.04 instance by running the following command:</p>
+
+<pre><code>$ kitchen setup default-ubuntu-1204
+</code></pre>
+
+<p>Note that this time we added an optional instance parameter so that Test
+Kitchen only performs the action against the specified instance.  If you do
+not specify this parameter, it defaults to <code>all</code>, running the command against
+all instances.  After about 5-10 minutes or so, you should observe that Test
+Kitchen downloaded an Ubuntu 12.04 basebox, booted a VM with the basebox, and
+successfully deployed our chef cookbook.</p>
+
+<p>Run the <code>kitchen list</code> command again to verify that the Ubuntu 12.04 instance
+is now in the <code>Set Up</code> state as well, showing that there were no errors:</p>
+
+<pre><code>Instance             Driver   Provisioner  Last Action
+default-centos-64    Vagrant  Chef Solo    Set Up
+default-ubuntu-1204  Vagrant  Chef Solo    Set Up
 </code></pre>
 ]]></content>
   </entry>
