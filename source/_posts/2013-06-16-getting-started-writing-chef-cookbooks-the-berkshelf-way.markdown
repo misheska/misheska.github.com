@@ -150,7 +150,7 @@ Before running `bundle install` edit the `Gemfile` and add a version constraint
 for the `test-kitchen` gem so that Bundler can resolve all the dependencies
 properly:
 
-{% codeblock myface/Vagrantfile lang:ruby %}
+{% codeblock myface/Gemfile lang:ruby %}
 source 'https://rubygems.org'
 
 gem 'berkshelf'
