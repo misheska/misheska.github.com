@@ -76,6 +76,7 @@ command to see your installed Test Kitchen's version information
 
 Iteration #14 - Create a Kitchen YAML file
 ==========================================
+
 In order to use Test Kitchen on a cookbook, first you need to add a few more
 dependencies and create a template Kitchen YAML file.  Test Kitchen makes this
 easy by providing the `kitchen init` command to perform all these
@@ -270,3 +271,177 @@ After you are done working in the test instance, make sure to run the
     [vagrant@default-centos-64 ~]$ exit
     logout
     Connection to 127.0.0.1 closed.
+
+Should you need it, the Test Kitchen equivalent of `vagrant destroy` is
+`kitchen destroy`.
+
+Iteration #15 - Provisioning on Ubuntu
+======================================
+
+We haven't really made use of any unique Test Kitchen features yet, let's
+start now.  We'll also deploy our cookbook locally to Ubuntu 12.04 for
+testing, in addition to CentOS 6.4.
+
+Edit `.kitchen.yml` and add a reference to a Ubuntu 12.04 basebox alongside
+the existing CentOS 6.4 basebox in the `platforms` stanza:
+
+    -name: ubuntu-12.04
+     driver_config:
+       box: misheska-ubuntu1204
+       box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+
+{% codeblock myface/.kitchen.yml %}
+
+---
+driver_plugin: vagrant
+driver_config:
+  require_chef_omnibus: true
+
+platforms:
+- name: centos-6.4
+  driver_config:
+    box: misheska-centos64
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
+- name: ubuntu-12.04
+  driver_config:
+    box: misheska-ubuntu1204
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+
+suites:
+- name: default
+  run_list: ["recipe[myface]"]
+  attributes: { mysql: { server_root_password: "rootpass", server_debian_password: "debpass", server_repl_password: "replpass" } }
+
+{% endcodeblock %}
+
+Before we run `kitchen setup` to do a Chef run, we need to fix our cookbook
+so it will run successfully on Ubuntu 12.04.  If you tried to deploy now you
+would notice that the MyFace cookbook would fail to deploy to Ubuntu 12.04
+successfully due to a reference to the `php-mysql` package in 
+`myface/receipes/webserver.rb`.
+
+    ... 
+    include_recipe "apache2"
+    include_recipe "apache2::mod_php5"
+
+    package "php-mysql" do
+      action :install
+      notifies :restart, "service[apache2]"
+    end
+    ...
+
+On Ubuntu the package name should be `php5-mysql` instead of `php-mysql`.
+
+As with most issues in the Chef world, there's a cookbook for that!
+The Opscode `php` cookbook has conditionals to reference the correct name
+for the `php-mysql` package on a number of platforms.
+
+Edit `myface/metadata.rb` and add a reference to the latest version of the
+`php` cookbook (currently 1.2.3):
+
+{% codeblock myface/metadata.rb %}
+name             'myface'
+maintainer       'Mischa Taylor'
+maintainer_email 'mischa@misheska.com'
+license          'Apache 2.0'
+description      'Installs/Configures myface'
+long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
+version          '2.0.0'
+
+depends "apache2", "~> 1.6.0"
+depends "mysql", "~> 3.0.0"
+depends "database", "~> 1.3.0"
+depends "php", "~> 1.2.0"
+{% endcodeblock %}
+
+In `myface/recipes/webserver.rb` replace the `package "php-mysql" do ... end`
+block with the following reference:
+
+    include_recipe "php::module_mysql"
+
+After editing, `myface/recipes/webserver.rb` should look like this:
+
+{% codeblock myface/recipes/metadata.rb %}
+#
+# Cookbook Name:: myface
+# Recipe:: webserver
+#
+# Copyright (C) 2013 YOUR_NAME
+#
+# All rights reserved - Do Not Redistribute
+#
+
+group node[:myface][:group]
+
+user node[:myface][:user] do
+  group node[:myface][:group]
+  system true
+  shell "/bin/bash"
+end
+
+include_recipe "apache2"
+include_recipe "apache2::mod_php5"
+
+include_recipe "php::module_mysql"
+
+# disable default site
+apache_site "000-default" do
+  enable false
+end
+
+# create apache config
+template "#{node[:apache][:dir]}/sites-available/#{node[:myface][:config]}" do
+  source "apache2.conf.erb"
+  notifies :restart, 'service[apache2]'
+end
+
+# create document root
+directory "#{node[:myface][:document_root]}" do
+  action :create
+  mode "0755"
+  recursive true
+end
+
+# write site
+template "#{node[:myface][:document_root]}/index.php" do
+  source "index.php.erb"
+  mode "0644"
+end
+
+# enable myface
+apache_site "#{node[:myface][:config]}" do
+  enable true
+end
+{% endcodeblock %}
+
+Testing Iteration #15 - Deploy locally to Ubuntu 12.04
+------------------------------------------------------
+
+Now that we've fixed up our cookbook to work on Ubuntu 12.04, let's test it
+out!  Run `kitchen list` to display the list of Test Kitchen instances:
+
+    Instance             Driver   Provisioner  Last Action
+    default-centos-64    Vagrant  Chef Solo    Set Up
+    default-ubuntu-1204  Vagrant  Chef Solo    <Not Created>
+
+Notice that after editing the `.kitchen.yml` we now have an Ubuntu 12.04
+instance called `default-ubuntu-1204` and it is in the `<Not Created>`
+state.
+
+Go ahead setup the Ubuntu 12.04 instance by running the following command:
+
+    $ kitchen setup default-ubuntu-1204
+
+Note that this time we added an optional instance parameter so that Test
+Kitchen only performs the action against the specified instance.  If you do
+not specify this parameter, it defaults to `all`, running the command against
+all instances.  After about 5-10 minutes or so, you should observe that Test
+Kitchen downloaded an Ubuntu 12.04 basebox, booted a VM with the basebox, and
+successfully deployed our chef cookbook.
+
+Run the `kitchen list` command again to verify that the Ubuntu 12.04 instance
+is now in the `Set Up` state as well, showing that there were no errors:
+
+    Instance             Driver   Provisioner  Last Action
+    default-centos-64    Vagrant  Chef Solo    Set Up
+    default-ubuntu-1204  Vagrant  Chef Solo    Set Up
