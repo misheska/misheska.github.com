@@ -311,7 +311,9 @@ After you are done working in the test instance, make sure to run the
     Connection to 127.0.0.1 closed.
 
 Should you need it, the Test Kitchen equivalent of `vagrant destroy` is
-`kitchen destroy`.
+`kitchen destroy`.  If you make a change to the chef cookbook and
+want to re-deploy, the Test Kitchen equivalent of `vagrant provision` is
+`kitchen converge`.
 
 Since you added a private IP for you instance, you can also view the
 MyFace website on your host with your favorite web browser:
@@ -524,5 +526,5 @@ if you like.  You now have two local vagrant VMs instantiated to play with!
 You can view the websites for each instance by viewing the appropriate
 private IP
 
-    CentOS 6.4:   <http://33.33.33.10>
-    Ubuntu 12.04: <http://33.33.33.11>
+    CentOS 6.4:   http://33.33.33.10
+    Ubuntu 12.04: http://33.33.33.11
