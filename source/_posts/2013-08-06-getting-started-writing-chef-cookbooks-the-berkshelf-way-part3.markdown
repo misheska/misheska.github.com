@@ -163,6 +163,44 @@ values that Berkshelf initialzed (which we used in
 Those `Vagrantfile` attributes were just converted into a format that the
 Test Kitchen YAML file format finds acceptable.
 
+You can add even more Vagrantfile customizations to your `kitchen.yml` file
+if you like.  For example, you can assign a host-only network IP so you can
+look at the MyFace website with a browser on your host.  Add the following
+`network:` block to a platform's `driver_config:`:
+
+    ...
+    driver_config:
+      network:
+      - ["private_network", {ip: "33.33.33.10"}]
+    ...
+
+After adding this block your `.kitchen.yml` should look like this:
+
+{% codeblock myface/.kitchen.yml %}
+
+---
+driver_plugin: vagrant
+driver_config:
+  require_chef_omnibus: true
+
+platforms:
+- name: centos-6.4
+  driver_config:
+    box: misheska-centos64
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
+    network:
+    - ["private_network", {ip: "33.33.33.10"}]
+
+suites:
+- name: default
+  run_list: ["recipe[myface]"]
+  attributes: { mysql: { server_root_password: "rootpass", server_debian_password: "debpass", server_repl_password: "replpass" } }
+
+{% endcodeblock %}
+
+For more information on the `kitchen-vagrant` settings, refer to the
+README.md file for `kitchen-vagrant` at <https://github.com/opscode/kitchen-vagrant/blob/master/README.md>
+
 Testing Iteration #14 - Provision with Test Kitchen
 ---------------------------------------------------
 
@@ -275,6 +313,13 @@ After you are done working in the test instance, make sure to run the
 Should you need it, the Test Kitchen equivalent of `vagrant destroy` is
 `kitchen destroy`.
 
+Since you added a private IP for you instance, you can also view the
+MyFace website on your host with your favorite web browser:
+
+<http://33.33.33.10>
+
+![Welcome to MyFace](/images/welcometomyface2.png)
+
 Iteration #15 - Provisioning on Ubuntu
 ======================================
 
@@ -289,6 +334,8 @@ the existing CentOS 6.4 basebox in the `platforms` stanza:
      driver_config:
        box: misheska-ubuntu1204
        box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+       network:
+       - ["private_network", {ip: "33.33.33.11"}]
 
 {% codeblock myface/.kitchen.yml %}
 
@@ -302,10 +349,14 @@ platforms:
   driver_config:
     box: misheska-centos64
     box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
+    network:
+    - ["private_network", {ip: "33.33.33.10"}]
 - name: ubuntu-12.04
   driver_config:
     box: misheska-ubuntu1204
     box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+    network:
+    - ["private_network", {ip: "33.33.33.11"}]
 
 suites:
 - name: default
@@ -469,3 +520,9 @@ if you like.  You now have two local vagrant VMs instantiated to play with!
     [vagrant@default-centos-64 ~]$ exit
     logout
     Connection to 127.0.0.1 closed.
+
+You can view the websites for each instance by viewing the appropriate
+private IP
+
+    CentOS 6.4:   <http://33.33.33.10>
+    Ubuntu 12.04: <http://33.33.33.11>
