@@ -293,6 +293,60 @@ end
 <p>Those <code>Vagrantfile</code> attributes were just converted into a format that the
 Test Kitchen YAML file format finds acceptable.</p>
 
+<p>You can add even more Vagrantfile customizations to your <code>kitchen.yml</code> file
+if you like.  For example, you can assign a host-only network IP so you can
+look at the MyFace website with a browser on your host.  Add the following
+<code>network:</code> block to a platform’s <code>driver_config:</code>:</p>
+
+<pre><code>...
+driver_config:
+  network:
+  - ["private_network", {ip: "33.33.33.10"}]
+...
+</code></pre>
+
+<p>After adding this block your <code>.kitchen.yml</code> should look like this:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/.kitchen.yml </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="nn">---</span>
+</span><span class="line"><span class="l-Scalar-Plain">driver_plugin</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vagrant</span>
+</span><span class="line"><span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">require_chef_omnibus</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos-6.4</span>
+</span><span class="line">  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">misheska-centos64</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box</span>
+</span><span class="line">    <span class="l-Scalar-Plain">network</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="s">&quot;private_network&quot;</span><span class="p-Indicator">,</span> <span class="p-Indicator">{</span><span class="nv">ip</span><span class="p-Indicator">:</span> <span class="s">&quot;33.33.33.10&quot;</span><span class="p-Indicator">}]</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">suites</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
+</span><span class="line">  <span class="l-Scalar-Plain">run_list</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;recipe[myface]&quot;</span><span class="p-Indicator">]</span>
+</span><span class="line">  <span class="l-Scalar-Plain">attributes</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span> <span class="nv">mysql</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span> <span class="nv">server_root_password</span><span class="p-Indicator">:</span> <span class="s">&quot;rootpass&quot;</span><span class="p-Indicator">,</span> <span class="nv">server_debian_password</span><span class="p-Indicator">:</span> <span class="s">&quot;debpass&quot;</span><span class="p-Indicator">,</span> <span class="nv">server_repl_password</span><span class="p-Indicator">:</span> <span class="s">&quot;replpass&quot;</span> <span class="p-Indicator">}</span> <span class="p-Indicator">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>For more information on the <code>kitchen-vagrant</code> settings, refer to the
+README.md file for <code>kitchen-vagrant</code> at <a href="https://github.com/opscode/kitchen-vagrant/blob/master/README.md">https://github.com/opscode/kitchen-vagrant/blob/master/README.md</a></p>
+
 <h2 id="testing-iteration-14---provision-with-test-kitchen">Testing Iteration #14 - Provision with Test Kitchen</h2>
 
 <p>You can do nearly everything that you were doing with vagrant just using Test
@@ -409,6 +463,13 @@ Connection to 127.0.0.1 closed.
 <p>Should you need it, the Test Kitchen equivalent of <code>vagrant destroy</code> is
 <code>kitchen destroy</code>.</p>
 
+<p>Since you added a private IP for you instance, you can also view the
+MyFace website on your host with your favorite web browser:</p>
+
+<p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
+
+<p><img src="/images/welcometomyface2.png" alt="Welcome to MyFace" /></p>
+
 <h1 id="iteration-15---provisioning-on-ubuntu">Iteration #15 - Provisioning on Ubuntu</h1>
 
 <p>We haven’t really made use of any unique Test Kitchen features yet, let’s
@@ -422,6 +483,8 @@ the existing CentOS 6.4 basebox in the <code>platforms</code> stanza:</p>
  driver_config:
    box: misheska-ubuntu1204
    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+   network:
+   - ["private_network", {ip: "33.33.33.11"}]
 </code></pre>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/.kitchen.yml </span></figcaption>
@@ -444,6 +507,10 @@ the existing CentOS 6.4 basebox in the <code>platforms</code> stanza:</p>
 <span class="line-number">17</span>
 <span class="line-number">18</span>
 <span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
 </pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="nn">---</span>
 </span><span class="line"><span class="l-Scalar-Plain">driver_plugin</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vagrant</span>
 </span><span class="line"><span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
@@ -454,10 +521,14 @@ the existing CentOS 6.4 basebox in the <code>platforms</code> stanza:</p>
 </span><span class="line">  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
 </span><span class="line">    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">misheska-centos64</span>
 </span><span class="line">    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box</span>
+</span><span class="line">    <span class="l-Scalar-Plain">network</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="s">&quot;private_network&quot;</span><span class="p-Indicator">,</span> <span class="p-Indicator">{</span><span class="nv">ip</span><span class="p-Indicator">:</span> <span class="s">&quot;33.33.33.10&quot;</span><span class="p-Indicator">}]</span>
 </span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu-12.04</span>
 </span><span class="line">  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
 </span><span class="line">    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">misheska-ubuntu1204</span>
 </span><span class="line">    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box</span>
+</span><span class="line">    <span class="l-Scalar-Plain">network</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="s">&quot;private_network&quot;</span><span class="p-Indicator">,</span> <span class="p-Indicator">{</span><span class="nv">ip</span><span class="p-Indicator">:</span> <span class="s">&quot;33.33.33.11&quot;</span><span class="p-Indicator">}]</span>
 </span><span class="line">
 </span><span class="line"><span class="l-Scalar-Plain">suites</span><span class="p-Indicator">:</span>
 </span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
@@ -687,6 +758,12 @@ Welcome to your Packer-built virtual machine.
 logout
 Connection to 127.0.0.1 closed.
 </code></pre>
+
+<p>You can view the websites for each instance by viewing the appropriate
+private IP</p>
+
+<p>CentOS 6.4: <a href="http://33.33.33.10">http://33.33.33.10</a>
+Ubuntu 12.04: <a href="http://33.33.33.11">http://33.33.33.11</a></p>
 </div>
 
 
