@@ -464,7 +464,9 @@ Connection to 127.0.0.1 closed.
 </code></pre>
 
 <p>Should you need it, the Test Kitchen equivalent of <code>vagrant destroy</code> is
-<code>kitchen destroy</code>.</p>
+<code>kitchen destroy</code>.  If you make a change to the chef cookbook and
+want to re-deploy, the Test Kitchen equivalent of <code>vagrant provision</code> is
+<code>kitchen converge</code>.</p>
 
 <p>Since you added a private IP for you instance, you can also view the
 MyFace website on your host with your favorite web browser:</p>
@@ -765,8 +767,8 @@ Connection to 127.0.0.1 closed.
 <p>You can view the websites for each instance by viewing the appropriate
 private IP</p>
 
-<pre><code>CentOS 6.4:   &lt;http://33.33.33.10&gt;
-Ubuntu 12.04: &lt;http://33.33.33.11&gt;
+<pre><code>CentOS 6.4:   http://33.33.33.10
+Ubuntu 12.04: http://33.33.33.11
 </code></pre>
 </div>
   
