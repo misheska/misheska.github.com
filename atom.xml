@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-10T12:44:22-07:00</updated>
+  <updated>2013-08-10T12:48:11-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -730,9 +730,9 @@ in the following directory:</p>
 
 <p>To start, we need to add a Ruby helper script which loads our Test Kitchen
 plugin.  We’ll call it
-<code>myface/test/integration/webserver/serverspec/spec_helper.rb</code>:</p>
+<code>myface/test/integration/default/serverspec/spec_helper.rb</code>:</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/webserver/serverspec/spec_helper.rb  </span></figcaption>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/spec_helper.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
@@ -759,6 +759,7 @@ plugin.  We’ll call it
 
 <p>This code is modeled after the examples provided on the
 <a href="http://serverspec.org/tutorial.html">serverspec</a> website.</p>
+
 ]]></content>
   </entry>
   
