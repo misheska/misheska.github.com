@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-10T12:48:11-07:00</updated>
+  <updated>2013-08-10T13:37:35-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -36,7 +36,10 @@
       <li><a href="#testing-iteration-15---deploy-locally-to-ubuntu-1204">Testing Iteration #15 - Deploy locally to Ubuntu 12.04</a></li>
     </ul>
   </li>
-  <li><a href="#iteration-16---writing-your-first-serverspec-test">Iteration #16 - Writing your first Serverspec test</a></li>
+  <li><a href="#iteration-16---writing-your-first-serverspec-test">Iteration #16 - Writing your first Serverspec test</a>    <ul>
+      <li><a href="#testing-iteration-16---running-your-first-serverspec-test">Testing Iteration #16 - Running your first Serverspec test</a></li>
+    </ul>
+  </li>
 </ul>
 
 <p>NOTE: Preview for beta testers to review…</p>
@@ -789,6 +792,128 @@ plugin.  We’ll call it
 <p>This code is modeled after the examples provided on the
 <a href="http://serverspec.org/tutorial.html">serverspec</a> website.</p>
 
+<p>Create a subdirectory underneath <code>myface/test/integration/default/serverspec</code>
+called <code>localhost</code>:</p>
+
+<pre><code>`myface/test/integration/default/serverspec/localhost`
+</code></pre>
+
+<p>It is a serverspec convention to put tests (a.k.a. “specs”) underneath
+<code>spec_helper.rb</code> in a subdirectory denoting the host name to be tested.
+Serverspec supports testing via SSH access to remote hosts.  We won’t
+be using this capability as we will be testing local images, so we’ll just
+use <code>localhost</code> for the host name.</p>
+
+<p>Now, let’s write our first test!  If you recall in 
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/#testing-iteration-1">Testing Iteration #1</a>, we ran
+the following command to verify that the myface user was created:</p>
+
+<pre><code>$ getent password myface
+myface:x:497:503::/home/myface:/bin/bash
+</code></pre>
+
+<p>Create the following file with a serverspec test to perform the same
+action:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="nb">require</span> <span class="err">‘</span><span class="n">spec_helper</span><span class="err">’</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;describe ‘MyFace webserver’ do&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">it</span> <span class="err">‘</span><span class="n">should</span> <span class="n">have</span> <span class="n">a</span> <span class="n">myface</span> <span class="n">user</span><span class="err">’</span>
+</span><span class='line'>    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="err">‘</span><span class="n">getent</span> <span class="n">passwd</span> <span class="n">myface</span><span class="err">’</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/myface:x:&lt;em&gt;:&lt;/em</span><span class="o">&gt;::</span><span class="sr">/home/m</span><span class="ss">yface</span><span class="p">:</span><span class="sr">/bin/</span><span class="n">bash</span><span class="o">/</span>
+</span><span class='line'>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Serverspec provides extensions to Rspec to help you more easily test servers.
+If you’re not familiar with Rspec syntax, Code School has an excellent
+tutorial on <a href="http://rspec.codeschool.com/">Testing with Rspec</a>.  Even if you
+don’t know Rspec, you should still be able to follow along from the 
+provided examples.</p>
+
+<p>You can find a list of serverspec resources at the following link:
+<a href="http://serverspec.org/resource_types.html">http://serverspec.org/resource_types.html</a>.  We’re using the <code>command</code>
+resource to run the command <code>getent password myface</code> and match the
+resultant output with a Ruby regular expression (because the uid and gid
+field could be any number between 100-999, because myface is a system
+account).</p>
+
+<h2 id="testing-iteration-16---running-your-first-serverspec-test">Testing Iteration #16 - Running your first Serverspec test</h2>
+
+<p>OK, let’s run our first test!</p>
+
+<p>To start you need to run <code>kitchen setup</code> so that Test Kitchen loads and
+configures all the required plugins.  In keeping with the restaurant theme,
+the component that manages Test Kitchen plugins is called
+<a href="http://en.wikipedia.org/wiki/Busser">Busser</a>.</p>
+
+<pre><code>$ kitchen setup
+-----&gt; Starting Kitchen (v1.0.0.beta.2)
+-----&gt; Setting up &lt;default-centos-64&gt;
+-----&gt; Setting up Busser
+       Creating BUSSER_ROOT in /opt/busser
+       Creating busser binstub
+       Plugin serverspec already installed
+       Finished setting up &lt;default-centos-64&gt; (0m12.21s).
+-----&gt; Setting up &lt;default-ubuntu-1204&gt;
+-----&gt; Setting up Busser
+       Creating BUSSER_ROOT in /opt/busser
+       Creating busser binstub
+       Plugin serverspec already installed
+       Finished setting up &lt;default-ubuntu-1204&gt; (0m2.26s).
+-----&gt; Kitchen is finished. (0m19.04s)
+</code></pre>
+
+<p>After running <code>kitchen setup</code>, next run <code>kitchen verify</code> to run your test
+suite.</p>
+
+<pre><code>$ kitchen verify
+-----&gt; Starting Kitchen (v1.0.0.beta.2)
+-----&gt; Verifying &lt;default-centos-64&gt;
+       Removing /opt/busser/suites/serverspec
+       Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+       Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+       /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+       .
+
+       Finished in 0.00954 seconds
+       1 example, 0 failures
+       Finished verifying &lt;default-centos-64&gt; (0m1.98s).
+-----&gt; Verifying &lt;default-ubuntu-1204&gt;
+       Removing /opt/busser/suites/serverspec
+Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+/opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+.
+
+Finished in 0.01468 seconds
+1 example, 0 failures
+       Finished verifying &lt;default-ubuntu-1204&gt; (0m1.90s).
+-----&gt; Kitchen is finished. (0m7.68s)
+</code></pre>
+
+<p>Finally run <code>kitchen list</code> to display the results of your test run.</p>
+
+<pre><code>$ kitchen list
+Instance             Driver   Provisioner  Last Action
+default-centos-64    Vagrant  Chef Solo    Verified
+default-ubuntu-1204  Vagrant  Chef Solo    Verified
+</code></pre>
+
+<p>If Test Kitchen displays the <code>Last Action</code> as <code>Verified</code>, all the tests passed.</p>
 ]]></content>
   </entry>
   
