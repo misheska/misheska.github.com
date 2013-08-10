@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-10T14:06:53-07:00</updated>
+  <updated>2013-08-10T14:08:17-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -830,7 +830,7 @@ action:</p>
 </span><span class='line'>
 </span><span class='line'><span class="sr">&lt;p&gt;describe ‘MyFace webserver’ do&lt;/</span><span class="nb">p</span><span class="o">&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">it</span> <span class="err">‘</span><span class="n">should</span> <span class="n">have</span> <span class="n">a</span> <span class="n">myface</span> <span class="n">user</span><span class="err">’</span>
+</span><span class='line'><span class="o">&lt;</span><span class="nb">p</span><span class="o">&gt;</span><span class="n">it</span> <span class="err">‘</span><span class="n">should</span> <span class="n">have</span> <span class="n">a</span> <span class="n">myface</span> <span class="n">user</span><span class="err">’</span> <span class="k">do</span>
 </span><span class='line'>    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="err">‘</span><span class="n">getent</span> <span class="n">passwd</span> <span class="n">myface</span><span class="err">’</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/myface:x:\d+:\d+::\/home\/myface:\/bin\/bash/</span>
 </span><span class='line'>  <span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>

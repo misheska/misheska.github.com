@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-10T14:06:53-07:00</updated>
+  <updated>2013-08-10T14:08:17-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -801,7 +801,7 @@ action:</p>
 </span><span class="line">
 </span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
 </span><span class="line">
-</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span>
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span> <span class="k">do</span>
 </span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;getent passwd myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/myface:x:\d+:\d+::\/home\/myface:\/bin\/bash/</span>
 </span><span class="line">  <span class="k">end</span>
 </span><span class="line">
