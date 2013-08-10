@@ -116,6 +116,7 @@
       <li><a href="#testing-iteration-15---deploy-locally-to-ubuntu-1204">Testing Iteration #15 - Deploy locally to Ubuntu 12.04</a></li>
     </ul>
   </li>
+  <li><a href="#iteration-16---writing-your-first-serverspec-test">Iteration #16 - Writing your first Serverspec test</a></li>
 </ul>
 
 <p>NOTE: Preview for beta testers to review…</p>
@@ -767,6 +768,32 @@ private IP</p>
 <pre><code>CentOS 6.4:   http://33.33.33.10
 Ubuntu 12.04: http://33.33.33.11
 </code></pre>
+
+<h1 id="iteration-16---writing-your-first-serverspec-test">Iteration #16 - Writing your first Serverspec test</h1>
+
+<p>While it’s really helpful to know now that the Myface cookbook will converge on
+both a CentOS 6.4 and Ubuntu 12.04 setup, we haven’t written any tests yet.
+Let’s do that.</p>
+
+<p>It’s helpful to know that Test Kitchen was designed as a framework for
+post-convergence system testing.  You are supposed to set up a bunch of test
+instances, perform a Chef run to apply your cookbook’s changes to them, then
+when this is process is complete your tests can inspect the state of each
+test instance after the Chef run is finished.  This is how we tested our
+nodes by hand in <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>
+and <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>.  Now we are going to automate the process.</p>
+
+<p>NOTE: It is a <a href="http://watirmelon.com/2012/01/31/introducing-the-software-testing-ice-cream-cone/">testing anti-pattern to rely too much on system tests, even if they are automated</a>
+so make sure you are judgicious in your use of system tests.  It can be
+difficult to maintain a lot of system tests over time and keep them relevant.
+The tests you performed by hand in <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>
+and <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>
+to verify MyFace are at just the right level of detail for a system test.
+Do just enough to verify that the system works correctly after it was
+configured.  In a future post, I’ll cover unit tests in more detail using
+<a href="http://acrmp.github.io/chefspec/">Chefspec</a> and
+<a href="https://github.com/guard/guard">Guard</a>.  For now, let’s focus on system tests.</p>
+
 </div>
 
 
