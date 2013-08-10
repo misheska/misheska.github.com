@@ -123,6 +123,7 @@
       <li><a href="#testing-iteration-16---running-your-first-serverspec-test">Testing Iteration #16 - Running your first Serverspec test</a></li>
     </ul>
   </li>
+  <li><a href="#iteration-17---completing-the-webserver-test-suite">Iteration #17 - Completing the webserver test suite</a></li>
 </ul>
 
 <p>NOTE: Preview for beta testers to review…</p>
@@ -854,7 +855,7 @@ plugin.  We’ll call it
 <p>Create a subdirectory underneath <code>myface/test/integration/default/serverspec</code>
 called <code>localhost</code>:</p>
 
-<pre><code>`myface/test/integration/default/serverspec/localhost`
+<pre><code>myface/test/integration/default/serverspec/localhost
 </code></pre>
 
 <p>It is a serverspec convention to put tests (a.k.a. “specs”) underneath
@@ -889,7 +890,7 @@ action:</p>
 </span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
 </span><span class="line">
 </span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span>
-</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;getent passwd myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/myface:x:*:*::/</span><span class="n">home</span><span class="o">/</span><span class="ss">myface</span><span class="p">:</span><span class="sr">/bin/</span><span class="n">bash</span><span class="o">/</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;getent passwd myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/myface:x:\d+:\d+::\/home\/myface:\/bin\/bash/</span>
 </span><span class="line">  <span class="k">end</span>
 </span><span class="line">
 </span><span class="line"><span class="k">end</span>
@@ -898,7 +899,7 @@ action:</p>
 <p>Serverspec provides extensions to Rspec to help you more easily test servers.
 If you’re not familiar with Rspec syntax, Code School has an excellent
 tutorial on <a href="http://rspec.codeschool.com/">Testing with Rspec</a>.  Even if you
-don’t know Rspec, you should still be able to follow along from the 
+don’t know Rspec, you should still be able to follow along with
 provided examples.</p>
 
 <p>You can find a list of serverspec resources at the following link:
@@ -973,6 +974,14 @@ default-ubuntu-1204  Vagrant  Chef Solo    Verified
 </code></pre>
 
 <p>If Test Kitchen displays the <code>Last Action</code> as <code>Verified</code>, all the tests passed.</p>
+
+<h1 id="iteration-17---completing-the-webserver-test-suite">Iteration #17 - Completing the webserver test suite</h1>
+
+<p>Now let’s dive in and encode all the rest of the tests from
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>.</p>
+
+<p>While we used the <code>command</code> resource to encode our first test, this isn’t
+the optimal way to encode this test as a serverspec.  </p>
 </div>
   
   
