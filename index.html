@@ -355,12 +355,12 @@ README.md file for <code>kitchen-vagrant</code> at <a href="https://github.com/o
 
 <p>You can do nearly everything that you were doing with vagrant just using Test
 Kitchen.  The Test Kitchen equivalent of the <code>vagrant up</code> command is 
-<code>kitchen setup</code>.  Try running the <code>kitchen setup</code> command now to verify that
-your <code>.kitchen.yml</code> file is valid.  When you run <code>kitchen setup</code> it will
+<code>kitchen converge</code>.  Try running the <code>kitchen converge</code> command now to verify
+that your <code>.kitchen.yml</code> file is valid.  When you run <code>kitchen converge</code> it will
 spin up a CentOS 6.4 vagrant test node instance and use Chef Solo to provision
 the MyFace cookbook on the test node:</p>
 
-<pre><code>$ kitchen setup
+<pre><code>$ kitchen converge 
 -----&gt; Starting Kitchen (v1.0.0.beta.2)
 -----&gt; Creating &lt;default-centos-64&gt;
        [kitchen::driver::vagrant command] BEGIN (vagrant up --no-provision)
@@ -542,7 +542,7 @@ the existing CentOS 6.4 basebox in the <code>platforms</code> stanza:</p>
 </span><span class="line">  <span class="l-Scalar-Plain">attributes</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span> <span class="nv">mysql</span><span class="p-Indicator">:</span> <span class="p-Indicator">{</span> <span class="nv">server_root_password</span><span class="p-Indicator">:</span> <span class="s">&quot;rootpass&quot;</span><span class="p-Indicator">,</span> <span class="nv">server_debian_password</span><span class="p-Indicator">:</span> <span class="s">&quot;debpass&quot;</span><span class="p-Indicator">,</span> <span class="nv">server_repl_password</span><span class="p-Indicator">:</span> <span class="s">&quot;replpass&quot;</span> <span class="p-Indicator">}</span> <span class="p-Indicator">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Before we run <code>kitchen setup</code> to do a Chef run, we need to fix our cookbook
+<p>Before we run <code>kitchen converge</code> to do a Chef run, we need to fix our cookbook
 so it will run successfully on Ubuntu 12.04.  If you tried to deploy now you
 would notice that the MyFace cookbook would fail to deploy to Ubuntu 12.04
 successfully due to a reference to the <code>php-mysql</code> package in 
@@ -722,7 +722,7 @@ state.</p>
 
 <p>Go ahead setup the Ubuntu 12.04 instance by running the following command:</p>
 
-<pre><code>$ kitchen setup default-ubuntu-1204
+<pre><code>$ kitchen converge default-ubuntu-1204
 </code></pre>
 
 <p>Note that this time we added an optional instance parameter so that Test
@@ -797,6 +797,56 @@ configured.  In a future post, I’ll cover unit tests in more detail using
 <a href="http://acrmp.github.io/chefspec/">Chefspec</a> and
 <a href="https://github.com/guard/guard">Guard</a>.  For now, let’s focus on system tests.</p>
 
+<p>Test Kitchen finds tests by following a directory naming convention.  When
+you installed Test Kitchen, it created the <code>test/integration/default</code>
+subdirectory underneath your main cookbook.  It looks for test code in the
+following directory underneath <code>test/integration</code>:</p>
+
+<pre><code>&lt;COOKBOOOK-PATH&gt;/test/integration/&lt;TEST-SUITE-NAME&gt;/&lt;PLUGIN-NAME&gt;
+</code></pre>
+
+<p>A collection of tests is called a <a href="http://en.wikipedia.org/wiki/Test_suite">test suite</a>.  Following Test Kitchen install’s lead, we’ll just call our first
+suite of tests <code>default</code>.  Test Kitchen has a number of plugins which will
+install and setup any components necessary for running tests.  We’ll be using
+the <code>severspec</code> plugin for our tests.  So you will be placing your test files
+in the following directory:</p>
+
+<pre><code>myface/test/integration/default/serverspec
+</code></pre>
+
+<p>Create the <code>myface/test/integration/default/serverspec</code> subdirectory now.</p>
+
+<p>To start, we need to add a Ruby helper script which loads our Test Kitchen
+plugin.  We’ll call it
+<code>myface/test/integration/webserver/serverspec/spec_helper.rb</code>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/webserver/serverspec/spec_helper.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;serverspec&#39;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;pathname&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="kp">include</span> <span class="ss">Serverspec</span><span class="p">:</span><span class="ss">:Helper</span><span class="o">::</span><span class="no">Exec</span>
+</span><span class="line"><span class="kp">include</span> <span class="ss">Serverspec</span><span class="p">:</span><span class="ss">:Helper</span><span class="o">::</span><span class="no">DetectOS</span>
+</span><span class="line">
+</span><span class="line"><span class="no">RSpec</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+</span><span class="line">  <span class="n">c</span><span class="o">.</span><span class="n">before</span> <span class="ss">:all</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">c</span><span class="o">.</span><span class="n">os</span> <span class="o">=</span> <span class="n">backend</span><span class="p">(</span><span class="ss">Serverspec</span><span class="p">:</span><span class="ss">:Commands</span><span class="o">::</span><span class="no">Base</span><span class="p">)</span><span class="o">.</span><span class="n">check_os</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This code is modeled after the examples provided on the
+<a href="http://serverspec.org/tutorial.html">serverspec</a> website.</p>
 </div>
   
   
