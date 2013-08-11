@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-11T16:20:12-07:00</updated>
+  <updated>2013-08-11T16:55:15-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -39,7 +39,11 @@
       <li><a href="#testing-iteration-17---running-the-suite">Testing Iteration #17 - Running the suite</a></li>
     </ul>
   </li>
-  <li><a href="#iteration-18---completing-the-database-test-suite">Iteration #18 - Completing the database test suite</a></li>
+  <li><a href="#iteration-18---completing-the-database-test-suite">Iteration #18 - Completing the database test suite</a>    <ul>
+      <li><a href="#testing-iteration-19---kitchen-test">Testing Iteration #19 - kitchen test</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
 </ul>
 
 <p>NOTE: Preview for beta testers to review…</p>
@@ -1429,6 +1433,38 @@ following:</p>
 </span><span class="line"><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<h2 id="testing-iteration-19---kitchen-test">Testing Iteration #19 - kitchen test</h2>
+
+<p>Perform a final <code>kitchen verify</code> and <code>kitchen list</code> to check that there are
+no syntax errors.  10 tests succeeded!</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>In addition to the <code>kitchen</code> commands that you have used so far, there’s one
+other command that it quite useful - <code>kitchen test</code>.  It runs all the commands
+in the Test Kitchen test lifecycle in order:</p>
+
+<p><code>kitchen create</code> - Creates a vagrant instance.</p>
+
+<p><code>kitchen converge</code> - Provision the vagrant instance with Chef, using the run list specified in the <code>.kitchen.yml</code> file.</p>
+
+<p><code>kitchen setup</code> - Install and configure any necessary Test Kitchen plugins needed to run tests.</p>
+
+<p><code>kitchen verify</code> - Run tests.</p>
+
+<p><code>kitchen destroy</code> - Destroy the vagrant instance, removing it from memory &amp; disk.</p>
+
+<p>When you are in the midst of writing tests, using the above commands
+interactively can save time (like only running <code>kitchen verify</code> after adding
+a new test).  But once the tests are written, normally you will run
+<code>kitchen test</code> to run everything in one shot, preferably running as a “latch”
+triggered when your cookbook changes are committed to source control.  This
+will ensure that your tests are run often.</p>
+
+<p>So hopefully now you understand how to use Test Kitchen and what it’s useful
+for.  In the next article in this series, we’ll cover writing tests that can
+run before deployment, providing feedback more quickly than with
+Test Kitchen, using Chefspec and Guard.</p>
 ]]></content>
   </entry>
   
