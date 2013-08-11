@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-11T06:03:38-07:00</updated>
+  <updated>2013-08-11T16:20:12-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -39,6 +39,7 @@
       <li><a href="#testing-iteration-17---running-the-suite">Testing Iteration #17 - Running the suite</a></li>
     </ul>
   </li>
+  <li><a href="#iteration-18---completing-the-database-test-suite">Iteration #18 - Completing the database test suite</a></li>
 </ul>
 
 <p>NOTE: Preview for beta testers to review…</p>
@@ -1241,6 +1242,193 @@ Instance             Driver   Provisioner  Last Action
 default-centos-64    Vagrant  Chef Solo    Verified
 default-ubuntu-1204  Vagrant  Chef Solo    Verified
 </code></pre>
+
+<h1 id="iteration-18---completing-the-database-test-suite">Iteration #18 - Completing the database test suite</h1>
+
+<p>Let’s wrap this up by finishing off the tests for the database portion in
+<a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>
+Create a new file called <code>myface/test/integration/default/serverspec/localhost/database_spec.rb</code> to contain the database tests.</p>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-7">Testing Iteration #7</a>
+we checked to see if the <code>mysqld</code> service was running with the following
+command:</p>
+
+<pre><code>$ sudo /sbin/service mysqld status
+</code></pre>
+
+<p>There is a similar name difference between the Ubuntu and CentOS services as
+there was with the Apache web server.  For Ubuntu, the name of the
+MySQL service is <code>mysql</code>.  For CentOS, the name of the service is <code>mysqld</code>.</p>
+
+<p>This should be a piece of cake to write a serverspec test for now:</p>
+
+<p>it ‘should be running the httpd server’ do
+    case RSpec.configuration.os
+    when “Debian”
+      expect(service ‘mysql’).to be_running
+      expect(service ‘mysql’).to be_enabled
+    else
+      expect(service ‘mysqld’).to be_running
+      expect(service ‘mysqld’).to be_enabled
+    end
+  end</p>
+
+<p>In [Testing Iteration #8)(http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-8)
+we ran the following command to verify that the myface database was created:</p>
+
+<pre><code>$ mysqlshow -uroot -prootpass
+</code></pre>
+
+<p>That’s a simple <code>command</code> resource regular expression:</p>
+
+<pre><code>it 'should have created the myface database' do
+  expect(command 'mysqlshow -uroot -prootpass').to return_stdout /.*myface.*/
+end
+</code></pre>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-9">Testing Iteration #9</a>
+we created a myface-app MySQL database user and to check to see if the
+myface_app user only has rights to the myface database with the following
+commands:</p>
+
+<pre><code>$ mysql -uroot -prootpass -e "select user,host from mysql.user;"
+$ mysql -uroot -prootpass -e "show grants for 'myface_app'@'localhost';"
+</code></pre>
+
+<p>Again, these are just more serverspec <code>command</code>s (\s indicates “any
+whitespace character”):</p>
+
+<pre><code>it 'should have created the myface_app user' do
+  expect(command 'mysql -uroot -prootpass -e "select user,host from mysql.user;"').to return_stdout /.*myface_app\s+localhost.*/
+end
+
+it 'should have given the myface_app database user rights to myface' do
+  expect(command 'mysql -uroot -prootpass -e "show grants for \'myface_app\'@\'localhost\';"').to return_stdout /.*GRANT ALL PRIVILEGES ON `myface`.\* TO \'myface_app\'@\'localhost\'.*/
+end
+</code></pre>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-10">Testing Itegration #10</a>
+we dumped the contents of the <code>users</code> table to verify it got created:</p>
+
+<pre><code>$ mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"'
+</code></pre>
+
+<p>You guessed it, yet another <code>command</code>:</p>
+
+<pre><code>it 'should have created the users table' do
+  expect(command 'mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"').to return_stdout /.*mbower.*/
+end
+</code></pre>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#test-iteration-11">Testing Iteration #11</a> we checked
+to see if the php5_module was successfully installed:</p>
+
+<pre><code>$ sudo /usr/sbin/httpd -M | grep php5
+</code></pre>
+
+<p>Note that there is a <code>php_config</code> serverspec resource for checking
+PHP config settings, but that’s not helpful for checking the existence
+of PHP, so another command will do (just remember the service name is
+different between the two different OSes):</p>
+
+<pre><code>it 'should have installed the Apache php5_module' do
+  case RSpec.configuration.os
+  when "Debian"
+    expect(command 'sudo /usr/sbin/apache2 -M | grep php5').to return_stdout /.*php5_module.*/
+  else
+    expect(command 'sudo /usr/sbin/httpd -M | grep php5').to return_stdout /.*php5_module.*/
+  end
+end
+</code></pre>
+
+<p>And there you have it!  Your final <code>database_spec.rb</code> should resemble the
+following:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/database_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace database&#39;</span> <span class="k">do</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should be running the httpd server&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="k">case</span> <span class="no">RSpec</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">os</span>
+</span><span class="line">    <span class="k">when</span> <span class="s2">&quot;Debian&quot;</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;mysql&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;mysql&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;mysqld&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;mysqld&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have created the myface database&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;mysqlshow -uroot -prootpass&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*myface.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have created the myface_app user&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;mysql -uroot -prootpass -e &quot;select user,host from mysql.user;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*myface_app\s+localhost.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have given the myface_app database user rights to myface&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;mysql -uroot -prootpass -e &quot;show grants for \&#39;myface_app\&#39;@\&#39;localhost\&#39;;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*GRANT ALL PRIVILEGES ON `myface`.\* TO \&#39;myface_app\&#39;@\&#39;localhost\&#39;.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have created the users table&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e &quot;select id,user_name from users;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*mbower.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have installed the Apache php5_module&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="k">case</span> <span class="no">RSpec</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">os</span>
+</span><span class="line">    <span class="k">when</span> <span class="s2">&quot;Debian&quot;</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;sudo /usr/sbin/apache2 -M | grep php5&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*php5_module.*/</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;sudo /usr/sbin/httpd -M | grep php5&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*php5_module.*/</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
 ]]></content>
   </entry>
   
