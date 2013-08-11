@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-10T23:14:46-07:00</updated>
+  <updated>2013-08-11T06:03:38-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -35,7 +35,10 @@
       <li><a href="#testing-iteration-16---running-your-first-serverspec-test">Testing Iteration #16 - Running your first Serverspec test</a></li>
     </ul>
   </li>
-  <li><a href="#iteration-17---completing-the-webserver-test-suite">Iteration #17 - Completing the webserver test suite</a></li>
+  <li><a href="#iteration-17---completing-the-webserver-test-suite">Iteration #17 - Completing the webserver test suite</a>    <ul>
+      <li><a href="#testing-iteration-17---running-the-suite">Testing Iteration #17 - Running the suite</a></li>
+    </ul>
+  </li>
 </ul>
 
 <p>NOTE: Preview for beta testers to review…</p>
@@ -942,10 +945,11 @@ httpd (pid  4831) is running.
 </code></pre>
 
 <p>Use the servspec <code>service</code> resource to perform a test to ensure that the
-httpd service is running:</p>
+httpd service is running and it automatically starts on bootup:</p>
 
 <pre><code>it 'should be running the httpd server' do
   expect(service 'httpd').to be_running
+  expect(service 'httpd').to be_enabled
 end
 </code></pre>
 
@@ -964,6 +968,7 @@ end
 <span class="line-number">10</span>
 <span class="line-number">11</span>
 <span class="line-number">12</span>
+<span class="line-number">13</span>
 </pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
 </span><span class="line">
 </span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
@@ -974,6 +979,7 @@ end
 </span><span class="line">
 </span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should be running the httpd server&#39;</span> <span class="k">do</span>
 </span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
 </span><span class="line">  <span class="k">end</span>
 </span><span class="line"><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
@@ -1014,7 +1020,7 @@ default-ubuntu-1204  Vagrant  Chef Solo    Set Up
 </code></pre>
 
 <p>Uh oh!  That’s not what we expected! The tests failed on our Ubuntu 12.04
-instance - it is not <code>Verified</code>, but they passed on CentOS 6.4.  This is
+instance - it is not <code>Verified</code>, but the tests passed on CentOS 6.4.  This is
 what you’ll see when a test fails.</p>
 
 <p>In this case, the reason for the failure is that on Ubuntu, the name of the
@@ -1031,8 +1037,10 @@ including CentOS.  So the following conditional should do the trick:</p>
   case RSpec.configuration.os
   when "Debian"
     expect(service 'apache2').to be_running
+    expect(service 'apache2').to be_enabled
   else
     expect(service 'httpd').to be_running
+    expect(service 'httpd').to be_enabled
   end
 end 
 </code></pre>
@@ -1058,6 +1066,8 @@ end
 <span class="line-number">16</span>
 <span class="line-number">17</span>
 <span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
 </pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
 </span><span class="line">
 </span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
@@ -1070,8 +1080,10 @@ end
 </span><span class="line">    <span class="k">case</span> <span class="no">RSpec</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">os</span>
 </span><span class="line">    <span class="k">when</span> <span class="s2">&quot;Debian&quot;</span>
 </span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;apache2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;apache2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
 </span><span class="line">    <span class="k">else</span>
 </span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
 </span><span class="line">    <span class="k">end</span>
 </span><span class="line">  <span class="k">end</span>
 </span><span class="line">
@@ -1105,6 +1117,124 @@ Finished in 0.02841 seconds
 2 examples, 0 failures
        Finished verifying &lt;default-ubuntu-1204&gt; (0m1.87s).
 -----&gt; Kitchen is finished. (0m7.84s)
+
+$ kitchen list
+Instance             Driver   Provisioner  Last Action
+default-centos-64    Vagrant  Chef Solo    Verified
+default-ubuntu-1204  Vagrant  Chef Solo    Verified
+</code></pre>
+
+<p>The final test that is used for the rest of the Test Iterations in
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>
+basically amounts to visiting http://33.33.33.10 with a web browser
+and eyeballing the results.  That would be difficult to automate with
+serverspec, and one would probably want to use a web automation framework
+like <a href="http://docs.seleniumhq.org/">Selenium</a> to do this.  However, you can
+at least use serverspec to verify that the Apache Server is serving up
+content on port 80 (the default http port).</p>
+
+<p>We can check that the server is listening on port 80 with the <code>port</code> resource:</p>
+
+<pre><code>it 'should be listening on port 80' do
+  expect(port 80).to be_listening
+end
+</code></pre>
+
+<p>We’ll resort to using the <code>command</code> resource to check to see if the server
+accepts an HTTP connections and returns something that looks reasonable, as
+there doesn’t seem to be an obvious higher-level resource to perform this
+action:</p>
+
+<pre><code>it 'should respond to an HTTP request' do
+  expect(command 'curl localhost').to return_stdout /.*&lt;title&gt;MyFace Users&lt;\/title&gt;.*/
+end
+</code></pre>
+
+<p>After adding these two checks, this is what your <code>webserver_spec.rb</code> should
+look like:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">user</span> <span class="s1">&#39;myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">exist</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should be running the httpd server&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="k">case</span> <span class="no">RSpec</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">os</span>
+</span><span class="line">    <span class="k">when</span> <span class="s2">&quot;Debian&quot;</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;apache2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;apache2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should respond to an HTTP request&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;curl localhost&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*&lt;title&gt;MyFace Users&lt;\/title&gt;.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now we have an automated script that performs some basic tests to verify
+that our cookbook enabled the web server properly.  Let the robots do some
+of the grunge work!</p>
+
+<h2 id="testing-iteration-17---running-the-suite">Testing Iteration #17 - Running the suite</h2>
+
+<p>Do a final <code>kitchen verify</code> and <code>kitchen list</code>.  Everything should look good:</p>
+
+<pre><code>$ kitchen verify
+-----&gt; Starting Kitchen (v1.0.0.beta.2)
+-----&gt; Verifying &lt;default-centos-64&gt;
+       Removing /opt/busser/suites/serverspec
+       Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+       Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+       /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+...       .
+
+       Finished in 0.04423 seconds
+       4 examples, 0 failures
+       Finished verifying &lt;default-centos-64&gt; (0m2.02s).
+-----&gt; Verifying &lt;default-ubuntu-1204&gt;
+       Removing /opt/busser/suites/serverspec
+Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+/opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+....
+
+Finished in 0.04676 seconds
+4 examples, 0 failures
+       Finished verifying &lt;default-ubuntu-1204&gt; (0m1.92s).
+-----&gt; Kitchen is finished. (0m7.34s)
 
 $ kitchen list
 Instance             Driver   Provisioner  Last Action
