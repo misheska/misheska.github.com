@@ -1019,24 +1019,20 @@ $ kitchen list
 <p>Only use the <code>command</code> resource as a method of last resort.  First check to
 see if serverspec has a better resource to perform a test.</p>
 
-<p>Let’s move on to the next commands from
+<p>Let’s move on to the next command from
 <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/#testing-iteration-3">Testing Iteration #3</a>:</p>
 
 <pre><code>$ vagrant ssh -c "sudo /sbin/service httpd status"
 httpd (pid  4831) is running.
-
-$ grep ip: Vagrantfile
-config.vm.network :private_network, ip: "33.33.33.10"
-
-&lt;visit http://33.33.33.10&gt;
 </code></pre>
 
 <p>Use the servspec <code>service</code> resource to perform a test to ensure that the
 httpd service is running:</p>
 
-<p>it ‘should be running the httpd server’ do
-    expect(service ‘httpd’).to be_running
-  end</p>
+<pre><code>it 'should be running the httpd server' do
+  expect(service 'httpd').to be_running
+end
+</code></pre>
 
 <p>Add this statement to your <code>webserver_spec</code> file:</p>
 
