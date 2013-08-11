@@ -206,12 +206,12 @@ Testing Iteration #14 - Provision with Test Kitchen
 
 You can do nearly everything that you were doing with vagrant just using Test
 Kitchen.  The Test Kitchen equivalent of the `vagrant up` command is 
-`kitchen setup`.  Try running the `kitchen setup` command now to verify that
-your `.kitchen.yml` file is valid.  When you run `kitchen setup` it will
+`kitchen converge`.  Try running the `kitchen converge` command now to verify
+that your `.kitchen.yml` file is valid.  When you run `kitchen converge` it will
 spin up a CentOS 6.4 vagrant test node instance and use Chef Solo to provision
 the MyFace cookbook on the test node:
 
-    $ kitchen setup
+    $ kitchen converge 
     -----> Starting Kitchen (v1.0.0.beta.2)
     -----> Creating <default-centos-64>
            [kitchen::driver::vagrant command] BEGIN (vagrant up --no-provision)
@@ -282,9 +282,9 @@ To display the results of the Chef Run, type in the `kitchen list` command:
 
     $ kitchen list
     Instance           Driver   Provisioner  Last Action
-    default-centos-64  Vagrant  Chef Solo    Set Up
+    default-centos-64  Vagrant  Chef Solo    Converged
 
-If the run succeeded, it should display `Set Up` in the `Last Action` field.
+If the run succeeded, it should display `Converged` in the `Last Action` field.
 
 The Test Kitchen equivalent of the `vagrant ssh` command is `kitchen login`.
 Since Test Kitchen supports multiple instances, you will need to pass in
@@ -367,7 +367,7 @@ suites:
 
 {% endcodeblock %}
 
-Before we run `kitchen setup` to do a Chef run, we need to fix our cookbook
+Before we run `kitchen converge` to do a Chef run, we need to fix our cookbook
 so it will run successfully on Ubuntu 12.04.  If you tried to deploy now you
 would notice that the MyFace cookbook would fail to deploy to Ubuntu 12.04
 successfully due to a reference to the `php-mysql` package in 
@@ -474,16 +474,16 @@ Now that we've fixed up our cookbook to work on Ubuntu 12.04, let's test it
 out!  Run `kitchen list` to display the list of Test Kitchen instances:
 
     Instance             Driver   Provisioner  Last Action
-    default-centos-64    Vagrant  Chef Solo    Set Up
+    default-centos-64    Vagrant  Chef Solo    Converged
     default-ubuntu-1204  Vagrant  Chef Solo    <Not Created>
 
 Notice that after editing the `.kitchen.yml` we now have an Ubuntu 12.04
 instance called `default-ubuntu-1204` and it is in the `<Not Created>`
 state.
 
-Go ahead setup the Ubuntu 12.04 instance by running the following command:
+Go ahead setup the Ubuntu 12.04 instance by running `kitchen converge` again:
 
-    $ kitchen setup default-ubuntu-1204
+    $ kitchen converge default-ubuntu-1204
 
 Note that this time we added an optional instance parameter so that Test
 Kitchen only performs the action against the specified instance.  If you do
@@ -496,8 +496,8 @@ Run the `kitchen list` command again to verify that the Ubuntu 12.04 instance
 is now in the `Set Up` state as well, showing that there were no errors:
 
     Instance             Driver   Provisioner  Last Action
-    default-centos-64    Vagrant  Chef Solo    Set Up
-    default-ubuntu-1204  Vagrant  Chef Solo    Set Up
+    default-centos-64    Vagrant  Chef Solo    Converged
+    default-ubuntu-1204  Vagrant  Chef Solo    Converged
 
 You just fixed an error with the MyFace cookbook that prevented deployment to
 Ubuntu 12.04, and verified that the cookbook correctly deploys to both 
@@ -528,3 +528,632 @@ private IP
 
     CentOS 6.4:   http://33.33.33.10
     Ubuntu 12.04: http://33.33.33.11
+
+
+Iteration #16 - Writing your first Serverspec test
+==================================================
+
+While it's really helpful to know now that the Myface cookbook will converge on
+both a CentOS 6.4 and Ubuntu 12.04 setup, we haven't written any tests yet.
+Let's do that.
+
+It's helpful to know that Test Kitchen was designed as a framework for
+post-convergence system testing.  You are supposed to set up a bunch of test
+instances, perform a Chef run to apply your cookbook's changes to them, then
+when this is process is complete your tests can inspect the state of each
+test instance after the Chef run is finished.  This is how we tested our
+nodes by hand in [Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/)
+and [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/).  Now we are going to automate the process.
+
+NOTE: It is a [testing anti-pattern to rely too much on system tests, even if they are automated](http://watirmelon.com/2012/01/31/introducing-the-software-testing-ice-cream-cone/)
+so make sure you are judgicious in your use of system tests.  It can be
+difficult to maintain a lot of system tests over time and keep them relevant.
+The tests you performed by hand in [Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/)
+and [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/)
+to verify MyFace are at just the right level of detail for a system test.
+Do just enough to verify that the system works correctly after it was
+configured.  In a future post, I'll cover unit tests in more detail using
+[Chefspec](http://acrmp.github.io/chefspec/) and
+[Guard](https://github.com/guard/guard).  For now, let's focus on system tests.
+
+Test Kitchen finds tests by following a directory naming convention.  When
+you installed Test Kitchen, it created the `test/integration/default`
+subdirectory underneath your main cookbook.  It looks for test code in the
+following directory underneath `test/integration`:
+
+    <COOKBOOOK-PATH>/test/integration/<TEST-SUITE-NAME>/<PLUGIN-NAME>
+
+A collection of tests is called a [test suite](http://en.wikipedia.org/wiki/Test_suite).  Following Test Kitchen install's lead, we'll just call our first
+suite of tests `default`.  Test Kitchen has a number of plugins which will
+install and setup any components necessary for running tests.  We'll be using
+the `severspec` plugin for our tests.  So you will be placing your test files
+in the following directory:
+
+    myface/test/integration/default/serverspec
+
+Create the `myface/test/integration/default/serverspec` subdirectory now.
+
+To start, we need to add a Ruby helper script which loads our Test Kitchen
+plugin.  We'll call it
+`myface/test/integration/default/serverspec/spec_helper.rb`:
+
+{% codeblock myface/test/integration/default/serverspec/spec_helper.rb lang:ruby %}
+require 'serverspec'
+require 'pathname'
+
+include Serverspec::Helper::Exec
+include Serverspec::Helper::DetectOS
+
+RSpec.configure do |c|
+  c.before :all do
+    c.os = backend(Serverspec::Commands::Base).check_os
+  end
+end
+{% endcodeblock %}
+
+This code is modeled after the examples provided on the
+[serverspec](http://serverspec.org/tutorial.html) website.
+
+Create a subdirectory underneath `myface/test/integration/default/serverspec`
+called `localhost`:
+
+    myface/test/integration/default/serverspec/localhost
+
+It is a serverspec convention to put tests (a.k.a. "specs") underneath
+`spec_helper.rb` in a subdirectory denoting the host name to be tested.
+Serverspec supports testing via SSH access to remote hosts.  We won't
+be using this capability as we will be testing local images, so we'll just
+use `localhost` for the host name.
+
+Now, let's write our first test!  If you recall in 
+[Testing Iteration #1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/#testing-iteration-1), we ran
+the following command to verify that the myface user was created:
+
+    $ getent password myface
+    myface:x:497:503::/home/myface:/bin/bash
+
+Create the following file with a serverspec test to perform the same
+action:
+
+{% codeblock myface/test/integration/default/serverspec/localhost/webserver_spec.rb lang:ruby %}
+require 'spec_helper'
+
+describe 'MyFace webserver' do
+
+  it 'should have a myface user' do
+    expect(command 'getent passwd myface').to return_stdout /myface:x:\d+:\d+::\/home\/myface:\/bin\/bash/
+  end
+
+end
+{% endcodeblock %}
+
+Serverspec provides extensions to Rspec to help you more easily test servers.
+If you're not familiar with Rspec syntax, Code School has an excellent
+tutorial on [Testing with Rspec](http://rspec.codeschool.com/).  Even if you
+don't know Rspec, you should still be able to follow along with
+provided examples.
+
+You can find a list of serverspec resources at the following link:
+<http://serverspec.org/resource_types.html>.  We're using the `command`
+resource to run the command `getent password myface` and match the
+resultant output with a Ruby regular expression (because the uid and gid
+field could be any number between 100-999, because myface is a system
+account).
+
+
+Testing Iteration #16 - Running your first Serverspec test
+----------------------------------------------------------
+
+OK, let's run our first test!
+
+To start you need to run `kitchen setup` so that Test Kitchen loads and
+configures all the required plugins.  In keeping with the restaurant theme,
+the component that manages Test Kitchen plugins is called
+[Busser](http://en.wikipedia.org/wiki/Busser).
+
+    $ kitchen setup
+    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Setting up <default-centos-64>
+    -----> Setting up Busser
+           Creating BUSSER_ROOT in /opt/busser
+           Creating busser binstub
+           Plugin serverspec already installed
+           Finished setting up <default-centos-64> (0m12.21s).
+    -----> Setting up <default-ubuntu-1204>
+    -----> Setting up Busser
+           Creating BUSSER_ROOT in /opt/busser
+           Creating busser binstub
+           Plugin serverspec already installed
+           Finished setting up <default-ubuntu-1204> (0m2.26s).
+    -----> Kitchen is finished. (0m19.04s)
+
+After running `kitchen setup`, next run `kitchen verify` to run your test
+suite.
+
+    $ kitchen verify
+    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Verifying <default-centos-64>
+           Removing /opt/busser/suites/serverspec
+           Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+           Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+           /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+           .
+
+           Finished in 0.00954 seconds
+           1 example, 0 failures
+           Finished verifying <default-centos-64> (0m1.98s).
+    -----> Verifying <default-ubuntu-1204>
+           Removing /opt/busser/suites/serverspec
+    Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+    Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+    /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+    .
+
+    Finished in 0.01468 seconds
+    1 example, 0 failures
+           Finished verifying <default-ubuntu-1204> (0m1.90s).
+    -----> Kitchen is finished. (0m7.68s)
+
+Finally run `kitchen list` to display the results of your test run.
+
+    $ kitchen list
+    Instance             Driver   Provisioner  Last Action
+    default-centos-64    Vagrant  Chef Solo    Verified
+    default-ubuntu-1204  Vagrant  Chef Solo    Verified
+
+If Test Kitchen displays the `Last Action` as `Verified`, all the tests passed.
+
+Iteration #17 - Completing the webserver test suite
+===================================================
+
+Now let's dive in and encode all the rest of the tests from
+[Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/).
+
+While we used the `command` resource to encode our first test, this isn't
+the optimal way to encode this test as a serverspec.  We can make use of the 
+`user` resource to encode a test more succinctly:
+
+  it 'should have a myface user' do
+    expect(user 'myface').to exist
+  end
+
+The `myface/test/integration/default/serverspec/localhost/webserver_spec.rb`
+file should resemble the following:
+
+{% codeblock myface/test/integration/default/serverspec/localhost/webserver_spec.rb lang:ruby %}
+require 'spec_helper'
+
+describe 'MyFace webserver' do
+
+  it 'should have a myface user' do
+    expect(user 'myface').to exist
+  end
+
+end
+{% endcodeblock %}
+
+Run `kitchen verify` and `kitchen list` to re-run your test.  You should see
+the same result as before - 0 failures:
+
+    $ kitchen verify
+    $ kitchen list
+
+Only use the `command` resource as a method of last resort.  First check to
+see if serverspec has a better resource to perform a test.
+
+Let's move on to the next command from
+[Testing Iteration #3](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/#testing-iteration-3):
+
+    $ vagrant ssh -c "sudo /sbin/service httpd status"
+    httpd (pid  4831) is running.
+
+Use the servspec `service` resource to perform a test to ensure that the
+httpd service is running and it automatically starts on bootup:
+
+    it 'should be running the httpd server' do
+      expect(service 'httpd').to be_running
+      expect(service 'httpd').to be_enabled
+    end
+
+Add this statement to your `webserver_spec` file:
+
+{% codeblock myface/test/integration/default/serverspec/localhost/webserver_spec.rb lang:ruby %}
+require 'spec_helper'
+
+describe 'MyFace webserver' do
+
+  it 'should have a myface user' do
+    expect(user 'myface').to exist
+  end
+
+  it 'should be running the httpd server' do
+    expect(service 'httpd').to be_running
+    expect(service 'httpd').to be_enabled
+  end
+end
+{% endcodeblock %}
+
+Run `kitchen verify` and `kitchen list` again to run this new test:
+
+    $ kitchen verify
+    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Verifying <default-centos-64>
+    ...
+    Finished in 0.02927 seconds
+           2 examples, 0 failures
+           Finished verifying <default-centos-64> (0m2.00s).
+    -----> Verifying <default-ubuntu-1204>
+           Removing /opt/busser/suites/serverspec
+    Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+    Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+    /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+    .httpd: unrecognized service
+    F
+
+    Failures:
+    
+      1) MyFace webserver should be running the httpd server
+         Failure/Error: expect(service 'httpd').to be_running
+           service httpd status | grep 'running'
+           expected Service "httpd" to be running
+         # /opt/busser/suites/serverspec/localhost/webserver_spec.rb:14:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.02461 seconds
+    2 examples, 1 failure
+    ...
+    $ kitchen list
+    Instance             Driver   Provisioner  Last Action
+    default-centos-64    Vagrant  Chef Solo    Verified
+    default-ubuntu-1204  Vagrant  Chef Solo    Set Up
+
+Uh oh!  That's not what we expected! The tests failed on our Ubuntu 12.04
+instance - it is not `Verified`, but the tests passed on CentOS 6.4.  This is
+what you'll see when a test fails.
+
+In this case, the reason for the failure is that on Ubuntu, the name of the
+Apache httpd service is `apache2` not `httpd`.  Let's address this by adding a conditional that checks the `os` custom configuration setting that is set in 
+`spec_helper.rb`.
+
+I didn't explain what this did before, but it runs a serverspec helper
+method to check the os type before each spec/test run.  When running under
+Ubuntu (or Debian), the value of `RSpec.configuation.os` will be `Debian`,
+otherwise the value will be `RedHat` if it is running under any RHEL variant,
+including CentOS.  So the following conditional should do the trick:
+
+    it 'should be running the httpd server' do
+      case RSpec.configuration.os
+      when "Debian"
+        expect(service 'apache2').to be_running
+        expect(service 'apache2').to be_enabled
+      else
+        expect(service 'httpd').to be_running
+        expect(service 'httpd').to be_enabled
+      end
+    end 
+
+After this change, your `webserver_spec` should resemble the following:
+
+{% codeblock myface/test/integration/default/serverspec/localhost/webserver_spec.rb lang:ruby %}
+require 'spec_helper'
+
+describe 'MyFace webserver' do
+
+  it 'should have a myface user' do
+    expect(user 'myface').to exist
+  end
+
+  it 'should be running the httpd server' do
+    case RSpec.configuration.os
+    when "Debian"
+      expect(service 'apache2').to be_running
+      expect(service 'apache2').to be_enabled
+    else
+      expect(service 'httpd').to be_running
+      expect(service 'httpd').to be_enabled
+    end
+  end
+
+end
+{% endcodeblock %}
+
+Run `kitchen verify` and `kitchen list` again - all the tests should pass:
+
+    $ kitchen verify
+    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Verifying <default-centos-64>
+           Removing /opt/busser/suites/serverspec
+           Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+           Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+           /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+    .       .
+    
+           Finished in 0.027 seconds
+           2 examples, 0 failures
+           Finished verifying <default-centos-64> (0m2.03s).
+    -----> Verifying <default-ubuntu-1204>
+           Removing /opt/busser/suites/serverspec
+    Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+    Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+    /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+    ..
+     
+    Finished in 0.02841 seconds
+    2 examples, 0 failures
+           Finished verifying <default-ubuntu-1204> (0m1.87s).
+    -----> Kitchen is finished. (0m7.84s)
+
+    $ kitchen list
+    Instance             Driver   Provisioner  Last Action
+    default-centos-64    Vagrant  Chef Solo    Verified
+    default-ubuntu-1204  Vagrant  Chef Solo    Verified
+
+The final test that is used for the rest of the Test Iterations in
+[Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/)
+basically amounts to visiting http://33.33.33.10 with a web browser
+and eyeballing the results.  That would be difficult to automate with
+serverspec, and one would probably want to use a web automation framework
+like [Selenium](http://docs.seleniumhq.org/) to do this.  However, you can
+at least use serverspec to verify that the Apache Server is serving up
+content on port 80 (the default http port).
+
+We can check that the server is listening on port 80 with the `port` resource:
+
+    it 'should be listening on port 80' do
+      expect(port 80).to be_listening
+    end
+
+We'll resort to using the `command` resource to check to see if the server
+accepts an HTTP connections and returns something that looks reasonable, as
+there doesn't seem to be an obvious higher-level resource to perform this
+action:
+
+    it 'should respond to an HTTP request' do
+      expect(command 'curl localhost').to return_stdout /.*<title>MyFace Users<\/title>.*/
+    end
+
+After adding these two checks, this is what your `webserver_spec.rb` should
+look like:
+
+{% codeblock myface/test/integration/default/serverspec/localhost/webserver_spec.rb lang:ruby %}
+require 'spec_helper'
+
+describe 'MyFace webserver' do
+
+  it 'should have a myface user' do
+    expect(user 'myface').to exist
+  end
+
+  it 'should be running the httpd server' do
+    case RSpec.configuration.os
+    when "Debian"
+      expect(service 'apache2').to be_running
+      expect(service 'apache2').to be_enabled
+    else
+      expect(service 'httpd').to be_running
+      expect(service 'httpd').to be_enabled
+    end
+  end
+
+  it 'should respond to an HTTP request' do
+    expect(command 'curl localhost').to return_stdout /.*<title>MyFace Users<\/title>.*/
+  end
+end
+{% endcodeblock %}
+
+Now we have an automated script that performs some basic tests to verify
+that our cookbook enabled the web server properly.  Let the robots do some
+of the grunge work!
+
+Testing Iteration #17 - Running the suite
+-----------------------------------------
+
+Do a final `kitchen verify` and `kitchen list`.  Everything should look good:
+
+    $ kitchen verify
+    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Verifying <default-centos-64>
+           Removing /opt/busser/suites/serverspec
+           Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+           Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+           /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+    ...       .
+    
+           Finished in 0.04423 seconds
+           4 examples, 0 failures
+           Finished verifying <default-centos-64> (0m2.02s).
+    -----> Verifying <default-ubuntu-1204>
+           Removing /opt/busser/suites/serverspec
+    Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+    Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+    /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+    ....
+
+    Finished in 0.04676 seconds
+    4 examples, 0 failures
+           Finished verifying <default-ubuntu-1204> (0m1.92s).
+    -----> Kitchen is finished. (0m7.34s)
+
+    $ kitchen list
+    Instance             Driver   Provisioner  Last Action
+    default-centos-64    Vagrant  Chef Solo    Verified
+    default-ubuntu-1204  Vagrant  Chef Solo    Verified
+
+Iteration #18 - Completing the database test suite
+==================================================
+
+Let's wrap this up by finishing off the tests for the database portion in
+[Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/)
+Create a new file called `myface/test/integration/default/serverspec/localhost/database_spec.rb` to contain the database tests.
+
+In [Testing Iteration #7](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-7)
+we checked to see if the `mysqld` service was running with the following
+command:
+
+    $ sudo /sbin/service mysqld status
+
+There is a similar name difference between the Ubuntu and CentOS services as
+there was with the Apache web server.  For Ubuntu, the name of the
+MySQL service is `mysql`.  For CentOS, the name of the service is `mysqld`.
+
+This should be a piece of cake to write a serverspec test for now:
+
+  it 'should be running the httpd server' do
+    case RSpec.configuration.os
+    when "Debian"
+      expect(service 'mysql').to be_running
+      expect(service 'mysql').to be_enabled
+    else
+      expect(service 'mysqld').to be_running
+      expect(service 'mysqld').to be_enabled
+    end
+  end
+
+In [Testing Iteration #8)(http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-8)
+we ran the following command to verify that the myface database was created:
+
+    $ mysqlshow -uroot -prootpass
+
+That's a simple `command` resource regular expression:
+
+    it 'should have created the myface database' do
+      expect(command 'mysqlshow -uroot -prootpass').to return_stdout /.*myface.*/
+    end
+
+In [Testing Iteration #9](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-9)
+we created a myface-app MySQL database user and to check to see if the
+myface_app user only has rights to the myface database with the following
+commands:
+
+    $ mysql -uroot -prootpass -e "select user,host from mysql.user;"
+    $ mysql -uroot -prootpass -e "show grants for 'myface_app'@'localhost';"
+
+Again, these are just more serverspec `command`s (\s indicates "any
+whitespace character"):
+
+    it 'should have created the myface_app user' do
+      expect(command 'mysql -uroot -prootpass -e "select user,host from mysql.user;"').to return_stdout /.*myface_app\s+localhost.*/
+    end
+
+    it 'should have given the myface_app database user rights to myface' do
+      expect(command 'mysql -uroot -prootpass -e "show grants for \'myface_app\'@\'localhost\';"').to return_stdout /.*GRANT ALL PRIVILEGES ON `myface`.\* TO \'myface_app\'@\'localhost\'.*/
+    end
+
+In [Testing Itegration #10](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-10)
+we dumped the contents of the `users` table to verify it got created:
+
+    $ mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"'
+
+You guessed it, yet another `command`:
+
+    it 'should have created the users table' do
+      expect(command 'mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"').to return_stdout /.*mbower.*/
+    end
+
+In [Testing Iteration #11](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#test-iteration-11) we checked
+to see if the php5_module was successfully installed:
+
+    $ sudo /usr/sbin/httpd -M | grep php5
+
+Note that there is a `php_config` serverspec resource for checking
+PHP config settings, but that's not helpful for checking the existence
+of PHP, so another command will do (just remember the service name is
+different between the two different OSes):
+
+    it 'should have installed the Apache php5_module' do
+      case RSpec.configuration.os
+      when "Debian"
+        expect(command 'sudo /usr/sbin/apache2 -M | grep php5').to return_stdout /.*php5_module.*/
+      else
+        expect(command 'sudo /usr/sbin/httpd -M | grep php5').to return_stdout /.*php5_module.*/
+      end
+    end
+
+And there you have it!  Your final `database_spec.rb` should resemble the
+following:
+
+{% codeblock myface/test/integration/default/serverspec/localhost/database_spec.rb lang:ruby %}
+require 'spec_helper'
+
+describe 'MyFace database' do
+
+  it 'should be running the httpd server' do
+    case RSpec.configuration.os
+    when "Debian"
+      expect(service 'mysql').to be_running
+      expect(service 'mysql').to be_enabled
+    else
+      expect(service 'mysqld').to be_running
+      expect(service 'mysqld').to be_enabled
+    end
+  end
+
+  it 'should have created the myface database' do
+    expect(command 'mysqlshow -uroot -prootpass').to return_stdout /.*myface.*/
+  end
+
+  it 'should have created the myface_app user' do
+    expect(command 'mysql -uroot -prootpass -e "select user,host from mysql.user;"').to return_stdout /.*myface_app\s+localhost.*/
+  end
+
+  it 'should have given the myface_app database user rights to myface' do
+    expect(command 'mysql -uroot -prootpass -e "show grants for \'myface_app\'@\'localhost\';"').to return_stdout /.*GRANT ALL PRIVILEGES ON `myface`.\* TO \'myface_app\'@\'localhost\'.*/
+  end
+
+  it 'should have created the users table' do
+    expect(command 'mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"').to return_stdout /.*mbower.*/
+  end
+
+  it 'should have installed the Apache php5_module' do
+    case RSpec.configuration.os
+    when "Debian"
+      expect(command 'sudo /usr/sbin/apache2 -M | grep php5').to return_stdout /.*php5_module.*/
+    else
+      expect(command 'sudo /usr/sbin/httpd -M | grep php5').to return_stdout /.*php5_module.*/
+    end
+  end
+
+end
+{% endcodeblock %}
+
+Testing Iteration #19 - kitchen test
+------------------------------------
+
+Perform a final `kitchen verify` and `kitchen list` to check that there are
+no syntax errors.  10 tests succeeded!
+
+
+Conclusion
+==========
+
+In addition to the `kitchen` commands that you have used so far, there's one
+other command that it quite useful - `kitchen test`.  It runs all the commands
+in the Test Kitchen test lifecycle in order:
+
+`kitchen create` - Creates a vagrant instance.
+
+`kitchen converge` - Provision the vagrant instance with Chef, using the run list specified in the `.kitchen.yml` file.
+
+`kitchen setup` - Install and configure any necessary Test Kitchen plugins needed to run tests.
+
+`kitchen verify` - Run tests.
+
+`kitchen destroy` - Destroy the vagrant instance, removing it from memory & disk.
+
+When you are in the midst of writing tests, using the above commands
+interactively can save time (like only running `kitchen verify` after adding
+a new test).  But once the tests are written, normally you will run
+`kitchen test` to run everything in one shot, preferably running as a "latch"
+triggered when your cookbook changes are committed to source control.  This
+will ensure that your tests are run often.
+
+So hopefully now you understand how to use Test Kitchen and what it's useful
+for.  In the next article in this series, we'll cover writing tests that can
+run before deployment, providing feedback more quickly than with
+Test Kitchen, using Chefspec and Guard.
