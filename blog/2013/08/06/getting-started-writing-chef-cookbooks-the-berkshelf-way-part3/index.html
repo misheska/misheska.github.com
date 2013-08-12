@@ -492,12 +492,12 @@ testing, in addition to CentOS 6.4.</p>
 <p>Edit <code>.kitchen.yml</code> and add a reference to a Ubuntu 12.04 basebox alongside
 the existing CentOS 6.4 basebox in the <code>platforms</code> stanza:</p>
 
-<pre><code>-name: ubuntu-12.04
- driver_config:
-   box: misheska-ubuntu1204
-   box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
-   network:
-   - ["private_network", {ip: "33.33.33.11"}]
+<pre><code>- name: ubuntu-12.04
+  driver_config:
+    box: misheska-ubuntu1204
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+    network:
+    - ["private_network", {ip: "33.33.33.11"}]
 </code></pre>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/.kitchen.yml </span></figcaption>
