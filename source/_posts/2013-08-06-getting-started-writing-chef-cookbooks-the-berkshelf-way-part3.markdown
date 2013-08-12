@@ -8,8 +8,6 @@ categories: chef
 * list element with functor item
 {:toc}
 
-NOTE: Preview for beta testers to review...
-
 This is the third article in a series on writing Opscode Chef cookbooks the
 Berkshelf Way.  Here's a link to [Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/) and
 [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/).  The source code examples covered in this
@@ -612,8 +610,7 @@ the following command to verify that the myface user was created:
     $ getent password myface
     myface:x:497:503::/home/myface:/bin/bash
 
-Create the following file with a serverspec test to perform the same
-action:
+Create the a file named `myface/test/integration/default/serverspec/localhost/webserver_spec.rb` that contains a serverspec test to perform the same action:
 
 {% codeblock myface/test/integration/default/serverspec/localhost/webserver_spec.rb lang:ruby %}
 require 'spec_helper'
@@ -654,18 +651,30 @@ the component that manages Test Kitchen plugins is called
     $ kitchen setup
     -----> Starting Kitchen (v1.0.0.beta.2)
     -----> Setting up <default-centos-64>
+    Fetching: thor-0.18.1.gem (100%)
+    Fetching: busser-0.4.1.gem (100%)
+           Successfully installed thor-0.18.1
+           Successfully installed busser-0.4.1
+           2 gems installed
     -----> Setting up Busser
            Creating BUSSER_ROOT in /opt/busser
            Creating busser binstub
-           Plugin serverspec already installed
-           Finished setting up <default-centos-64> (0m12.21s).
+           Plugin serverspec installed (version 0.2.3)
+    -----> Running postinstall for serverspec plugin
+           Finished setting up <default-centos-64> (0m49.98s).
     -----> Setting up <default-ubuntu-1204>
+    Fetching: thor-0.18.1.gem (100%)
+    Fetching: busser-0.4.1.gem (100%)
+    Successfully installed thor-0.18.1
+    Successfully installed busser-0.4.1
+    2 gems installed
     -----> Setting up Busser
            Creating BUSSER_ROOT in /opt/busser
            Creating busser binstub
-           Plugin serverspec already installed
-           Finished setting up <default-ubuntu-1204> (0m2.26s).
-    -----> Kitchen is finished. (0m19.04s)
+           Plugin serverspec installed (version 0.2.3)
+    -----> Running postinstall for serverspec plugin
+           Finished setting up <default-ubuntu-1204> (0m10.46s).
+    -----> Kitchen is finished. (1m4.85s)
 
 After running `kitchen setup`, next run `kitchen verify` to run your test
 suite.
@@ -715,9 +724,9 @@ While we used the `command` resource to encode our first test, this isn't
 the optimal way to encode this test as a serverspec.  We can make use of the 
 `user` resource to encode a test more succinctly:
 
-  it 'should have a myface user' do
-    expect(user 'myface').to exist
-  end
+    it 'should have a myface user' do
+      expect(user 'myface').to exist
+    end
 
 The `myface/test/integration/default/serverspec/localhost/webserver_spec.rb`
 file should resemble the following:
@@ -735,7 +744,7 @@ end
 {% endcodeblock %}
 
 Run `kitchen verify` and `kitchen list` to re-run your test.  You should see
-the same result as before - 0 failures:
+the same result as before - `1 example, 0 failures`:
 
     $ kitchen verify
     $ kitchen list
@@ -780,38 +789,26 @@ Run `kitchen verify` and `kitchen list` again to run this new test:
     $ kitchen verify
     -----> Starting Kitchen (v1.0.0.beta.2)
     -----> Verifying <default-centos-64>
-    ...
-    Finished in 0.02927 seconds
-           2 examples, 0 failures
-           Finished verifying <default-centos-64> (0m2.00s).
-    -----> Verifying <default-ubuntu-1204>
            Removing /opt/busser/suites/serverspec
-    Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-    Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+           Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+           Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
     -----> Running serverspec test suite
-    /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-    .httpd: unrecognized service
-    F
-
-    Failures:
+           /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+    .       .
     
-      1) MyFace webserver should be running the httpd server
-         Failure/Error: expect(service 'httpd').to be_running
-           service httpd status | grep 'running'
-           expected Service "httpd" to be running
-         # /opt/busser/suites/serverspec/localhost/webserver_spec.rb:14:in `block (2 levels) in <top (required)>'
-
-    Finished in 0.02461 seconds
-    2 examples, 1 failure
+           Finished in 0.03896 seconds
+           2 examples, 0 failures
     ...
     $ kitchen list
     Instance             Driver   Provisioner  Last Action
     default-centos-64    Vagrant  Chef Solo    Verified
-    default-ubuntu-1204  Vagrant  Chef Solo    Set Up
+    default-ubuntu-1204  Vagrant  Chef Solo    Verified
 
 Uh oh!  That's not what we expected! The tests failed on our Ubuntu 12.04
-instance - it is not `Verified`, but the tests passed on CentOS 6.4.  This is
-what you'll see when a test fails.
+instance - and yet it still says that it is `Verified`, but the tests passed
+on CentOS 6.4.  The `Last Action` field is literally the last action.  It does
+not report success or failure state, so you'll want to pay attention to the
+output of `kitchen verify` and note whether or not all the tests passed.
 
 In this case, the reason for the failure is that on Ubuntu, the name of the
 Apache httpd service is `apache2` not `httpd`.  Let's address this by adding a conditional that checks the `os` custom configuration setting that is set in 
@@ -834,8 +831,8 @@ including CentOS.  So the following conditional should do the trick:
       end
     end 
 
-After this change, your `webserver_spec` should resemble the following:
-
+After this change, your `webserver_spec.rb` file should resemble the following:
+ 
 {% codeblock myface/test/integration/default/serverspec/localhost/webserver_spec.rb lang:ruby %}
 require 'spec_helper'
 
@@ -916,7 +913,7 @@ action:
       expect(command 'curl localhost').to return_stdout /.*<title>MyFace Users<\/title>.*/
     end
 
-After adding these two checks, this is what your `webserver_spec.rb` should
+After adding these two checks, this is what your `webserver_spec.rb` file should
 look like:
 
 {% codeblock myface/test/integration/default/serverspec/localhost/webserver_spec.rb lang:ruby %}
@@ -1075,7 +1072,7 @@ different between the two different OSes):
       end
     end
 
-And there you have it!  Your final `database_spec.rb` should resemble the
+And there you have it!  Your final `database_spec.rb` file should resemble the
 following:
 
 {% codeblock myface/test/integration/default/serverspec/localhost/database_spec.rb lang:ruby %}
@@ -1126,11 +1123,7 @@ Testing Iteration #19 - kitchen test
 ------------------------------------
 
 Perform a final `kitchen verify` and `kitchen list` to check that there are
-no syntax errors.  10 tests succeeded!
-
-
-Conclusion
-==========
+no syntax errors.  9 tests succeeded!
 
 In addition to the `kitchen` commands that you have used so far, there's one
 other command that it quite useful - `kitchen test`.  It runs all the commands
@@ -1152,6 +1145,9 @@ a new test).  But once the tests are written, normally you will run
 `kitchen test` to run everything in one shot, preferably running as a "latch"
 triggered when your cookbook changes are committed to source control.  This
 will ensure that your tests are run often.
+
+Conclusion
+==========
 
 So hopefully now you understand how to use Test Kitchen and what it's useful
 for.  In the next article in this series, we'll cover writing tests that can
