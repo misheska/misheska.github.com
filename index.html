@@ -134,8 +134,6 @@
   <li><a href="#conclusion">Conclusion</a></li>
 </ul>
 
-<p>NOTE: Preview for beta testers to review…</p>
-
 <p>This is the third article in a series on writing Opscode Chef cookbooks the
 Berkshelf Way.  Here’s a link to <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a> and
 <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>.  The source code examples covered in this
@@ -880,8 +878,7 @@ the following command to verify that the myface user was created:</p>
 myface:x:497:503::/home/myface:/bin/bash
 </code></pre>
 
-<p>Create the following file with a serverspec test to perform the same
-action:</p>
+<p>Create the a file named <code>myface/test/integration/default/serverspec/localhost/webserver_spec.rb</code> that contains a serverspec test to perform the same action:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -929,18 +926,30 @@ the component that manages Test Kitchen plugins is called
 <pre><code>$ kitchen setup
 -----&gt; Starting Kitchen (v1.0.0.beta.2)
 -----&gt; Setting up &lt;default-centos-64&gt;
+Fetching: thor-0.18.1.gem (100%)
+Fetching: busser-0.4.1.gem (100%)
+       Successfully installed thor-0.18.1
+       Successfully installed busser-0.4.1
+       2 gems installed
 -----&gt; Setting up Busser
        Creating BUSSER_ROOT in /opt/busser
        Creating busser binstub
-       Plugin serverspec already installed
-       Finished setting up &lt;default-centos-64&gt; (0m12.21s).
+       Plugin serverspec installed (version 0.2.3)
+-----&gt; Running postinstall for serverspec plugin
+       Finished setting up &lt;default-centos-64&gt; (0m49.98s).
 -----&gt; Setting up &lt;default-ubuntu-1204&gt;
+Fetching: thor-0.18.1.gem (100%)
+Fetching: busser-0.4.1.gem (100%)
+Successfully installed thor-0.18.1
+Successfully installed busser-0.4.1
+2 gems installed
 -----&gt; Setting up Busser
        Creating BUSSER_ROOT in /opt/busser
        Creating busser binstub
-       Plugin serverspec already installed
-       Finished setting up &lt;default-ubuntu-1204&gt; (0m2.26s).
------&gt; Kitchen is finished. (0m19.04s)
+       Plugin serverspec installed (version 0.2.3)
+-----&gt; Running postinstall for serverspec plugin
+       Finished setting up &lt;default-ubuntu-1204&gt; (0m10.46s).
+-----&gt; Kitchen is finished. (1m4.85s)
 </code></pre>
 
 <p>After running <code>kitchen setup</code>, next run <code>kitchen verify</code> to run your test
@@ -992,9 +1001,10 @@ default-ubuntu-1204  Vagrant  Chef Solo    Verified
 the optimal way to encode this test as a serverspec.  We can make use of the 
 <code>user</code> resource to encode a test more succinctly:</p>
 
-<p>it ‘should have a myface user’ do
-    expect(user ‘myface’).to exist
-  end</p>
+<pre><code>it 'should have a myface user' do
+  expect(user 'myface').to exist
+end
+</code></pre>
 
 <p>The <code>myface/test/integration/default/serverspec/localhost/webserver_spec.rb</code>
 file should resemble the following:</p>
@@ -1021,7 +1031,7 @@ file should resemble the following:</p>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>Run <code>kitchen verify</code> and <code>kitchen list</code> to re-run your test.  You should see
-the same result as before - 0 failures:</p>
+the same result as before - <code>1 example, 0 failures</code>:</p>
 
 <pre><code>$ kitchen verify
 $ kitchen list
@@ -1082,39 +1092,27 @@ end
 <pre><code>$ kitchen verify
 -----&gt; Starting Kitchen (v1.0.0.beta.2)
 -----&gt; Verifying &lt;default-centos-64&gt;
-...
-Finished in 0.02927 seconds
-       2 examples, 0 failures
-       Finished verifying &lt;default-centos-64&gt; (0m2.00s).
------&gt; Verifying &lt;default-ubuntu-1204&gt;
        Removing /opt/busser/suites/serverspec
-Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+       Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+       Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
 -----&gt; Running serverspec test suite
-/opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-.httpd: unrecognized service
-F
+       /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
+.       .
 
-Failures:
-
-  1) MyFace webserver should be running the httpd server
-     Failure/Error: expect(service 'httpd').to be_running
-       service httpd status | grep 'running'
-       expected Service "httpd" to be running
-     # /opt/busser/suites/serverspec/localhost/webserver_spec.rb:14:in `block (2 levels) in &lt;top (required)&gt;'
-
-Finished in 0.02461 seconds
-2 examples, 1 failure
+       Finished in 0.03896 seconds
+       2 examples, 0 failures
 ...
 $ kitchen list
 Instance             Driver   Provisioner  Last Action
 default-centos-64    Vagrant  Chef Solo    Verified
-default-ubuntu-1204  Vagrant  Chef Solo    Set Up
+default-ubuntu-1204  Vagrant  Chef Solo    Verified
 </code></pre>
 
 <p>Uh oh!  That’s not what we expected! The tests failed on our Ubuntu 12.04
-instance - it is not <code>Verified</code>, but the tests passed on CentOS 6.4.  This is
-what you’ll see when a test fails.</p>
+instance - and yet it still says that it is <code>Verified</code>, but the tests passed
+on CentOS 6.4.  The <code>Last Action</code> field is literally the last action.  It does
+not report success or failure state, so you’ll want to pay attention to the
+output of <code>kitchen verify</code> and note whether or not all the tests passed.</p>
 
 <p>In this case, the reason for the failure is that on Ubuntu, the name of the
 Apache httpd service is <code>apache2</code> not <code>httpd</code>.  Let’s address this by adding a conditional that checks the <code>os</code> custom configuration setting that is set in 
@@ -1138,7 +1136,7 @@ including CentOS.  So the following conditional should do the trick:</p>
 end 
 </code></pre>
 
-<p>After this change, your <code>webserver_spec</code> should resemble the following:</p>
+<p>After this change, your <code>webserver_spec.rb</code> file should resemble the following:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
  <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -1243,7 +1241,7 @@ action:</p>
 end
 </code></pre>
 
-<p>After adding these two checks, this is what your <code>webserver_spec.rb</code> should
+<p>After adding these two checks, this is what your <code>webserver_spec.rb</code> file should
 look like:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
@@ -1433,7 +1431,7 @@ different between the two different OSes):</p>
 end
 </code></pre>
 
-<p>And there you have it!  Your final <code>database_spec.rb</code> should resemble the
+<p>And there you have it!  Your final <code>database_spec.rb</code> file should resemble the
 following:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/database_spec.rb  </span></figcaption>
@@ -1524,9 +1522,7 @@ following:</p>
 <h2 id="testing-iteration-19---kitchen-test">Testing Iteration #19 - kitchen test</h2>
 
 <p>Perform a final <code>kitchen verify</code> and <code>kitchen list</code> to check that there are
-no syntax errors.  10 tests succeeded!</p>
-
-<h1 id="conclusion">Conclusion</h1>
+no syntax errors.  9 tests succeeded!</p>
 
 <p>In addition to the <code>kitchen</code> commands that you have used so far, there’s one
 other command that it quite useful - <code>kitchen test</code>.  It runs all the commands
@@ -1548,6 +1544,8 @@ a new test).  But once the tests are written, normally you will run
 <code>kitchen test</code> to run everything in one shot, preferably running as a “latch”
 triggered when your cookbook changes are committed to source control.  This
 will ensure that your tests are run often.</p>
+
+<h1 id="conclusion">Conclusion</h1>
 
 <p>So hopefully now you understand how to use Test Kitchen and what it’s useful
 for.  In the next article in this series, we’ll cover writing tests that can
