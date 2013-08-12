@@ -1003,16 +1003,16 @@ MySQL service is `mysql`.  For CentOS, the name of the service is `mysqld`.
 
 This should be a piece of cake to write a serverspec test for now:
 
-  it 'should be running the httpd server' do
-    case RSpec.configuration.os
-    when "Debian"
-      expect(service 'mysql').to be_running
-      expect(service 'mysql').to be_enabled
-    else
-      expect(service 'mysqld').to be_running
-      expect(service 'mysqld').to be_enabled
+    it 'should be running the database server' do
+      case RSpec.configuration.os
+      when "Debian"
+        expect(service 'mysql').to be_running
+        expect(service 'mysql').to be_enabled
+      else
+        expect(service 'mysqld').to be_running
+        expect(service 'mysqld').to be_enabled
+      end
     end
-  end
 
 In [Testing Iteration #8)(http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-8)
 we ran the following command to verify that the myface database was created:
@@ -1082,7 +1082,7 @@ require 'spec_helper'
 
 describe 'MyFace database' do
 
-  it 'should be running the httpd server' do
+  it 'should be running the database server' do
     case RSpec.configuration.os
     when "Debian"
       expect(service 'mysql').to be_running
