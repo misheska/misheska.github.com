@@ -1014,7 +1014,7 @@ This should be a piece of cake to write a serverspec test for now:
       end
     end
 
-In [Testing Iteration #8)(http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-8)
+In [Testing Iteration #8](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-8)
 we ran the following command to verify that the myface database was created:
 
     $ mysqlshow -uroot -prootpass
@@ -1033,7 +1033,7 @@ commands:
     $ mysql -uroot -prootpass -e "select user,host from mysql.user;"
     $ mysql -uroot -prootpass -e "show grants for 'myface_app'@'localhost';"
 
-Again, these are just more serverspec `command`s (\s indicates "any
+Again, these are just more serverspec `command`s (`\s` indicates "any
 whitespace character"):
 
     it 'should have created the myface_app user' do
