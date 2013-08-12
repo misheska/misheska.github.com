@@ -1154,7 +1154,7 @@ Conclusion
 So hopefully now you understand how to use Test Kitchen and what it's useful
 for.  In the next article in this series, we'll cover writing tests that can
 run before deployment, providing feedback more quickly than with
-Test Kitchen, using Chefspec and Guard.
+Test Kitchen (albeit in more limited circumstances), using Chefspec and Guard.
 
 Now you should be able to test everything but the kitchen sink!  Wait...
 actually Test Kitchen has got that covered as well:
