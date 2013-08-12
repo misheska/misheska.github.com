@@ -337,6 +337,8 @@ the existing CentOS 6.4 basebox in the `platforms` stanza:
         network:
         - ["private_network", {ip: "33.33.33.11"}]
 
+After editing, your `.kitchen.yml` file should resemble the following:
+
 {% codeblock myface/.kitchen.yml %}
 
 ---
