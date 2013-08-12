@@ -1080,7 +1080,7 @@ require 'spec_helper'
 
 describe 'MyFace database' do
 
-  it 'should be running the httpd server' do
+  it 'should be running the database server' do
     case RSpec.configuration.os
     when "Debian"
       expect(service 'mysql').to be_running
