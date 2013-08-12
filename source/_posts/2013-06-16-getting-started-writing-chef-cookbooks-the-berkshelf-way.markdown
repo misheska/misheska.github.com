@@ -435,7 +435,7 @@ our attribute - in this case, we're defining two new attributes: `:user` and
 equivalent definitions to the ones above:
 
     node.default[:myface][:user] = "myface"
-    node.default[:myface][:user] = "myface"
+    node.default[:myface][:group] = "myface"
 
 Also note the use of symbols instead of strings.  It is [strongly recommended
 that you use symbols instead of strings](http://www.robertsosinski.com/2009/01/11/the-difference-between-ruby-symbols-and-strings/)
