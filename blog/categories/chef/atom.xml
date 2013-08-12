@@ -4,7 +4,7 @@
   <title><![CDATA[Category: chef | Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/blog/categories/chef/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2013-08-11T17:44:03-07:00</updated>
+  <updated>2013-08-12T09:35:29-07:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -3602,7 +3602,7 @@ our attribute - in this case, we’re defining two new attributes: <code>:user</
 equivalent definitions to the ones above:</p>
 
 <pre><code>node.default[:myface][:user] = "myface"
-node.default[:myface][:user] = "myface"
+node.default[:myface][:group] = "myface"
 </code></pre>
 
 <p>Also note the use of symbols instead of strings.  It is <a href="http://www.robertsosinski.com/2009/01/11/the-difference-between-ruby-symbols-and-strings/">strongly recommended
