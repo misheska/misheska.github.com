@@ -8,6 +8,9 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated September 1, 2013_
+* _Bumped Test Kitchen from 1.0.0.beta.2 to 1.0.0.beta.3_
+
 This is the third article in a series on writing Opscode Chef cookbooks the
 Berkshelf Way.  Here's a link to [Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/) and
 [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/).  The source code examples covered in this
@@ -32,7 +35,7 @@ Iteration #13 - Install Test Kitchen
 Edit `myface/Gemfile` and add the following line to load the
 Test Kitchen gem:
 
-    gem 'test-kitchen', '~> 1.0.0.beta.2'
+    gem 'test-kitchen', '~> 1.0.0.beta.3'
 
 Your `myface/Gemfile` should look like the following after editing:
 
@@ -40,11 +43,11 @@ Your `myface/Gemfile` should look like the following after editing:
 source 'https://rubygems.org'
 
 gem 'berkshelf'
-gem 'test-kitchen', '~> 1.0.0.beta.2'
+gem 'test-kitchen', '~> 1.0.0.beta.3'
 {% endcodeblock %}
 
 Test Kitchen is in beta release and is still evolving rapidly.  The
-1.0.0.beta.2 version constraint will ensure that you are using the latest
+1.0.0.beta.3 version constraint will ensure that you are using the latest
 stable prerelease version.
 
 After you have updated the `Gemfile` run `bundle install` to download the
@@ -54,11 +57,12 @@ test-kitchen gem and all its dependencies:
     Fetching gem metadata from https://rubygems.org/........
     Fetching gem metadata from https://rubygems.org/..
     Resolving dependencies...
-    Using i18n (0.6.4)
-    Using multi_json (1.7.8)
+    Using i18n (0.6.5)
+    Using multi_json (1.7.9)
     Using activesupport (3.2.14)
     ...
-    Installing test-kitchen (1.0.0.beta.2)
+    Installing test-kitchen (1.0.0.beta.3)
+    Using kitchen-vagrant (0.11.1)
     Using bundler (1.3.5)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
@@ -70,7 +74,7 @@ If everything worked properly you should be able to run the `kitchen --version`
 command to see your installed Test Kitchen's version information
 
     $ kitchen --version
-    Test Kitchen version 1.0.0.beta.2
+    Test Kitchen version 1.0.0.beta.3
 
 Iteration #14 - Create a Kitchen YAML file
 ==========================================
@@ -101,7 +105,7 @@ Since `kitchen init` modified your Gemfile, you need to re-run `bundle install`
     Using activesupport (3.2.14)
     ...
     Using safe_yaml (0.9.5)
-    Using test-kitchen (1.0.0.beta.2)
+    Using test-kitchen (1.0.0.beta.3)
     Installing kitchen-vagrant (0.11.0)
     Using bundler (1.3.5)
     Your bundle is complete!
@@ -123,7 +127,7 @@ driver_config:
   require_chef_omnibus: true
 
 platforms:
-- name: centos-6.4
+- name: centos-64
   driver_config:
     box: misheska-centos64
     box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
@@ -131,7 +135,11 @@ platforms:
 suites:
 - name: default
   run_list: ["recipe[myface]"]
-  attributes: { mysql: { server_root_password: "rootpass", server_debian_password: "debpass", server_repl_password: "replpass" } }
+  attributes:
+    mysql:
+      server_root_password: "rootpass"
+      server_debian_password: "debpass"
+      server_repl_password: "replpass"
 
 {% endcodeblock %}
 
@@ -182,7 +190,7 @@ driver_config:
   require_chef_omnibus: true
 
 platforms:
-- name: centos-6.4
+- name: centos-64
   driver_config:
     box: misheska-centos64
     box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
@@ -192,8 +200,11 @@ platforms:
 suites:
 - name: default
   run_list: ["recipe[myface]"]
-  attributes: { mysql: { server_root_password: "rootpass", server_debian_password: "debpass", server_repl_password: "replpass" } }
-
+  attributes:
+    mysql:
+      server_root_password: "rootpass"
+      server_debian_password: "debpass"
+      server_repl_password: "replpass"
 {% endcodeblock %}
 
 For more information on the `kitchen-vagrant` settings, refer to the
@@ -210,7 +221,7 @@ spin up a CentOS 6.4 vagrant test node instance and use Chef Solo to provision
 the MyFace cookbook on the test node:
 
     $ kitchen converge 
-    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Starting Kitchen (v1.0.0.beta.3)
     -----> Creating <default-centos-64>
            [kitchen::driver::vagrant command] BEGIN (vagrant up --no-provision)
            Bringing machine 'default' up with 'virtualbox' provider...
@@ -330,7 +341,7 @@ testing, in addition to CentOS 6.4.
 Edit `.kitchen.yml` and add a reference to a Ubuntu 12.04 basebox alongside
 the existing CentOS 6.4 basebox in the `platforms` stanza:
 
-    - name: ubuntu-12.04
+    - name: ubuntu-1204
       driver_config:
         box: misheska-ubuntu1204
         box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
@@ -347,13 +358,13 @@ driver_config:
   require_chef_omnibus: true
 
 platforms:
-- name: centos-6.4
+- name: centos-64
   driver_config:
     box: misheska-centos64
     box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
     network:
     - ["private_network", {ip: "33.33.33.10"}]
-- name: ubuntu-12.04
+- name: ubuntu-1204
   driver_config:
     box: misheska-ubuntu1204
     box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
@@ -363,7 +374,11 @@ platforms:
 suites:
 - name: default
   run_list: ["recipe[myface]"]
-  attributes: { mysql: { server_root_password: "rootpass", server_debian_password: "debpass", server_repl_password: "replpass" } }
+  attributes:
+    mysql:
+      server_root_password: "rootpass"
+      server_debian_password: "debpass"
+      server_repl_password: "replpass"
 
 {% endcodeblock %}
 
@@ -401,9 +416,9 @@ description      'Installs/Configures myface'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '2.0.0'
 
-depends "apache2", "~> 1.6.0"
+depends "apache2", "~> 1.7.0"
 depends "mysql", "~> 3.0.0"
-depends "database", "~> 1.3.0"
+depends "database", "~> 1.4.0"
 depends "php", "~> 1.2.0"
 {% endcodeblock %}
 
@@ -546,7 +561,7 @@ nodes by hand in [Part 1](http://misheska.com/blog/2013/06/16/getting-started-wr
 and [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/).  Now we are going to automate the process.
 
 NOTE: It is a [testing anti-pattern to rely too much on system tests, even if they are automated](http://watirmelon.com/2012/01/31/introducing-the-software-testing-ice-cream-cone/)
-so make sure you are judgicious in your use of system tests.  It can be
+so make sure you are judicious in your use of system tests.  It can be
 difficult to maintain a lot of system tests over time and keep them relevant.
 The tests you performed by hand in [Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/)
 and [Part 2](http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/)
@@ -651,7 +666,7 @@ the component that manages Test Kitchen plugins is called
 [Busser](http://en.wikipedia.org/wiki/Busser).
 
     $ kitchen setup
-    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Starting Kitchen (v1.0.0.beta.3)
     -----> Setting up <default-centos-64>
     Fetching: thor-0.18.1.gem (100%)
     Fetching: busser-0.4.1.gem (100%)
@@ -682,7 +697,7 @@ After running `kitchen setup`, next run `kitchen verify` to run your test
 suite.
 
     $ kitchen verify
-    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Starting Kitchen (v1.0.0.beta.3)
     -----> Verifying <default-centos-64>
            Removing /opt/busser/suites/serverspec
            Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
@@ -783,13 +798,14 @@ describe 'MyFace webserver' do
     expect(service 'httpd').to be_running
     expect(service 'httpd').to be_enabled
   end
+
 end
 {% endcodeblock %}
 
 Run `kitchen verify` and `kitchen list` again to run this new test:
 
     $ kitchen verify
-    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Starting Kitchen (v1.0.0.beta.3)
     -----> Verifying <default-centos-64>
            Removing /opt/busser/suites/serverspec
            Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
@@ -861,7 +877,7 @@ end
 Run `kitchen verify` and `kitchen list` again - all the tests should pass:
 
     $ kitchen verify
-    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Starting Kitchen (v1.0.0.beta.3)
     -----> Verifying <default-centos-64>
            Removing /opt/busser/suites/serverspec
            Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
@@ -941,6 +957,7 @@ describe 'MyFace webserver' do
   it 'should respond to an HTTP request' do
     expect(command 'curl localhost').to return_stdout /.*<title>MyFace Users<\/title>.*/
   end
+
 end
 {% endcodeblock %}
 
@@ -954,7 +971,7 @@ Testing Iteration #17 - Running the suite
 Do a final `kitchen verify` and `kitchen list`.  Everything should look good:
 
     $ kitchen verify
-    -----> Starting Kitchen (v1.0.0.beta.2)
+    -----> Starting Kitchen (v1.0.0.beta.3)
     -----> Verifying <default-centos-64>
            Removing /opt/busser/suites/serverspec
            Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
