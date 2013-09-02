@@ -8,6 +8,10 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated September 1, 2013_
+* _Bumped apache2 cookbook reference from 1.6.x to 1.7.x_
+* _Bumped database cookbook reference from 1.3.x to 1.4.x_
+
 _Updated August 7, 2013_
 
 * _Fixed error in Iteration #10 test per Jeff Thomas_
@@ -44,9 +48,9 @@ maintainer_email 'mischa@misheska.com'
 license          'Apache 2.0'
 description      'Installs/Configures myface'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '1.0.0'
+version          '2.0.0'
 
-depends "apache2", "~> 1.6.0"
+depends "apache2", "~> 1.7.0"
 depends "mysql", "~> 3.0.0"
 {% endcodeblock %}
 
@@ -89,10 +93,10 @@ Run `vagrant provision` to converge your changes.
     $ vagrant provision
     [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
     [Berkshelf] Using myface (1.0.0)
-    [Berkshelf] Using apache2 (1.6.6)
-    [Berkshelf] Using mysql (3.0.2)
-    [Berkshelf] Using openssl (1.0.2)
-    [Berkshelf] Using build-essential (1.4.0)
+    [Berkshelf] Using apache2 (1.7.0)
+    [Berkshelf] Using mysql (3.0.4)
+    [Berkshelf] Using openssl (1.1.0)
+    [Berkshelf] Using build-essential (1.4.2)
     [default] Chef 11.6.0 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
@@ -172,17 +176,17 @@ cookbook, the `database` cookbook.
 Add the `database` cookbook as a dependency in the `metadata.rb` file:
 
 {% codeblock myface/metadata.rb lang:ruby %}
-name             'myface'
-maintainer       'YOUR_NAME'
-maintainer_email 'YOUR_EMAIL'
-license          'All rights reserved'
-description      'Installs/Configures myface'
+name             "myface"
+maintainer       "Mischa Taylor"
+maintainer_email "mischa@misheska.com"
+license          "Apache 2.0"
+description      "Installs/Configures myface"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '2.0.0'
 
-depends "apache2", "~> 1.6.0"
+depends "apache2", "~> 1.7.0"
 depends "mysql", "~> 3.0.0"
-depends "database", "~> 1.3.0"
+depends "database", "~> 1.4.0"
 {% endcodeblock %}
 
 Berkshelf automatically populates MySQL passwords for you.  They were
@@ -249,14 +253,14 @@ Converge the changes with `vagrant provision`:
     $ vagrant provision
     [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
     [Berkshelf] Using myface (2.0.0)
-    [Berkshelf] Using apache2 (1.6.6)
-    [Berkshelf] Using mysql (3.0.2)
-    [Berkshelf] Using openssl (1.0.2)
-    [Berkshelf] Using build-essential (1.4.0)
-    [Berkshelf] Installing database (1.3.12) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
-    [Berkshelf] Installing postgresql (3.0.2) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
-    [Berkshelf] Installing apt (2.0.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
-    [Berkshelf] Installing aws (0.101.2) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Using apache2 (1.7.0)
+    [Berkshelf] Using mysql (3.0.4)
+    [Berkshelf] Using openssl (1.1.0)
+    [Berkshelf] Using build-essential (1.4.2)
+    [Berkshelf] Installing database (1.4.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Installing postgresql (3.0.4) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Installing apt (2.1.1) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Installing aws (0.101.4) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
     [Berkshelf] Installing xfs (1.1.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
     [default] Chef 11.6.0 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
@@ -634,8 +638,7 @@ directory "#{node[:myface][:document_root]}" do
 end
 
 # write site
-template "#{node[:myface][:document_root]}/index.html" do
-  source "index.html.erb"
+cookbook_file "#{node[:myface][:document_root]}/index.html" do
   mode "0644"
 end
 
@@ -668,34 +671,34 @@ It's the last iteration, get ready to see the PHP sizzle!  First modify
 `templates/default/apache2.conf.erb` as follows:
 
 {% codeblock myface/templates/default/apache2.conf.erb lang:ruby %}
-# Managed by Chef for <%= node['hostname'] %>
+# Managed by Chef for <%= node[:hostname] %>
 <VirtualHost *:80>
-        ServerAdmin <%= node['apache']['contact'] %>
+        ServerAdmin <%= node[:apache][:contact] %>
 
-        DocumentRoot /srv/apache/myface
+        DocumentRoot <%= node[:myface][:document_root] %>
         <Directory />
                 Options FollowSymLinks
                 AllowOverride None
         </Directory>
-        <Directory /srv/apache/myface>
+        <Directory <%= node[:myface][:document_root] %>>
                 Options Indexes FollowSymLinks MultiViews
                 AllowOverride None
                 Order allow,deny
                 allow from all
         </Directory>
 
-        ErrorLog <%= node['apache']['log_dir'] %>/error.log
+        ErrorLog <%= node[:apache][:log_dir] %>/error.log
 
         LogLevel warn
 
-        CustomLog <%= node['apache']['log_dir'] %>/access.log combined
+        CustomLog <%= node[:apache][:log_dir] %>/access.log combined
         ServerSignature Off
 </VirtualHost>
 {% endcodeblock %}
 
-Next delete `templates/default/index.html.erb` with the following command:
+Next delete `files/default/index.html` with the following command:
 
-    $ rm templates/default/index.html.erb
+    $ rm files/default/index.html
 
 You'll be replacing it with the following parametized PHP script as
 `templates/default/index.php.erb`:
