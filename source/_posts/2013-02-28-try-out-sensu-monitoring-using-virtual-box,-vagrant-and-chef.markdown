@@ -5,11 +5,18 @@ date: 2013-02-28 22:54
 comments: true
 categories: [ruby, virtual box, vagrant, chef]
 ---
+* list element with functor item
+{:toc}
+
+_Updated September 2nd, 2013_
+
+* _Updated to use the sensu-chef 0.5.5 cookbook_
+
 I've been using Sensu Monitoring in production for about three to four months
 now.  It's a nice, lightweight monitoring framework, designed with the cloud
 in mind and for use with modern configuration management frameworks like
 Chef and Puppet.  For more information on Sensu, check out the article
-[Why Sonian created Sensu (by Sean Porter)](https://github.com/sensu/sensu/wiki)
+[Why Sonian created Sensu (by Sean Porter)](http://portertech.ca/2011/11/01/sensu-a-monitoring-framework/)
 and the associated articles and links on the [Sensu Wiki](https://github.com/sensu/sensu/wiki)
 
 In this article, I'm going to present a quick overview on how to test and
@@ -43,16 +50,14 @@ Install Vagrant
 After installing VirtualBox, next install Vagrant.  Vagrant is an automation
 framework for VirtualBox.  Grab the latest Vagrant installer for your OS from
 the [Vagrant Downloads page](http://downloads.vagrantup.com/) and run install.
-On Mac OS X and Windows, the Vagrant install will automatically add the Vagrant
-binaries to your PATH, on Linux, you will need to manually add
-<code>/opt/vagrant/bin</code> per the [Getting Started with Vagrant docs](http://docs.vagrantup.com/v1/docs/getting-started/index.html).
+The Vagrant install will automatically add the Vagrant binaries to your PATH.
 
 Download the sensu-chef cookbook
 ================================
 Grab the latest version of the sensu-chef cookbook from GitHub by running
 the following command:
 
-    git clone https://github.com/sensu/sensu-chef.git
+    $ git clone https://github.com/sensu/sensu-chef.git
 
 Install Ruby & RubyGems
 =======================
@@ -62,36 +67,8 @@ On Mac OS X and Linux, I strongly recommend that you use either RVM or Rbenv
 to make sure that you are using the latest version of Ruby instead of whatever
 version of Ruby your system installs by default.
 
-See my previous articles on [RVM](http://misheska.com/blog/2013/02/24/using-rvm-to-manage-multiple-versions-of-ruby/) or [Rbenv](http://misheska.com/blog/2013/02/24/using-rbenv-to-manage-multiple-versions-of-ruby/).  NOTE: If you don't
+See my previous articles on [RVM](http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/) or [Rbenv](http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/).  NOTE: If you don't
 know whether or not to decide between RVM or Rbenv, go with RVM.
-
-Patch chef-sensu Vagrantfile
-============================
-As of this writing, the `Vagrantfile` included in
-`sensu-chef/examples` will not set up the VM properly and the
-Chef run will fail with the following error:
-
-    [default] Running chef-solo...
-    stdin: is not a tty
-    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: *** Chef 0.10.8 ***
-    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Setting the run_list to ["recipe[monitor::master]", "recipe[monitor::redis]", "recipe[monitor::rabbitmq]"] from JSON
-    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List is [recipe[monitor::master], recipe[monitor::redis], recipe[monitor::rabbitmq]]
-    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Run List expands to [monitor::master, monitor::redis, monitor::rabbitmq]
-    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Starting Chef Run for ubuntu-1204-i386
-    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Running start handlers
-    [Fri, 01 Mar 2013 08:28:06 +0000] INFO: Start handlers complete.
-    [Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Running exception handlers
-    [Fri, 01 Mar 2013 08:28:07 +0000] ERROR: Exception handlers complete
-    [Fri, 01 Mar 2013 08:28:07 +0000] FATAL: Stacktrace dumped to /tmp/vagrant-chef-1/chef-stacktrace.out
-    [Fri, 01 Mar 2013 08:28:07 +0000] FATAL: NoMethodError: undefined method `default_action' for #<Class:0x8decb20>
-    Chef never successfully completed! Any errors should be visible in the
-output above. Please fix your recipes so that they properly complete.
-
-I've created a revised `Vagrantfile` which fixes this issue.
-Download this amended version and copy it in place of
-`sensu-client/examples/Vagrantfile`
-
-{% gist 5063291 Vagrantfile %}
 
 Install Ruby DevKit (Windows)
 =============================
@@ -144,10 +121,6 @@ If this is successful, on Mac OX and Linux, just run the following command to
 log in to your newly-created virtual machine instance:
 
     vagrant ssh
-
-On Windows, run the following command (or use a visual SSH client like PuTTY):
-
-    ssh vagrant@127.0.0.1 -p 2222 -i C:/Users/misheska/.vagrant.d/insecure_private_key
 
 And refer to the [Sensu wiki](https://github.com/sensu/sensu/wiki) on how 
 to experiment with various configuration options.
