@@ -9,6 +9,7 @@ categories: chef
 {:toc}
 
 _Updated September 1, 2013_
+
 * _Bumped apache2 cookbook reference from 1.6.x to 1.7.x_
 * _Bumped database cookbook reference from 1.3.x to 1.4.x_
 
