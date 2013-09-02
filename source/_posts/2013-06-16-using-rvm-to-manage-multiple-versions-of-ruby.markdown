@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Using RVM to manage multiple versions of Ruby"
+title: "Using RVM to Manage Multiple Versions of Ruby"
 date: 2013-06-16 00:35
 comments: true
 categories: ruby

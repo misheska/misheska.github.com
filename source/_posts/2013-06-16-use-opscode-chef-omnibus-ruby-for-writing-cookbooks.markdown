@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Use Opscode Chef Omnibus Ruby for writing cookbooks"
+title: "Use Opscode Chef Omnibus Ruby for Writing Cookbooks"
 date: 2013-06-16 02:35
 comments: true
 categories: chef

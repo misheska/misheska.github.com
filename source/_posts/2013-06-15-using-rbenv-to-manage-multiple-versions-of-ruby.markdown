@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Using Rbenv to manage multiple versions of Ruby"
+title: "Using Rbenv to Manage Multiple Versions of Ruby"
 date: 2013-06-15 15:53
 comments: true
 categories: ruby
