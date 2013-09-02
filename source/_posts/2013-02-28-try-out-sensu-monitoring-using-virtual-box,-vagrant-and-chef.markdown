@@ -57,7 +57,7 @@ Download the sensu-chef cookbook
 Grab the latest version of the sensu-chef cookbook from GitHub by running
 the following command:
 
-    $ git clone https://github.com/sensu/sensu-chef.git
+    git clone https://github.com/sensu/sensu-chef.git
 
 Install Ruby & RubyGems
 =======================
@@ -117,8 +117,8 @@ with the username `admin` and the password `secret`:
 
 ![Sensu Dashboard](/images/sensudashboard.png)
 
-If this is successful, on Mac OX and Linux, just run the following command to
-log in to your newly-created virtual machine instance:
+If this is successful, just run the following command to log in to your
+newly-created virtual machine instance:
 
     vagrant ssh
 
