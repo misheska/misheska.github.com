@@ -8,6 +8,14 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated September 1st, 2013_
+
+* _Corrected link to Jamie Winsor's Berkshelf slides_
+* _Bumped berkshelf from version 2.0.8 to 2.0.9_
+* _Bumped Test Kitchen version from 1.0.0.beta.2 to 1.0.0.beta.3_
+* _Bumped apache2 cookbook reference from 1.6.x to 1.7.x_
+* _Per Herr Flupke, tried to make the difference between files and templates more clear_
+
 _Updated August 7th, 2013_
 
 * _Bumped vagrant from version 1.2.4 to 1.2.7_
@@ -29,11 +37,11 @@ _Updated July 9th, 2013_
 
 Jamie Winsor hasn't yet updated his [guide to authoring cookbooks the Berkshelf way](http://vialstudios.com/guide-authoring-cookbooks.html)
 to match [recent changes related to Vagrant 1.x](https://github.com/RiotGames/berkshelf/issues/416) and [Chef 11](http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/)
-This post is an attempt to update these instructions, walking through his
+This post is an attempt to update these instructions, walking through Jamie's
 and Sean O'Meara's example app - [MyFace](https://github.com/someara/myface-cookbook).
 For more information on [Berkshelf](http://berkshelf.com/), check out his recent
 [talk](http://www.youtube.com/watch?v=hYt0E84kYUI)
-and [slides](http://www.slideshare.net/resetexistence/the-berkshelf-way)
+and [slides](http://www.slideshare.net/resetexistence/the-berkshelf-way-21787019?from_search=1)
 from ChefConf 2013.
 
 NOTE: The source code examples covered in this article can be found on
@@ -57,12 +65,12 @@ this post.
 
 ```
 $ gem install berkshelf --no-ri --no-rdoc
-Fetching: berkshelf-2.0.8.gem (100%)
-Successfully installed berkshelf-2.0.8
+Fetching: berkshelf-2.0.9.gem (100%)
+Successfully installed berkshelf-2.0.9
 1 gem installed
 
 $ berks -v
-Berkshelf (2.0.8)
+Berkshelf (2.0.9)
 
 Copyright 2012-2013 Riot Games
 
@@ -115,7 +123,7 @@ application or service.  As an example, this blog post will walk you through
 the creation of an example service - MyFace - the next killer social web app.
 
 First create a new cookbook for the MyFace application using the
-`berks cookbook` command:
+`berks cookbook myface` command:
 
     $ berks cookbook myface
           create  myface/files/default
@@ -147,14 +155,14 @@ First create a new cookbook for the MyFace application using the
           create  myface/Vagrantfile
 
 Before running `bundle install` edit the `Gemfile` and add a version constraint
-for the `test-kitchen` gem so that Bundler can resolve all the dependencies
-properly:
+for the `test-kitchen` gem so that [Bundler](http://bundler.io/) can resolve
+all the dependencies properly:
 
 {% codeblock myface/Gemfile lang:ruby %}
 source 'https://rubygems.org'
 
 gem 'berkshelf'
-gem 'test-kitchen', '~> 1.0.0.beta.2', :group => :integration
+gem 'test-kitchen', '~> 1.0.0.beta.3', :group => :integration
 gem 'kitchen-vagrant', :group => :integration
 {% endcodeblock %}
 
@@ -178,11 +186,11 @@ necessary Gem dependencies:
     Fetching gem metadata from https://rubygems.org/........
     Fetching gem metadata from https://rubygems.org/..
     Resolving dependencies...
-    Using i18n (0.6.4)
-    Using multi_json (1.7.8)
+    Using i18n (0.6.5)
+    Using multi_json (1.7.9)
     Using activesupport (3.2.14)
     . . .
-    Using berkshelf (2.0.8)
+    Using berkshelf (2.0.9)
     Using coderay (1.0.9)
     Using mixlib-shellout (1.2.0)
     Using net-scp (1.1.2)
@@ -190,8 +198,8 @@ necessary Gem dependencies:
     Using slop (3.4.6)
     Using pry (0.9.12.2)
     Using safe_yaml (0.9.5)
-    Using test-kitchen (1.0.0.beta.2)
-    Using kitchen-vagrant (0.11.0)
+    Using test-kitchen (1.0.0.beta.3)
+    Using kitchen-vagrant (0.11.1)
     Using bundler (1.3.5)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
@@ -520,19 +528,19 @@ Since you are loading Apache2 from another cookbook, you need to configure the
 dependency in your metadata.  Edit `myface/metadata.rb` and add the `apache2`
 dependency at the bottom:
 
-    depends "apache2", "~> 1.6.0"
+    depends "apache2", "~> 1.7.0"
 
 This tells Chef that the myface cookbook depends on the apache2 cookbook.
 We've also specified a version constraint using the optimistic operator
 `~>` to tell our Chef that we want the latest version of the apache2 cookbook
-that is greater than 1.6.0 but *not* 1.7.0 or higher.
+that is greater than 1.7.0 but *not* 1.8.0 or higher.
 
 It is recommended that Chef cookbooks follow a
 [Semantic Versioning](http://semver.org/) scheme.  So if you write your
-cookbook to use the latest apache2 1.6.x cookbook, if the apache2 cookbook is
-ever bumped to a 1.7.x version (or 2.x), it has some public API functionality
+cookbook to use the latest apache2 1.7.x cookbook, if the apache2 cookbook is
+ever bumped to a 1.8.x version (or 2.x), it has some public API functionality
 that has at least been deprecated.  So you'll want to review the changes and
-test before automatically using an apache2 cookbook version 1.7.x or higher.
+test before automatically using an apache2 cookbook version 1.8.x or higher.
 However, automatic use of any new 1.6.x is perfectly fine, because no
 only backwards-compatible bug fixes has been introduced.  Semantic Versioning
 guarantees there are no changes in the public APIs.
@@ -548,7 +556,7 @@ description      "Installs/Configures myface"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "0.1.0"
 
-depends "apache2", "~> 1.6.0"
+depends "apache2", "~> 1.7.0"
 {% endcodeblock %}
 
 Now when you re-run `vagrant provision` it will install apache2 on your
@@ -557,7 +565,7 @@ test virtual machine:
     $ vagrant provision
     [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
     [Berkshelf] Using myface (0.1.0)
-    [Berkshelf] Installing apache2 (1.6.6) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [Berkshelf] Installing apache2 (1.7.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
     [default] Chef 11.6.0 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
@@ -615,8 +623,8 @@ much like Bundler automatically loads all your gem dependencies.
 Where does the Berkshelf put the cookbooks it downloads?  You can find them
 in `~/.berkshelf/cookbooks`
 
-    Users/misheska/.berkshelf/cookbooks
-    └── apache2-1.6.6
+    Users/misheska/.berkshelf/default/cookbooks
+    └── apache2-1.7.0
         ├── attributes
         ├── definitions
         ├── files
@@ -676,8 +684,7 @@ directory "/srv/apache/myface" do
 end
 
 # write site
-template "/srv/apache/myface/index.html" do
-  source "index.html.erb"
+cookbook_file "/srv/apache/myface/index.html" do
   mode "0644" # forget me to create debugging exercise
 end
 
@@ -693,7 +700,15 @@ the resource references at <http://docs.opscode.com>
 
 With Chef, you can create config files from templates using
 [ERB](http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html), a
-Ruby templating system.  Create a new template file called
+Ruby templating system.  When the template `.erb` file is processed by Chef,
+it will replace any token bracketed by a `<%=` `%>` tag with the value
+of the Ruby expression inside the token (like `node[:hostname]`).  Chef expects
+ERB template files to be in the `templates` subirectory of a cookbook.
+A subdirectory level underneath `templates` is used to specify
+platorm-specific files.  Files in the `templates/default` subdirectory are
+used with every platform.
+
+Create a new template file called
 `myface/templates/default/apache2.conf.erb` which will become the
 file `.../sites-available/myface.conf` on our test virtual machine
 (refer to `myface/recipes/default.rb` above):
@@ -709,11 +724,12 @@ Alias / /srv/apache/myface/
 </Directory>
 {% endcodeblock %}
 
-Also create our web site content as `myface/templates/default/index.html.erb`.
-While it doesn't take advantage of ERB templating yet, it will in further
-iterations.
+Create a file to contain our web site content as
+`myface/files/default/index.html`.
+`index.html` is a static file that does not take advantage of any ERB
+templating.
 
-{% codeblock myface/templates/default/index.html.erb lang:ruby %}
+{% codeblock myface/files/default/index.html lang:ruby %}
 Welcome to MyFace!
 {% endcodeblock %}
 
@@ -783,8 +799,7 @@ directory "/srv/apache/myface" do
 end
 
 # write site
-template "/srv/apache/myface/index.html" do
-  source "index.html.erb"
+cookbook_file "/srv/apache/myface/index.html" do
   mode "0644"
 end
 
@@ -821,7 +836,8 @@ default[:myface][:user] = "myface"
 default[:myface][:group] = "myface"
 default[:myface][:name] = "myface"
 default[:myface][:config] = "myface.conf"
-default[:myface][:document_root] = "/srv/apache/myface"
+# Trailing slash on document_root is important
+default[:myface][:document_root] = "/srv/apache/myface/"
 {% endcodeblock %}
 
 NOTE: With Chef 11, it is now possible to nest attributes, like so:
@@ -875,8 +891,7 @@ directory "#{node[:myface][:document_root]}" do
 end
 
 # write site
-template "#{node[:myface][:document_root]}/index.html" do
-  source "index.html.erb"
+cookbook_file "#{node[:myface][:document_root]}/index.html" do
   mode "0644"
 end
 
@@ -884,6 +899,25 @@ end
 apache_site "#{node[:myface][:config]}" do
   enable true
 end
+{% endcodeblock %}
+
+Converge your node to make sure there are no syntax errors:
+
+    $ vagrant provision
+
+Add tokens to the `templates/default/apache2.conf.erb` ERB template
+file so they will be replaced with the value of the
+`node[:myface][:document_root]` attribute during the Chef run.
+
+{% codeblock myface/templates/default/apache2.conf.erb lang:ruby %}
+# Managed by Chef for <%= node[:hostname] %>
+
+Alias / <%= node[:myface][:document_root]%>
+
+<Directory <%= node[:myface][:document_root]%>>
+    Options FollowSymLinks +Indexes
+    Allow from All
+</Directory>
 {% endcodeblock %}
 
 Converge your node one last time to make sure there are no syntax errors:
@@ -921,7 +955,7 @@ description      "Installs/Configures myface"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "1.0.0"
 
-depends "apache2", "~> 1.6.0"
+depends "apache2", "~> 1.7.0"
 {% endcodeblock %}
 
 Configure Berkshelf
@@ -983,9 +1017,9 @@ values.  Then run `berks upload` to upload your cookbooks to the chef server:
 
     $ berks upload
     Using myface (1.0.0)
-    Using apache2 (1.6.6)
+    Using apache2 (1.7.0)
     Uploading myface (1.0.0) to: 'https://api.opscode.com:443/organizations/misheska'
-    Uploading apache2 (1.6.6) to: 'https://api.opscode.com:443/organizations/misheska'
+    Uploading apache2 (1.7.0) to: 'https://api.opscode.com:443/organizations/misheska'
 
 Similarly to when you ran `vagrant up`, Berkshelf automatically uploaded all
 the cookbook dependencies.
@@ -1005,7 +1039,7 @@ setup to run chef-client automatically).  For example, here's the command
 I used to run `chef-client` on my production node:
 
     $ knife ssh name:mischa-ubuntu "sudo chef-client" -x misheska
-    Starting Chef Client, version 11.4.4
+    Starting Chef Client, version 11.6.0
     resolving cookbooks for run list: ["myface"]
     Synchronizing Cookbooks:
       - myface
