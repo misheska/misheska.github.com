@@ -836,8 +836,7 @@ default[:myface][:user] = "myface"
 default[:myface][:group] = "myface"
 default[:myface][:name] = "myface"
 default[:myface][:config] = "myface.conf"
-# Trailing slash on document_root is important
-default[:myface][:document_root] = "/srv/apache/myface/"
+default[:myface][:document_root] = "/srv/apache/myface"
 {% endcodeblock %}
 
 NOTE: With Chef 11, it is now possible to nest attributes, like so:
@@ -891,7 +890,7 @@ directory "#{node[:myface][:document_root]}" do
 end
 
 # write site
-cookbook_file "#{node[:myface][:document_root]}index.html" do
+cookbook_file "#{node[:myface][:document_root]}/index.html" do
   mode "0644"
 end
 
@@ -912,7 +911,7 @@ file so they will be replaced with the value of the
 {% codeblock myface/templates/default/apache2.conf.erb lang:ruby %}
 # Managed by Chef for <%= node[:hostname] %>
 
-Alias / <%= node[:myface][:document_root] %>
+Alias / <%= node[:myface][:document_root] %>/
 
 <Directory <%= node[:myface][:document_root] %>>
     Options FollowSymLinks +Indexes
