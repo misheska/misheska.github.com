@@ -541,7 +541,7 @@ cookbook to use the latest apache2 1.7.x cookbook, if the apache2 cookbook is
 ever bumped to a 1.8.x version (or 2.x), it has some public API functionality
 that has at least been deprecated.  So you'll want to review the changes and
 test before automatically using an apache2 cookbook version 1.8.x or higher.
-However, automatic use of any new 1.6.x is perfectly fine, because no
+However, automatic use of any new 1.7.x is perfectly fine, because no
 only backwards-compatible bug fixes has been introduced.  Semantic Versioning
 guarantees there are no changes in the public APIs.
 
@@ -621,7 +621,7 @@ virtual machine.  Berkshelf automatically loads all your cookbook dependencies
 much like Bundler automatically loads all your gem dependencies.
 
 Where does the Berkshelf put the cookbooks it downloads?  You can find them
-in `~/.berkshelf/cookbooks`
+in `~/.berkshelf/default/cookbooks`
 
     Users/misheska/.berkshelf/default/cookbooks
     └── apache2-1.7.0
@@ -725,9 +725,9 @@ Alias / /srv/apache/myface/
 {% endcodeblock %}
 
 Create a file to contain our web site content as
-`myface/files/default/index.html`.
-`index.html` is a static file that does not take advantage of any ERB
-templating.
+`myface/files/default/index.html`.  `index.html` is a static file that does
+not take advantage of any ERB templating.  Chef looks for static files in
+the `files` subtree by default.
 
 {% codeblock myface/files/default/index.html lang:ruby %}
 Welcome to MyFace!
@@ -891,7 +891,7 @@ directory "#{node[:myface][:document_root]}" do
 end
 
 # write site
-cookbook_file "#{node[:myface][:document_root]}/index.html" do
+cookbook_file "#{node[:myface][:document_root]}index.html" do
   mode "0644"
 end
 
@@ -912,9 +912,9 @@ file so they will be replaced with the value of the
 {% codeblock myface/templates/default/apache2.conf.erb lang:ruby %}
 # Managed by Chef for <%= node[:hostname] %>
 
-Alias / <%= node[:myface][:document_root]%>
+Alias / <%= node[:myface][:document_root] %>
 
-<Directory <%= node[:myface][:document_root]%>>
+<Directory <%= node[:myface][:document_root] %>>
     Options FollowSymLinks +Indexes
     Allow from All
 </Directory>
