@@ -9,6 +9,7 @@ categories: chef
 {:toc}
 
 _Updated September 1, 2013_
+
 * _Bumped Test Kitchen from 1.0.0.beta.2 to 1.0.0.beta.3_
 
 This is the third article in a series on writing Opscode Chef cookbooks the

@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Getting started writing Chef cookbooks the Berkshelf Way, Part 1"
+title: "Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 1"
 date: 2013-06-16 03:49
 comments: true
 categories: chef
