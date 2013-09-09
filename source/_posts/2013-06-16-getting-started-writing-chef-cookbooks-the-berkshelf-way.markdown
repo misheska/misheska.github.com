@@ -153,18 +153,6 @@ First create a new cookbook for the MyFace application using the
           create  myface/Gemfile
           create  myface/Vagrantfile
 
-Before running `bundle install` edit the `Gemfile` and add a version constraint
-for the `test-kitchen` gem so that [Bundler](http://bundler.io/) can resolve
-all the dependencies properly:
-
-{% codeblock myface/Gemfile lang:ruby %}
-source 'https://rubygems.org'
-
-gem 'berkshelf'
-gem 'test-kitchen', '~> 1.0.0.beta.3', :group => :integration
-gem 'kitchen-vagrant', :group => :integration
-{% endcodeblock %}
-
 Run `bundle install` in the newly created cookbook directory to install the
 necessary Gem dependencies:
 
