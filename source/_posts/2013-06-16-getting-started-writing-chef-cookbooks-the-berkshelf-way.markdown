@@ -151,14 +151,6 @@ First create a new cookbook for the MyFace application using the
           create  myface/.gitignore
              run  git init from "./myface"
           create  myface/Gemfile
-          create  .kitchen.yml
-          append  Thorfile
-          create  test/integration/default
-          append  .gitignore
-          append  .gitignore
-          append  Gemfile
-          append  Gemfile
-    You must run `bundle install' to fetch any new gems.
           create  myface/Vagrantfile
 
 Before running `bundle install` edit the `Gemfile` and add a version constraint
@@ -173,18 +165,6 @@ gem 'test-kitchen', '~> 1.0.0.beta.3', :group => :integration
 gem 'kitchen-vagrant', :group => :integration
 {% endcodeblock %}
 
-As of this writing, if you do not add the version constraint for `test-kitchen`
-you will get this mysterious error when you run `bundle install`:
-
-    Bundler could not find compatible versions for gem "test-kitchen":
-      In Gemfile:
-        kitchen-vagrant (>= 0) ruby depends on
-          test-kitchen (~> 1.0.0.alpha.0) ruby
-
-        test-kitchen (0.5.0)
-
-The version constraint addresses this issue.
-
 Run `bundle install` in the newly created cookbook directory to install the
 necessary Gem dependencies:
 
@@ -194,19 +174,10 @@ necessary Gem dependencies:
     Fetching gem metadata from https://rubygems.org/..
     Resolving dependencies...
     Using i18n (0.6.5)
-    Using multi_json (1.7.9)
+    Using multi_json (1.8.0)
     Using activesupport (3.2.14)
     . . .
-    Using berkshelf (2.0.9)
-    Using coderay (1.0.9)
-    Using mixlib-shellout (1.2.0)
-    Using net-scp (1.1.2)
-    Using method_source (0.8.2)
-    Using slop (3.4.6)
-    Using pry (0.9.12.2)
-    Using safe_yaml (0.9.5)
-    Using test-kitchen (1.0.0.beta.3)
-    Using kitchen-vagrant (0.11.1)
+    Using berkshelf (2.0.10)
     Using bundler (1.3.5)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
@@ -234,7 +205,7 @@ a VirtualBox template that does not have a version of Chef provisioned.
 Then, specify that you want your image to always use the latest version
 of Chef.  (By default Berkshelf points to an image with an older version of CentOS and Chef 11.2.0, which is also old).  If you are using vagrant 1.3.0
 (or higher) your Vagrantfile should look like the following (vagrant 1.3.0
-deprecated the config.ssh.max_tries and config.ssh.timeout settings that are
+deprecated the `config.ssh.max_tries` and `config.ssh.timeout` settings that are
 inserted by Berkshelf):
 
 {% codeblock myface/Vagrantfile lang:ruby %}
