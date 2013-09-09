@@ -64,7 +64,7 @@ installed:
 NOTE: Avoid VirtualBox 4.2.14, [it breaks vagrant](https://twitter.com/mitchellh/status/348886504728305664).  VirtualBox 4.2.18 was tested for
 this post.
 
-* [Install Vagrant 1.2.1 (or higher)](http://vagrantup.com).  Vagrant 1.3.0 was tested for this post.
+* [Install Vagrant 1.2.1 (or higher)](http://vagrantup.com).  Vagrant 1.3.1 was tested for this post.
 
 * Install Ruby 1.9.x via [Chef Omnibus Installer Ruby](http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/), [rvm](http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/) or [rbenv](http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/)
 
