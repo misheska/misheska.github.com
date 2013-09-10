@@ -349,7 +349,7 @@ the existing CentOS 6.4 basebox in the `platforms` stanza:
     - name: ubuntu-1204
       driver_config:
         box: misheska-ubuntu1204
-        box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+        box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-ubuntu1204.box
         network:
         - ["private_network", {ip: "33.33.33.11"}]
 
@@ -384,7 +384,6 @@ suites:
       server_root_password: "rootpass"
       server_debian_password: "debpass"
       server_repl_password: "replpass"
-
 {% endcodeblock %}
 
 Before we run `kitchen converge` to do a Chef run, we need to fix our cookbook
@@ -434,7 +433,7 @@ block with the following reference:
 
 After editing, `myface/recipes/webserver.rb` should look like this:
 
-{% codeblock myface/recipes/metadata.rb %}
+{% codeblock myface/recipes/webserver.rb %}
 #
 # Cookbook Name:: myface
 # Recipe:: webserver
