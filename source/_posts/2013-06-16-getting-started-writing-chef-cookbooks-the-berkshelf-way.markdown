@@ -64,7 +64,7 @@ installed:
 NOTE: Avoid VirtualBox 4.2.14, [it breaks vagrant](https://twitter.com/mitchellh/status/348886504728305664).  VirtualBox 4.2.18 was tested for
 this post.
 
-* [Install Vagrant 1.2.1 (or higher)](http://vagrantup.com).  Vagrant 1.3.1 was tested for this post.
+* [Install Vagrant 1.3.0 (or higher)](http://vagrantup.com).  Vagrant 1.3.1 was tested for this post.
 
 * Install Ruby 1.9.x via [Chef Omnibus Installer Ruby](http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/), [rvm](http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/) or [rbenv](http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/)
 
@@ -221,35 +221,13 @@ Vagrant.configure("2") do |config|
 end
 {% endcodeblock %}
 
-If you are using vagrant 1.2.x, keep the config.ssh.max_tries and
-config.ssh.timeout settings, as the new `config.vm.boot_timeout` setting is
-not valid in the older version of vagrant.
-
-{% codeblock myface/Vagrantfile lang:ruby %}
-Vagrant.configure("2") do |config|
-  config.vm.hostname = "myface-berkshelf"
-  config.vm.box = "misheska-centos64"
-  config.vm.box_url = "https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-centos64.box"
-  config.omnibus.chef_version = :latest
-  config.vm.network :private_network, ip: "33.33.33.10"
-  config.ssh.max_tries = 40
-  config.ssh.timeout = 120
-  config.berkshelf.enabled = true
-
-  config.vm.provision :chef_solo do |chef|
-    chef.json = {
-      :mysql => {
-        :server_root_password => 'rootpass',
-        :server_debian_password => 'debpass',
-        :server_repl_password => 'replpass'
-      }
-    }
-    chef.run_list = [
-      "recipe[myface::default]"
-    ]
-  end
-end
-{% endcodeblock %}
+NOTE: Vagrant 1.3.0 deprecated the `config.ssh.max_tries` and 
+`config.ssh.timeout` settings that are inserted in the Vagrantfile by Berkshelf.
+Until Berkshelf is updated for Vagrant 1.3.x, you'll need to remove these
+settings from the `Vagrantfile` and replace them with `config.vm.boot_timeout`
+as above.  If you are using vagrant 1.2.x, keep the `config.ssh.max_tries`
+and `config.ssh.timeout` settings, as the new `config.vm.boot_timeout` setting
+is not valid in the older version of vagrant.
 
 Run `vagrant up` to start up the virtual machine and to test the stub MyFace
 cookbook you just created:
