@@ -8,6 +8,11 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated September 10, 2013_
+
+* _Bumped VirtualBox images from version 4.2.16 to 4.2.18_
+* _Bumped Vagrant from version 1.2.7 to 1.3.1_
+
 _Updated September 1, 2013_
 
 * _Bumped Test Kitchen from 1.0.0.beta.2 to 1.0.0.beta.3_
@@ -59,11 +64,10 @@ test-kitchen gem and all its dependencies:
     Fetching gem metadata from https://rubygems.org/..
     Resolving dependencies...
     Using i18n (0.6.5)
-    Using multi_json (1.7.9)
+    Using multi_json (1.8.0)
     Using activesupport (3.2.14)
     ...
     Installing test-kitchen (1.0.0.beta.3)
-    Using kitchen-vagrant (0.11.1)
     Using bundler (1.3.5)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
@@ -101,13 +105,13 @@ Since `kitchen init` modified your Gemfile, you need to re-run `bundle install`
     Fetching gem metadata from https://rubygems.org/........
     Fetching gem metadata from https://rubygems.org/..
     Resolving dependencies...
-    Using i18n (0.6.4)
-    Using multi_json (1.7.8)
+    Using i18n (0.6.5)
+    Using multi_json (1.8.0)
     Using activesupport (3.2.14)
     ...
     Using safe_yaml (0.9.5)
     Using test-kitchen (1.0.0.beta.3)
-    Installing kitchen-vagrant (0.11.0)
+    Installing kitchen-vagrant (0.11.1)
     Using bundler (1.3.5)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
@@ -131,7 +135,7 @@ platforms:
 - name: centos-64
   driver_config:
     box: misheska-centos64
-    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-centos64.box
 
 suites:
 - name: default
@@ -194,7 +198,7 @@ platforms:
 - name: centos-64
   driver_config:
     box: misheska-centos64
-    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-centos64.box
     network:
     - ["private_network", {ip: "33.33.33.10"}]
 
@@ -332,8 +336,8 @@ MyFace website on your host with your favorite web browser:
 
 ![Welcome to MyFace](/images/welcometomyface2.png)
 
-Iteration #15 - Provisioning on Ubuntu
-======================================
+Iteration #15 - Provisioning Ubuntu
+===================================
 
 We haven't really made use of any unique Test Kitchen features yet, let's
 start now.  We'll also deploy our cookbook locally to Ubuntu 12.04 for
@@ -362,13 +366,13 @@ platforms:
 - name: centos-64
   driver_config:
     box: misheska-centos64
-    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-centos64.box
     network:
     - ["private_network", {ip: "33.33.33.10"}]
 - name: ubuntu-1204
   driver_config:
     box: misheska-ubuntu1204
-    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-ubuntu1204.box
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-ubuntu1204.box
     network:
     - ["private_network", {ip: "33.33.33.11"}]
 
