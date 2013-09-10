@@ -985,7 +985,7 @@ Do a final `kitchen verify` and `kitchen list`.  Everything should look good:
     ...       .
     
            Finished in 0.04423 seconds
-           4 examples, 0 failures
+           3 examples, 0 failures
            Finished verifying <default-centos-64> (0m2.02s).
     -----> Verifying <default-ubuntu-1204>
            Removing /opt/busser/suites/serverspec
@@ -996,7 +996,7 @@ Do a final `kitchen verify` and `kitchen list`.  Everything should look good:
     ....
 
     Finished in 0.04676 seconds
-    4 examples, 0 failures
+    3 examples, 0 failures
            Finished verifying <default-ubuntu-1204> (0m1.92s).
     -----> Kitchen is finished. (0m7.34s)
 
