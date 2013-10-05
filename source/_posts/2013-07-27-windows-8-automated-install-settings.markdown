@@ -222,7 +222,7 @@ right-click on _UserAccounts/LocalAccounts/LocalAccount/Password_ and choose
 _Add Setting to Pass 7 oobeSystem_.  Using the Answer File _Properties_ and
 _Settings_ panes, configure the following settings:
 
-{% img right /images/sysprep/win7x64/vagrantpassword.png %}
+{% img right /images/sysprep/win8x64/vagrantpassword.png %}
 
 * Value = **vagrant**
 
