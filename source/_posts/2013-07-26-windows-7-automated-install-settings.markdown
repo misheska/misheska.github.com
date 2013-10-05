@@ -61,10 +61,17 @@ right-click on _ImageInstall/OSImage/InstallFrom/Metadata_ and choose
 _Add Setting to Pass 1 windowsPE_.  Using the Answer File _Properties_ and
 _Settings_ panes, configure the following settings:
 
+For Windows 7 Enterprise:
 {% img right /images/sysprep/win7x64/operatingsystemsettings.png %}
 
 * Key = **/IMAGE/NAME**
 * Value = **Windows 7 ENTERPRISE**
+
+For Windows 7 Professional:
+{% img right /images/sysprep/win7x64/operatingsystemsettingspro.png %}
+
+* Key = **/IMAGE/NAME**
+* Value = **Windows 7 PROFESSIONAL**
 
 Disabling the EULA dialog
 =========================
@@ -390,7 +397,7 @@ and _Settings_ panes, configure the following settings:
 
 In the _Windows Image_ pane, select the component
 *amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral*,
-right-click _FirstLogonCommands/SynchronousCommand" and choose
+right-click _FirstLogonCommands/SynchronousCommand_ and choose
 _Add Setting to Pass 7 oobeSystem_.  Using the Answer File _Properties_
 and _Settings_ panes, configure the following settings:
 
@@ -421,7 +428,7 @@ and _Settings_ panes, configure the following settings:
 
 * CommandLine = **REG ADD "HKLM\System\CurrentControlSet\Services\Netlogon\Parameters" /v DisablePasswordChange /t REG_DWORD /d 2 /f**
 * Description = **Disable computer password change**
-* Order = **1**
+* Order = **2**
 * RequiresUserInput **true**
 
 
