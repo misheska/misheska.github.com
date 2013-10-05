@@ -214,7 +214,7 @@ _Settings_ panes, configure the following settings:
 * Group = **Administrators**
 * Name = **vagrant**
 
-{% img /images/sysprep/win8x64/vagrantpasswordcomponents.png %}
+{% img /images/sysprep/win8x64/vagrantimagepasswordcomponents.png %}
 
 In the _Windows Image_ pane, select the component
 *amd64_Microsoft-Windows-Shell-Setup_6.2.9200.16384_neutral*,
