@@ -8,6 +8,15 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated December 15th, 2013_
+
+* _Bumped CentOS basebox version from 6.4 to 6.5_
+* _Added note about issue with Vagrant 1.4.0_
+* _Bumped VirtualBox from version 4.2.18 to 4.3.4_
+* _Bumped Vagrant from version 1.3.1 to 1.3.5_
+* _Bumped vagrant-berkshelf plugin from version 1.3.3 to 1.3.6_
+* _Bumped vagrant-omnibus plugin from version 1.1.1 to 1.1.2_
+
 _Updated September 9th, 2013_
 
 * _Bumped VirtualBox from version 4.2.16 to 4.2.18_
@@ -22,25 +31,6 @@ _Updated September 1st, 2013_
 * _Bumped Test Kitchen version from 1.0.0.beta.2 to 1.0.0.beta.3_
 * _Bumped apache2 cookbook reference from 1.6.x to 1.7.x_
 * _Per Herr Flupke, tried to make the difference between files and templates more clear_
-
-_Updated August 7th, 2013_
-
-* _Bumped vagrant from version 1.2.4 to 1.2.7_
-* _Bumped berkshelf from version 2.0.7 to 2.0.8_
-* _Berkshelf 2.0.8 currently needs a version constraint for test-kitchen - added_
-
-_Updated July 22nd, 2013_
-
-* _Bumped vagrant from version 1.2.3 to 1.2.4_
-* _Bumped berkshelf from version 2.0.6 to 2.0.7_
-* _Referenced Sean O'Meara's & Charles Johnson's latest myface example app_
-
-_Updated July 9th, 2013_
-
-* _Bumped vagrant from version 1.2.2 to 1.2.3_
-* _Bumped berkshelf from version 2.0.5 to 2.0.6_
-* _Bumped VirtualBox from version 4.2.12 to 4.2.16_
-* _Berkshelf 2.0.6 no longer needs the version constraint for test-kitchen - removed_
 
 Jamie Winsor hasn't yet updated his [guide to authoring cookbooks the Berkshelf way](http://vialstudios.com/guide-authoring-cookbooks.html)
 to match [recent changes related to Vagrant 1.x](https://github.com/RiotGames/berkshelf/issues/416) and [Chef 11](http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/)
@@ -60,13 +50,15 @@ You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
 To set up your cookbook-writing environment, make sure you have the following
 installed:
 
-* [Install VirtualBox 4.2.x (or higher)](http://virtualbox.org)
-NOTE: Avoid VirtualBox 4.2.14, [it breaks vagrant](https://twitter.com/mitchellh/status/348886504728305664).  VirtualBox 4.2.18 was tested for
-this post.
+* [Install VirtualBox 4.x](http://virtualbox.org).  VirtualBox 4.3.4 was tested
+for this post.
 
-* [Install Vagrant 1.3.0 (or higher)](http://vagrantup.com).  Vagrant 1.3.1 was tested for this post.
+* [Install Vagrant 1.3.x](http://vagrantup.com).  Vagrant 1.3.5 was tested for this post.  _NOTE: Vagrant 1.4.0
+[has a bug configuring networking on CentOS](https://github.com/mitchellh/vagrant/issues/2614), you will have issues following this article series if you try
+to use Vagrant 1.4.0, either downgrade to Vagrant 1.3.5 or wait for
+Vagrant 1.4.1 to be released._
 
-* Install Ruby 1.9.x via [Chef Omnibus Installer Ruby](http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/), [rvm](http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/) or [rbenv](http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/)
+* Install Ruby 1.9.x via [rbenv](http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/), [rvm](http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/) or [Chef Omnibus Installer Ruby](http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/). 
 
 * Install Berkshelf
 
@@ -93,7 +85,7 @@ Copyright 2012-2013 Riot Games
 ```
 $ vagrant plugin install vagrant-berkshelf
 Installing the 'vagrant-berkshelf' plugin. This can take a few minutes...
-Installed the plugin 'vagrant-berkshelf (1.3.3)'!
+Installed the plugin 'vagrant-berkshelf (1.3.6)'!
 ```
 
 * Install the vagrant-omnibus plugin (1.1.0 or higher)
@@ -101,7 +93,7 @@ Installed the plugin 'vagrant-berkshelf (1.3.3)'!
 ```
 $ vagrant plugin install vagrant-omnibus
 Installing the 'vagrant-omnibus' plugin.  This can take a few minutes...
-Installed the plugin 'vagrant-omnibus (1.1.1)'!
+Installed the plugin 'vagrant-omnibus (1.1.2)'!
 ```
 
 Upgrade from Berkshelf 1.x
@@ -161,9 +153,9 @@ necessary Gem dependencies:
     Fetching gem metadata from https://rubygems.org/........
     Fetching gem metadata from https://rubygems.org/..
     Resolving dependencies...
-    Using i18n (0.6.5)
-    Using multi_json (1.8.0)
-    Using activesupport (3.2.14)
+    Using i18n (0.6.9)
+    Using multi_json (1.8.2)
+    Using activesupport (3.2.16)
     . . .
     Using berkshelf (2.0.10)
     Using bundler (1.3.5)
@@ -181,7 +173,7 @@ Ensure that the `vagrant-omnibus` plugin is installed correctly.
 
     $ vagrant plugin list
     ...
-    vagrant-omnibus (1.1.1)
+    vagrant-omnibus (1.1.2)
     ...
 
 The `vagrant-omnibus` plugin hooks into Vagrant and allows you to specify
@@ -198,8 +190,8 @@ legacy `config.ssh.max_tries` and `config.ssh.timeout` settings with
 {% codeblock myface/Vagrantfile lang:ruby %}
 Vagrant.configure("2") do |config|
   config.vm.hostname = "myface-berkshelf"
-  config.vm.box = "misheska-centos64"
-  config.vm.box_url = "https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-centos64.box"
+  config.vm.box = "centos65"
+  config.vm.box_url = "https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.4/centos65.box"
   config.omnibus.chef_version = :latest
   config.vm.network :private_network, ip: "33.33.33.10"
   config.vm.boot_timeout = 120
@@ -233,19 +225,23 @@ cookbook you just created:
 
     $ vagrant up
     Bringing machine 'default' up with 'virtualbox' provider...
-    [default] Box 'misheska-centos64' was not found. Fetching box from specified URL for
+    [default] Box 'centos65' was not found. Fetching box from specified URL for
     the provider 'virtualbox'. Note that if the URL does not have
     a box for this provider, you should interrupt Vagrant now and add
     the box yourself. Otherwise Vagrant will attempt to download the
     full box prior to discovering this error.
     Downloading or copying the box...
     Extracting box...te: 2487k/s, Estimated time remaining: --:--:--)
-    Successfully added box 'misheska-centos64' with provider 'virtualbox'!
-    [default] Importing base box 'misheska-centos64'...
+    Successfully added box 'centos65' with provider 'virtualbox'!
+    [default] Importing base box 'centos65'...
     [default] Matching MAC address for NAT networking...
     [default] Setting the name of the VM...
     [default] Clearing any previously set forwarded ports...
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
+    [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+    [Berkshelf] You should check for a newer version of vagrant-berkshelf.
+    [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+    [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131215-17887-1ph2ekj-default'
     [Berkshelf] Using myface (0.1.0)
     [default] Creating shared folders metadata...
     [default] Clearing any previously set network interfaces...
@@ -253,28 +249,30 @@ cookbook you just created:
     [default] Forwarding ports...
     [default] -- 22 => 2222 (adapter 1)
     [default] Booting VM...
-    [default] Waiting for VM to boot. This can take a few minutes.
-    [default] VM booted and ready for use!
+    [default] Waiting for machine to boot. This can take a few minutes.
+    [default] Machine booted and ready for use!
     [default] Setting hostname...
     [default] Configuring and enabling network interfaces...
     [default] Mounting shared folders...
     [default] -- /vagrant
     [default] -- /tmp/vagrant-chef-1/chef-solo-1/cookbooks
-    [default] Installing Chef 11.6.0 Omnibus package...
+    [default] Installing Chef 11.8.2 Omnibus package...
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-08-07T20:41:29-07:00] INFO: Forking chef instance to converge...
-    [2013-08-07T20:41:29-07:00] INFO: *** Chef 11.6.0 ***
-    [2013-08-07T20:41:30-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    [2013-08-07T20:41:30-07:00] INFO: Run List is [recipe[myface::default]]
-    [2013-08-07T20:41:30-07:00] INFO: Run List expands to [myface::default]
-    [2013-08-07T20:41:30-07:00] INFO: Starting Chef Run for myface-berkshelf
-    [2013-08-07T20:41:30-07:00] INFO: Running start handlers
-    [2013-08-07T20:41:30-07:00] INFO: Start handlers complete.
-    [2013-08-07T20:41:30-07:00] INFO: Chef Run complete in 0.025063914 seconds
-    [2013-08-07T20:41:30-07:00] INFO: Running report handlers
-    [2013-08-07T20:41:30-07:00] INFO: Report handlers complete
+    [2013-12-15T21:46:15-08:00] INFO: Forking chef instance to converge...
+    [2013-12-15T21:46:15-08:00] INFO: *** Chef 11.8.2 ***
+    [2013-12-15T21:46:15-08:00] INFO: Chef-client pid: 3344
+    [2013-12-15T21:46:16-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-12-15T21:46:16-08:00] INFO: Run List is [recipe[myface::default]]
+    [2013-12-15T21:46:16-08:00] INFO: Run List expands to [myface::default]
+    [2013-12-15T21:46:16-08:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-12-15T21:46:16-08:00] INFO: Running start handlers
+    [2013-12-15T21:46:16-08:00] INFO: Start handlers complete.
+    [2013-12-15T21:46:16-08:00] INFO: Chef Run complete in 0.015128138 seconds
+    [2013-12-15T21:46:16-08:00] INFO: Running report handlers
+    [2013-12-15T21:46:16-08:00] INFO: Report handlers complete
+    [2013-12-15T21:46:15-08:00] INFO: Forking chef instance to converge...
 
 If all goes well, you should see `Chef Run complete` with no errors.
 
@@ -331,25 +329,31 @@ Save `recipes/default.rb` and re-run `vagrant provision` to create the
 myface user on your test virtual machine:
 
     $ vagrant provision
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
+    [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+    [Berkshelf] You should check for a newer version of vagrant-berkshelf.
+    [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+    [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131215-17887-1ph2ekj-default'
     [Berkshelf] Using myface (0.1.0)
-    [default] Chef 11.6.0 Omnibus package is already installed.
+    [default] Chef 11.8.2 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-08-07T20:46:33-07:00] INFO: Forking chef instance to converge...
-    [2013-08-07T20:46:33-07:00] INFO: *** Chef 11.6.0 ***
-    [2013-08-07T20:46:34-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    [2013-08-07T20:46:34-07:00] INFO: Run List is [recipe[myface::default]]
-    [2013-08-07T20:46:34-07:00] INFO: Run List expands to [myface::default]
-    [2013-08-07T20:46:34-07:00] INFO: Starting Chef Run for myface-berkshelf
-    [2013-08-07T20:46:34-07:00] INFO: Running start handlers
-    [2013-08-07T20:46:34-07:00] INFO: Start handlers complete.
-    [2013-08-07T20:46:34-07:00] INFO: group[myface] created
-    [2013-08-07T20:46:34-07:00] INFO: user[myface] created
-    [2013-08-07T20:46:34-07:00] INFO: Chef Run complete in 0.185753077 seconds
-    [2013-08-07T20:46:34-07:00] INFO: Running report handlers
-    [2013-08-07T20:46:34-07:00] INFO: Report handlers complete
+    [2013-12-15T21:51:17-08:00] INFO: Forking chef instance to converge...
+    [2013-12-15T21:51:17-08:00] INFO: *** Chef 11.8.2 ***
+    [2013-12-15T21:51:17-08:00] INFO: Chef-client pid: 3721
+    [2013-12-15T21:51:17-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-12-15T21:51:17-08:00] INFO: Run List is [recipe[myface::default]]
+    [2013-12-15T21:51:17-08:00] INFO: Run List expands to [myface::default]
+    [2013-12-15T21:51:17-08:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-12-15T21:51:17-08:00] INFO: Running start handlers
+    [2013-12-15T21:51:17-08:00] INFO: Start handlers complete.
+    [2013-12-15T21:51:17-08:00] INFO: group[myface] created
+    [2013-12-15T21:51:17-08:00] INFO: user[myface] created
+    [2013-12-15T21:51:17-08:00] INFO: Chef Run complete in 0.128871665 seconds
+    [2013-12-15T21:51:17-08:00] INFO: Running report handlers
+    [2013-12-15T21:51:17-08:00] INFO: Report handlers complete
+    [2013-12-15T21:51:17-08:00] INFO: Forking chef instance to converge...
 
 You should expect to see the Chef run complete with no errors.  Notice
 that it also creates `group[myface]` and `user[myface]`.
@@ -361,7 +365,7 @@ Verify that Chef actually created the myface user on our test virtual
 machine by running the following:
 
     $ vagrant ssh -c "getent passwd myface"
-    myface:x:497:503::/home/myface:/bin/bash
+    myface:x:497:501::/home/myface:/bin/bash
 
 We use `vagrant ssh -c` to run a command on our test virtual machine.  The
 `getent` command can be used to query all user databases.  In this
@@ -373,23 +377,29 @@ that if you run `vagrant provision` again, the Chef run executes more quickly
 and it does not try to re-create the user/group it already created.
 
     $ vagrant provision
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
+    [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+    [Berkshelf] You should check for a newer version of vagrant-berkshelf.
+    [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+    [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131215-17887-1ph2ekj-default'
     [Berkshelf] Using myface (0.1.0)
-    [default] Chef 11.6.0 Omnibus package is already installed.
+    [default] Chef 11.8.2 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-08-07T20:48:27-07:00] INFO: Forking chef instance to converge...
-    [2013-08-07T20:48:27-07:00] INFO: *** Chef 11.6.0 ***
-    [2013-08-07T20:48:28-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    [2013-08-07T20:48:28-07:00] INFO: Run List is [recipe[myface::default]]
-    [2013-08-07T20:48:28-07:00] INFO: Run List expands to [myface::default]
-    [2013-08-07T20:48:28-07:00] INFO: Starting Chef Run for myface-berkshelf
-    [2013-08-07T20:48:28-07:00] INFO: Running start handlers
-    [2013-08-07T20:48:28-07:00] INFO: Start handlers complete.
-    [2013-08-07T20:48:28-07:00] INFO: Chef Run complete in 0.027612724 seconds
-    [2013-08-07T20:48:28-07:00] INFO: Running report handlers
-    [2013-08-07T20:48:28-07:00] INFO: Report handlers complete
+    [2013-12-15T21:53:41-08:00] INFO: Forking chef instance to converge...
+    [2013-12-15T21:53:41-08:00] INFO: *** Chef 11.8.2 ***
+    [2013-12-15T21:53:41-08:00] INFO: Chef-client pid: 4138
+    [2013-12-15T21:53:41-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-12-15T21:53:41-08:00] INFO: Run List is [recipe[myface::default]]
+    [2013-12-15T21:53:41-08:00] INFO: Run List expands to [myface::default]
+    [2013-12-15T21:53:41-08:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-12-15T21:53:41-08:00] INFO: Running start handlers
+    [2013-12-15T21:53:41-08:00] INFO: Start handlers complete.
+    [2013-12-15T21:53:41-08:00] INFO: Chef Run complete in 0.02021423 seconds
+    [2013-12-15T21:53:41-08:00] INFO: Running report handlers
+    [2013-12-15T21:53:41-08:00] INFO: Report handlers complete
+    [2013-12-15T21:53:41-08:00] INFO: Forking chef instance to converge...
 
 Iteration #2 - Refactor to attributes
 =====================================
@@ -464,7 +474,7 @@ Running  `getent` on the test virtual machine should also produce the same
 result as when you validated Iteration #1:
 
     $ vagrant ssh -c "getent passwd myface"
-    myface:x:497:503::/home/myface:/bin/bash
+    myface:x:497:501::/home/myface:/bin/bash
 
 Iteration #3 - Install the Apache2 Web Server
 ============================================
@@ -503,20 +513,20 @@ Since you are loading Apache2 from another cookbook, you need to configure the
 dependency in your metadata.  Edit `myface/metadata.rb` and add the `apache2`
 dependency at the bottom:
 
-    depends "apache2", "~> 1.7.0"
+    depends "apache2", "~> 1.8.0"
 
 This tells Chef that the myface cookbook depends on the apache2 cookbook.
 We've also specified a version constraint using the optimistic operator
 `~>` to tell our Chef that we want the latest version of the apache2 cookbook
-that is greater than 1.7.0 but *not* 1.8.0 or higher.
+that is greater than 1.8.0 but *not* 1.9.0 or higher.
 
 It is recommended that Chef cookbooks follow a
 [Semantic Versioning](http://semver.org/) scheme.  So if you write your
-cookbook to use the latest apache2 1.7.x cookbook, if the apache2 cookbook is
-ever bumped to a 1.8.x version (or 2.x), it has some public API functionality
+cookbook to use the latest apache2 1.8.x cookbook, if the apache2 cookbook is
+ever bumped to a 1.9.x version (or 2.x), it has some public API functionality
 that has at least been deprecated.  So you'll want to review the changes and
-test before automatically using an apache2 cookbook version 1.8.x or higher.
-However, automatic use of any new 1.7.x is perfectly fine, because no
+test before automatically using an apache2 cookbook version 1.9.x or higher.
+However, automatic use of any new 1.8.x is perfectly fine, because no
 only backwards-compatible bug fixes has been introduced.  Semantic Versioning
 guarantees there are no changes in the public APIs.
 
@@ -531,35 +541,32 @@ description      "Installs/Configures myface"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "0.1.0"
 
-depends "apache2", "~> 1.7.0"
+depends "apache2", "~> 1.8.0"
 {% endcodeblock %}
 
 Now when you re-run `vagrant provision` it will install apache2 on your
 test virtual machine:
 
     $ vagrant provision
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20130807-5122-1ipka2m-default'
+    [Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+    [Berkshelf] You should check for a newer version of vagrant-berkshelf.
+    [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+    [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131215-17887-1ph2ekj-default'
     [Berkshelf] Using myface (0.1.0)
-    [Berkshelf] Installing apache2 (1.7.0) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
-    [default] Chef 11.6.0 Omnibus package is already installed.
+    [Berkshelf] Installing apache2 (1.8.14) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+    [default] Chef 11.8.2 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
-    Running chef-solo...
-    [2013-08-07T20:53:08-07:00] INFO: Forking chef instance to converge...
-    [2013-08-07T20:53:08-07:00] INFO: *** Chef 11.6.0 ***
-    [2013-08-07T20:53:08-07:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    [2013-08-07T20:53:08-07:00] INFO: Run List is [recipe[myface::default]]
-    [2013-08-07T20:53:08-07:00] INFO: Run List expands to [myface::default]
-    [2013-08-07T20:53:08-07:00] INFO: Starting Chef Run for myface-berkshelf
-    [2013-08-07T20:53:08-07:00] INFO: Running start handlers
-    [2013-08-07T20:53:08-07:00] INFO: Start handlers complete.
+    Running chef-solo... 
     ...
-    [2013-08-07T20:54:13-07:00] INFO: service[apache2] started
-    [2013-08-07T20:54:13-07:00] INFO: template[/etc/httpd/mods-available/deflate.conf] sending restart action to service[apache2] (delayed)
-    [2013-08-07T20:54:14-07:00] INFO: service[apache2] restarted
-    [2013-08-07T20:54:14-07:00] INFO: Chef Run complete in 66.177345199 seconds
-    [2013-08-07T20:54:14-07:00] INFO: Running report handlers
-    [2013-08-07T20:54:14-07:00] INFO: Report handlers complete
+    [2013-12-15T21:59:12-08:00] INFO: service[apache2] started
+    [2013-12-15T21:59:12-08:00] INFO: template[/etc/httpd/mods-available/deflate.conf] sending restart action to service[apache2] (delayed)
+    [2013-12-15T21:59:14-08:00] INFO: service[apache2] restarted
+    [2013-12-15T21:59:14-08:00] INFO: Chef Run complete in 46.188904141 seconds
+    [2013-12-15T21:59:14-08:00] INFO: Running report handlers
+    [2013-12-15T21:59:14-08:00] INFO: Report handlers complete
+    [2013-12-15T21:58:27-08:00] INFO: Forking chef instance to converge...
 
 Testing Iteration #3
 --------------------
@@ -568,7 +575,7 @@ You can verify that the apache2 `httpd` service is running on your berkshelf
 virtual machine with the following command:
 
     $ vagrant ssh -c "sudo /sbin/service httpd status"
-    httpd (pid  4831) is running.
+    httpd (pid  5310) is running.
 
 Since this is a web server, so you can also check it out in your favorite web
 browser.  The host-only private network address for the virtual machine
@@ -599,7 +606,7 @@ Where does the Berkshelf put the cookbooks it downloads?  You can find them
 in `~/.berkshelf/default/cookbooks`
 
     Users/misheska/.berkshelf/default/cookbooks
-    └── apache2-1.7.0
+    └── apache2-1.8.14
         ├── attributes
         ├── definitions
         ├── files
@@ -929,7 +936,7 @@ description      "Installs/Configures myface"
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          "1.0.0"
 
-depends "apache2", "~> 1.7.0"
+depends "apache2", "~> 1.8.0"
 {% endcodeblock %}
 
 Configure Berkshelf
@@ -961,8 +968,8 @@ So here's what my `$HOME/.berkshelf/config.json` file looks like:
       },
       "vagrant":{
         "vm":{
-          "box": "misheska-centos64",
-          "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox/misheska-centos64.box",
+          "box": "centos65",
+          "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.4/centos65.box",
           "forward_port": {
           },
           "network":{
@@ -991,9 +998,9 @@ values.  Then run `berks upload` to upload your cookbooks to the chef server:
 
     $ berks upload
     Using myface (1.0.0)
-    Using apache2 (1.7.0)
+    Using apache2 (1.8.14)
     Uploading myface (1.0.0) to: 'https://api.opscode.com:443/organizations/misheska'
-    Uploading apache2 (1.7.0) to: 'https://api.opscode.com:443/organizations/misheska'
+    Uploading apache2 (1.8.14) to: 'https://api.opscode.com:443/organizations/misheska'
 
 Similarly to when you ran `vagrant up`, Berkshelf automatically uploaded all
 the cookbook dependencies.
@@ -1013,7 +1020,7 @@ setup to run chef-client automatically).  For example, here's the command
 I used to run `chef-client` on my production node:
 
     $ knife ssh name:mischa-ubuntu "sudo chef-client" -x misheska
-    Starting Chef Client, version 11.6.0
+    Starting Chef Client, version 11.8.2
     resolving cookbooks for run list: ["myface"]
     Synchronizing Cookbooks:
       - myface
