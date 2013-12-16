@@ -8,6 +8,13 @@ categories: ruby
 * list element with functor item
 {:toc}
 
+_Updated December 15th, 2013:_
+
+* _Updated install link for homebrew, it has changed_
+* _Updated Xcode install instructions for Mac OS X Mavericks_
+* _Bumped ruby 1.9.3 version from 1.9.3p448 to 1.9.3p484_
+* _Bumped ruby 2.0.0 version from 2.0.0p247 to 2.0.0p353_
+
 _Updated July 9th, 2013:_
 
 * _Bumped ruby 1.9.3 version from 1.9.3p429 to 1.9.3p448_
@@ -15,22 +22,19 @@ _Updated July 9th, 2013:_
 * _Removed openssl workaround for compiling ruby 2.0.0 on Mac OS X - this has been fixed_
 
 Out of the box, Ruby does not provide a mechanism to support multiple
-installed versions.  Compounding this issue, the default system-installed
-version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
-For example, even in the latest version of Mac OS X Mountain Lion, the
-system-wide version of Ruby is over five years old (ruby 1.8.7).  Most
-developers prefer to use a newer version of Ruby installed in their home
-directory and to leave the default systemwide version of Ruby untouched.
-
-[Rbenv](https://github.com/sstephenson/rbenv/) makes managing multiple
-versions of Ruby easy.  It's a great way to work on current development
-projects using Ruby 1.9.x and be able to switch to Ruby 2.0.x for new
-work.  Rbenv is a lightweight alternative to
+installed versions.  [Rbenv](https://github.com/sstephenson/rbenv/) makes
+managing multiple versions of Ruby easy.  It's a great way to work on
+current development projects using Ruby 1.9.x and be able to switch to
+Ruby 2.0.x for new work.  Rbenv is a lightweight alternative to
 [Ruby Version Manager (RVM)](http://rvm.io).  Rbenv does not include
-any mechanism to install Ruby or manage gems, like with RVM.
+a way to manage gems, like with RVM, though most people prefer to use
+[Bundler](http://bundler.io) gem management instead.
 
-Rbenv is supported on Linux and Mac OS X.  Rbenv doesn't work on Windows.
-For Windows, [Pik](https://github.com/vertiginous/pik) is an Rbenv alternative.
+Rbenv is supported on Linux and Mac OS X.  Rbenv doesn't work on Windows (and
+isn't really necessary on Windows as there is no system Ruby on Windows).
+On Windows, the [RubyInstaller](http://rubyinstaller.org) and/or
+[Pik](https://github.com/vertiginous/pik) are both good alternatives to
+work with multiple versions of Ruby on the same box.
 
 NOTE: Rbenv is incompatible with RVM because RVM overrides the
 `gem` command with a function.  If you want to switch to Rbenv,
@@ -48,13 +52,60 @@ Mac OS X
 
 Install Rbenv and Ruby 1.9.x - Mac OS X
 ---------------------------------------
-First you'll need to install a C compiler to build Ruby from source.  Just
-download and install the latest version of Xcode from the App Store, if you
-don't have it installed already.  Also make sure you install the *Command Line
-Tools* by choosing the menu item <code>Xcode -> Preferences...</code> and click
-on the *Downloads* tab.  Click on the *Install* button to download the
-Command Line Tools.
-![Xcode Command Line Tools](/images/xcodecommandline.png)
+First you'll need to install a C compiler and some other command line tools
+to build Ruby from source.  You'll need to install the Xcode Command Line
+Tools:  
+
+### Mac OS X Mavericks 10.9
+
+If you are using the latest version of Mac OS X Mavericks, it has support
+for downloading the Xcode command line tools directly from a Terminal window.
+Run the following on a command line:
+
+    $ xcode-select --install
+
+You will be prompted to either click on `Install` to just install the command
+line developer tools or click on `Get Xcode` to install both Xcode and the
+command line developer tools.  It can be handy to have Xcode as well, but
+it is a rather large multi-gigabyte download and not really necessary for
+Ruby development.  So if you want to get going quickly, just click on the
+`Install` button:
+
+![xcode-select](/images/xcodeselect.png)
+
+### Mac OS X Snow Leopard 10.8 (and earlier)
+
+Versions of Mac OS X prior to Mavericks, like Snow Leopard do not have
+built-in support for downloading the Xcode command line developer tools, but you
+can download them directly from the Apple Developer web site
+[developer.apple.com/downloads](http://developer.apple.com/downloads).
+Here are the current direct download links for the Xcode command line tools
+as of this writing.  Download the applicable package for your version of
+Mac OS X:
+
+* [Xcode Command Line Tools for Mac OS X Mountain Lion 10.8](http://devimages.apple.com/downloads/xcode/command_line_tools_os_x_mountain_lion_for_xcode_october_2013.dmg)
+* [Xcode Command Line Tools for Mac OS X Lion 10.7](http://devimages.apple.com/downloads/xcode/command_line_tools_for_xcode_os_x_lion_april_2013.dmg)
+
+Once you have downloaded the .dmg file, double-click on the .dmg to open it,
+then double-click on the .mpkg file to run the Command Line Tools installer:
+
+![xcode-select](/images/commandlinetools.png)
+
+If you have time to install Xcode, it's handy to have it around, though not
+really required for Ruby development.  If you are running Mac OS X Mountain
+Lion 10.8, you will need to make sure that you have OS X version 10.8.4 or
+later to install Xcode, otherwise the App Store will issue the following
+complaint:
+
+![xcode-select](/images/xcode1084.png)
+
+Download and install the latest version of Xcode from the App Store.
+Then install the *Command Line Tools* by choosing the menu item
+ <code>Xcode -> Preferences...</code> to display the `Downloads` dialog.
+Click on the *Downloads* tab, then click on the download arrow to the right
+of the `Command Line Tools` component to install.
+
+![Xcode Command Line Tools](/images/xcodecommandline2.png)
 
 Next, you'll need to install the Homebrew package manager to get all the
 dependencies needed to compile Ruby from source.  While you could manage
@@ -63,7 +114,7 @@ package managers know how to uninstall what they install.
 
 Run the following command to install Homebrew:
 
-    $ ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+    $ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
 
 Run `brew doctor` and address any issues it discovers.  When
 all is well, you should see:
@@ -94,9 +145,9 @@ Restart shell as a login shell so that the PATH changes take effect:
 
     $ exec $SHELL -l
 
-Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p448)
+Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p484)
 
-    $ rbenv install 1.9.3-p448
+    $ rbenv install 1.9.3-p484
 
 Rebuild the shim executable
 
@@ -107,13 +158,13 @@ or install a new gem.
 
 Set the latest version of ruby to be the default version of ruby
 
-    $ rbenv global 1.9.3-p448
+    $ rbenv global 1.9.3-p484
 
 Verify the ruby install.  If everything was installed correctly, the `ruby -v`
-command should report that version 1.9.3p448 is installed.
+command should report that version 1.9.3p484 is installed.
 
     $ ruby -v
-    ruby 1.9.3p448 (2013-06-27 revision 41675) [x86_64-darwin12.0.0]
+    ruby 1.9.3p484 (2013-11-22 revision 43786) [x86_64-darwin13.0.0]
 
 Install Bundler - Mac OS X
 --------------------------
@@ -124,6 +175,12 @@ prerequisites.
 First, make sure you update to the latest version of Rubygems:
 
     $ gem update --system
+    Updating rubygems-update
+    Fetching: rubygems-update-2.1.11.gem (100%)
+    Successfully installed rubygems-update-2.1.11
+    Installing RubyGems 2.1.11
+    RubyGems 2.1.11 installed
+    ...
 
 Then install the `bundler` gem.  If the `gem install` command reports
 `Successfully installed` you're good to go:
@@ -136,20 +193,20 @@ Then install the `bundler` gem.  If the `gem install` command reports
  
 Install Ruby 2.0.0 - Mac OS X
 -------------------------------------
-As of this writing, Ruby 2.0.0-p247 is the latest version of Ruby 2.0.0.
+As of this writing, Ruby 2.0.0-p353 is the latest version of Ruby 2.0.0.
 Use `rbenv install --list` to print out the available versions.  To install:
 
-    $ rbenv install 2.0.0-p247
+    $ rbenv install 2.0.0-p353
 
 To verify the install:
 
-    $ rbenv local 2.0.0-p247
+    $ rbenv local 2.0.0-p353
     $ ruby -v
-    ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-darwin12.0.0]
+    ruby 2.0.0p353 (2013-11-22 revision 43784) [x86_64-darwin13.0.0]
 
 If you want to make Ruby 2.0.0 the global default version of ruby:
 
-    $ rbenv global 2.0.0-p247
+    $ rbenv global 2.0.0-p353
 
 Upgrade Rbenv - Mac OS X
 ------------------------
@@ -217,9 +274,9 @@ and install new Ruby versions:
 
     $ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
 
-Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p448)
+Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p484)
 
-    $ rbenv install 1.9.3-p448
+    $ rbenv install 1.9.3-p484
 
 Rebuild the shim executable
 
@@ -230,13 +287,13 @@ version of Ruby or install a new gem.
 
 Set the latest version of ruby to be the default version of ruby
 
-    $ rbenv global 1.9.3-p448
+    $ rbenv global 1.9.3-p484
 
 Verify the ruby install.  If everything was installed correctly, the
-`ruby -v` command should report that version 1.9.3p448 is installed.
+`ruby -v` command should report that version 1.9.3p484 is installed.
 
     $ ruby -v
-    ruby 1.9.3p448 (2013-06-27 revision 41675) [x86_64-linux]
+    ruby 1.9.3p484 (2013-11-22 revision 43786) [x86_64-linux]
 
 Install Bundler - Linux
 -----------------------
@@ -260,20 +317,21 @@ Then install the `bundler` gem.  If the `gem install` command reports
     
 Install Ruby 2.0.0 - Linux
 --------------------------
-As of this writing, Ruby 2.0.0-p247 is the latest version of Ruby 2.0.0.
+As of this writing, Ruby 2.0.0-p353 is the latest version of Ruby 2.0.0.
 Use `rbenv install --list` to print out the available versions.  To install:
 
-    $ rbenv install 2.0.0-p247
+    $ rbenv install 2.0.0-p353
 
 To verify the install:
 
-    $ rbenv local 2.0.0-p247
+    $ rbenv local 2.0.0-p353
     $ ruby -v
-    ruby 2.0.0p247 (2013-06-27 revision 41674) [x86_64-linux] 
+    ruby 2.0.0p353 (2013-11-22 revision 43784) [x86_64-linux]
 
-If you want to make Ruby 2.0.0 the global default version of ruby:
+If you want to make Ruby 2.0.0 the global default version of ruby (but
+currently Chef requires Ruby 1.9.x):
 
-    $ rbenv global 2.0.0-p247
+    $ rbenv global 2.0.0-p353
 
 Upgrade Rbenv - Linux
 ---------------------
