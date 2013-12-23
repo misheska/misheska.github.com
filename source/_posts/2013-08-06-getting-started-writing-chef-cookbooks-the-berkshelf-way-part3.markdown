@@ -865,8 +865,8 @@ describe 'MyFace webserver' do
   end
 
   it 'should be running the httpd server' do
-    case RSpec.configuration.os
-    when "Debian"
+    case RSpec.configuration.os[:family]
+    when "Ubuntu"
       expect(service 'apache2').to be_running
       expect(service 'apache2').to be_enabled
     else
