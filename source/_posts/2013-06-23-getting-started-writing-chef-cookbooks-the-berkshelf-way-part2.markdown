@@ -490,7 +490,7 @@ is only executed when necessary.
 
     # Write schema seed file to filesystem
     cookbook_file node[:myface][:database][:seed_file] do
-      source "myface-init.sql"
+      source "myface-create.sql"
       owner "root"
       group "root"
       mode "0600"
