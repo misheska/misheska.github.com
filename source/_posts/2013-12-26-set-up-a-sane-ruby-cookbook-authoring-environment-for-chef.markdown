@@ -361,3 +361,29 @@ installed properly:
     Copyright (C) 2010 Free Software Foundation, Inc.
     This is free software; see the source for copying conditions.  There is NO
     warranty; not even for MERCHANTABILITY or FITNESS OR A PARTICULAR PURPOSE.
+
+Install Bundler - Windows
+-------------------------
+
+You'll need to use [Bundler](http://gembundler.com/) to manage gems.  Installing
+a gem is also a good way to ensure that you've installed most of the Ruby
+prerequisites.
+
+First, make sure you update to the latest version of Rubygems:
+
+    > c:\Ruby\DevKit\devkitvars.bat
+    Adding the DevKit to Path...
+    > gem update --system
+    Fetching: rubygems-update-2.2.0.gem (100%)
+    Successfully installed ruygems-update-2.2.0
+    Installing RubyGems 2.2.0
+    RubyGems 2.2.0 installed
+    ...
+
+Then install the `bundler` gem.  If the `gem install` command reports
+`Successfully installed` you're good to go:
+
+    $ gem install bundler
+    Successfully installed bundler-1.5.0
+    Parsing documentation for bundler-1.5.0
+    1 gem installed
