@@ -383,7 +383,7 @@ First, make sure you update to the latest version of Rubygems:
 Then install the `bundler` gem.  If the `gem install` command reports
 `Successfully installed` you're good to go:
 
-    $ gem install bundler
+    > gem install bundler
     Successfully installed bundler-1.5.0
     Parsing documentation for bundler-1.5.0
     1 gem installed
