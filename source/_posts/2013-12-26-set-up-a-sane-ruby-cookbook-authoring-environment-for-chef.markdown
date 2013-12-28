@@ -235,7 +235,7 @@ display the Command Palette by pressing `COMMAND+SHIFT+P`:
 
 {% img center /images/sublime2commandpalette.png [Sublime Text 2 Command Palette] %}
 
-### Install Sublime Chef (Optional) - Windows
+### Install Sublime Chef (Optional) - Mac OS X
 
 After pressing `CTRL+SHIFT+P` to display the Command Palette, start typing
 `install` to select `Package Control: Install Package`:
