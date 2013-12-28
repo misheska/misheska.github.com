@@ -387,3 +387,28 @@ Then install the `bundler` gem.  If the `gem install` command reports
     Successfully installed bundler-1.5.0
     Parsing documentation for bundler-1.5.0
     1 gem installed
+
+Install Git - Windows
+---------------------
+
+While using source control is a recommended best practice, Chef does not
+require Git.  If you use some other source control system besides Git,
+feel free to install it instead of Git.  Use of Git source control just
+happens to be more common than others with Chef.
+
+Download the latest stable release of the Git for Windows install from
+<http://git-scm.com/downloads>
+
+{% img center /images/wingit.png [Download for Windows] %}
+
+Run the Git Windows install accepting the default choices, except on the
+PATH setup dialog.  You'll need to include the Unix tools on your Windows
+command prompt for some Chef commands to work:
+
+{% img center /images/wingitunixtools.png [Run Git and Included Unix tools from the Windows Command Prompt] %}
+
+Verify that Git installed correcting by running the following on a command
+prompt:
+
+    > git --version
+    git version 1.8.4.msysgit.0
