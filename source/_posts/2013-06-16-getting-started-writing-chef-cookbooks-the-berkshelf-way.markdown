@@ -8,6 +8,16 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated December 27th, 2013_
+
+* _Being more prescriptive about the necessary Ruby 1.9.x environment_
+* _Bumped VirtualBox from version 4.3.4 to 4.3.6_
+* _Bumped vagrant-berkshelf plugin from version 1.3.6 to 1.3.7_
+* _Bumped vagrant-omnibus plugin from version 1.1.2 to 1.2.1_
+* _Added alternate command lines for Windows, as necessary_
+* _Debate on symbols vs strings is an unnecessary distraction, removed this section_
+* _Per Dan Patrick introducing the concept of `cookbook_file` before `template`, as this was confusing_
+
 _Updated December 15th, 2013_
 
 * _Bumped CentOS basebox version from 6.4 to 6.5_
@@ -23,14 +33,6 @@ _Updated September 9th, 2013_
 * _Bumped berkshelf from version 2.0.9 to 2.0.10_
 * _Bumped vagrant from version 1.2.7 to 1.3.1_
 * _Bumped vagrant-omnibus plugin from version 1.1.0 to 1.1.1_
-
-_Updated September 1st, 2013_
-
-* _Corrected link to Jamie Winsor's Berkshelf slides_
-* _Bumped berkshelf from version 2.0.8 to 2.0.9_
-* _Bumped Test Kitchen version from 1.0.0.beta.2 to 1.0.0.beta.3_
-* _Bumped apache2 cookbook reference from 1.6.x to 1.7.x_
-* _Per Herr Flupke, tried to make the difference between files and templates more clear_
 
 Jamie Winsor hasn't yet updated his [guide to authoring cookbooks the Berkshelf way](http://vialstudios.com/guide-authoring-cookbooks.html)
 to match [recent changes related to Vagrant 1.x](https://github.com/RiotGames/berkshelf/issues/416) and [Chef 11](http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/)
@@ -50,15 +52,12 @@ You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
 To set up your cookbook-writing environment, make sure you have the following
 installed:
 
-* [Install VirtualBox 4.x](http://virtualbox.org).  VirtualBox 4.3.4 was tested
+* [Install VirtualBox 4.x](http://virtualbox.org).  VirtualBox 4.3.6 was tested
 for this post.
 
-* [Install Vagrant 1.3.x](http://vagrantup.com).  Vagrant 1.3.5 was tested for this post.  _NOTE: Vagrant 1.4.0
-[has a bug configuring networking on CentOS](https://github.com/mitchellh/vagrant/issues/2614), you will have issues following this article series if you try
-to use Vagrant 1.4.0, either downgrade to Vagrant 1.3.5 or wait for
-Vagrant 1.4.1 to be released._
+* [Install Vagrant 1.4.1](http://vagrantup.com) (or higher).  Vagrant 1.4.1 was tested for this post. 
 
-* Install Ruby 1.9.x via [rbenv](http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/), [rvm](http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/) or [Chef Omnibus Installer Ruby](http://misheska.com/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/). 
+* Set up a [sane Ruby 1.9.x environment](/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/) for Chef cookbook authoring
 
 * Install Berkshelf
 
@@ -85,7 +84,7 @@ Copyright 2012-2013 Riot Games
 ```
 $ vagrant plugin install vagrant-berkshelf
 Installing the 'vagrant-berkshelf' plugin. This can take a few minutes...
-Installed the plugin 'vagrant-berkshelf (1.3.6)'!
+Installed the plugin 'vagrant-berkshelf (1.3.7)'!
 ```
 
 * Install the vagrant-omnibus plugin (1.1.0 or higher)
@@ -93,7 +92,7 @@ Installed the plugin 'vagrant-berkshelf (1.3.6)'!
 ```
 $ vagrant plugin install vagrant-omnibus
 Installing the 'vagrant-omnibus' plugin.  This can take a few minutes...
-Installed the plugin 'vagrant-omnibus (1.1.2)'!
+Installed the plugin 'vagrant-omnibus (1.2.1)'!
 ```
 
 Upgrade from Berkshelf 1.x
@@ -143,6 +142,14 @@ First create a new cookbook for the MyFace application using the
           create  myface/.gitignore
              run  git init from "./myface"
           create  myface/Gemfile
+          create  .kitchen.yml
+          append  Thorfile
+          create  test/integration/default
+          append  .gitignore
+          append  .gitignore
+          append  Gemfile
+          append  Gemfile
+    You must run `bundle install' to fetch any new gems.
           create  myface/Vagrantfile
 
 Run `bundle install` in the newly created cookbook directory to install the
@@ -150,18 +157,22 @@ necessary Gem dependencies:
 
     $ cd myface
     $ bundle install
-    Fetching gem metadata from https://rubygems.org/........
-    Fetching gem metadata from https://rubygems.org/..
+    Fetching gem metadata from https://rubygems.org/.......
+    Fetching additional metadata from https://rubygems.org/..
     Resolving dependencies...
     Using i18n (0.6.9)
     Using multi_json (1.8.2)
     Using activesupport (3.2.16)
     . . .
     Using berkshelf (2.0.10)
-    Using bundler (1.3.5)
+    Using mixlib-shellout (1.3.0)
+    Using net-scp (1.1.2)
+    Using safe_yaml (0.9.7)
+    Using test-kitchen (1.1.1)
+    Using kitchen-vagrant (0.14.0)
+    Using bundler (1.5.0)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
-
 
 Prepare a virtual machine for testing
 =====================================
@@ -173,7 +184,7 @@ Ensure that the `vagrant-omnibus` plugin is installed correctly.
 
     $ vagrant plugin list
     ...
-    vagrant-omnibus (1.1.2)
+    vagrant-omnibus (1.2.1)
     ...
 
 The `vagrant-omnibus` plugin hooks into Vagrant and allows you to specify
@@ -191,7 +202,7 @@ legacy `config.ssh.max_tries` and `config.ssh.timeout` settings with
 Vagrant.configure("2") do |config|
   config.vm.hostname = "myface-berkshelf"
   config.vm.box = "centos65"
-  config.vm.box_url = "https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.4/centos65.box"
+  config.vm.box_url = "https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box"
   config.omnibus.chef_version = :latest
   config.vm.network :private_network, ip: "33.33.33.10"
   config.vm.boot_timeout = 120
@@ -213,12 +224,12 @@ end
 {% endcodeblock %}
 
 NOTE: Vagrant 1.3.0 deprecated the `config.ssh.max_tries` and 
-`config.ssh.timeout` settings that are inserted in the Vagrantfile by Berkshelf.
-Until Berkshelf is updated for Vagrant 1.3.x, you'll need to remove these
-settings from the `Vagrantfile` and replace them with `config.vm.boot_timeout`
-as above.  If you are using vagrant 1.2.x, keep the `config.ssh.max_tries`
-and `config.ssh.timeout` settings, as the new `config.vm.boot_timeout` setting
-is not valid in the older version of vagrant.
+`config.ssh.timeout` settings that are inserted in the Vagrantfile by
+Berkshelf.  Until Berkshelf is updated for these changes to vagrant, you'll
+need to remove these settings from the `Vagrantfile` and replace them with
+`config.vm.boot_timeout` as above.  If you are using vagrant 1.2.x, keep the
+`config.ssh.max_tries` and `config.ssh.timeout` settings, as the new
+`config.vm.boot_timeout` setting is not valid in the older version of vagrant.
 
 Run `vagrant up` to start up the virtual machine and to test the stub MyFace
 cookbook you just created:
@@ -230,8 +241,8 @@ cookbook you just created:
     a box for this provider, you should interrupt Vagrant now and add
     the box yourself. Otherwise Vagrant will attempt to download the
     full box prior to discovering this error.
-    Downloading or copying the box...
-    Extracting box...te: 2487k/s, Estimated time remaining: --:--:--)
+    Downloading box from URL: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box
+    Extracting box...te: 6881k/s, Estimated time remaining: 0:00:01)
     Successfully added box 'centos65' with provider 'virtualbox'!
     [default] Importing base box 'centos65'...
     [default] Matching MAC address for NAT networking...
@@ -241,38 +252,60 @@ cookbook you just created:
     [Berkshelf] You should check for a newer version of vagrant-berkshelf.
     [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
     [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131215-17887-1ph2ekj-default'
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131228-44316-176rdqc-default'
     [Berkshelf] Using myface (0.1.0)
-    [default] Creating shared folders metadata...
     [default] Clearing any previously set network interfaces...
     [default] Preparing network interfaces based on configuration...
     [default] Forwarding ports...
     [default] -- 22 => 2222 (adapter 1)
     [default] Booting VM...
-    [default] Waiting for machine to boot. This can take a few minutes.
-    [default] Machine booted and ready for use!
+    [default] Waiting for machine to boot. This may take a few minutes...
+    [default] Machine booted and ready!
     [default] Setting hostname...
     [default] Configuring and enabling network interfaces...
     [default] Mounting shared folders...
     [default] -- /vagrant
     [default] -- /tmp/vagrant-chef-1/chef-solo-1/cookbooks
     [default] Installing Chef 11.8.2 Omnibus package...
+    [default] Downloading Chef 11.8.2 for el...
+    [default] downloading https://www.opscode.com/chef/metadata?v=11.8.2&prerelease=false&p=el&pv=6&m=x86_64
+      to file /tmp/install.sh.2993/metadata.txt
+    trying wget...
+    [default] url	https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+    md5	10f3d0da82efa973fe91cc24a6a74549
+    sha256	044558f38d25bbf75dbd5790ccce892a38e5e9f2a091ed55367ab914fbd1cfed
+    [default] downloaded metadata file looks valid...
+    [default] downloading https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+      to file /tmp/install.sh.2993/chef-11.8.2.x86_64.rpm
+    trying wget...
+    [default] Checksum compare with sha256sum succeeded.
+    [default] Installing Chef 11.8.2
+    installing with rpm...
+    [default] warning:
+    [default] /tmp/install.sh.2993/chef-11.8.2.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+    [default] Preparing...
+    [default] ##################################################
+    [default]
+    [default] chef
+    [default] #
+    [default]
+    [default] Thank you for installing Chef!
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-12-15T21:46:15-08:00] INFO: Forking chef instance to converge...
-    [2013-12-15T21:46:15-08:00] INFO: *** Chef 11.8.2 ***
-    [2013-12-15T21:46:15-08:00] INFO: Chef-client pid: 3344
-    [2013-12-15T21:46:16-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    [2013-12-15T21:46:16-08:00] INFO: Run List is [recipe[myface::default]]
-    [2013-12-15T21:46:16-08:00] INFO: Run List expands to [myface::default]
-    [2013-12-15T21:46:16-08:00] INFO: Starting Chef Run for myface-berkshelf
-    [2013-12-15T21:46:16-08:00] INFO: Running start handlers
-    [2013-12-15T21:46:16-08:00] INFO: Start handlers complete.
-    [2013-12-15T21:46:16-08:00] INFO: Chef Run complete in 0.015128138 seconds
-    [2013-12-15T21:46:16-08:00] INFO: Running report handlers
-    [2013-12-15T21:46:16-08:00] INFO: Report handlers complete
-    [2013-12-15T21:46:15-08:00] INFO: Forking chef instance to converge...
+    [2013-12-28T13:42:49-08:00] INFO: Forking chef instance to converge...
+    [2013-12-28T13:42:49-08:00] INFO: *** Chef 11.8.2 ***
+    [2013-12-28T13:42:49-08:00] INFO: Chef-client pid: 3368
+    [2013-12-28T13:42:50-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-12-28T13:42:50-08:00] INFO: Run List is [recipe[myface::default]]
+    [2013-12-28T13:42:50-08:00] INFO: Run List expands to [myface::default]
+    [2013-12-28T13:42:50-08:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-12-28T13:42:50-08:00] INFO: Running start handlers
+    [2013-12-28T13:42:50-08:00] INFO: Start handlers complete.
+    [2013-12-28T13:42:50-08:00] INFO: Chef Run complete in 0.023677599 seconds
+    [2013-12-28T13:42:50-08:00] INFO: Running report handlers
+    [2013-12-28T13:42:50-08:00] INFO: Report handlers complete
+    [2013-12-28T13:42:49-08:00] INFO: Forking chef instance to converge...
 
 If all goes well, you should see `Chef Run complete` with no errors.
 
@@ -289,6 +322,7 @@ you can destroy your test virtual machine with the `vagrant destroy` command:
     [default] Forcing shutdown of VM...
     [default] Destroying VM and associated drives...
     [Berkshelf] Cleaning Vagrant's berkshelf
+    [default] Running cleanup tasks for 'chef_solo' provisioner...
 
 Run `vagrant up` to recreate the test virtual machine.
 
@@ -316,12 +350,12 @@ so it looks like the following:
 # All rights reserved - Do Not Redistribute
 #
 
-group "myface"
+group 'myface'
 
-user "myface" do
-  group "myface"
+user 'myface' do
+  group 'myface'
   system true
-  shell "/bin/bash"
+  shell '/bin/bash'
 end
 {% endcodeblock %}
 
@@ -333,27 +367,27 @@ myface user on your test virtual machine:
     [Berkshelf] You should check for a newer version of vagrant-berkshelf.
     [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
     [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131215-17887-1ph2ekj-default'
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131228-44581-4bhc9d-default'
     [Berkshelf] Using myface (0.1.0)
     [default] Chef 11.8.2 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-12-15T21:51:17-08:00] INFO: Forking chef instance to converge...
-    [2013-12-15T21:51:17-08:00] INFO: *** Chef 11.8.2 ***
-    [2013-12-15T21:51:17-08:00] INFO: Chef-client pid: 3721
-    [2013-12-15T21:51:17-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    [2013-12-15T21:51:17-08:00] INFO: Run List is [recipe[myface::default]]
-    [2013-12-15T21:51:17-08:00] INFO: Run List expands to [myface::default]
-    [2013-12-15T21:51:17-08:00] INFO: Starting Chef Run for myface-berkshelf
-    [2013-12-15T21:51:17-08:00] INFO: Running start handlers
-    [2013-12-15T21:51:17-08:00] INFO: Start handlers complete.
-    [2013-12-15T21:51:17-08:00] INFO: group[myface] created
-    [2013-12-15T21:51:17-08:00] INFO: user[myface] created
-    [2013-12-15T21:51:17-08:00] INFO: Chef Run complete in 0.128871665 seconds
-    [2013-12-15T21:51:17-08:00] INFO: Running report handlers
-    [2013-12-15T21:51:17-08:00] INFO: Report handlers complete
-    [2013-12-15T21:51:17-08:00] INFO: Forking chef instance to converge...
+    [2013-12-28T13:57:59-08:00] INFO: Forking chef instance to converge...
+    [2013-12-28T13:57:59-08:00] INFO: *** Chef 11.8.2 ***
+    [2013-12-28T13:57:59-08:00] INFO: Chef-client pid: 3845
+    [2013-12-28T13:57:59-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-12-28T13:57:59-08:00] INFO: Run List is [recipe[myface::default]]
+    [2013-12-28T13:57:59-08:00] INFO: Run List expands to [myface::default]
+    [2013-12-28T13:57:59-08:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-12-28T13:57:59-08:00] INFO: Running start handlers
+    [2013-12-28T13:57:59-08:00] INFO: Start handlers complete.
+    [2013-12-28T13:57:59-08:00] INFO: group[myface] created
+    [2013-12-28T13:57:59-08:00] INFO: user[myface] created
+    [2013-12-28T13:57:59-08:00] INFO: Chef Run complete in 0.157055758 seconds
+    [2013-12-28T13:57:59-08:00] INFO: Running report handlers
+    [2013-12-28T13:57:59-08:00] INFO: Report handlers complete
+    [2013-12-28T13:57:59-08:00] INFO: Forking chef instance to converge...
 
 You should expect to see the Chef run complete with no errors.  Notice
 that it also creates `group[myface]` and `user[myface]`.
@@ -362,10 +396,23 @@ Testing Iteration #1
 --------------------
 
 Verify that Chef actually created the myface user on our test virtual
-machine by running the following:
+machine by running the following on Mac OS X/Linux:
 
     $ vagrant ssh -c "getent passwd myface"
     myface:x:497:501::/home/myface:/bin/bash
+
+On Windows, add two extra parameters to the ssh invocation to squelch some
+error messages:
+
+    > vagrant ssh -c "getent passwd myface" -- -n -T
+    myface:x:497:501::/home/myface:/bin/bash
+
+The extra `-n` and `-T` parameters for Windows are additional ssh parameters
+to prevent trying to read from stdin and to suppress an error message
+that a pseudo terminal can't be allocated, respectively.  On Windows,
+vagrant runs as a service, and windows services do not have console
+sessions attached which ssh assumes, so you'll see some errors on Windows
+if you don't use these extra parameters.
 
 We use `vagrant ssh -c` to run a command on our test virtual machine.  The
 `getent` command can be used to query all user databases.  In this
@@ -381,25 +428,25 @@ and it does not try to re-create the user/group it already created.
     [Berkshelf] You should check for a newer version of vagrant-berkshelf.
     [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
     [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131215-17887-1ph2ekj-default'
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131228-44581-4bhc9d-default'
     [Berkshelf] Using myface (0.1.0)
     [default] Chef 11.8.2 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
     Running chef-solo...
-    [2013-12-15T21:53:41-08:00] INFO: Forking chef instance to converge...
-    [2013-12-15T21:53:41-08:00] INFO: *** Chef 11.8.2 ***
-    [2013-12-15T21:53:41-08:00] INFO: Chef-client pid: 4138
-    [2013-12-15T21:53:41-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
-    [2013-12-15T21:53:41-08:00] INFO: Run List is [recipe[myface::default]]
-    [2013-12-15T21:53:41-08:00] INFO: Run List expands to [myface::default]
-    [2013-12-15T21:53:41-08:00] INFO: Starting Chef Run for myface-berkshelf
-    [2013-12-15T21:53:41-08:00] INFO: Running start handlers
-    [2013-12-15T21:53:41-08:00] INFO: Start handlers complete.
-    [2013-12-15T21:53:41-08:00] INFO: Chef Run complete in 0.02021423 seconds
-    [2013-12-15T21:53:41-08:00] INFO: Running report handlers
-    [2013-12-15T21:53:41-08:00] INFO: Report handlers complete
-    [2013-12-15T21:53:41-08:00] INFO: Forking chef instance to converge...
+    [2013-12-28T14:01:18-08:00] INFO: Forking chef instance to converge...
+    [2013-12-28T14:01:18-08:00] INFO: *** Chef 11.8.2 ***
+    [2013-12-28T14:01:18-08:00] INFO: Chef-client pid: 4378
+    [2013-12-28T14:01:18-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+    [2013-12-28T14:01:18-08:00] INFO: Run List is [recipe[myface::default]]
+    [2013-12-28T14:01:18-08:00] INFO: Run List expands to [myface::default]
+    [2013-12-28T14:01:18-08:00] INFO: Starting Chef Run for myface-berkshelf
+    [2013-12-28T14:01:18-08:00] INFO: Running start handlers
+    [2013-12-28T14:01:18-08:00] INFO: Start handlers complete.
+    [2013-12-28T14:01:18-08:00] INFO: Chef Run complete in 0.023349135 seconds
+    [2013-12-28T14:01:18-08:00] INFO: Running report handlers
+    [2013-12-28T14:01:18-08:00] INFO: Report handlers complete
+    [2013-12-28T14:01:18-08:00] INFO: Forking chef instance to converge...
 
 Iteration #2 - Refactor to attributes
 =====================================
@@ -413,31 +460,36 @@ defining the user name and group name under which our application will run so
 that you [don't repeat yourself](http://en.wikipedia.org/wiki/Don't_repeat_yourself).
 
 {% codeblock myface/attributes/default.rb lang:ruby %}
-default[:myface][:user] = "myface"
-default[:myface][:group] = "myface"
+default['myface']['user'] = 'myface'
+default['myface']['group'] = 'myface'
 {% endcodeblock %}
 
 In Chef, attributes are a hash of a hash used to override the default settings
 on a node.  The first hash is the cookbook name - in our
-case we've named our cookbook `:myface`. The second hash is the name of
-our attribute - in this case, we're defining two new attributes: `:user` and
-`:group`.
+case we've named our cookbook `'myface'`. The second hash is the name of
+our attribute - in this case, we're defining two new attributes: `'user'` and
+`'group'`.
 
 `default` implies the use of the [node object](http://docs.opscode.com/chef/essentials_node_object.html)
 `node.default` and is a Chef attribute file shorthand.  The following are
 equivalent definitions to the ones above:
 
-    node.default[:myface][:user] = "myface"
-    node.default[:myface][:group] = "myface"
+    node.default['myface']['user'] = 'myface'
+    node.default['myface']['group'] = 'myface'
 
-Also note the use of symbols instead of strings.  It is [strongly recommended
-that you use symbols instead of strings](http://www.robertsosinski.com/2009/01/11/the-difference-between-ruby-symbols-and-strings/)
-for hash indexes. 
+Note that the hash names are defined as strings enclosed by quotes.
+In this case, it doesn't matter if you use single or double quotes.  In
+Chef source files, double quotes indicate that
+[string interpolation](http://rubymonk.com/learning/books/1/chapters/5-strings/lessons/31-string-basics?section=143)
+should be performed, replacing special tokens in a string with their
+values.  If single quotes are used, no string interpolation is performed.
+We'll see more examples of when string interpolation is necessary later
+in this artile.
 
 Now that you've created your attribute definitions, edit
-`myface/recipes/default.rb` and replace all references to the "myface" user name
-with `node[:myface][:user]` and all references to the "myface" group with
-`node[:myface][:group]`.  `myface/recipes/default.rb` should now look like
+`myface/recipes/default.rb` and replace all references to the 'myface' user name
+with `node['myface']['user']` and all references to the 'myface' group with
+`node['myface']['group']`.  `myface/recipes/default.rb` should now look like
 this:
 
 {% codeblock myface/recipes/default.rb lang:ruby %}
@@ -450,12 +502,12 @@ this:
 # All rights reserved - Do Not Redistribute
 #
 
-group node[:myface][:group]
+group node['myface']['group']
 
-user node[:myface][:user] do
-  group node[:myface][:group]
+user node['myface']['user'] do
+  group node['myface']['group']
   system true
-  shell "/bin/bash"
+  shell '/bin/bash'
 end
 {% endcodeblock %}
 
@@ -471,9 +523,14 @@ Testing Iteration #2
 --------------------
 
 Running  `getent` on the test virtual machine should also produce the same
-result as when you validated Iteration #1:
+result as when you validated Iteration #1 on Mac OS X/Linux:
 
     $ vagrant ssh -c "getent passwd myface"
+    myface:x:497:501::/home/myface:/bin/bash
+
+And on Windows:
+
+    > vagrant ssh -c "getent passwd myface" -- -n -T
     myface:x:497:501::/home/myface:/bin/bash
 
 Iteration #3 - Install the Apache2 Web Server
@@ -484,7 +541,7 @@ to install a web server.  Let's install the Apache2 web server.
 Modify `myface/recipes/default.rb` to include the apache2 cookbook's default
 recipe:
 
-    include_recipe "apache2"
+    include_recipe 'apache2'
 
 The resultant `myface/recipes/default.rb` file should look like so:
 
@@ -498,22 +555,22 @@ The resultant `myface/recipes/default.rb` file should look like so:
 # All rights reserved - Do Not Redistribute
 #
 
-group node[:myface][:group]
+group node['myface']['group']
 
-user node[:myface][:user] do
-  group node[:myface][:group]
+user node['myface']['user'] do
+  group node['myface']['group']
   system true
-  shell "/bin/bash"
+  shell '/bin/bash'
 end
 
-include_recipe "apache2"
+include_recipe 'apache2'
 {% endcodeblock %}
 
 Since you are loading Apache2 from another cookbook, you need to configure the
 dependency in your metadata.  Edit `myface/metadata.rb` and add the `apache2`
 dependency at the bottom:
 
-    depends "apache2", "~> 1.8.0"
+    depends 'apache2', '~> 1.8.0'
 
 This tells Chef that the myface cookbook depends on the apache2 cookbook.
 We've also specified a version constraint using the optimistic operator
@@ -533,15 +590,15 @@ guarantees there are no changes in the public APIs.
 Your `myface/metadata.rb` file should look like this:
 
 {% codeblock myface/metadata.rb lang:ruby %}
-name             "myface"
-maintainer       "YOUR_NAME"
-maintainer_email "YOUR_EMAIL"
-license          "All rights reserved"
-description      "Installs/Configures myface"
+name             'myface'
+maintainer       'YOUR_NAME'
+maintainer_email 'YOUR_EMAIL'
+license          'All rights reserved'
+description      'Installs/Configures myface'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "0.1.0"
+version          '0.1.0'
 
-depends "apache2", "~> 1.8.0"
+depends 'apache2', '~> 1.8.0'
 {% endcodeblock %}
 
 Now when you re-run `vagrant provision` it will install apache2 on your
@@ -552,30 +609,35 @@ test virtual machine:
     [Berkshelf] You should check for a newer version of vagrant-berkshelf.
     [Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
     [Berkshelf] You can also join the discussion in #berkshelf on Freenode.
-    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131215-17887-1ph2ekj-default'
+    [Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131228-44581-4bhc9d-default'
     [Berkshelf] Using myface (0.1.0)
     [Berkshelf] Installing apache2 (1.8.14) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
     [default] Chef 11.8.2 Omnibus package is already installed.
     [default] Running provisioner: chef_solo...
     Generating chef JSON and uploading...
-    Running chef-solo... 
+    Running chef-solo...
     ...
-    [2013-12-15T21:59:12-08:00] INFO: service[apache2] started
-    [2013-12-15T21:59:12-08:00] INFO: template[/etc/httpd/mods-available/deflate.conf] sending restart action to service[apache2] (delayed)
-    [2013-12-15T21:59:14-08:00] INFO: service[apache2] restarted
-    [2013-12-15T21:59:14-08:00] INFO: Chef Run complete in 46.188904141 seconds
-    [2013-12-15T21:59:14-08:00] INFO: Running report handlers
-    [2013-12-15T21:59:14-08:00] INFO: Report handlers complete
-    [2013-12-15T21:58:27-08:00] INFO: Forking chef instance to converge...
+    [2013-12-28T14:10:49-08:00] INFO: service[apache2] started
+    [2013-12-28T14:10:49-08:00] INFO: template[/etc/httpd/mods-available/deflate.conf] sending restart action to service[apache2] (delayed)
+    [2013-12-28T14:10:51-08:00] INFO: service[apache2] restarted
+    [2013-12-28T14:10:51-08:00] INFO: Chef Run complete in 38.225601754 seconds
+    [2013-12-28T14:10:51-08:00] INFO: Running report handlers
+    [2013-12-28T14:10:51-08:00] INFO: Report handlers complete
+    [2013-12-28T14:10:12-08:00] INFO: Forking chef instance to converge...
 
 Testing Iteration #3
 --------------------
 
 You can verify that the apache2 `httpd` service is running on your berkshelf
-virtual machine with the following command:
+virtual machine with the following command on Mac OS X/Linux:
 
     $ vagrant ssh -c "sudo /sbin/service httpd status"
-    httpd (pid  5310) is running.
+    httpd (pid  5758) is running.
+
+And on Windows:
+
+    > vagrant ssh -c "sudo /sbin/service httpd status" -- -n -T
+    httpd (pid  5758) is running.
 
 Since this is a web server, so you can also check it out in your favorite web
 browser.  The host-only private network address for the virtual machine
@@ -603,7 +665,8 @@ virtual machine.  Berkshelf automatically loads all your cookbook dependencies
 much like Bundler automatically loads all your gem dependencies.
 
 Where does the Berkshelf put the cookbooks it downloads?  You can find them
-in `~/.berkshelf/default/cookbooks`
+in `~/.berkshelf/default/cookbooks` (or
+`%USERPROFILE%\.berkshelf\default\cookbooks` on Windows)
 
     Users/misheska/.berkshelf/default/cookbooks
     └── apache2-1.8.14
@@ -619,9 +682,9 @@ in `~/.berkshelf/default/cookbooks`
             └── default
                 └── mods
 
-`~/.berkshelf` is just the default location where Berkshelf stores data
-on your local disk.  This location can be altered by setting the environment
-variable `BERKSHELF_PATH`.
+`~/.berkshelf` (or `%USERPROFILE%\.berkshelf` on Windows) is just the default
+location where Berkshelf stores data on your local disk.  This location can be
+altered by setting the environment variable `BERKSHELF_PATH`.
 
 Iteration #4 - Add Content
 ==========================
@@ -638,40 +701,40 @@ Let's add some content to make that 404 go away.  Edit
 # All rights reserved - Do Not Redistribute
 #
 
-group node[:myface][:group]
+group node['myface']['group']
 
-user node[:myface][:user] do
-  group node[:myface][:group]
+user node['myface']['user'] do
+  group node['myface']['group']
   system true
-  shell "/bin/bash"
+  shell '/bin/bash'
 end
 
-include_recipe "apache2"
+include_recipe 'apache2'
 
 # disable default site
-apache_site "000-default" do
+apache_site '000-default' do
   enable false
 end
 
 # create apache config
-template "#{node[:apache][:dir]}/sites-available/myface.conf" do
-  source "apache2.conf.erb"
+template "#{node['apache']['dir']}/sites-available/myface.conf" do
+  source 'apache2.conf.erb'
   notifies :restart, 'service[apache2]'
 end
 
 # create document root
-directory "/srv/apache/myface" do
+directory '/srv/apache/myface' do
   action :create
   recursive true
 end
 
 # write site
-cookbook_file "/srv/apache/myface/index.html" do
-  mode "0644" # forget me to create debugging exercise
+cookbook_file '/srv/apache/myface/index.html' do
+  mode '0644' # forget me to create debugging exercise
 end
 
 # enable myface
-apache_site "myface.conf" do
+apache_site 'myface.conf' do
   enable true
 end
 {% endcodeblock %}
@@ -680,13 +743,39 @@ If you're familiar with Chef and configuring a web app via apache2, nothing
 here should be too surprising.  But if not, spend some time reading up on
 the resource references at <http://docs.opscode.com>
 
-With Chef, you can create config files from templates using
+Note our first use of [string interpolation](http://rubymonk.com/learning/books/1/chapters/5-strings/lessons/31-string-basics?section=143)
+on line 26:
+
+    template "#{node['apache']['dir']}/sites-available/myface.conf" do
+
+We need to enclose the template string in double-quotes because we're
+using the Ruby `#{}` operator to indicate that we want to perform string
+interpolation and evaluate the value of `node['apache']['dir']` inserting the
+evaluated value in the string.
+
+Create a file to contain our web site content as
+`myface/files/default/index.html`.  
+Chef looks for files in the `files` subtree by default.  A subdirectory
+level underneath `files` is used to specify platform-specific files.
+Files in `files/default` are used with every platform.   During the Chef
+run this file is copied to the target node in the location
+specified in the [cookbook_file](http://docs.opscode.com/resource_cookbook_file.html)
+resource (see line 38 of `myface/recipes/default.rb`).
+
+{% codeblock myface/files/default/index.html lang:ruby %}
+Welcome to MyFace!
+{% endcodeblock %}
+
+With Chef, you can also create config files from templates using
 [ERB](http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html), a
 Ruby templating system.  When the template `.erb` file is processed by Chef,
 it will replace any token bracketed by a `<%=` `%>` tag with the value
-of the Ruby expression inside the token (like `node[:hostname]`).  Chef expects
-ERB template files to be in the `templates` subirectory of a cookbook.
-A subdirectory level underneath `templates` is used to specify
+of the Ruby expression inside the token (like `node[:hostname]`).  (Unlike
+with a `cookbook_file` whose content is static and is never manipulated
+by Chef).
+
+Chef expects ERB template files to be in the `templates` subirectory of a
+cookbook.  A subdirectory level underneath `templates` is used to specify
 platorm-specific files.  Files in the `templates/default` subdirectory are
 used with every platform.
 
@@ -696,7 +785,7 @@ file `.../sites-available/myface.conf` on our test virtual machine
 (refer to `myface/recipes/default.rb` above):
 
 {% codeblock myface/templates/default/apache2.conf.erb lang:ruby %}
-# Managed by Chef for <%= node[:hostname] %>
+# Managed by Chef for <%= node['hostname'] %>
 
 Alias / /srv/apache/myface/
 
@@ -732,6 +821,43 @@ You'll see some lovely content!
 
 ![Welcome to MyFace](/images/welcometomyface.png)
 
+Also, note the difference between a `cookbook_file` and a `template`.  Run this
+command on Mac OS X/Linux to print out `index.html` that was copied to the node during the Chef run.
+
+    $ vagrant ssh -c "cat /srv/apache/myface/index.html"
+    Welcome to MyFace!
+    Connection to 127.0.0.1 closed.
+
+And on Windows:
+
+    > vagrant ssh -c "cat /srv/apache/myface/index.html" -- -n -T
+    Welcome to MyFace!
+    Connection to 127.0.0.1 closed.
+
+Note that `index.html` is copied verbatim with no changes to the file.
+
+By comparison, in a `template` any ERB tokens are replaced when they are
+copied to the node.  Look at the resultant `myface.conf` on the node
+with the following command on Mac OS X/Linux:
+
+    $ vagrant ssh -c "cat /etc/httpd/sites-available/myface.conf"
+    # Managed by Chef for myface-berkshelf
+
+    Alias / /srv/apache/myface/
+
+    <Directory /srv/apache/myface>
+     	Options FollowSymLinks +Indexes
+     	Allow from All
+    </Directory>
+    Connection to 127.0.0.1 closed.
+
+and with the following command on Windows:
+
+    > vagrant ssh -c "cat /etc/httpd/sites-available/myface.conf"
+
+The ERB token `<%= node['hostname'] %>` was replaced by the evaluated string
+`myface-berkshelf` during the Chef run.
+
 Iteration #5 - Refactoring webserver
 ====================================
 `myface/recipes/default.rb` is getting rather large and we've got a lot more
@@ -753,40 +879,40 @@ Now `myface/recipes/webserver.rb` should look like this:
 # All rights reserved - Do Not Redistribute
 #
 
-group node[:myface][:group]
+group node['myface']['group']
 
-user node[:myface][:user] do
-  group node[:myface][:group]
+user node['myface']['user'] do
+  group node['myface']['group']
   system true
-  shell "/bin/bash"
+  shell '/bin/bash'
 end
 
-include_recipe "apache2"
+include_recipe 'apache2'
 
 # disable default site
-apache_site "000-default" do
+apache_site '000-default' do
   enable false
 end
 
 # create apache config
-template "#{node[:apache][:dir]}/sites-available/myface.conf" do
-  source "apache2.conf.erb"
+template "#{node['apache']['dir']}/sites-available/myface.conf" do
+  source 'apache2.conf.erb'
   notifies :restart, 'service[apache2]'
 end
 
 # create document root
-directory "/srv/apache/myface" do
+directory '/srv/apache/myface' do
   action :create
   recursive true
 end
 
 # write site
-cookbook_file "/srv/apache/myface/index.html" do
-  mode "0644"
+cookbook_file '/srv/apache/myface/index.html' do
+  mode '0644'
 end
 
 # enable myface
-apache_site "myface.conf" do
+apache_site 'myface.conf' do
   enable true
 end
 {% endcodeblock %}
@@ -803,7 +929,7 @@ Create a new `myface/recipes/default.rb` file which references `webserver.rb`.
 # All rights reserved - Do Not Redistribute
 #
 
-include_recipe "myface::webserver"
+include_recipe 'myface::webserver'
 {% endcodeblock %}
 
 Converge your node again to make sure there are no syntax errors:
@@ -814,17 +940,17 @@ Let's eliminate some more of the duplication that crept in while we were
 working on things.  Edit `myface/attributes/default.rb`
 
 {% codeblock myface/attributes/default.rb lang:ruby %}
-default[:myface][:user] = "myface"
-default[:myface][:group] = "myface"
-default[:myface][:name] = "myface"
-default[:myface][:config] = "myface.conf"
-default[:myface][:document_root] = "/srv/apache/myface"
+default['myface']['user'] = 'myface'
+default['myface']['group'] = 'myface'
+default['myface']['name'] = 'myface'
+default['myface']['config'] = 'myface.conf'
+default['myface']['document_root'] = '/srv/apache/myface'
 {% endcodeblock %}
 
 NOTE: With Chef 11, it is now possible to nest attributes, like so:
 
-    node.default[:app][:name] = "my_app"
-    node.default[:app][:document_root] = "/srv/apache/#{node[:app][:name]}"
+    node.default['app']['name'] = 'my_app'
+    node.default['app']['document_root'] = "/srv/apache/#{node['app']['name']}"
 
 This approach is overkill for MyFace (and is frankly overkill for most
 Chef recipes).  Even though nesting is an option now with Chef 11, you should
@@ -844,40 +970,40 @@ to attribute references:
 # All rights reserved - Do Not Redistribute
 #
 
-group node[:myface][:group]
+group node['myface']['group']
 
-user node[:myface][:user] do
-  group node[:myface][:group]
+user node['myface']['user'] do
+  group node['myface']['group']
   system true
-  shell "/bin/bash"
+  shell '/bin/bash'
 end
 
-include_recipe "apache2"
+include_recipe 'apache2'
 
 # disable default site
-apache_site "000-default" do
+apache_site '000-default' do
   enable false
 end
 
 # create apache config
-template "#{node[:apache][:dir]}/sites-available/#{node[:myface][:config]}" do
-  source "apache2.conf.erb"
+template "#{node['apache']['dir']}/sites-available/#{node['myface']['config']}" do
+  source 'apache2.conf.erb'
   notifies :restart, 'service[apache2]'
 end
 
 # create document root
-directory "#{node[:myface][:document_root]}" do
+directory "#{node['myface']['document_root']}" do
   action :create
   recursive true
 end
 
 # write site
-cookbook_file "#{node[:myface][:document_root]}/index.html" do
-  mode "0644"
+cookbook_file "#{node['myface']['document_root']}/index.html" do
+  mode '0644'
 end
 
 # enable myface
-apache_site "#{node[:myface][:config]}" do
+apache_site "#{node['myface']['config']}" do
   enable true
 end
 {% endcodeblock %}
@@ -888,14 +1014,14 @@ Converge your node to make sure there are no syntax errors:
 
 Add tokens to the `templates/default/apache2.conf.erb` ERB template
 file so they will be replaced with the value of the
-`node[:myface][:document_root]` attribute during the Chef run.
+`node['myface']['document_root']` attribute during the Chef run.
 
 {% codeblock myface/templates/default/apache2.conf.erb lang:ruby %}
-# Managed by Chef for <%= node[:hostname] %>
+# Managed by Chef for <%= node['hostname'] %>
 
-Alias / <%= node[:myface][:document_root] %>/
+Alias / <%= node['myface']['document_root'] %>/
 
-<Directory <%= node[:myface][:document_root] %>>
+<Directory <%= node['myface']['document_root'] %>>
     Options FollowSymLinks +Indexes
     Allow from All
 </Directory>
@@ -928,15 +1054,15 @@ public version of our cookbook, it's version 1.0.0.
 `myface/metadata.rb` should look like this:
 
 {% codeblock myface/metadata.rb lang:ruby %}
-name             "myface"
-maintainer       "Mischa Taylor"
-maintainer_email "mischa@misheska.com"
-license          "Apache 2.0"
-description      "Installs/Configures myface"
+name             'myface'
+maintainer       'Mischa Taylor'
+maintainer_email 'mischa@misheska.com'
+license          'Apache 2.0'
+description      'Installs/Configures myface'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          "1.0.0"
+version          '1.0.0'
 
-depends "apache2", "~> 1.8.0"
+depends 'apache2', '~> 1.8.0'
 {% endcodeblock %}
 
 Configure Berkshelf
@@ -944,19 +1070,57 @@ Configure Berkshelf
 
 In order to deploy to your production server (instead of just locally with
 vagrant), you'll need to add a section to your Berkshelf config file with
-your production Chef settings.  The config file is located in
-`$HOME/.berkshelf/config.json`.
+your production Chef settings.  Run the following command to create a default
+Berkshelf configuration file:
 
-For example, I'm using hosted Chef to manage my servers, so my
-Chef settings are as follows:
+    $ berks configure
 
-    Chef Server API URL endpoint: https://api.opscode.com/organizations/misheska
-    Chef API validation client name: misheska-validator
-    Chef API validation key path: /Users/misheska/.chef/misheska-validator.pem
-    Chef API client key: /Users/misheska/.chef/misheska.pem
-    Chef API node name: misheska
+It will prompt you for a bunch of server files.  Since I'm using hosted Chef
+to manage my servers, my settings are as follows (yours will be 
+slightly different):
 
-So here's what my `$HOME/.berkshelf/config.json` file looks like:
+    $ berks configure
+    Enter value for chef.chef_server_url (default: 'http://localhost:4000'):  https://api.opscode.com/organizations/misheska
+    Enter value for chef.node_name (default: 'Ruby.local'):  misheska
+    Enter value for chef.client_key (default: '/etc/chef/client.pem'):  /Users/misheska/.chef/misheska.pem
+    Enter value for chef.validation_client_name (default: 'chef-validator'):  misheska-validator
+    Enter value for chef.validation_key_path (default: '/etc/chef/validation.pem'):  /Users/misheska/.chef/misheska-validator.pem
+    Enter value for vagrant.vm.box (default: 'Berkshelf-CentOS-6.3-x86_64-minimal'):  centos65
+    Enter value for vagrant.vm.box_url (default: 'https://dl.dropbox.com/u/31081437/Berkshelf-CentOS-6.3-x86_64-minimal.box'):  https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box
+    Config written to: '/Users/misheska/.berkshelf/config.json'
+
+The config file is located in `$HOME/.berkshelf/config.json` (or inx
+`%USERPROFILE%/.berkshelf/config.json` on Windows).
+
+Here's what my `$HOME/.berkshelf/config.json` file looks like:
+
+    {
+      "chef":{
+        "chef_server_url":"https://api.opscode.com/organizations/misheska",
+        "validation_client_name":"misheska-validator",
+        "validation_key_path":"/Users/misheska/.chef/misheska-validator.pem",
+        "client_key":"/Users/misheska/.chef/misheska.pem",
+        "node_name":"misheska"
+      },
+      "cookbook":{
+        "copyright":"Mischa Taylor",
+        "email":"mischa@misheska.com",
+        "license":"Apache 2.0"
+      },
+      "allowed_licenses":[],
+      "raise_license_exception":false,
+      "vagrant":{
+        "vm":{
+          "box":"centos65",
+          "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box",
+          "forward_port":{},
+          "network":{"bridged":false,"hostonly":"33.33.33.10"},
+          "provision":"chef_solo"}
+      },
+      "ssl":{
+        "verify":false
+      }
+    }
 
     {
       "chef":{
@@ -969,7 +1133,7 @@ So here's what my `$HOME/.berkshelf/config.json` file looks like:
       "vagrant":{
         "vm":{
           "box": "centos65",
-          "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.4/centos65.box",
+          "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box",
           "forward_port": {
           },
           "network":{
