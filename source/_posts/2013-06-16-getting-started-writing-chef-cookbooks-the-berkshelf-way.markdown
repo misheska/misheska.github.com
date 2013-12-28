@@ -1075,7 +1075,7 @@ Berkshelf configuration file:
 
     $ berks configure
 
-It will prompt you for a bunch of server files.  Since I'm using hosted Chef
+It will prompt you for a bunch of server settings.  Since I'm using hosted Chef
 to manage my servers, my settings are as follows (yours will be 
 slightly different):
 
