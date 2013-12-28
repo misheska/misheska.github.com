@@ -197,6 +197,59 @@ Then install the `bundler` gem.  If the `gem install` command reports
     1 gem installed
     $ rbenv rehash
 
+Install Sublime Text 2 (Optional) - Mac OS X
+--------------------------------------------
+
+Miguel Cabeça has written an excellent plugin for the Sublime Text editor
+called [SublimeChef](https://github.com/cabeca/SublimeChef), which is the
+closest thing to an Integrated Development Environment (IDE) that exists
+for Chef.  Sublime Text is costs $70 for a license, but has no restriction
+on the length of a trial period, so feel free try out Sublime Text to see
+if it works for you.
+
+SublimeChef currently only supports Sublime Text 2, not the
+latest Sublime Text 3 in beta, so make sure you stick with the older
+version for now if you want to use SublimeChef.
+
+Download and install SublimeText 2 for your platform via
+<http://www.sublimetext.com/2>
+
+### Install Sublime Text 2 Package Control (Optional) - Mac OS X
+
+In order to install the SublimeChef plugin, first you need to install
+Sublime Text Package Control.
+
+* Download [Package Control.sublime-package](https://sublime.wbond.net/Package%20Control.sublime-package)
+
+* Choose `Preferences > Browse Packages...` from the Sublime Text 2 menu
+
+* Browse up a folder, then navigate into `Installed Packages/`
+
+* Copy `Package Control.sublime-package` file you downloaded into this
+`Sublime Text 2\Installed Packages` directory
+
+* Restart Sublime Text 2 to enable Package Control
+
+Once Package Control is installed successfully, you should be able to
+display the Command Palette by pressing `COMMAND+SHIFT+P`:
+
+{% img center /images/sublime2commandpalette.png [Sublime Text 2 Command Palette] %}
+
+### Install Sublime Chef (Optional) - Windows
+
+After pressing `CTRL+SHIFT+P` to display the Command Palette, start typing
+`install` to select `Package Control: Install Package`:
+
+{% img center /images/sublime2installpackagecontrol.png [Sublime Text 2 Package Control] %}
+
+Then type `chef` to display the SublimeChef entry - click to install:
+
+{% img center /images/sublime2sublimechef.png [SublimeChef install] %}
+
+Miguel created the following
+[demo video](http://www.youtube.com/watch?v=4VtDj_ar1Xg)
+to show how SublimeChef can be used.
+
 Linux
 =====
 
@@ -204,13 +257,13 @@ Install Prerequisite Packages - Linux
 -------------------------------------
 Make sure the prerequisite packages are installed.
 
-## Ubuntu prerequisites:
+### Ubuntu prerequisites:
 
     $ sudo apt-get update
     $ sudo apt-get install -y build-essential git
     $ sudo apt-get install -y libxml2-dev libxslt-dev libssl-dev
 
-## RHEL/CentOS prerequisites:
+### RHEL/CentOS prerequisites:
 
     $ sudo yum update
     $ sudo yum install -y git
@@ -293,6 +346,59 @@ Then install the `bundler` gem.  If the `gem install` command reports
     Parsing documentation for bundler-1.5.0
     1 gem installed
     $ rbenv rehash
+
+Install Sublime Text 2 (Optional) - Linux
+-----------------------------------------
+
+Miguel Cabeça has written an excellent plugin for the Sublime Text editor
+called [SublimeChef](https://github.com/cabeca/SublimeChef), which is the
+closest thing to an Integrated Development Environment (IDE) that exists
+for Chef.  Sublime Text is costs $70 for a license, but has no restriction
+on the length of a trial period, so feel free try out Sublime Text to see
+if it works for you.
+
+SublimeChef currently only supports Sublime Text 2, not the
+latest Sublime Text 3 in beta, so make sure you stick with the older
+version for now if you want to use SublimeChef.
+
+Download and install SublimeText 2 for your platform via
+<http://www.sublimetext.com/2>
+
+### Install Sublime Text 2 Package Control (Optional) - Linux
+
+In order to install the SublimeChef plugin, first you need to install
+Sublime Text Package Control.
+
+* Download [Package Control.sublime-package](https://sublime.wbond.net/Package%20Control.sublime-package)
+
+* Choose `Preferences > Browse Packages...` from the Sublime Text 2 menu
+
+* Browse up a folder, then navigate into `Installed Packages/`
+
+* Copy `Package Control.sublime-package` file you downloaded into this
+`Sublime Text 2/Installed Packages` directory
+
+* Restart Sublime Text 2 to enable Package Control
+
+Once Package Control is installed successfully, you should be able to
+display the Command Pallete by pressing `CTRL+SHIFT+P`:
+
+{% img center /images/sublime2commandpalette.png [Sublime Text 2 Command Palette] %}
+
+### Install Sublime Chef (Optional) - Linux
+
+After pressing `CTRL+SHIFT+P` to display the Command Pallette, start typing
+`install` to select `Package Control: Install Package`:
+
+{% img center /images/sublime2installpackagecontrol.png [Sublime Text 2 Package Control] %}
+
+Then type `chef` to display the SublimeChef entry - click to install:
+
+{% img center /images/sublime2sublimechef.png [SublimeChef install] %}
+
+Miguel created the following
+[demo video](http://www.youtube.com/watch?v=4VtDj_ar1Xg)
+to show how SublimeChef can be used.
 
 Windows
 =======
@@ -412,3 +518,56 @@ prompt:
 
     > git --version
     git version 1.8.4.msysgit.0
+
+Install Sublime Text 2 (Optional) - Windows
+-------------------------------------------
+
+Miguel Cabeça has written an excellent plugin for the Sublime Text editor
+called [SublimeChef](https://github.com/cabeca/SublimeChef), which is the
+closest thing to an Integrated Development Environment (IDE) that exists
+for Chef.  Sublime Text is costs $70 for a license, but has no restriction
+on the length of a trial period, so feel free try out Sublime Text to see
+if it works for you.
+
+SublimeChef currently only supports Sublime Text 2, not the
+latest Sublime Text 3 in beta, so make sure you stick with the older
+version for now if you want to use SublimeChef.
+
+Download and install SublimeText 2 for your platform via
+<http://www.sublimetext.com/2>
+
+### Install Sublime Text 2 Package Control (Optional) - Windows
+
+In order to install the SublimeChef plugin, first you need to install
+Sublime Text Package Control.
+
+* Download [Package Control.sublime-package](https://sublime.wbond.net/Package%20Control.sublime-package)
+
+* Choose `Preferences > Browse Packages...` from the Sublime Text 2 menu
+
+* Browse up a folder, then navigate into `Installed Packages/`
+
+* Copy `Package Control.sublime-package` file you downloaded into this
+`Sublime Text 2\Installed Packages` directory
+
+* Restart Sublime Text 2 to enable Package Control
+
+Once Package Control is installed successfully, you should be able to
+display the Command Pallete by pressing `CTRL+SHIFT+P`:
+
+{% img center /images/sublime2commandpalette.png [Sublime Text 2 Command Palette] %}
+
+### Install Sublime Chef (Optional) - Windows
+
+After pressing `CTRL+SHIFT+P` to display the Command Pallette, start typing
+`install` to select `Package Control: Install Package`:
+
+{% img center /images/sublime2installpackagecontrol.png [Sublime Text 2 Package Control] %}
+
+Then type `chef` to display the SublimeChef entry - click to install:
+
+{% img center /images/sublime2sublimechef.png [SublimeChef install] %}
+
+Miguel created the following
+[demo video](http://www.youtube.com/watch?v=4VtDj_ar1Xg)
+to show how SublimeChef can be used.
