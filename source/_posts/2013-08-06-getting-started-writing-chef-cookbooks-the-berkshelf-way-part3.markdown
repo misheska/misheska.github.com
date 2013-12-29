@@ -8,6 +8,12 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated December 29, 2013_
+
+* _Bumped Test Kitchen from 1.0.0.beta.3 to 1.1.1_
+* _Bumped CentOS to version 6.5_
+* _Per Kelly Setzer, updated os check with recent RSpec updates_
+
 _Updated September 10, 2013_
 
 * _Bumped VirtualBox images from version 4.2.16 to 4.2.18_
@@ -38,23 +44,23 @@ on both the CentOS 6.4 and Ubuntu 12.04 Linux distributions.
 
 Iteration #13 - Install Test Kitchen
 ====================================
-Edit `myface/Gemfile` and add the following line to load the
-Test Kitchen gem:
+Edit `myface/Gemfile` and add the following lines to load the
+Test Kitchen gems:
 
-    gem 'test-kitchen', '~> 1.0.0.beta.3'
+    gem 'test-kitchen'
+    gem 'kitchen-vagrant'
 
-Your `myface/Gemfile` should look like the following after editing:
+Depending on when you went through this article series, your `Gemfile`
+may already have these additions.  After editing, your `myface/Gemfile`
+should look like the following after editing:
 
 {% codeblock myface/Gemfile lang:ruby %}
 source 'https://rubygems.org'
 
 gem 'berkshelf'
-gem 'test-kitchen', '~> 1.0.0.beta.3'
+gem 'test-kitchen'
+gem 'kitchen-vagrant'
 {% endcodeblock %}
-
-Test Kitchen is in beta release and is still evolving rapidly.  The
-1.0.0.beta.3 version constraint will ensure that you are using the latest
-stable prerelease version.
 
 After you have updated the `Gemfile` run `bundle install` to download the
 test-kitchen gem and all its dependencies:
@@ -63,12 +69,12 @@ test-kitchen gem and all its dependencies:
     Fetching gem metadata from https://rubygems.org/........
     Fetching gem metadata from https://rubygems.org/..
     Resolving dependencies...
-    Using i18n (0.6.5)
-    Using multi_json (1.8.0)
-    Using activesupport (3.2.14)
+    Using i18n (0.6.9)
+    Using multi_json (1.8.2)
+    Using activesupport (3.2.16)
     ...
-    Installing test-kitchen (1.0.0.beta.3)
-    Using bundler (1.3.5)
+    Installing test-kitchen (1.1.1)
+    Using bundler (1.5.1)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
 
@@ -79,7 +85,7 @@ If everything worked properly you should be able to run the `kitchen --version`
 command to see your installed Test Kitchen's version information
 
     $ kitchen --version
-    Test Kitchen version 1.0.0.beta.3
+    Test Kitchen version 1.1.1
 
 Iteration #14 - Create a Kitchen YAML file
 ==========================================
@@ -96,6 +102,7 @@ initialization steps automatically
           append  .gitignore
           append  .gitignore
           append  Gemfile
+          append  Gemfile
     You must run 'bundle install' to fetch any new gems.
 
 Since `kitchen init` modified your Gemfile, you need to re-run `bundle install`
@@ -103,16 +110,16 @@ Since `kitchen init` modified your Gemfile, you need to re-run `bundle install`
 
     $ bundle install
     Fetching gem metadata from https://rubygems.org/........
-    Fetching gem metadata from https://rubygems.org/..
+    Fetching additional metadata from https://rubygems.org/..
     Resolving dependencies...
-    Using i18n (0.6.5)
-    Using multi_json (1.8.0)
-    Using activesupport (3.2.14)
+    Using i18n (0.6.9)
+    Using multi_json (1.8.2)
+    Using activesupport (3.2.16)
     ...
-    Using safe_yaml (0.9.5)
-    Using test-kitchen (1.0.0.beta.3)
-    Installing kitchen-vagrant (0.11.1)
-    Using bundler (1.3.5)
+    Using safe_yaml (0.9.7)
+    Using test-kitchen (1.1.1)
+    Installing kitchen-vagrant (0.14.0)
+    Using bundler (1.5.1)
     Your bundle is complete!
     Use `bundle show [gemname]` to see where a bundled gem is installed.
 
@@ -127,15 +134,17 @@ the previous installments with the `Vagrantfile`.
 {% codeblock myface/.kitchen.yml %}
 
 ---
-driver_plugin: vagrant
-driver_config:
-  require_chef_omnibus: true
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
 
 platforms:
-- name: centos-64
+- name: centos65
   driver_config:
-    box: misheska-centos64
-    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-centos64.box
+    box: centos65
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box
 
 suites:
 - name: default
@@ -190,15 +199,17 @@ After adding this block your `.kitchen.yml` should look like this:
 {% codeblock myface/.kitchen.yml %}
 
 ---
-driver_plugin: vagrant
-driver_config:
-  require_chef_omnibus: true
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
 
 platforms:
-- name: centos-64
+- name: centos65
   driver_config:
-    box: misheska-centos64
-    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-centos64.box
+    box: centos65
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box
     network:
     - ["private_network", {ip: "33.33.33.10"}]
 
@@ -222,105 +233,108 @@ You can do nearly everything that you were doing with vagrant just using Test
 Kitchen.  The Test Kitchen equivalent of the `vagrant up` command is 
 `kitchen converge`.  Try running the `kitchen converge` command now to verify
 that your `.kitchen.yml` file is valid.  When you run `kitchen converge` it will
-spin up a CentOS 6.4 vagrant test node instance and use Chef Solo to provision
+spin up a CentOS 6.5 vagrant test node instance and use Chef Solo to provision
 the MyFace cookbook on the test node:
 
     $ kitchen converge 
-    -----> Starting Kitchen (v1.0.0.beta.3)
-    -----> Creating <default-centos-64>
-           [kitchen::driver::vagrant command] BEGIN (vagrant up --no-provision)
+    -----> Starting Kitchen (v1.1.1)
+    -----> Creating <default-centos65>...
            Bringing machine 'default' up with 'virtualbox' provider...
-           [default] Importing base box 'misheska-centos64'...
+           [default] Importing base box 'centos65'...
            [default] Matching MAC address for NAT networking...
            [default] Setting the name of the VM...
            [default] Clearing any previously set forwarded ports...
            [Berkshelf] Skipping Berkshelf with --no-provision
            [default] Fixed port collision for 22 => 2222. Now on port 2200.
-           [default] Creating shared folders metadata...
            [default] Clearing any previously set network interfaces...
            [default] Preparing network interfaces based on configuration...
            [default] Forwarding ports...
            [default] -- 22 => 2200 (adapter 1)
            [default] Running 'pre-boot' VM customizations...
            [default] Booting VM...
-           [default] Waiting for VM to boot. This can take a few minutes.
-           [default] VM booted and ready for use!
+           [default] Waiting for machine to boot. This may take a few minutes...
+           [default] Machine booted and ready!
            [default] Setting hostname...
-           [default] Mounting shared folders...
-           [default] -- /vagrant
-           [kitchen::driver::vagrant command] END (0m39.38s)
-           [kitchen::driver::vagrant command] BEGIN (vagrant ssh-config)
-           [kitchen::driver::vagrant command] END (0m2.85s)
-           Vagrant instance <default-centos-64> created.
-           Finished creating <default-centos-64> (0m46.19s).
-    -----> Converging <default-centos-64>
+           Vagrant instance <default-centos65> created.
+           Finished creating <default-centos65> (0m51.76s).
+    -----> Converging <default-centos65>...
+           Preparing files for transfer
+           Resolving cookbook dependencies with Berkshelf...
+           Removing non-cookbook files before transfer
     -----> Installing Chef Omnibus (true)
-           --2013-08-07 07:25:35--  https://www.opscode.com/chef/install.sh
-    Resolving www.opscode.com...        184.106.28.82
-           Connecting to www.opscode.com|184.106.28.82|:443...
-           connected.
-    HTTP request sent, awaiting response...        200 OK
-           Length: 6790 (6.6K) [application/x-sh]
-           Saving to: “STDOUT”
-    
-     0% [                                       ] 0           --.-K/s
-    100%[======================================>] 6,790       --.-K/s   in 0s
-     
-           2013-08-07 07:25:40 (461 MB/s) - written to stdout [6790/6790]
-    
+           downloading https://www.opscode.com/chef/install.sh
+             to file /tmp/install.sh
+           trying wget...
            Downloading Chef  for el...
+           downloading https://www.opscode.com/chef/metadata?v=&prerelease=false&p=el&pv=6&m=x86_64
+             to file /tmp/install.sh.2158/metadata.txt
+           trying wget...
+           url	https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+           md5	10f3d0da82efa973fe91cc24a6a74549
+           sha256	044558f38d25bbf75dbd5790ccce892a38e5e9f2a091ed55367ab914fbd1cfed
+           downloaded metadata file looks valid...
+           downloading https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+             to file /tmp/install.sh.2158/chef-.x86_64.rpm
+           trying wget...
+           Checksum compare with sha256sum succeeded.
            Installing Chef
-           warning: /tmp/tmp.wAJrUjYo/chef-.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+           installing with rpm...
+           warning: /tmp/install.sh.2158/chef-.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
     Preparing...                #####  ########################################### [100%]
        1:chef                          ########################################### [100%]
            Thank you for installing Chef!
-           Resolving cookbook dependencies with Berkshelf
-    Using myface (2.0.0)
-    ...
+           Transfering files to <default-centos65>
+           [2013-12-29T11:44:52-08:00] INFO: Forking chef instance to converge...
+           Starting Chef Client, version 11.8.2
+           [2013-12-29T11:44:52-08:00] INFO: *** Chef 11.8.2 ***
+           [2013-12-29T11:44:52-08:00] INFO: Chef-client pid: 2257
+           [2013-12-29T11:44:53-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+           [2013-12-29T11:44:53-08:00] INFO: Run List is [recipe[myface::default]]
+           ...
            Recipe: apache2::default
-             * service[apache2] action restart[2013-08-07T07:28:54+00:00] INFO: Processing service[apache2] action restart (apache2::default line 221)
-           [2013-08-07T07:28:55+00:00] INFO: service[apache2] restarted
-    
+             * service[apache2] action restart[2013-12-29T11:47:41-08:00] INFO: Processing service[apache2] action restart (apache2::default line 210)
+           [2013-12-29T11:47:43-08:00] INFO: service[apache2] restarted
+
                - restart service service[apache2]
-    
-           [2013-08-07T07:28:55+00:00] INFO: Chef Run complete in 162.083058446 seconds
-           [2013-08-07T07:28:55+00:00] INFO: Running report handlers
-           [2013-08-07T07:28:55+00:00] INFO: Report handlers complete
-           Chef Client finished, 97 resources updated
-           Finished converging <default-centos-64> (3m20.62s).
-    -----> Setting up <default-centos-64>
-           Finished setting up <default-centos-64> (0m0.00s).
-    -----> Kitchen is finished. (4m11.93s)
+
+           [2013-12-29T11:47:43-08:00] INFO: Chef Run complete in 170.575449983 seconds
+           [2013-12-29T11:47:43-08:00] INFO: Running report handlers
+           [2013-12-29T11:47:43-08:00] INFO: Report handlers complete
+           Chef Client finished, 100 resources updated
+           Finished converging <default-centos65> (3m43.06s).
+    -----> Kitchen is finished. (4m35.40s)
+
 
 To display the results of the Chef Run, type in the `kitchen list` command:
 
     $ kitchen list
     Instance           Driver   Provisioner  Last Action
-    default-centos-64  Vagrant  Chef Solo    Converged
+    default-centos65   Vagrant  Chef Solo    Converged
 
 If the run succeeded, it should display `Converged` in the `Last Action` field.
 
 The Test Kitchen equivalent of the `vagrant ssh` command is `kitchen login`.
 Since Test Kitchen supports multiple instances, you will need to pass in
 the instance name for which you wish to login as a parameter (which you can
-get from the `kitchen list` output).  We want to login to the CentOS 6.4
+get from the `kitchen list` output).  We want to login to the CentOS 6.5
 instance (the only instance for now), so type in the command
-`kitchen login default-centos-64` to login:
+`kitchen login default-centos65` to login:
 
-    $ kitchen login default-centos-64
-    Last login: Wed Aug  7 07:39:31 2013 from 10.0.2.2
-    [vagrant@default-centos-64 ~]$
+    $ kitchen login default-centos65
+    Last login: Sun Dec 29 13:16:33 2013 from 10.0.2.2
+    Welcome to your Packer-built virtual machine.
+    [vagrant@default-centos65 ~]$
 
 Now you can poke around in the image the same way you did with `vagrant ssh`,
 for example, verifying that the httpd server is running:
 
-    [vagrant@default-centos-64 ~]$ sudo /sbin/service httpd status
-    httpd (pid  3737) is running...
+    [vagrant@default-centos65 ~]$ sudo /sbin/service httpd status
+    httpd (pid  4410) is running...
 
 After you are done working in the test instance, make sure to run the
 `exit` command to log out so that you return back to your host prompt:
 
-    [vagrant@default-centos-64 ~]$ exit
+    [vagrant@default-centos65 ~]$ exit
     logout
     Connection to 127.0.0.1 closed.
 
@@ -341,15 +355,15 @@ Iteration #15 - Provisioning Ubuntu
 
 We haven't really made use of any unique Test Kitchen features yet, let's
 start now.  We'll also deploy our cookbook locally to Ubuntu 12.04 for
-testing, in addition to CentOS 6.4.
+testing, in addition to CentOS 6.5.
 
 Edit `.kitchen.yml` and add a reference to a Ubuntu 12.04 basebox alongside
-the existing CentOS 6.4 basebox in the `platforms` stanza:
+the existing CentOS 6.5 basebox in the `platforms` stanza:
 
-    - name: ubuntu-1204
+    - name: ubuntu1204
       driver_config:
-        box: misheska-ubuntu1204
-        box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-ubuntu1204.box
+        box: ubuntu1204
+        box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/ubuntu1204.box
         network:
         - ["private_network", {ip: "33.33.33.11"}]
 
@@ -358,21 +372,23 @@ After editing, your `.kitchen.yml` file should resemble the following:
 {% codeblock myface/.kitchen.yml %}
 
 ---
-driver_plugin: vagrant
-driver_config:
-  require_chef_omnibus: true
+driver:
+  name: vagrant
+
+provisioner:
+  name: chef_solo
 
 platforms:
-- name: centos-64
+- name: centos65
   driver_config:
-    box: misheska-centos64
-    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-centos64.box
+    box: centos65
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box 
     network:
     - ["private_network", {ip: "33.33.33.10"}]
-- name: ubuntu-1204
+- name: ubuntu1204
   driver_config:
-    box: misheska-ubuntu1204
-    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.2.18/misheska-ubuntu1204.box
+    box: ubuntu1204
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/ubuntu1204.box
     network:
     - ["private_network", {ip: "33.33.33.11"}]
 
@@ -393,12 +409,12 @@ successfully due to a reference to the `php-mysql` package in
 `myface/receipes/webserver.rb`.
 
     ... 
-    include_recipe "apache2"
-    include_recipe "apache2::mod_php5"
+    include_recipe 'apache2'
+    include_recipe 'apache2::mod_php5'
 
-    package "php-mysql" do
+    package 'php-mysql' do
       action :install
-      notifies :restart, "service[apache2]"
+      notifies :restart, 'service[apache2]'
     end
     ...
 
@@ -409,7 +425,7 @@ The Opscode `php` cookbook has conditionals to reference the correct name
 for the `php-mysql` package on a number of platforms.
 
 Edit `myface/metadata.rb` and add a reference to the latest version of the
-`php` cookbook (currently 1.2.3):
+`php` cookbook (currently 1.3.10):
 
 {% codeblock myface/metadata.rb %}
 name             'myface'
@@ -420,16 +436,16 @@ description      'Installs/Configures myface'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '2.0.0'
 
-depends "apache2", "~> 1.7.0"
-depends "mysql", "~> 3.0.0"
-depends "database", "~> 1.4.0"
-depends "php", "~> 1.2.0"
+depends 'apache2', '~> 1.8.0'
+depends 'mysql', '~> 4.0.0'
+depends 'database', '~> 1.6.0'
+depends 'php', '~> 1.3.0'
 {% endcodeblock %}
 
 In `myface/recipes/webserver.rb` replace the `package "php-mysql" do ... end`
 block with the following reference:
 
-    include_recipe "php::module_mysql"
+    include_recipe 'php::module_mysql'
 
 After editing, `myface/recipes/webserver.rb` should look like this:
 
@@ -443,45 +459,45 @@ After editing, `myface/recipes/webserver.rb` should look like this:
 # All rights reserved - Do Not Redistribute
 #
 
-group node[:myface][:group]
+group node['myface']['group']
 
-user node[:myface][:user] do
-  group node[:myface][:group]
+user node['myface']['user'] do
+  group node['myface']['group']
   system true
-  shell "/bin/bash"
+  shell '/bin/bash'
 end
 
-include_recipe "apache2"
-include_recipe "apache2::mod_php5"
+include_recipe 'apache2'
+include_recipe 'apache2::mod_php5'
 
-include_recipe "php::module_mysql"
+include_recipe 'php::module_mysql'
 
 # disable default site
-apache_site "000-default" do
+apache_site '000-default' do
   enable false
 end
 
 # create apache config
-template "#{node[:apache][:dir]}/sites-available/#{node[:myface][:config]}" do
-  source "apache2.conf.erb"
+template "#{node['apache']['dir']}/sites-available/#{node['myface']['config']}" do
+  source 'apache2.conf.erb'
   notifies :restart, 'service[apache2]'
 end
 
 # create document root
-directory "#{node[:myface][:document_root]}" do
+directory "#{node['myface']['document_root']}" do
   action :create
-  mode "0755"
+  mode '0755'
   recursive true
 end
 
 # write site
-template "#{node[:myface][:document_root]}/index.php" do
-  source "index.php.erb"
-  mode "0644"
+template "#{node['myface']['document_root']}/index.php" do
+  source 'index.php.erb'
+  mode '0644'
 end
 
 # enable myface
-apache_site "#{node[:myface][:config]}" do
+apache_site "#{node['myface']['config']}" do
   enable true
 end
 {% endcodeblock %}
@@ -493,16 +509,16 @@ Now that we've fixed up our cookbook to work on Ubuntu 12.04, let's test it
 out!  Run `kitchen list` to display the list of Test Kitchen instances:
 
     Instance             Driver   Provisioner  Last Action
-    default-centos-64    Vagrant  Chef Solo    Converged
-    default-ubuntu-1204  Vagrant  Chef Solo    <Not Created>
+    default-centos65     Vagrant  Chef Solo    Converged
+    default-ubuntu1204   Vagrant  Chef Solo    <Not Created>
 
 Notice that after editing the `.kitchen.yml` we now have an Ubuntu 12.04
-instance called `default-ubuntu-1204` and it is in the `<Not Created>`
+instance called `default-ubuntu1204` and it is in the `<Not Created>`
 state.
 
 Go ahead setup the Ubuntu 12.04 instance by running `kitchen converge` again:
 
-    $ kitchen converge default-ubuntu-1204
+    $ kitchen converge default-ubuntu1204
 
 Note that this time we added an optional instance parameter so that Test
 Kitchen only performs the action against the specified instance.  If you do
@@ -515,37 +531,37 @@ Run the `kitchen list` command again to verify that the Ubuntu 12.04 instance
 is now in the `Set Up` state as well, showing that there were no errors:
 
     Instance             Driver   Provisioner  Last Action
-    default-centos-64    Vagrant  Chef Solo    Converged
-    default-ubuntu-1204  Vagrant  Chef Solo    Converged
+    default-centos65     Vagrant  Chef Solo    Converged
+    default-ubuntu1204   Vagrant  Chef Solo    Converged
 
 You just fixed an error with the MyFace cookbook that prevented deployment to
 Ubuntu 12.04, and verified that the cookbook correctly deploys to both 
-Ubuntu 12.04 and Centos 6.4.
+Ubuntu 12.04 and Centos 6.5.
 
 Use the `kitchen login` command to ssh into each instance and poke around
 if you like.  You now have two local vagrant VMs instantiated to play with!
 
-    $ kitchen login default-ubuntu-1204
-    Welcome to Ubuntu 12.04.2 LTS (GNU/Linux 3.5.0-23-generic x86_64)
-    
+    $ kitchen login default-ubuntu1204
+    Welcome to Ubuntu 12.04.3 LTS (GNU/Linux 3.8.0-29-generic x86_64)
+
      * Documentation:  https://help.ubuntu.com/
-    Last login: Thu Aug  8 08:40:50 2013 from 10.0.2.2
+    Last login: Sun Dec 29 13:30:36 2013 from 10.0.2.2
     $ [...poke around, run some commands...]
     $ exit
     Connection to 127.0.0.1 closed.
 
-    $ kitchen login default-centos-64
-    Last login: Thu Aug  8 08:54:44 2013 from 10.0.2.2
+    $ kitchen login default-centos65
+    Last login: Sun Dec 29 13:21:10 2013 from 10.0.2.2
     Welcome to your Packer-built virtual machine.
-    [vagrant@default-centos-64 ~]$ [...poke around, run some commands...]
-    [vagrant@default-centos-64 ~]$ exit
+    [vagrant@default-centos65 ~]$ [...poke around, run some commands...]
+    [vagrant@default-centos65 ~]$ exit
     logout
     Connection to 127.0.0.1 closed.
 
 You can view the websites for each instance by viewing the appropriate
 private IP
 
-    CentOS 6.4:   http://33.33.33.10
+    CentOS 6.5:   http://33.33.33.10
     Ubuntu 12.04: http://33.33.33.11
 
 
@@ -553,7 +569,7 @@ Iteration #16 - Writing your first Serverspec test
 ==================================================
 
 While it's really helpful to know now that the Myface cookbook will converge on
-both a CentOS 6.4 and Ubuntu 12.04 setup, we haven't written any tests yet.
+both a CentOS 6.5 and Ubuntu 12.04 setup, we haven't written any tests yet.
 Let's do that.
 
 It's helpful to know that Test Kitchen was designed as a framework for
@@ -670,61 +686,65 @@ the component that manages Test Kitchen plugins is called
 [Busser](http://en.wikipedia.org/wiki/Busser).
 
     $ kitchen setup
-    -----> Starting Kitchen (v1.0.0.beta.3)
-    -----> Setting up <default-centos-64>
+    -----> Starting Kitchen (v1.1.1)
+    -----> Setting up <default-centos65>...
     Fetching: thor-0.18.1.gem (100%)
-    Fetching: busser-0.4.1.gem (100%)
+    Fetching: busser-0.6.0.gem (100%)
            Successfully installed thor-0.18.1
-           Successfully installed busser-0.4.1
+           Successfully installed busser-0.6.0
            2 gems installed
     -----> Setting up Busser
-           Creating BUSSER_ROOT in /opt/busser
+           Creating BUSSER_ROOT in /tmp/busser
            Creating busser binstub
-           Plugin serverspec installed (version 0.2.3)
+           Plugin serverspec installed (version 0.2.5)
     -----> Running postinstall for serverspec plugin
-           Finished setting up <default-centos-64> (0m49.98s).
-    -----> Setting up <default-ubuntu-1204>
+           Finished setting up <default-centos65> (0m52.12s).
+    -----> Setting up <default-ubuntu1204>...
     Fetching: thor-0.18.1.gem (100%)
-    Fetching: busser-0.4.1.gem (100%)
+    Fetching: busser-0.6.0.gem (100%)
     Successfully installed thor-0.18.1
-    Successfully installed busser-0.4.1
+    Successfully installed busser-0.6.0
     2 gems installed
     -----> Setting up Busser
-           Creating BUSSER_ROOT in /opt/busser
+           Creating BUSSER_ROOT in /tmp/busser
            Creating busser binstub
-           Plugin serverspec installed (version 0.2.3)
+           Plugin serverspec installed (version 0.2.5)
     -----> Running postinstall for serverspec plugin
-           Finished setting up <default-ubuntu-1204> (0m10.46s).
-    -----> Kitchen is finished. (1m4.85s)
+           Finished setting up <default-ubuntu1204> (0m15.36s).
+    -----> Kitchen is finished. (1m7.77s)
 
 After running `kitchen setup`, next run `kitchen verify` to run your test
 suite.
 
     $ kitchen verify
-    -----> Starting Kitchen (v1.0.0.beta.3)
-    -----> Verifying <default-centos-64>
-           Removing /opt/busser/suites/serverspec
-           Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-           Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Starting Kitchen (v1.1.1)
+    -----> Verifying <default-centos65>...
+           Suite path directory /tmp/busser/suites does not exist, skipping.
+           Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+           Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
     -----> Running serverspec test suite
-           /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-           .
+           /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
 
-           Finished in 0.00954 seconds
+           MyFace webserver
+             should have a myface user
+
+           Finished in 0.04293 seconds
            1 example, 0 failures
-           Finished verifying <default-centos-64> (0m1.98s).
-    -----> Verifying <default-ubuntu-1204>
-           Removing /opt/busser/suites/serverspec
-    Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-    Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+           Finished verifying <default-centos65> (0m1.61s).
+    -----> Verifying <default-ubuntu1204>...
+           Suite path directory /tmp/busser/suites does not exist, skipping.
+    Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+    Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
     -----> Running serverspec test suite
-    /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-    .
+     /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
 
-    Finished in 0.01468 seconds
+    MyFace webserver
+      should have a myface user
+
+    Finished in 0.11307 seconds
     1 example, 0 failures
-           Finished verifying <default-ubuntu-1204> (0m1.90s).
-    -----> Kitchen is finished. (0m7.68s)
+           Finished verifying <default-ubuntu1204> (0m1.66s).
+    -----> Kitchen is finished. (0m3.80s)
 
 Finally run `kitchen list` to display the results of your test run.
 
@@ -809,26 +829,59 @@ end
 Run `kitchen verify` and `kitchen list` again to run this new test:
 
     $ kitchen verify
-    -----> Starting Kitchen (v1.0.0.beta.3)
-    -----> Verifying <default-centos-64>
-           Removing /opt/busser/suites/serverspec
-           Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-           Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
-    -----> Running serverspec test suite
-           /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-    .       .
-    
-           Finished in 0.03896 seconds
+    -----> Starting Kitchen (v1.1.1)
+    -----> Verifying <default-centos65>...
+    ...
+           MyFace webserver
+             should have a myface user
+             should be running the httpd server
+
+           Finished in 0.04706 seconds
            2 examples, 0 failures
+           Finished verifying <default-centos65> (0m1.61s).
+    -----> Verifying <default-ubuntu1204>...
+           Removing /tmp/busser/suites/serverspec
+    Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+    Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+    /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+    MyFace webserver
+      should have a myface user
+    httpd: unrecognized service
+      should be running the httpd server (FAILED - 1)
+
+    Failures:
+
+      1) MyFace webserver should be running the httpd server
+         Failure/Error: expect(service 'httpd').to be_running
+           ps aux | grep -w -- httpd | grep -qv grep
+           expected Service "httpd" to be running
+         # /tmp/busser/suites/serverspec/localhost/webserver_spec.rb:10:in `block (2 levels) in <top (required)>'
+
+    Finished in 0.05906 seconds
+    2 examples, 1 failure
+
+    Failed examples:
+
+    rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb:9 # MyFace webserver should be running the httpd server
+    /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation failed
+    Ruby Script[/tmp/busser/gems/gems/busser-serverspec-0.2.5/lib/busser/runner_plugin/../serverspec/runner.rb /tmp/busser/suites/serverspec] exit code was 1
+    >>>>>> Verify failed on instance <default-ubuntu1204>.
+    >>>>>> Please see .kitchen/logs/default-ubuntu1204.log for more details
+    >>>>>> ------Exception-------
+    >>>>>> Class: Kitchen::ActionFailed
+    >>>>>> Message: SSH exited (1) for command: [sh -c 'BUSSER_ROOT="/tmp/busser" GEM_HOME="/tmp/busser/gems" GEM_PATH="/tmp/busser/gems" GEM_CACHE="/tmp/busser/gems/cache" ; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE; sudo -E /tmp/busser/bin/busser test']
+    >>>>>> ----------------------
     ...
     $ kitchen list
-    Instance             Driver   Provisioner  Last Action
-    default-centos-64    Vagrant  Chef Solo    Verified
-    default-ubuntu-1204  Vagrant  Chef Solo    Verified
+    Instance            Driver   Provisioner  Last Action
+    default-centos65    Vagrant  ChefSolo     Verified
+    default-ubuntu1204  Vagrant  ChefSolo     Verified
 
 Uh oh!  That's not what we expected! The tests failed on our Ubuntu 12.04
 instance - and yet it still says that it is `Verified`, but the tests passed
-on CentOS 6.4.  The `Last Action` field is literally the last action.  It does
+on CentOS 6.5.  The `Last Action` field is literally the last action.  It does
 not report success or failure state, so you'll want to pay attention to the
 output of `kitchen verify` and note whether or not all the tests passed.
 
@@ -865,8 +918,8 @@ describe 'MyFace webserver' do
   end
 
   it 'should be running the httpd server' do
-    case RSpec.configuration.os
-    when "Debian"
+    case RSpec.configuration.os[:family]
+    when "Ubuntu"
       expect(service 'apache2').to be_running
       expect(service 'apache2').to be_enabled
     else
@@ -881,35 +934,41 @@ end
 Run `kitchen verify` and `kitchen list` again - all the tests should pass:
 
     $ kitchen verify
-    -----> Starting Kitchen (v1.0.0.beta.3)
-    -----> Verifying <default-centos-64>
-           Removing /opt/busser/suites/serverspec
-           Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-           Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Starting Kitchen (v1.1.1)
+    -----> Verifying <default-centos65>...
+           Removing /tmp/busser/suites/serverspec
+           Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+           Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
     -----> Running serverspec test suite
-           /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-    .       .
-    
-           Finished in 0.027 seconds
+           /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+           MyFace webserver
+             should have a myface user
+             should be running the httpd server
+
+           Finished in 0.04858 seconds
            2 examples, 0 failures
-           Finished verifying <default-centos-64> (0m2.03s).
-    -----> Verifying <default-ubuntu-1204>
-           Removing /opt/busser/suites/serverspec
-    Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-    Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+           Finished verifying <default-centos65> (0m1.58s).
+    -----> Verifying <default-ubuntu1204>...
+           Removing /tmp/busser/suites/serverspec
+    Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+    Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
     -----> Running serverspec test suite
-    /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-    ..
-     
-    Finished in 0.02841 seconds
+    /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+    MyFace webserver
+      should have a myface user
+      should be running the httpd server
+
+    Finished in 0.06551 seconds
     2 examples, 0 failures
-           Finished verifying <default-ubuntu-1204> (0m1.87s).
-    -----> Kitchen is finished. (0m7.84s)
+           Finished verifying <default-ubuntu1204> (0m1.59s).
+    -----> Kitchen is finished. (0m3.46s)
 
     $ kitchen list
     Instance             Driver   Provisioner  Last Action
-    default-centos-64    Vagrant  Chef Solo    Verified
-    default-ubuntu-1204  Vagrant  Chef Solo    Verified
+    default-centos65     Vagrant  Chef Solo    Verified
+    default-ubuntu1204   Vagrant  Chef Solo    Verified
 
 The final test that is used for the rest of the Test Iterations in
 [Part 1](http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/)
@@ -948,8 +1007,8 @@ describe 'MyFace webserver' do
   end
 
   it 'should be running the httpd server' do
-    case RSpec.configuration.os
-    when "Debian"
+    case RSpec.configuration.os[:family]
+    when "Ubuntu"
       expect(service 'apache2').to be_running
       expect(service 'apache2').to be_enabled
     else
@@ -975,35 +1034,43 @@ Testing Iteration #17 - Running the suite
 Do a final `kitchen verify` and `kitchen list`.  Everything should look good:
 
     $ kitchen verify
-    -----> Starting Kitchen (v1.0.0.beta.3)
-    -----> Verifying <default-centos-64>
-           Removing /opt/busser/suites/serverspec
-           Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-           Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Starting Kitchen (v1.1.1)
+    -----> Verifying <default-centos65>...
+           Removing /tmp/busser/suites/serverspec
+           Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+           Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
     -----> Running serverspec test suite
-           /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-    ...       .
-    
-           Finished in 0.04423 seconds
-           3 examples, 0 failures
-           Finished verifying <default-centos-64> (0m2.02s).
-    -----> Verifying <default-ubuntu-1204>
-           Removing /opt/busser/suites/serverspec
-    Uploading /opt/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
-    Uploading /opt/busser/suites/serverspec/spec_helper.rb (mode=0644)
-    -----> Running serverspec test suite
-    /opt/chef/embedded/bin/ruby -I/opt/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /opt/busser/suites/serverspec/localhost/webserver_spec.rb
-    ....
+           /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
 
-    Finished in 0.04676 seconds
+           MyFace webserver
+             should have a myface user
+             should be running the httpd server
+             should respond to an HTTP request
+
+           Finished in 0.05525 seconds
+           3 examples, 0 failures
+           Finished verifying <default-centos65> (0m1.53s).
+    -----> Verifying <default-ubuntu1204>...
+           Removing /tmp/busser/suites/serverspec
+    Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+    Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+    -----> Running serverspec test suite
+    /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+    MyFace webserver
+      should have a myface user
+      should be running the httpd server
+      should respond to an HTTP request
+
+    Finished in 0.15965 seconds
     3 examples, 0 failures
-           Finished verifying <default-ubuntu-1204> (0m1.92s).
-    -----> Kitchen is finished. (0m7.34s)
+           Finished verifying <default-ubuntu1204> (0m1.68s).
+    -----> Kitchen is finished. (0m3.53s)
 
     $ kitchen list
     Instance             Driver   Provisioner  Last Action
-    default-centos-64    Vagrant  Chef Solo    Verified
-    default-ubuntu-1204  Vagrant  Chef Solo    Verified
+    default-centos65     Vagrant  Chef Solo    Verified
+    default-ubuntu1204   Vagrant  Chef Solo    Verified
 
 Iteration #18 - Completing the database test suite
 ==================================================
@@ -1025,8 +1092,8 @@ MySQL service is `mysql`.  For CentOS, the name of the service is `mysqld`.
 This should be a piece of cake to write a serverspec test for now:
 
     it 'should be running the database server' do
-      case RSpec.configuration.os
-      when "Debian"
+      case RSpec.configuration.os[:family]
+      when "Ubuntu"
         expect(service 'mysql').to be_running
         expect(service 'mysql').to be_enabled
       else
@@ -1087,8 +1154,8 @@ of PHP, so another command will do (just remember the service name is
 different between the two different OSes):
 
     it 'should have installed the Apache php5_module' do
-      case RSpec.configuration.os
-      when "Debian"
+      case RSpec.configuration.os[:family]
+      when "Ubuntu"
         expect(command 'sudo /usr/sbin/apache2 -M | grep php5').to return_stdout /.*php5_module.*/
       else
         expect(command 'sudo /usr/sbin/httpd -M | grep php5').to return_stdout /.*php5_module.*/
@@ -1104,8 +1171,8 @@ require 'spec_helper'
 describe 'MyFace database' do
 
   it 'should be running the database server' do
-    case RSpec.configuration.os
-    when "Debian"
+    case RSpec.configuration.os[:family]
+    when "Ubuntu"
       expect(service 'mysql').to be_running
       expect(service 'mysql').to be_enabled
     else
@@ -1131,8 +1198,8 @@ describe 'MyFace database' do
   end
 
   it 'should have installed the Apache php5_module' do
-    case RSpec.configuration.os
-    when "Debian"
+    case RSpec.configuration.os[:family]
+    when "Ubuntu"
       expect(command 'sudo /usr/sbin/apache2 -M | grep php5').to return_stdout /.*php5_module.*/
     else
       expect(command 'sudo /usr/sbin/httpd -M | grep php5').to return_stdout /.*php5_module.*/
