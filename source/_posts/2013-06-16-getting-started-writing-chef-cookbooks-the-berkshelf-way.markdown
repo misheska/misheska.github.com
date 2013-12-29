@@ -795,15 +795,6 @@ Alias / /srv/apache/myface/
 </Directory>
 {% endcodeblock %}
 
-Create a file to contain our web site content as
-`myface/files/default/index.html`.  `index.html` is a static file that does
-not take advantage of any ERB templating.  Chef looks for static files in
-the `files` subtree by default.
-
-{% codeblock myface/files/default/index.html lang:ruby %}
-Welcome to MyFace!
-{% endcodeblock %}
-
 After you have created these three files, run `vagrant provision` to deploy
 your changes:
 
@@ -853,7 +844,7 @@ with the following command on Mac OS X/Linux:
 
 and with the following command on Windows:
 
-    > vagrant ssh -c "cat /etc/httpd/sites-available/myface.conf"
+    > vagrant ssh -c "cat /etc/httpd/sites-available/myface.conf" -- -n -T
 
 The ERB token `<%= node['hostname'] %>` was replaced by the evaluated string
 `myface-berkshelf` during the Chef run.
