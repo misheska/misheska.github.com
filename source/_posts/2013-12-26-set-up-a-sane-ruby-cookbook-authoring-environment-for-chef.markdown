@@ -275,8 +275,8 @@ Make sure the prerequisite packages are installed.
     $ sudo yum install -y autoconf automake libtool bison
     $ sudo yum install -y libxml2-devel libxslt-devel
 
-Install Chruby and Ruby-Install - Linux
----------------------------------------
+Install Chruby and Ruby-Build - Linux
+-------------------------------------
 
 Download the chruby source distribution:
 
