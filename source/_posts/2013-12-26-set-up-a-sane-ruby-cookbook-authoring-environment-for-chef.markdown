@@ -8,6 +8,11 @@ categories: [Ruby, Chef]
 * list element with functor item
 {:toc}
 
+_Updated January 2, 2014_
+
+* _Per Seth Vargo switched from rbenv to chruby_
+* _Switched from SublimeText 2 to SublimeText 3 - it works with SublimeChef_
+
 You will need to set up a sane Ruby 1.9.x development to support your
 Chef cookbook authoring activity on Mac OS X, Linux or Windows.  In this
 Ruby environment, you will manage all the required Ruby Gem libraries
@@ -20,7 +25,7 @@ a Ruby environment dedicated for Chef cookbook development.
 
 There are many different ways to set up a sane Ruby environment.  This
 article covers how to set up a sane Ruby environment for Chef using
-[Rbenv](https://github.com/sstephenson/rbenv) for Mac OS X/Linux and
+[Chruby](https://github.com/postmodern/chruby) for Mac OS X/Linux and
 [RubyInstaller](http://rubyinstaller.org) for Windows.  The setup
 covered in this article should work for most people wanting to write
 Chef cookbooks.  If you are more experienced with Ruby development, you
@@ -32,14 +37,15 @@ Mac OS X
 ========
 
 Out of the box, Ruby does not provide a mechanism to support multiple
-installed versions.  [Rbenv](https://github.com/sstephenson/rbenv/)
-makes managing multiple versions of Ruby easy.  It's a great way to set up
+installed versions.  [Chruby](https://github.com/postmodern/chruby)
+makes it easy to manage multiple versions of Ruby.  It's a great way to set up
 a dedicated Ruby 1.9.x environment with all the required Gem libraries for
 Chef cookbook development.
 
 - - -
 
-__NOTE:__ Before trying to install [Rbenv](https://github.com/sstephenson/rbenv)
+__NOTE:__ Before trying to install
+[Chruby](https://github.com/postmodern/chruby)
 verify that you do not have another popular Ruby virtualization manager
 installed - [RVM](http://rvm.io).  If you try to run the following `rvm`
 command, it should say `command not found`:
@@ -47,9 +53,9 @@ command, it should say `command not found`:
     $ rvm --version
     -bash: rvm: command not found
 
-If you want to switch to Rbenv (which is recommended), make sure that you
+If you want to switch to Chruby (which is recommended), make sure that you
 [completely remove RVM first](http://stackoverflow.com/questions/3558656/how-can-i-remove-rvm-ruby-version-manager-from-my-system)
-(as Rbenv and RVM cannot coexist because RVM overrides the `gem` command with
+(as Chruby and RVM cannot coexist because RVM overrides the `gem` command with
 a function specific to RVM).
 
 - - -
@@ -129,41 +135,43 @@ Next, install the additional dependencies to compile Ruby from source:
     # Install legacy C compiler for building Ruby
     brew install apple-gcc42
 
-Install Rbenv and Ruby-Build via Homebrew - Mac OS X
-----------------------------------------------------
+Install Chruby, Ruby-Build and Ruby-Install via Homebrew - Mac OS X
+-------------------------------------------------------------------
 
-And now install `rbenv` and the `ruby-build` plugin:
+And now install `chruby` and the `ruby-build`/`ruby-install` plugins:
 
     $ brew update
-    $ brew install rbenv
-    $ brew install ruby-build
+    $ brew install chruby
+    $ brew install ruby-build ruby-install
 
-Add <code>rbenv init</code> to your shell to enable shims and autocompletion:
+Add `chruby.sh` to your shell to enable chruby:
 
-    $ echo 'eval "$(rbenv init -)"' >> $HOME/.bash_profile
-    $ source ~/.bash_profile
+    $ echo 'source /usr/local/opt/chruby/share/chruby/chruby.sh' >> $HOME/.bashrc
 
-Restart shell as a login shell so that the PATH changes take effect:
+Add `auto.sh` to your shell to enble auto-switching of Rubies specified by
+`.ruby-version files:
 
-    $ exec $SHELL -l
+    $ echo 'source /usr/local/opt/chruby/share/chruby/auto.sh' >> $HOME/.bashrc
+
+Reload `.bashrc` with these new settings:
+
+    $ source $HOME/.bashrc
 
 Compile Ruby 1.9.x from source - Mac OS X
 -----------------------------------------
 
 Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p484)
 
-    $ rbenv install 1.9.3-p484
+    $ ruby-install ruby 1.9.3-p484 --install-dir ~/.rubies/ruby-1.9.3-p484
 
-Rebuild the shim executable
+To switch to the Ruby required for Chef:
 
-    $ rbenv rehash
+    $ chruby ruby-1.9
 
-You'll need to run `rbenv rehash` every time you install a new version of Ruby
-or install a new gem.
+To make this version the default version of Ruby, simply add this command
+to your $HOME/.bashrc
 
-Set the latest version of ruby to be the default version of ruby
-
-    $ rbenv global 1.9.3-p484
+    $ echo 'chruby ruby-1.9' >> $HOME/.bashrc
 
 Verify the ruby install.  If everything was installed correctly, the `ruby -v`
 command should report that version 1.9.3p484 is installed.
@@ -195,9 +203,8 @@ Then install the `bundler` gem.  If the `gem install` command reports
     Successfully installed bundler-1.5.0
     Parsing documentation for bundler-1.5.0
     1 gem installed
-    $ rbenv rehash
 
-Install Sublime Text 2 (Optional) - Mac OS X
+Install Sublime Text 3 (Optional) - Mac OS X
 --------------------------------------------
 
 Miguel Cabeça has written an excellent plugin for the Sublime Text editor
@@ -207,44 +214,40 @@ for Chef.  Sublime Text is costs $70 for a license, but has no restriction
 on the length of a trial period, so feel free try out Sublime Text to see
 if it works for you.
 
-SublimeChef currently only supports Sublime Text 2, not the
-latest Sublime Text 3 in beta, so make sure you stick with the older
-version for now if you want to use SublimeChef.
+Download and install SublimeText 3 for your platform via
+<http://www.sublimetext.com/3>
 
-Download and install SublimeText 2 for your platform via
-<http://www.sublimetext.com/2>
-
-### Install Sublime Text 2 Package Control (Optional) - Mac OS X
+### Install Sublime Text 3 Package Control (Optional) - Mac OS X
 
 In order to install the SublimeChef plugin, first you need to install
 Sublime Text Package Control.
 
 * Download [Package Control.sublime-package](https://sublime.wbond.net/Package%20Control.sublime-package)
 
-* Choose `Preferences > Browse Packages...` from the Sublime Text 2 menu
+* Choose `Preferences > Browse Packages...` from the Sublime Text 3 menu
 
 * Browse up a folder, then navigate into `Installed Packages/`
 
 * Copy `Package Control.sublime-package` file you downloaded into this
-`Sublime Text 2\Installed Packages` directory
+`Sublime Text 3\Installed Packages` directory
 
-* Restart Sublime Text 2 to enable Package Control
+* Restart Sublime Text 3 to enable Package Control
 
 Once Package Control is installed successfully, you should be able to
 display the Command Palette by pressing `COMMAND+SHIFT+P`:
 
-{% img center /images/sublime2commandpalette.png [Sublime Text 2 Command Palette] %}
+{% img center /images/sublime3commandpalette-mac.png [Sublime Text 3 Command Palette] %}
 
 ### Install Sublime Chef (Optional) - Mac OS X
 
 After pressing `CTRL+SHIFT+P` to display the Command Palette, start typing
 `install` to select `Package Control: Install Package`:
 
-{% img center /images/sublime2installpackagecontrol.png [Sublime Text 2 Package Control] %}
+{% img center /images/sublime3installpackagecontrol-mac.png [Sublime Text 3 Package Control] %}
 
 Then type `chef` to display the SublimeChef entry - click to install:
 
-{% img center /images/sublime2sublimechef.png [SublimeChef install] %}
+{% img center /images/sublime3sublimechef-mac.png [SublimeChef install] %}
 
 Miguel created the following
 [demo video](http://www.youtube.com/watch?v=4VtDj_ar1Xg)
@@ -272,54 +275,86 @@ Make sure the prerequisite packages are installed.
     $ sudo yum install -y autoconf automake libtool bison
     $ sudo yum install -y libxml2-devel libxslt-devel
 
-Install Rbenv - Linux
----------------------
-Download the Rbenv source distribution to the `$HOME/.rbenv` directory:
+Install Chruby, Ruby-Build and Ruby-Install - Linux
+---------------------------------------------------
 
-    $ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv
+Download the chruby source distribution:
 
-Add $HOME/.rbenv/bin to your $PATH
+    $ wget -O chruby-0.3.8.tar.gz https://github.com/postmodern/chruby/archive/v0.3.8.tar.gz
 
-    $ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> $HOME/.bashrc
+Extract chruby and install:
 
-Add `rbenv init` to your shell to enable shims and autocompletion:
+    $ tar xzvf chruby-0.3.8.tar.gz
+    $ cd chruby-0.3.8/
+    $ sudo make install
 
-    $ echo 'eval "$(rbenv init -)"' >> $HOME/.bashrc
+Feel free to remove the chruby source dir after installing:
 
-Restart shell as a login shell so that the PATH changes take effect:
+    $ cd ..
+    $ rm chruby-0.3.8.tar.gz
+    $ rm -rf chruby-0.3.8
 
-    $ exec $SHELL -l
+Download the chruby source distribution:
 
-Install the ruby-build plugin - Linux
--------------------------------------
-Install the `ruby-build` plugin, which provides an
-`rbenv install` command to simplify the process of compiling
-and install new Ruby versions:
+    $ wget -O ruby-install-0.3.4.tar.gz https://github.com/postmodern/ruby-install/archive/v0.3.4.tar.gz
 
-    $ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
+Extract and install ruby-install:
+
+    $ tar -xzvf ruby-install-0.3.4.tar.gz
+    $ cd ruby-install-0.3.4/
+    $ sudo make install
+
+Feel free to remove the chruby source dir after installing:
+
+    $ cd ..
+    $ rm ruby-install-0.3.4.tar.gz
+    $ rm -rf ruby-install-0.3.4
+
+Extract and install ruby-build:
+
+    $ git clone https://github.com/sstephenson/ruby-build.git
+    $ cd ruby-build
+    $ sudo ./install.sh
+
+Feel free to remove the ruby-build source dir after installing:
+
+    $ cd ..
+    $ rm -rf ruby-build
+
+Add `chruby.sh` to your shell to enable chruby:
+
+    $ echo 'source /usr/local/share/chruby/chruby.sh' >> $HOME/.bashrc
+
+Add `auto.sh` to your shell to enble auto-switching of Rubies specified by
+`.ruby-version files:
+
+    $ echo 'source /usr/local/share/chruby/auto.sh' >> $HOME/.bashrc
+
+Reload `.bashrc` with these new settings:
+
+    $ source $HOME/.bashrc
 
 Compile Ruby 1.9.x from source - Linux
---------------------------------------
+-----------------------------------------
+
 Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p484)
 
-    $ rbenv install 1.9.3-p484
+    $ ruby-install ruby 1.9.3-p484 --install-dir ~/.rubies/ruby-1.9.3-p484
 
-Rebuild the shim executable
+To switch to the Ruby required for Chef:
 
-    $ rbenv rehash
+    $ chruby ruby-1.9
 
-You'll need to run `rbenv rehash` every time you install a new
-version of Ruby or install a new gem.
+To make this version the default version of Ruby, simply add this command
+to your $HOME/.bashrc
 
-Set the latest version of ruby to be the default version of ruby
+    $ echo 'chruby ruby-1.9' >> $HOME/.bashrc
 
-    $ rbenv global 1.9.3-p484
-
-Verify the ruby install.  If everything was installed correctly, the
-`ruby -v` command should report that version 1.9.3p484 is installed.
+Verify the ruby install.  If everything was installed correctly, the `ruby -v`
+command should report that version 1.9.3p484 is installed.
 
     $ ruby -v
-    ruby 1.9.3p484 (2013-11-22 revision 43786) [x86_64-linux]
+    ruby 1.9.3p484 (2013-11-22 revision 43786) [x86_64-darwin13.0.0]
 
 Install Bundler - Linux
 -----------------------
@@ -345,9 +380,8 @@ Then install the `bundler` gem.  If the `gem install` command reports
     Successfully installed bundler-1.5.0
     Parsing documentation for bundler-1.5.0
     1 gem installed
-    $ rbenv rehash
 
-Install Sublime Text 2 (Optional) - Linux
+Install Sublime Text 3 (Optional) - Linux
 -----------------------------------------
 
 Miguel Cabeça has written an excellent plugin for the Sublime Text editor
@@ -357,44 +391,40 @@ for Chef.  Sublime Text is costs $70 for a license, but has no restriction
 on the length of a trial period, so feel free try out Sublime Text to see
 if it works for you.
 
-SublimeChef currently only supports Sublime Text 2, not the
-latest Sublime Text 3 in beta, so make sure you stick with the older
-version for now if you want to use SublimeChef.
+Download and install SublimeText 3 for your platform via
+<http://www.sublimetext.com/3>
 
-Download and install SublimeText 2 for your platform via
-<http://www.sublimetext.com/2>
-
-### Install Sublime Text 2 Package Control (Optional) - Linux
+### Install Sublime Text 3 Package Control (Optional) - Linux
 
 In order to install the SublimeChef plugin, first you need to install
 Sublime Text Package Control.
 
 * Download [Package Control.sublime-package](https://sublime.wbond.net/Package%20Control.sublime-package)
 
-* Choose `Preferences > Browse Packages...` from the Sublime Text 2 menu
+* Choose `Preferences > Browse Packages...` from the Sublime Text 3 menu
 
 * Browse up a folder, then navigate into `Installed Packages/`
 
 * Copy `Package Control.sublime-package` file you downloaded into this
-`Sublime Text 2/Installed Packages` directory
+`Sublime Text 3/Installed Packages` directory
 
-* Restart Sublime Text 2 to enable Package Control
+* Restart Sublime Text 3 to enable Package Control
 
 Once Package Control is installed successfully, you should be able to
 display the Command Pallete by pressing `CTRL+SHIFT+P`:
 
-{% img center /images/sublime2commandpalette.png [Sublime Text 2 Command Palette] %}
+{% img center /images/sublime3commandpalette-ubuntu.png [Sublime Text 3 Command Palette] %}
 
 ### Install Sublime Chef (Optional) - Linux
 
 After pressing `CTRL+SHIFT+P` to display the Command Pallette, start typing
 `install` to select `Package Control: Install Package`:
 
-{% img center /images/sublime2installpackagecontrol.png [Sublime Text 2 Package Control] %}
+{% img center /images/sublime3installpackagecontrol.png [Sublime Text 3 Package Control] %}
 
 Then type `chef` to display the SublimeChef entry - click to install:
 
-{% img center /images/sublime2sublimechef.png [SublimeChef install] %}
+{% img center /images/sublime3sublimechef-ubuntu.png [SublimeChef install] %}
 
 Miguel created the following
 [demo video](http://www.youtube.com/watch?v=4VtDj_ar1Xg)
@@ -404,7 +434,7 @@ Windows
 =======
 
 There is no need to install a Ruby version manager on Windows, like there
-is for Mac OS X or Linux.  In fact, the Rbenv version manager does not
+is for Mac OS X or Linux.  In fact, the chruby version manager does not
 work on Windows.  Instead, you'll use the 
 [RubyInstaller for Windows](http://rubyinstaller.org/) which
 can install different versions of Ruby on the same machine.
@@ -519,7 +549,7 @@ prompt:
     > git --version
     git version 1.8.4.msysgit.0
 
-Install Sublime Text 2 (Optional) - Windows
+Install Sublime Text 3 (Optional) - Windows
 -------------------------------------------
 
 Miguel Cabeça has written an excellent plugin for the Sublime Text editor
@@ -529,28 +559,24 @@ for Chef.  Sublime Text is costs $70 for a license, but has no restriction
 on the length of a trial period, so feel free try out Sublime Text to see
 if it works for you.
 
-SublimeChef currently only supports Sublime Text 2, not the
-latest Sublime Text 3 in beta, so make sure you stick with the older
-version for now if you want to use SublimeChef.
+Download and install SublimeText 3 for your platform via
+<http://www.sublimetext.com/3>
 
-Download and install SublimeText 2 for your platform via
-<http://www.sublimetext.com/2>
-
-### Install Sublime Text 2 Package Control (Optional) - Windows
+### Install Sublime Text 3 Package Control (Optional) - Windows
 
 In order to install the SublimeChef plugin, first you need to install
 Sublime Text Package Control.
 
 * Download [Package Control.sublime-package](https://sublime.wbond.net/Package%20Control.sublime-package)
 
-* Choose `Preferences > Browse Packages...` from the Sublime Text 2 menu
+* Choose `Preferences > Browse Packages...` from the Sublime Text 3 menu
 
 * Browse up a folder, then navigate into `Installed Packages/`
 
 * Copy `Package Control.sublime-package` file you downloaded into this
-`Sublime Text 2\Installed Packages` directory
+`Sublime Text 3\Installed Packages` directory
 
-* Restart Sublime Text 2 to enable Package Control
+* Restart Sublime Text 3 to enable Package Control
 
 Once Package Control is installed successfully, you should be able to
 display the Command Pallete by pressing `CTRL+SHIFT+P`:
@@ -562,7 +588,7 @@ display the Command Pallete by pressing `CTRL+SHIFT+P`:
 After pressing `CTRL+SHIFT+P` to display the Command Pallette, start typing
 `install` to select `Package Control: Install Package`:
 
-{% img center /images/sublime2installpackagecontrol.png [Sublime Text 2 Package Control] %}
+{% img center /images/sublime2installpackagecontrol.png [Sublime Text 3 Package Control] %}
 
 Then type `chef` to display the SublimeChef entry - click to install:
 
