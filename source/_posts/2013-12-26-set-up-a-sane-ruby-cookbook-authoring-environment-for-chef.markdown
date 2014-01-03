@@ -135,43 +135,43 @@ Next, install the additional dependencies to compile Ruby from source:
     # Install legacy C compiler for building Ruby
     brew install apple-gcc42
 
-Install Chruby, Ruby-Build and Ruby-Install via Homebrew - Mac OS X
--------------------------------------------------------------------
+Install Chruby and Ruby-Build via Homebrew - Mac OS X
+------------------------------------------------------
 
-And now install `chruby` and the `ruby-build`/`ruby-install` plugins:
+Now install `chruby` and `ruby-install` via Homebrew:
 
     $ brew update
     $ brew install chruby
-    $ brew install ruby-build ruby-install
+    $ brew install ruby-build
 
 Add `chruby.sh` to your shell to enable chruby:
 
-    $ echo 'source /usr/local/opt/chruby/share/chruby/chruby.sh' >> $HOME/.bashrc
+    $ echo 'source /usr/local/share/chruby/chruby.sh' >> $HOME/.bash_profile
 
 Add `auto.sh` to your shell to enble auto-switching of Rubies specified by
 `.ruby-version files:
 
-    $ echo 'source /usr/local/opt/chruby/share/chruby/auto.sh' >> $HOME/.bashrc
-
-Reload `.bashrc` with these new settings:
-
-    $ source $HOME/.bashrc
+    $ echo 'source /usr/local/share/chruby/auto.sh' >> $HOME/.bash_profile
 
 Compile Ruby 1.9.x from source - Mac OS X
 -----------------------------------------
 
 Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p484)
 
-    $ ruby-install ruby 1.9.3-p484 --install-dir ~/.rubies/ruby-1.9.3-p484
+    $ ruby-build 1.9.3-p484 --install-dir ~/.rubies/ruby-1.9.3-p484
+
+Reload `.bashrc` with these new settings:
+
+    $ source $HOME/.bash_profile    
 
 To switch to the Ruby required for Chef:
 
     $ chruby ruby-1.9
 
 To make this version the default version of Ruby, simply add this command
-to your $HOME/.bashrc
+to your $HOME/.bash_profile
 
-    $ echo 'chruby ruby-1.9' >> $HOME/.bashrc
+    $ echo 'chruby ruby-1.9' >> $HOME/.bash_profile
 
 Verify the ruby install.  If everything was installed correctly, the `ruby -v`
 command should report that version 1.9.3p484 is installed.
@@ -200,8 +200,8 @@ Then install the `bundler` gem.  If the `gem install` command reports
 `Successfully installed` you're good to go:
 
     $ gem install bundler
-    Successfully installed bundler-1.5.0
-    Parsing documentation for bundler-1.5.0
+    Successfully installed bundler-1.5.1
+    Parsing documentation for bundler-1.5.1
     1 gem installed
 
 Install Sublime Text 3 (Optional) - Mac OS X
@@ -275,8 +275,8 @@ Make sure the prerequisite packages are installed.
     $ sudo yum install -y autoconf automake libtool bison
     $ sudo yum install -y libxml2-devel libxslt-devel
 
-Install Chruby, Ruby-Build and Ruby-Install - Linux
----------------------------------------------------
+Install Chruby and Ruby-Install - Linux
+---------------------------------------
 
 Download the chruby source distribution:
 
@@ -294,23 +294,7 @@ Feel free to remove the chruby source dir after installing:
     $ rm chruby-0.3.8.tar.gz
     $ rm -rf chruby-0.3.8
 
-Download the chruby source distribution:
-
-    $ wget -O ruby-install-0.3.4.tar.gz https://github.com/postmodern/ruby-install/archive/v0.3.4.tar.gz
-
-Extract and install ruby-install:
-
-    $ tar -xzvf ruby-install-0.3.4.tar.gz
-    $ cd ruby-install-0.3.4/
-    $ sudo make install
-
-Feel free to remove the chruby source dir after installing:
-
-    $ cd ..
-    $ rm ruby-install-0.3.4.tar.gz
-    $ rm -rf ruby-install-0.3.4
-
-Extract and install ruby-build:
+Install ruby-build:
 
     $ git clone https://github.com/sstephenson/ruby-build.git
     $ cd ruby-build
@@ -330,16 +314,16 @@ Add `auto.sh` to your shell to enble auto-switching of Rubies specified by
 
     $ echo 'source /usr/local/share/chruby/auto.sh' >> $HOME/.bashrc
 
-Reload `.bashrc` with these new settings:
-
-    $ source $HOME/.bashrc
-
 Compile Ruby 1.9.x from source - Linux
 -----------------------------------------
 
 Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p484)
 
-    $ ruby-install ruby 1.9.3-p484 --install-dir ~/.rubies/ruby-1.9.3-p484
+    $ ruby-build 1.9.3-p484 --install-dir ~/.rubies/ruby-1.9.3-p484
+
+Reload `.bashrc` with these new settings:
+
+    $ source $HOME/.bashrc
 
 To switch to the Ruby required for Chef:
 
