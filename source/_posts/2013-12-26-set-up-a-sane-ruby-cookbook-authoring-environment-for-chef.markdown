@@ -8,6 +8,10 @@ categories: [Ruby, Chef]
 * list element with functor item
 {:toc}
 
+_Updated January 3, 2014_
+
+* _Added instructions to create `subl` launching commandlet_
+
 _Updated January 2, 2014_
 
 * _Per Seth Vargo switched from rbenv to chruby_
@@ -78,6 +82,13 @@ Ruby development.  So if you want to get going quickly, just click on the
 `Install` button:
 
 {% img center /images/xcodeselect.png xcode-select %}
+
+If `xcode-select` installed the Xcode Command Line Tools, you should have
+`git` installed (among other things).  Verify this with the following
+command:
+
+    $ git --version
+    git version 1.8.3.4 (Apple Git-47)
 
 Install the Homebrew Package Manager - Mac OS X
 -----------------------------------------------
@@ -216,6 +227,26 @@ if it works for you.
 
 Download and install SublimeText 3 for your platform via
 <http://www.sublimetext.com/3>
+
+### Create `subl` command line launch link - Mac OS X
+
+It is very handy to be able to launch Sublime Text from the command line
+as you'll find yourself going back and forth between the two in developing
+your cookbooks.  Create a short-named link to the Sublime Text executable
+with the following commands:
+
+    $ sudo mkdir -p /usr/local/bin
+    $ sudo chown -R $(whoami) /usr/local/bin
+    $ ln -s /Applications/Sublime\ Text.app/Contents/SharedSupport/bin/subl /usr/local/bin/subl
+
+Since `/usr/local/bin` should already bin your path, typing in the following 
+command should launch Sublime Text:
+
+    $ subl
+
+You can pass in a filename parameter as well, such as:
+
+    $ subl default.rb
 
 ### Install Sublime Text 3 Package Control (Optional) - Mac OS X
 
@@ -377,6 +408,18 @@ if it works for you.
 
 Download and install SublimeText 3 for your platform via
 <http://www.sublimetext.com/3>
+
+### `subl` command line launch link - Linux
+
+Unlike with Mac OS X, the Linux installer should have created a
+command line launch link for Sublime Text in `/usr/bin/subl`.
+Typing in the following command should launch Sublime Text:
+
+    $ subl
+
+You can pass in a filename parameter as well, such as:
+
+    $ subl default.rb
 
 ### Install Sublime Text 3 Package Control (Optional) - Linux
 
@@ -565,18 +608,18 @@ Sublime Text Package Control.
 Once Package Control is installed successfully, you should be able to
 display the Command Pallete by pressing `CTRL+SHIFT+P`:
 
-{% img center /images/sublime2commandpalette.png [Sublime Text 2 Command Palette] %}
+{% img center /images/sublime3commandpalette-win.png [Sublime Text 3 Command Palette] %}
 
 ### Install Sublime Chef (Optional) - Windows
 
 After pressing `CTRL+SHIFT+P` to display the Command Pallette, start typing
 `install` to select `Package Control: Install Package`:
 
-{% img center /images/sublime2installpackagecontrol.png [Sublime Text 3 Package Control] %}
+{% img center /images/sublime3installpackagecontrol-win.png [Sublime Text 3 Package Control] %}
 
 Then type `chef` to display the SublimeChef entry - click to install:
 
-{% img center /images/sublime2sublimechef.png [SublimeChef install] %}
+{% img center /images/sublime3sublimechef-win.png [SublimeChef install] %}
 
 Miguel created the following
 [demo video](http://www.youtube.com/watch?v=4VtDj_ar1Xg)
