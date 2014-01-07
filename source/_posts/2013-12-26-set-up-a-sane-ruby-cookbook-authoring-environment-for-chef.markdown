@@ -221,7 +221,7 @@ Install Sublime Text 3 (Optional) - Mac OS X
 Miguel Cabeça has written an excellent plugin for the Sublime Text editor
 called [SublimeChef](https://github.com/cabeca/SublimeChef), which is the
 closest thing to an Integrated Development Environment (IDE) that exists
-for Chef.  Sublime Text is costs $70 for a license, but has no restriction
+for Chef.  Sublime Text costs $70 for a license, but has no restriction
 on the length of a trial period, so feel free try out Sublime Text to see
 if it works for you.
 
@@ -402,7 +402,7 @@ Install Sublime Text 3 (Optional) - Linux
 Miguel Cabeça has written an excellent plugin for the Sublime Text editor
 called [SublimeChef](https://github.com/cabeca/SublimeChef), which is the
 closest thing to an Integrated Development Environment (IDE) that exists
-for Chef.  Sublime Text is costs $70 for a license, but has no restriction
+for Chef.  Sublime Text costs $70 for a license, but has no restriction
 on the length of a trial period, so feel free try out Sublime Text to see
 if it works for you.
 
@@ -582,7 +582,7 @@ Install Sublime Text 3 (Optional) - Windows
 Miguel Cabeça has written an excellent plugin for the Sublime Text editor
 called [SublimeChef](https://github.com/cabeca/SublimeChef), which is the
 closest thing to an Integrated Development Environment (IDE) that exists
-for Chef.  Sublime Text is costs $70 for a license, but has no restriction
+for Chef.  Sublime Text costs $70 for a license, but has no restriction
 on the length of a trial period, so feel free try out Sublime Text to see
 if it works for you.
 
