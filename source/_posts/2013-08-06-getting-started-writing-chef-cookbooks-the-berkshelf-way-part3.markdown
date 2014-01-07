@@ -8,6 +8,9 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Update January 7, 2014_
+* _Note about Michel Goetz's blog series on ChefSpec_
+
 _Updated December 29, 2013_
 
 * _Bumped Test Kitchen from 1.0.0.beta.3 to 1.1.1_
@@ -1243,6 +1246,12 @@ So hopefully now you understand how to use Test Kitchen and what it's useful
 for.  In the next article in this series, we'll cover writing tests that can
 run before deployment, providing feedback more quickly than with
 Test Kitchen (albeit in more limited circumstances), using Chefspec and Guard.
+(In the meantime check out [Michael Geotz's](https://twitter.com/michaelpgoetz)
+excellent article series on [ChefSpec with Guard](https://micgo.net/continuous-chefspec-validation-with-guard/)
+as I'm currently coauthoring upcoming O'Reilly Media book on Chef with
+[Seth Vargo](https://twitter.com/sethvargo)
+and probably won't have time to do further installments in this series
+anytime soon until I help finish the d*mn book!)
 
 Now you should be able to test everything but the kitchen sink!  Wait...
 actually Test Kitchen has got that covered as well:
