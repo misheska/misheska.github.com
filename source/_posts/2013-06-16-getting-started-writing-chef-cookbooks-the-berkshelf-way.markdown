@@ -8,6 +8,10 @@ categories: chef
 * list element with functor item
 {:toc}
 
+_Updated Jan 29th, 2014_
+
+* _Per Seth Vargo,  Note about the future of vagrant-berkshelf_
+
 _Updated December 27th, 2013_
 
 * _Being more prescriptive about the necessary Ruby 1.9.x environment_
@@ -33,6 +37,14 @@ _Updated September 9th, 2013_
 * _Bumped berkshelf from version 2.0.9 to 2.0.10_
 * _Bumped vagrant from version 1.2.7 to 1.3.1_
 * _Bumped vagrant-omnibus plugin from version 1.1.0 to 1.1.1_
+
+NOTE: As of Tuesday, January 28th [the Berkshelf core team announced the future deprecation and retirement of the vagrant-berkshelf
+plugin](https://sethvargo.com/the-future-of-vagrant-berkshelf/)
+It is recommended that new users consider start by using Test Kitchen and 
+its `.kitchen.yml` covered in [Part 3](http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/)
+of this series. 
+
+---------------------------------------------
 
 Jamie Winsor hasn't yet updated his [guide to authoring cookbooks the Berkshelf way](http://vialstudios.com/guide-authoring-cookbooks.html)
 to match [recent changes related to Vagrant 1.x](https://github.com/RiotGames/berkshelf/issues/416) and [Chef 11](http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/)
