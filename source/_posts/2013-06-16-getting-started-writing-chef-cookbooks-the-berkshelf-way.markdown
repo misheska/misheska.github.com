@@ -38,10 +38,9 @@ _Updated September 9th, 2013_
 * _Bumped vagrant from version 1.2.7 to 1.3.1_
 * _Bumped vagrant-omnibus plugin from version 1.1.0 to 1.1.1_
 
-NOTE: As of Tuesday, January 28th [the Berkshelf core team announced the future deprecation and retirement of the vagrant-berkshelf
-plugin](https://sethvargo.com/the-future-of-vagrant-berkshelf/)
-It is recommended that new users consider start by using Test Kitchen and 
-its `.kitchen.yml` covered in [Part 3](http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/)
+NOTE: As of Tuesday, January 28th [the Berkshelf core team announced the future deprecation and retirement of the vagrant-berkshelf plugin](https://sethvargo.com/the-future-of-vagrant-berkshelf/)
+It is recommended that new users get started with the Berkshelf Way by 
+using Test Kitchen and its `.kitchen.yml` covered in [Part 3](http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/)
 of this series. 
 
 ---------------------------------------------
