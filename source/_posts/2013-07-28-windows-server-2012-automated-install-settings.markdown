@@ -28,7 +28,7 @@ XML answer files.  The Windows System Image Manager is packaged with the
 tool suite.  Download and install the Windows Assessment and Deployment Kit
 to install the Windows System Image Manager (WSIM).
 
-Link to [Autounattend.xml](https://raw.githubusercontent.com/misheska/basebox-packer/master/template/windows2012/floppy/win2012-datacenter/Autounattend.xml) with all the settings in this article.  **NOTE:** Right-click and choose "Download Linked File As..." in your web browser, as many web browsers will try to interpret the Xml.
+Link to [Autounattend.xml](https://raw.githubusercontent.com/misheska/basebox-packer/master/template/windows2012/floppy/win2012-datacenter/Autounattend.xml) with all the settings in this article.  _**NOTE:** Right-click and choose "Download Linked File As..." in your web browser, as many web browsers will try to interpret the Xml_.
 
 Disabling the language settings dialog
 ======================================
@@ -58,7 +58,7 @@ Answer File _Properties_ and _Settings_ panes, configure the following settings:
 
 {% img right /images/sysprep/win2012x64/productkeysettings.png %}
 
-* Key = _*<_YOUR_PRODUCT_KEY_>*_
+* Key = _YOUR_PRODUCT_KEY_
 * WillShowUI = **OnError**
 
 The official Microsoft KMS keys are listed [here](http://technet.microsoft.com/en-us/library/jj612867.aspx) and make a good starting point to test installs.
