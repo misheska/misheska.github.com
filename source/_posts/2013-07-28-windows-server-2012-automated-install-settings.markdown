@@ -28,8 +28,7 @@ XML answer files.  The Windows System Image Manager is packaged with the
 tool suite.  Download and install the Windows Assessment and Deployment Kit
 to install the Windows System Image Manager (WSIM).
 
-Link to [Autounattend.xml](https://raw.githubusercontent.com/misheska/basebox-packer/master/template/windows2012/floppy/win2012-datacenter/Autounattend.xml)  
-with all the settings in this article.  Right-click and choose "Download Linked File As..." in your web browser, as many web browsers will try to interpret the Xml.
+Link to [Autounattend.xml](https://raw.githubusercontent.com/misheska/basebox-packer/master/template/windows2012/floppy/win2012-datacenter/Autounattend.xml) with all the settings in this article.  **NOTE:** Right-click and choose "Download Linked File As..." in your web browser, as many web browsers will try to interpret the Xml.
 
 Disabling the language settings dialog
 ======================================
