@@ -9,6 +9,12 @@ categories:
 * list element with functor item
 {:toc}
 
+_Updated March 19, 2013_
+
+* _Updated ADK link from version 8 to 8.1_
+* _Updated link to Autounattend.xml_
+* _Added note about using KMS keys_
+
 I just recently revised all my automated install XML files for the Windows
 System Preparation Tool (Sysprep) that I use for my Windows development
 testbed.  For this go around, I'm documenting the XML answer file settings
@@ -18,12 +24,12 @@ OS install.
 
 You'll need to use the Windows System Image Manager tool to edit Sysprep
 XML answer files.  The Windows System Image Manager is packaged with the
-[Windows Assessment and Deployment Kit](http://www.microsoft.com/en-us/download/details.aspx?id=30652)
+[Windows Assessment and Deployment Kit](http://www.microsoft.com/en-us/download/details.aspx?id=39982)
 tool suite.  Download and install the Windows Assessment and Deployment Kit
 to install the Windows System Image Manager (WSIM).
 
-Link to [Autounattend.xml](https://raw.github.com/misheska/basebox-packer/master/template/misheska-win2012x64/floppy/Autounattend.xml)
-with all the settings in this article.
+Link to [Autounattend.xml](https://raw.githubusercontent.com/misheska/basebox-packer/master/template/windows2012/floppy/win2012-datacenter/Autounattend.xml)  
+with all the settings in this article.  Right-click and choose "Download Linked File As..." in your web browser, as many web browsers will try to interpret the Xml.
 
 Disabling the language settings dialog
 ======================================
@@ -53,8 +59,10 @@ Answer File _Properties_ and _Settings_ panes, configure the following settings:
 
 {% img right /images/sysprep/win2012x64/productkeysettings.png %}
 
-* Key = **<_YOUR_PRODUCT_KEY_>**
+* Key = _*<_YOUR_PRODUCT_KEY_>*_
 * WillShowUI = **OnError**
+
+The official Microsoft KMS keys are listed [here](http://technet.microsoft.com/en-us/library/jj612867.aspx) and make a good starting point to test installs.
 
 Disabling the Select Operating System dialog
 ============================================
