@@ -9,6 +9,10 @@ categories:
 * list element with functor item
 {:toc}
 
+_Updated April 03, 2014_
+
+* _Updated link to Autounattend.xml_
+
 I just recently revised all my automated install XML files for the Windows
 System Preparation Tool (Sysprep) that I use for my Windows development
 testbed.  For this go around, I'm documenting the XML answer file settings
@@ -22,8 +26,8 @@ XML answer files.  The Windows System Image Manager is packaged with the
 tool suite.  Download and install the Windows Assessment and Deployment Kit
 to install the Windows System Image Manager (WSIM).
 
-Link to [Autounattend.xml](https://raw.github.com/misheska/basebox-packer/master/template/misheska-win8x64/floppy/Autounattend.xml)
-with all the settings in this article.
+Link to [Autounattend.xml](https://github.com/misheska/basebox-packer/raw/master/template/windows8/floppy/win8x64-enterprise/Autounattend.xml)
+with all the settings in this article.  _**NOTE:** Right-click and choose "Download Linked File As..." in your web browser, as many web browsers will try to interpret the Xml_.
 
 Disabling the language settings dialog
 ======================================
