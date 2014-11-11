@@ -1,0 +1,1438 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Survey of Test Kitchen providers - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Introduction Desktop Virtualization kitchen-vagrant with VMware Fusion/VMware Workstation desktop virtualization Test Kitchen Cloud Drivers &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.com/blog/2014/09/21/survey-of-test-kitchen-providers/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Survey of Test Kitchen Providers</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-09-21T20:52:00-07:00" pubdate data-updated="true">Sep 21<span>st</span>, 2014</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#desktop-virtualization">Desktop Virtualization</a>    <ul>
+      <li><a href="#kitchen-vagrant-with-vmware-fusionvmware-workstation-desktop-virtualization">kitchen-vagrant with VMware Fusion/VMware Workstation desktop virtualization</a></li>
+    </ul>
+  </li>
+  <li><a href="#test-kitchen-cloud-drivers">Test Kitchen Cloud Drivers</a>    <ul>
+      <li><a href="#digitalocean-cloud-provider-kitchen-digitalocean">DigitalOcean Cloud Provider (kitchen-digitalocean)</a>        <ul>
+          <li><a href="#kitchen-digitalocean-setup">kitchen-digitalocean Setup</a></li>
+          <li><a href="#kitchen-digitalocean-kitchenyml-example">kitchen-digitalocean .kitchen.yml Example</a></li>
+        </ul>
+      </li>
+      <li><a href="#amazon-ec2-cloud-provider-kitchen-ec2">Amazon EC2 Cloud Provider (kitchen-ec2)</a>        <ul>
+          <li><a href="#kitchen-ec2-setup">kitchen-ec2 Setup</a></li>
+          <li><a href="#kitchen-ec2-kitchenyml-example">kitchen-ec2 .kitchen.yml Example</a></li>
+        </ul>
+      </li>
+      <li><a href="#google-compute-engine-cloud-provider-kitchen-gce">Google Compute Engine Cloud Provider (kitchen-gce)</a>        <ul>
+          <li><a href="#kitchen-gce-setup">kitchen-gce Setup</a></li>
+          <li><a href="#kitchen-gce-kitchenyml-example">kitchen-gce .kitchen.yml Example</a></li>
+        </ul>
+      </li>
+      <li><a href="#rackspace-cloud-provider-kitchen-rackspace">Rackspace Cloud Provider (kitchen-rackspace)</a>        <ul>
+          <li><a href="#kitchen-rackspace-setup">kitchen-rackspace Setup</a></li>
+          <li><a href="#kitchen-rackspace-kitchenyml-example">kitchen-rackspace .kitchen.yml Example</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#linux-container-drivers">Linux Container Drivers</a>    <ul>
+      <li><a href="#docker-driver-kitchen-docker">Docker Driver (kitchen-docker)</a>        <ul>
+          <li><a href="#chef-training-environment-setup">Chef Training Environment Setup</a></li>
+          <li><a href="#kitchen-docker-setup">kitchen-docker Setup</a></li>
+          <li><a href="#kitchen-docker-kitchenyml-example">kitchen-docker .kitchen.yml Example</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="#physical-machine-drivers">Physical Machine Drivers</a>    <ul>
+      <li><a href="#driver-for-any-server-with-an-ssh-address-kitchen-ssh">Driver for any server with an SSH address (kitchen-ssh)</a>        <ul>
+          <li><a href="#kitchen-ssh-kitchenyml-example">kitchen-ssh .kitchen.yml Example</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><em>Update November 10, 2014</em>
+* <em>Update for DigitalOcean 0.8x provider using API V2</em></p>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>Test Kitchen supports a wide variety of different providers via Test Kitchen drivers besides the default <code>kitchen-vagrant</code> driver.  In this post, we’ll cover several popular alternatives.</p>
+
+<p>Test Kitchen drivers are gem libraries available for download from http://rubygems.org .  Use the <code>kitchen driver discover</code> command to list all the Test Kitchen gems currently available.  Here is a list of all the Test Kitchen drivers as of this writing:</p>
+
+<pre><code>$ kitchen driver discover
+    Gem Name                          Latest Stable Release
+    kitchen-all                       0.2.0
+    kitchen-ansible                   0.0.1
+    kitchen-azure                     0.1.0
+    kitchen-bluebox                   0.6.2
+    kitchen-cabinet                   3.0.0
+    kitchen-cloudstack                0.10.0
+    kitchen-digital_ocean             0.3.0
+    kitchen-digitalocean              0.8.0
+    kitchen-docker                    1.5.0
+    kitchen-docker-api                0.4.0
+    kitchen-driver-vagrant_provision  1.0.0
+    kitchen-ec2                       0.8.0
+    kitchen-fifo                      0.1.0
+    kitchen-fog                       0.7.3
+    kitchen-gce                       0.2.0
+    kitchen-goiardi                   0.1.1
+    kitchen-inspector                 1.3.0
+    kitchen-joyent                    0.1.1
+    kitchen-libvirtlxc                0.4.0
+    kitchen-local                     0.0.1
+    kitchen-lxc                       0.0.1
+    kitchen-openstack                 1.6.0
+    kitchen-puppet                    0.0.13
+    kitchen-rackspace                 0.12.0
+    kitchen-rightscale                0.1.0
+    kitchen-salt                      0.0.19
+    kitchen-scribe                    0.3.1
+    kitchen-sharedtests               0.2.0
+    kitchen-ssh                       0.0.4
+    kitchen-sshgzip                   0.0.3
+    kitchen-sync                      1.0.1
+    kitchen-vagrant                   0.15.0
+    kitchen-vagrant_sandbox           0.1.1
+    kitchen-vagrant_winrm             0.1.1
+    kitchen-zcloudjp                  0.5.0
+    test-kitchen-provisioners         0.1
+</code></pre>
+
+<p>By default, Test Kitchen defaults to using the <code>kitchen-vagrant</code> driver.  When you run the <code>kitchen init</code> command to add Test Kitchen support to a project, you can add the <code>--driver=&lt;gem_name&gt;</code> option to have Test Kitchen generate configuration files using another driver of your choice.  For example, the following command would use the <code>kitchen-azure</code> driver:</p>
+
+<pre><code>kitchen init --create-gemfile --driver=kitchen-azure
+</code></pre>
+
+<p>As shown in the following diagram the environments supported by Chef-releated drivers fall into four different categories: desktop virtual machines, public/private cloud providers, Linux containers and physical machines.  We’ll cover representative examples from each category in this appendix.</p>
+
+<p><img class="center" src="/images/chapa01/tkdriver.004.png" title="[Test Kitchen driver architecture]" /></p>
+
+<h1 id="desktop-virtualization">Desktop Virtualization</h1>
+
+<p>Test Kitchen uses the <code>kitchen-vagrant</code> driver to work with desktop virtualization providers, like VirtualBox, VMWare Fusion, VMWare Workstation and Hyper-V.  Since the <code>kitchen-vagrant</code> driver is just a shim on top of Vagrant for Test Kitchen, any provider that Vagrant supports should be supported by the <code>kitchen-vagrant</code> driver.</p>
+
+<p>It is important to clarify that as of this writing, the <code>kitchen-vagrant</code> driver assumes that the virtualization provider is installed locally on the host machine.  As shown in the following diagram, using the <code>kitchen-vagrant</code> driver, Test Kitchen creates a sandbox environment virtual machine locally on your host:</p>
+
+<ol>
+  <li>Test Kitchen invokes the <code>kitchen-vagrant</code> driver to create a virtual machine instance.</li>
+  <li>In the case of the <code>kitchen-vagrant</code> driver, Vagrant itself contains all the logic to work with different types of virtualization software.  The <code>kitchen-vagrant</code> is just a small shim to allow Test Kitchen to use Vagrant to work with virtual machine instances.  In this example, Vagrant uses the VirtualBox API to spin up a virtual machine instance for our sandbox environment.</li>
+  <li>Once the sandbox environment is running, Test Kitchen links the instance for communication.</li>
+</ol>
+
+<p><img class="center" src="/images/chapa01/tkdriver.001.png" title="[Sandbox environment creation with kitchen-vagrant]" /></p>
+
+<p>Test Kitchen treats the data center versions of VMware, like vCenter/vSphere/ESXi as a cloud provider.  To Test Kitchen the data center editions are handled as if there were cloud instances, as vCenter/vSphere/ESXi merely a private cloud on a local LAN or corporate WAN instead of a public cloud over the Internet.  As of this writing, the <code>kitchen-openstack</code> and <code>kitchen-ssh</code> drivers support vSphere data center virtualization with Test Kitchen.</p>
+
+<h2 id="kitchen-vagrant-with-vmware-fusionvmware-workstation-desktop-virtualization">kitchen-vagrant with VMware Fusion/VMware Workstation desktop virtualization</h2>
+
+<p>You can use VMware desktop virutalization with <code>kitchen-varant</code> instead of Oracle VM VirtualBox.  It requires the purchase of the Vagrant VMware plugin from https://www.vagrantup.com/vmware which, at the time of this writing, costs USD $79 per seat.  The VMware plugin works with VMware Workstation 9 and 10 on Windows/Linux and VMware Fusion 5, 6 and 7 on Mac OS X.</p>
+
+<p>On Mac OS X/Linux, you may have multiple virtualization solutions installed alongside VMware.  On these platforms, you can use both VMware and VirtualBox baseboxes at the same time, for example, if you have enough system resources.  On Windows, you must make a choice, as only one virtualization solution can be installed at a time.</p>
+
+<p>Once you have purchased the VMware plugin and received a license file, you can install the Vagrant plugin and license with the following:</p>
+
+<p>For VMware Workstation (on Windows/Linux):</p>
+
+<pre><code>$ vagrant plugin install vagrant-vmware-workstation
+$ vagrant plugin license vagrant-vmware-workstation license.lic
+</code></pre>
+
+<p>For VMware Fusion (on Mac OS X):</p>
+
+<pre><code>$ vagrant plugin install vagrant-vmware-fusion
+$ vagrant plugin license vagrant-vmware-fusion license.lic
+</code></pre>
+
+<p>After you install the VMware plugin and license file and want to use VMware, you’ll need to get VMware baseboxes.  Currently VirtualBox and VMware baseboxes are not interchangeable.</p>
+
+<p>Once the VMware plugin and license has been installed, you’ll need to change your <code>.kitchen.yml</code> files slightly for VMware.  You can specify the VMware provider name in the <code>platforms</code> section of your <code>.kitchen.yml</code> file.</p>
+
+<p>Modify the <code>.kitchen.yml</code> file, adding a <code>provider:</code> line to the <code>platforms</code> <code>driver</code> section.  If you are using VMware Workstation, use the <code>vmware_workstation</code> provider name.  For VMware Fusion, the provider name should be <code>vmware_fusion</code>.  You’ll also need to change the <code>box_url</code> line to point at a box file which has Vmware Tools installed, as box files are not guest tool agnostic.  For this book, box files have been provided for both VMware and VirtualBox via VagrantCloud, so you can use the same <code>box_url</code> line.</p>
+
+<p>Synced folders work the same as with VirtualBox.  Just add a <code>synced_folders:</code> block to the <code>driver:</code> section with a list of folders to map between the guest and the host.  Each entry in the list contains an array with two parameters.  The first parameter is a path to the directory on the host machine.  If the path is relative, it is relative to the <code>.kitchen.yml</code> file.  The second parameter is an absolute path specifying where the folder is shared on the guest machine.  The <code>.kitchen.yml</code> examples that follow map the current working directory on the host to the directory <code>/vagrant</code> on the guest, like so:</p>
+
+<pre><code>...
+       synced_folders:
+       - [".", "/vagrant"]
+...
+</code></pre>
+
+<p>VMware Workstation <code>.kitchen.yml</code> example:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>vmware/workstation/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">vagrant</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">      <span class="ss">provider</span><span class="p">:</span> <span class="n">vmware_workstation</span>
+</span><span class="line">      <span class="ss">box</span><span class="p">:</span> <span class="n">learningchef</span><span class="o">/</span><span class="n">centos65</span>
+</span><span class="line">      <span class="n">box_url</span><span class="p">:</span> <span class="n">learningchef</span><span class="o">/</span><span class="n">centos65</span>
+</span><span class="line">      <span class="n">synced_folders</span><span class="p">:</span>
+</span><span class="line">        <span class="o">-</span> <span class="o">[</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;/vagrant&quot;</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>VMware Fusion <code>.kitchen.yml</code> example:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>vmware/fusion/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">vagrant</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">      <span class="ss">provider</span><span class="p">:</span> <span class="n">vmware_fusion</span>
+</span><span class="line">      <span class="ss">box</span><span class="p">:</span> <span class="n">learningchef</span><span class="o">/</span><span class="n">centos65</span>
+</span><span class="line">      <span class="n">box_url</span><span class="p">:</span> <span class="n">learningchef</span><span class="o">/</span><span class="n">centos65</span>
+</span><span class="line">      <span class="n">synced_folders</span><span class="p">:</span>
+</span><span class="line">        <span class="o">-</span> <span class="o">[</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;/vagrant&quot;</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Once you modify the <code>.kitchen.yml</code> file appropriately the <code>kitchen create</code>, <code>kitchen converge</code>, etc. commands will use VMware instead of VirtualBox:</p>
+
+<pre><code>$ kitchen create default-centos65
+-----&gt; Starting Kitchen (v1.2.2.dev)
+-----&gt; Creating &lt;default-centos65&gt;...
+       Bringing machine 'default' up with 'vmware_fusion' provider...
+       ==&gt; default: Cloning VMware VM: 'learningchef/centos65'. This can take some time...
+       ==&gt; default: Checking if box 'learningchef/centos65' is up to date...
+       ==&gt; default: Verifying vmnet devices are healthy...
+       ==&gt; default: Preparing network adapters...
+       ==&gt; default: Fixed port collision for 22 =&gt; 2222. Now on port 2200.
+       ==&gt; default: Starting the VMware VM...
+       ==&gt; default: Waiting for the VM to finish booting...
+       ==&gt; default: The machine is booted and ready!
+       ==&gt; default: Forwarding ports...
+           default: -- 22 =&gt; 2200
+       ==&gt; default: Setting hostname...
+       ==&gt; default: Configuring network adapters within the VM...
+       ==&gt; default: Waiting for HGFS kernel module to load...
+       ==&gt; default: Enabling and configuring shared folders...
+           default: -- /Users/misheska/github/learningchef/learningchef-code/chapa01/vmware/fusion: /vagrant
+       ==&gt; default: Machine not provisioning because `--no-provision` is specified.
+       Vagrant instance &lt;default-centos65&gt; created.
+       Finished creating &lt;default-centos65&gt; (0m39.42s).
+-----&gt; Kitchen is finished. (0m39.66s)
+</code></pre>
+
+<h1 id="test-kitchen-cloud-drivers">Test Kitchen Cloud Drivers</h1>
+
+<p>The following diagram shows how the Test Kitchen cloud drivers create a sandbox environment.  The main difference between using a cloud provider and desktop virtualization is that the sandbox environment lives remotely on another machine.  Test Kitchen communicates with the sandbox environment remotely over SSH, usually on the Internet.</p>
+
+<ol>
+  <li>Test Kitchen invokes the specified driver (like <code>kitchen-ec2</code>) to create an instance on the cloud provider.  Cloud provider drivers communicate with the cloud provider using the appropiate cloud API.  Normally this is an HTTP API. </li>
+  <li>The cloud provider spins up an instance to serve as our sandbox environment.</li>
+  <li>Once the sandbox environment is running, Test Kitchen links the instance to your local development workstation for remote communication, usually over SSH.  All Test Kitchen commands work with the remote sandbox environment transparently.  As far as the user experience with Test Kitchen goes, it behaves as if it were a local desktop virtualization environment.</li>
+</ol>
+
+<p><img class="center" src="/images/chapa01/tkdriver.005.png" title="[Test Kitchen driver architecture]" /></p>
+
+<p>As of this writing, all of the Test Kitchen Cloud drivers do not support synchronized folders.  All <code>kitchen</code> commands automatically copy your project files to the sandbox environment, as Test Kitchen uses <code>scp</code> to transfer files from your host to the remote cloud instance.  For any other file sharing beyond what is supported by Test Kitchen, you’ll need to use a Cloud Provider-specific mechanism, such as Amazon Elastic Block Store (EBS).</p>
+
+<h2 id="digitalocean-cloud-provider-kitchen-digitalocean">DigitalOcean Cloud Provider (kitchen-digitalocean)</h2>
+
+<h3 id="kitchen-digitalocean-setup">kitchen-digitalocean Setup</h3>
+
+<p>Go to https://cloud.digitalocean.com/settings/applications and click on the
+<code>Generate new token</code> button to generate a new Personal Access Token using
+the v2.0 API.  Make sure you check the optional <code>Write</code> scope when you
+generate the token.  Write scope is necessary for the DigitalOcean Cloud
+provider to function correctly.</p>
+
+<p><img class="center" src="/images/chapa01/digitalocean_generate_token.png" title="[DigitalOcean New Personal Access Token]" /></p>
+
+<p>Record the personal access token that is generated when you click on the
+<code>Generate new token</code> button, as shown below:</p>
+
+<p><img class="center" src="/images/chapa01/digitalocean_generate_new_token.png" title="[DigitalOcean Generate new token]" /></p>
+
+<p>Add the new access token to your <code>~/.bash_profile</code> (or equivalent for your
+platform) as the environment variable <code>DIGITALOCEAN_ACCESS_TOKEN</code>:</p>
+
+<pre><code>export DIGITALOCEAN_ACCESS_TOKEN="1234567890abcdefg"
+</code></pre>
+
+<p>Collect SSH public keys from the computers which need access to your sandbox
+instances.  Visit https://cloud.digitalocean.com/ssh_keys and add the SSH keys.
+Once you’ve added the SSH keys(s), use the following <code>curl</code> command to get the
+DigitalOcean SSH Key IDs:</p>
+
+<pre><code>curl -X GET https://api.digitalocean.com/v2/account/keys -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
+</code></pre>
+
+<p>Record the <code>id</code> field for each of your SSH keys.  Add the list of SSH Key IDs
+to the environment variable <code>DIGITALOCEAN_SSH_KEY_IDS</code>.  If you have more than
+one SSH key ID, separate each ID by a comma followed by a space:</p>
+
+<pre><code>export DIGITALOCEAN_SSH_KEY_IDS="12345, 67890"
+</code></pre>
+
+<p>Run the following <code>kitchen init</code> command to add Test Kitchen support to your project using the <code>kitchen-digitalocean</code> driver:</p>
+
+<pre><code>$ kitchen init --driver=kitchen-digitalocean --create-gemfile
+      create  .kitchen.yml
+      create  test/integration/default
+      create  Gemfile
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
+</code></pre>
+
+<p>Run <code>bundle install</code> to download and install any required gems.</p>
+
+<h3 id="kitchen-digitalocean-kitchenyml-example">kitchen-digitalocean .kitchen.yml Example</h3>
+
+<p>As of the 0.8.x release, the <code>kitchen-digitalocean</code> provider automatically 
+looks for the access token in the <code>DIGITAL_ACCESS_TOKEN</code> and the ssh key
+IDs in the <code>DIGITALOCEAN_SSH_KEY_IDS</code> environment variables.  Since the
+access token and SSH key IDs are sensitive information, it is recommended
+that you store them in these environment variables instead of directly in
+your <code>.kitchen.yml</code> file.  This way, you can share your <code>.kitchen.yml</code> file
+with others and store it in source control.</p>
+
+<p>Here is an example <code>kitchen.yml</code> which spins up a CentOS 6.5 sandbox environment, loading the Access Token and SSH Key IDs from corresponding environment variables:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>digitalocean/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">digitalocean</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_zero</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">      <span class="nb">name</span><span class="p">:</span> <span class="n">digitalocean</span>
+</span><span class="line">      <span class="ss">image</span><span class="p">:</span> <span class="n">centos</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="mi">5</span><span class="o">-</span><span class="n">x64</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Before running any Test Kitchen commands, make sure you set the appropriate environment variables as shown below (with your own values):</p>
+
+<p>Linux and Mac OS X:</p>
+
+<pre><code>export DIGITALOCEAN_ACCESS_TOKEN="01234567890abcdef01234567890abcdef"
+export DIGITALOCEAN_SSH_KEY_IDS="12345, 67890"
+</code></pre>
+
+<p>Windows Command Prompt:</p>
+
+<pre><code>set DIGITALOCEAN_ACCESS_TOKEN=01234567890abcdef01234567890abcdef
+set DIGITALOCEAN_SSH_KEY_IDS=12345, 67890
+</code></pre>
+
+<p>Windows Powershell:</p>
+
+<pre><code>$env:DIGITALOCEAN_ACCESS_TOKEN="01234567890abcdef01234567890abcdef"
+$env:DIGITALOCEAN_SSH_KEY_IDS="12345, 67890"
+</code></pre>
+
+<p>The output of <code>kitchen list</code> should resemble the following:</p>
+
+<pre><code>$ kitchen list
+Instance           Driver        Provisioner  Last Action
+default-centos65  Digitalocean   ChefZero     &lt;Not Created&gt;
+</code></pre>
+
+<p>Spin up the node with <code>kitchen create</code>:</p>
+
+<pre><code>$ kitchen create default-centos65
+-----&gt; Starting Kitchen (v1.2.1)
+-----&gt; Creating &lt;default-centos65&gt;...
+       Digital Ocean instance &lt;3129943&gt; created.
+       Waiting for 192.241.185.202:22...
+       Waiting for 192.241.185.202:22...
+       (ssh ready)
+
+       Finished creating &lt;default-centos65&gt; (2m42.61s).
+-----&gt; Kitchen is finished. (2m42.82s)
+</code></pre>
+
+<p>Install Chef Client with <code>kitchen setup</code>.  <code>kitchen destroy</code> will delete your Droplet on DigitalOcean.</p>
+
+<p>Refer to the <code>kitchen-digitalocean</code> driver documentation on https://github.com/test-kitchen/kitchen-digitalocean for more information on additional <code>.kitchen.yml</code> settings.</p>
+
+<h2 id="amazon-ec2-cloud-provider-kitchen-ec2">Amazon EC2 Cloud Provider (kitchen-ec2)</h2>
+
+<h3 id="kitchen-ec2-setup">kitchen-ec2 Setup</h3>
+
+<p>In order to use the <code>kitchen-ec2</code> driver, you’ll need to create an Amazon Web Services access key, consisting of an <em>access key ID</em> plus a <em>secret key</em>.  You can create a new <em>access key ID</em> and <em>secret _key</em> or retrieve an existing <em>access key ID</em> on the AWS Identity and Access Management (IAM) page in the AWS Console.  Once you select a user, click on the <em>Manage Access Keys</em> button as shown in the following:</p>
+
+<p><img class="center" src="/images/chapa01/ec2_manage_access_keys.png" title="[AWS IAM Manage Access Keys]" /></p>
+
+<p>In the Manage Access keys dialog, click on the <em>Create Access Key</em> button to create a new <em>access key ID</em> and <em>secret _key</em> as shown in the following:</p>
+
+<p><img class="center" src="/images/chapa01/ec2_create_access_key.png" title="[AWS Create Access Key]" /></p>
+
+<p>AWS will create your access key.  You can click on <em>Show User Security Credentials</em> to display the <em>Access Key ID</em> and the <em>Secret Access Key</em>.  Make note of these as this is the last time they will be displayed.  You can also click on the <em>Download Credentials</em> button to download the credentials as a <code>.csv</code> file as shown below:</p>
+
+<p><img class="center" src="/images/chapa01/ec2_download_security_credentials.png" title="[Download Credentials]" /></p>
+
+<p>Create a key pair to use when you launch instances.  Amazon EC2 supports a variety of ways to work with key pairs.  Refer to http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-key-pairs.html for more information.</p>
+
+<p>Make sure you set permissions on the key pair.  Otherwise <code>kitchen-ec2</code> will ignore the file.</p>
+
+<pre><code>chmod 400 my-key-pair.pem
+</code></pre>
+
+<p>Run the following <code>kitchen init</code> command to add Test Kitchen support to your project using the <code>kitchen-ec2</code> driver:</p>
+
+<pre><code>$ kitchen init --driver=kitchen-ec2 --create-gemfile
+      create  .kitchen.yml
+      create  test/integration/default
+      create  Gemfile
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
+</code></pre>
+
+<p>Run <code>bundle install</code> to fetch any new gems.</p>
+
+<h3 id="kitchen-ec2-kitchenyml-example">kitchen-ec2 .kitchen.yml Example</h3>
+
+<p>Since the Access Key ID, Secret Access Key and SSH Key ID contain sensitive information, it is recommended that you store these values in environment variables instead of directly in your <code>.kitchen.yml</code> file.  This way, you can share your <code>.kitchen.yml</code> file with others and store it in source control.  You can use embedded Ruby templates in a <code>.kitchen.yml</code> file to load values from the environment.  Here is an example <code>kitchen.yml</code> which spins up a CentOS 6.5 sandbox environment, loading the Access Key ID, Secret Acces Key and SSH Key ID from corresponding environment variables:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>ec2/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="n">require_chef_omnibus</span><span class="p">:</span> <span class="kp">true</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">ec2</span>
+</span><span class="line">  <span class="n">aws_access_key_id</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;AWS_ACCESS_KEY_ID&#39;]%&gt;&quot;</span>
+</span><span class="line">  <span class="n">aws_secret_access_key</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;AWS_SECRET_ACCESS_KEY&#39;]%&gt;&quot;</span>
+</span><span class="line">  <span class="n">aws_ssh_key_id</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;AWS_SSH_KEY_ID&#39;]%&gt;&quot;</span>
+</span><span class="line">  <span class="n">ssh_key</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;AWS_SSH_KEY&#39;]%&gt;&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">      <span class="n">image_id</span><span class="p">:</span> <span class="n">ami</span><span class="o">-</span><span class="mi">8997</span><span class="n">afe0</span>
+</span><span class="line">      <span class="ss">username</span><span class="p">:</span> <span class="n">root</span>
+</span><span class="line">      <span class="ss">region</span><span class="p">:</span> <span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mi">1</span>
+</span><span class="line">      <span class="n">availability_zone</span><span class="p">:</span> <span class="n">us</span><span class="o">-</span><span class="n">east</span><span class="o">-</span><span class="mi">1</span><span class="n">c</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Before running any Test Kitchen commands, make sure you set the appropriate environment variables as shown below (with your own values):</p>
+
+<p>Linux and Mac OS X:</p>
+
+<pre><code>export AWS_ACCESS_KEY_ID="ABCDEFGHI123JKLMNOPQ"
+export AWS_SECRET_ACCESS_KEY="abcdefghijklmnopqrstuvwyz"
+export AWS_SSH_KEY_ID="keyid1234"
+export AWS_SSH_KEY="$HOME/ec2/$AWS_SSH_KEY_ID.pem"
+</code></pre>
+
+<p>Windows Command Prompt:</p>
+
+<pre><code>set AWS_ACCESS_KEY_ID=ABCDEFGHI123JKLMNOPQ
+set AWS_SECRET_ACCESS_KEY=abcdefghijklmnopqrstuvwyz
+set AWS_SSH_KEY_ID=keyid1234
+set AWS_SSH_KEY=%USERPROFILE%/ec2/%AWS_SSH_KEY_ID%.pem
+</code></pre>
+
+<p>Windows Powershell:</p>
+
+<pre><code>$env:AWS_ACCESS_KEY_ID="ABCDEFGHI123JKLMNOPQ"
+$env:AWS_SECRET_ACCESS_KEY="abcdefghijklmnopqrstuvwyz"
+$env:AWS_SSH_KEY_ID="keyid1234"
+$env:AWS_SSH_KEY="$env:userprofile/ec2/$env:aws_ssh_key_id.pem"
+</code></pre>
+
+<p>The output of <code>kitchen list</code> should resemble the following:</p>
+
+<pre><code>$ kitchen list
+Instance           Driver  Provisioner  Last Action
+default-centos65  Ec2     ChefSolo     &lt;Not Created&gt;
+</code></pre>
+
+<p>Spin up the node with <code>kitchen create</code>:</p>
+
+<pre><code>$ kitchen create default-centos65
+-----&gt; Starting Kitchen (v1.2.2.dev)
+-----&gt; Creating &lt;default-centos65&gt;...
+       EC2 instance &lt;i-5b6f2b70&gt; created.
+...........       (server ready)
+       Waiting for ec2-54-197-34-184.compute-1.amazonaws.com:22...
+       Waiting for ec2-54-197-34-184.compute-1.amazonaws.com:22...
+       Waiting for ec2-54-197-34-184.compute-1.amazonaws.com:22...
+       Waiting for ec2-54-197-34-184.compute-1.amazonaws.com:22...
+       (ssh ready)\n
+       Finished creating &lt;default-centos65&gt; (3m2.97s).
+-----&gt; Kitchen is finished. (3m3.40s)
+</code></pre>
+
+<p>NOTE:</p>
+
+<p>You may be prompted to opt in and accept the terms and subscribe to using the AWS Marketplace CentOS image the first time you spin up an image.  The <code>kitchen-ec2</code> driver will provide you with a link to the opt in URL.</p>
+
+<p>NOTE:</p>
+
+<p>You might not be able to create CentOS images in all availability zones.  The <code>kitchen-ec2</code> driver will advice you of your availability zone options if there is an issue with your availability zone choice.</p>
+
+<p>Install Chef Client with <code>kitchen setup</code>.  <code>kitchen destroy</code> will delete your EC2 instance.</p>
+
+<p>Refer to the <code>kitchen-ec2</code> driver documentation on https://github.com/test-kitchen/kitchen-ec2 for more information additional <code>.kitchen.yml</code> settings.</p>
+
+<h2 id="google-compute-engine-cloud-provider-kitchen-gce">Google Compute Engine Cloud Provider (kitchen-gce)</h2>
+
+<h3 id="kitchen-gce-setup">kitchen-gce Setup</h3>
+
+<p>Create a Google Compute Engine project in the Google Developers Console at https://console.developers.google.com.  Create a Service Account Key by navigating to <em>APIs &amp; auth</em> &gt; <em>Credentials</em>.  Under OAuth start the process by clicking on the <em>CREATE NEW CLIENT ID</em> button as shown here:</p>
+
+<p><img class="center" src="/images/chapa01/gce_create_new_client_id.png" title="[Create New Client ID]" /></p>
+
+<p>On the <em>Create Client ID</em> dialog, choose <em>Service account</em> then click on <em>Create Client ID</em> as shown below.  This will generate a private key file along with a password.  Record this information, as it is the only time it will be displayed.</p>
+
+<p><img class="center" src="/images/chapa01/gce_create_service_account.png" title="[Create Service Account]" /></p>
+
+<p>Make note of the <em>Email address</em> field for the Service Account (not to be confused with the project owner’s Email Address at the top of the page) as shown in the following.  You’ll be recording this in the <code>google_client_email</code> field in the <code>.kitchen.yml</code>.</p>
+
+<p><img class="center" src="/images/chapa01/gce_client_email.png" title="[Google Client Email]" /></p>
+
+<p>If you do not already have an SSH key pair to login, create them using <code>ssh-keygen</code> or an equivalent tool.  Register the public key in the Google Developer Console.  The default file name for a public key is <code>$HOME/.ssh/id_rsa.pub</code>.  Navigate to <em>Compute</em> &gt; <em>Compute Engine</em> &gt; <em>Metadata</em> on the Google Developers Console.  Make sure the <em>SSH_keys</em> is selected in the panel on the right, then click on the <em>Add SSH key</em> button as shown in the following:</p>
+
+<p><img class="center" src="/images/chapa01/gce_add_ssh_key.png" title="[Add SSH key to a GCE Project]" /></p>
+
+<p>Copy the public key <code>id_rsa.pub</code> file contents to the clipboard and paste it into the <em>Enter entire key data</em> field.  Click on the <em>Done</em> button to save.</p>
+
+<p><img class="center" src="/images/chapa01/gce_ssh_keys.png" title="[Register SSH Public Key]" /></p>
+
+<p>Run the following <code>kitchen init</code> command to add Test Kitchen support to your project using the <code>kitchen-gce</code> driver:</p>
+
+<pre><code>$ kitchen init --driver=kitchen-gce --create-gemfile
+      create  .kitchen.yml
+      create  test/integration/default
+      create  Gemfile
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
+</code></pre>
+
+<p>Run <code>bundle install</code> to fetch any new gems.</p>
+
+<h3 id="kitchen-gce-kitchenyml-example">kitchen-gce .kitchen.yml Example</h3>
+
+<p>Since the project, client e-mail and key location are sensitive information and differ between users, it is recommended that you store them in environment variables instead of directly in your <code>.kitchen.yml</code> file.  This way, you can share your <code>.kitchen.yml</code> file with others and store it in source control.  You can use an embedded Ruby template in a <code>.kitchen.yml</code> file to load values from the environment.  Here is an example <code>kitchen.yml</code> which spins up a CentOS 6.5 sandbox environment, loading the project and client e-mail from corresponding environment variables:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>gce/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">gce</span>
+</span><span class="line">  <span class="n">google_project</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;GOOGLE_PROJECT&#39;]%&gt;&quot;</span>
+</span><span class="line">  <span class="n">google_client_email</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;GOOGLE_CLIENT_EMAIL&#39;]%&gt;&quot;</span>
+</span><span class="line">  <span class="n">google_key_location</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;GOOGLE_KEY_LOCATION&#39;]%&gt;&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span> <span class="n">gce</span>
+</span><span class="line">      <span class="ss">area</span><span class="p">:</span> <span class="n">us</span>
+</span><span class="line">      <span class="n">image_name</span><span class="p">:</span> <span class="n">centos</span><span class="o">-</span><span class="mi">6</span><span class="o">-</span><span class="n">v20140619</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Before running any Test Kitchen commands, make sure you set the appropriate environment variables as shown below (with your own values):</p>
+
+<p>Linux and Mac OS X:</p>
+
+<pre><code>export GOOGLE_PROJECT="alpha-bravo-123"
+export GOOGLE_CLIENT_EMAIL="123456789012@developer.gserviceaccount.com"
+export GOOGLE_KEY_LOCATION="$HOME/gce/1234567890abcdef1234567890abcdef12345678-privatekey.p12"
+</code></pre>
+
+<p>Windows Command Prompt:</p>
+
+<pre><code>set GOOGLE_PROJECT=alpha-bravo-123
+set GOOGLE_CLIENT_EMAIL=123456789012@developer.gserviceaccount.com
+set GOOGLE_KEY_LOCATION=%USERPROFILE%/gce/1234567890abcdef1234567890abcdef12345678-privatekey.p12
+</code></pre>
+
+<p>Windows Powershell:</p>
+
+<pre><code>$env:GOOGLE_PROJECT="alpha-bravo-123"
+$env:GOOGLE_CLIENT_EMAIL="123456789012@developer.gserviceaccount.com"
+$env:GOOGLE_KEY_LOCATION="$env:userprofile/gce/1234567890abcdef1234567890abcdef12345678-privatekey.p12"
+</code></pre>
+
+<p>The output of <code>kitchen list</code> should resemble the following:</p>
+
+<pre><code>$ kitchen list
+Instance          Driver  Provisioner  Last Action
+default-centos65  Gce     ChefSolo     &lt;Not Created&gt;
+</code></pre>
+
+<p>Spin up the node with <code>kitchen create</code>:</p>
+
+<pre><code>$ kitchen create default-centos65
+-----&gt; Starting Kitchen (v1.2.2.dev)
+-----&gt; Creating &lt;default-centos65&gt;...
+       GCE instance &lt;default-centos65-31681aab-e6a2-494b-99cb-9b920a1f6284&gt; created.
+..       (server ready)
+       (ssh ready)
+       Finished creating &lt;default-centos65&gt; (1m26.70s).
+-----&gt; Kitchen is finished. (1m28.18s)
+</code></pre>
+
+<p>Install Chef Client with <code>kitchen setup</code>.  <code>kitchen destroy</code> will delete your Google Compute Engine instance.</p>
+
+<p>Refer to the <code>kitchen-gce</code> driver documentation on https://github.com/anl/kitchen-gce for more information on additional <code>.kitchen.yml</code> settings.</p>
+
+<h2 id="rackspace-cloud-provider-kitchen-rackspace">Rackspace Cloud Provider (kitchen-rackspace)</h2>
+
+<h3 id="kitchen-rackspace-setup">kitchen-rackspace Setup</h3>
+
+<p>Login to the Cloud Sites Control Panel at https://manage.rackspacecloud.com/pages/Login.jsp  Navigate to <em>Your Account</em> &gt; <em>API Access</em> to display your username and API key as shown in below:</p>
+
+<p><img class="center" src="/images/chapa01/rackspace_api_key_image.png" title="[Rackspace API Key]" /></p>
+
+<p>Run the following <code>kitchen init</code> command to add Test Kitchen support to your project using the <code>kitchen-rackspace</code> driver:</p>
+
+<pre><code>$ kitchen init --driver=kitchen-rackspace --create-gemfile
+      create  .kitchen.yml
+      create  test/integration/default
+      create  Gemfile
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
+</code></pre>
+
+<p>Run <code>bundle install</code> to fetch any new gems.</p>
+
+<h3 id="kitchen-rackspace-kitchenyml-example">kitchen-rackspace .kitchen.yml Example</h3>
+
+<p>Since the username and API Key are sensitive information and differ between users, it is recommended that you store them in environment variables instead of directly in your <code>.kitchen.yml</code> file.  This way, you can share your <code>.kitchen.yml</code> file with others and store it in source control.  You can use an embedded Ruby template in a <code>.kitchen.yml</code> file to load values from the environment.  Here is an example <code>kitchen.yml</code> which spins up a CentOS 6.5 sandbox environment, loading the project and client e-mail from corresponding environment variables:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>rackspace/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="n">require_chef_omnibus</span><span class="p">:</span> <span class="kp">true</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">rackspace</span>
+</span><span class="line">  <span class="n">rackspace_username</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;RACKSPACE_USERNAME&#39;]%&gt;&quot;</span>
+</span><span class="line">  <span class="n">rackspace_api_key</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;RACKSPACE_API_KEY&#39;]%&gt;&quot;</span>
+</span><span class="line">  <span class="n">public_key_path</span><span class="p">:</span> <span class="s2">&quot;&lt;%= ENV[&#39;RACKSPACE_PUBLIC_KEY_PATH&#39;]%&gt;&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span> <span class="n">rackspace</span>
+</span><span class="line">      <span class="n">image_id</span><span class="p">:</span> <span class="s2">&quot;592c879e-f37d-43e6-8b54-8c2d97cf04d4&quot;</span>
+</span><span class="line">      <span class="n">flavor_id</span><span class="p">:</span> <span class="s2">&quot;performance1-1&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Before running any Test Kitchen commands, make sure you set the appropriate environment variables as shown below (with your own values):</p>
+
+<p>Linux and Mac OS X:</p>
+
+<pre><code>export RACKSPACE_USERNAME="alice"
+export RACKSPACE_API_KEY="abcdef0123456789abcdef0123456789"
+export RACKSPACE_PUBLIC_KEY_PATH="$HOME/.ssh/id_rsa.pub"
+</code></pre>
+
+<p>Windows Command Prompt:</p>
+
+<pre><code>set RACKSPACE_USERNAME=alice
+set RACKSPACE_API_KEY=abcdef0123456789abcdef0123456789
+set RACKSPACE_PUBLIC_KEY_PATH=%USERPROFILE%/.ssh/id_rsa.pub
+</code></pre>
+
+<p>Windows Powershell:</p>
+
+<pre><code>$env:RACKSPACE_USERNAME="alice"
+$env:RACKSPACE_API_KEY="abcdef0123456789abcdef0123456789"
+$env:RACKSPACE_PUBLIC_KEY_PATH="$env:userprofile/.ssh/id_rsa.pub"
+</code></pre>
+
+<p>The output of <code>kitchen list</code> should resemble the following:</p>
+
+<pre><code>$ kitchen list
+Instance          Driver     Provisioner  Last Action
+default-centos65  Rackspace  ChefSolo     &lt;Not Created&gt;
+</code></pre>
+
+<p>Spin up the node with <code>kitchen create</code>:</p>
+
+<pre><code>$ kitchen create default-centos65
+-----&gt; Starting Kitchen (v1.2.2.dev)
+-----&gt; Creating &lt;default-centos65&gt;...
+       Rackspace instance &lt;9456b985-3a41-4cb0-a3cf-7536cc15baf7&gt; created.
+       (server ready)
+       (ssh ready)
+       Finished creating &lt;default-centos65&gt; (0m37.77s).
+-----&gt; Kitchen is finished. (0m38.21s)
+</code></pre>
+
+<p>Then install Chef Client with <code>kitchen setup</code>.  <code>kitchen destroy</code> will delete your instance on Rackspace.</p>
+
+<p>Refer to the <code>kitchen-gce</code> driver documentation on https://github.com/test-kitchen/kitchen-rackspace for more information on additional <code>.kitchen.yml</code> settings.</p>
+
+<h1 id="linux-container-drivers">Linux Container Drivers</h1>
+
+<p>You can regard Linux Containers to be a resource-efficient variant of virtual machines.  As shown in the following diagram, Linux containers trade off the flexibility (and overhead) of being able to run different operating systems in each guest to minimize resource consumption by having all guests share the same OS kernel.  In container environments, guests are isolated like virtual machines using more lightweight mechanisms around Linux processes instead.</p>
+
+<p><img class="center" src="/images/chapa01/tkdriver.006.png" title="[Virtual Machines versus Containers]" /></p>
+
+<p>This idea has its origins in attempts to provide better process isolation to <em>chroot jails</em>.  <em>chroot</em> is a Unix command that facilitates creating a separate virtualized copy of the operating system by changing the apparent <em>root directory</em> (/) to processes running within this copy of the operating system.  Other variants of Unix have added extensions to this <em>chroot</em> mechanism to provide better isolation of the guest process, such as FreeBSD jails and Solaris Containers.  Linux Containers bring this process-based isolation mechanism to the standard Linux kernel via a recently added kernel feature called <em>control groups</em>.</p>
+
+<p>As of this writing, there are no container-like Test Kitchen drivers for Windows.  Microsoft is working on adding similar lightweight virtualization technology to Windows via its Drawbridge virtalization technology[http://research.microsoft.com/en-us/projects/drawbridge/].  The only equivalent to Linux Containers in Windows at this moment is Microsoft Applications Virtualization (App-V), which has been around for quite some time, but it has a major drawback in requiring modification of target applications in order to work with the system, so it is not widely used.</p>
+
+<p>The following diagram shows the steps in the sandbox environment creation process for containers.  It is identical to the host-based model presented previously, just using lightweight, isolated container processes instead of full-blown virtual machines.</p>
+
+<ol>
+  <li>Test Kitchen invokes the container driver (<code>kitchen-docker</code> or <code>kitchen-lxc</code>) to create a container instance.</li>
+  <li>The Test Kitchen driver uses the operating system APIs for Linux Containers to create a new instance for our sandbox environment.</li>
+  <li>Once the sandbox environment is running, Test Kitchen links the instance for communication.</li>
+</ol>
+
+<p><img class="center" src="/images/chapa01/tkdriver.007.png" title="[Sandbox environment creation with kitchen-docker]" /></p>
+
+<p>As of this writing, Test Kitchen drivers for Linux Containers do not support functionality equivalent to synchronized folders.  All Test Kitchen commands use <code>scp</code> to transfer files from your host to the container instance.  For any other file sharing beyond what is supported by Test Kitchen, you’ll need to make direct use of the file sharing mechanisms provided by the container driver being used.  This is where Docker shines, as it supports data volume containers which bypass container image layering.  Data volume containers are an ideal way to share data between containers.  It is also possible to mount host directories in a container, but that has more limited use cases.  Refer to the documentation on your container provider for more information.</p>
+
+<p>You can combine together virtual machines with Linux containers to use containers on platforms that do not have native container support, like Mac OS X and Windows.  The following diagram presents an overview of the setup.  With virtual machines, it is usually not possible to nest virtualization software instances.  Running virtualization software <em>inside</em> guest OS instances is either prohibited or painfully slow.  However, it’s perfectly fine to run Linux Containers within a virtual machine.  To the outer virtualization software, the container instances are merely Linux processes.</p>
+
+<p><img class="center" src="/images/chapa01/tkdriver.003.png" title="[Docker running in a virtual machine]" /></p>
+
+<p>In the next section on Docker, we’ll show you how to use this technique for readers running Mac OS X or Windows.  Neither platform supports Linux containers natively on the host.  Chef Software uses a Docker-based VM in training classes, so that students with laptops running Mac OS X or Windows can use the same setup as the students using Linux.  This approach also saves money, as Chef Software uses cloud providers for training, and these providers charge based the number of instances and resources used.  The lightweight Docker instances consume fewer resources and only require one running instance on the cloud provider - all the other instances are just lightweight container instances, which cloud providers (currently) do not charge extra.  You may want to consider using Linux Containers in a similar fashion to save money if you make heavy use of third-party virtualization or cloud providers, like we do.</p>
+
+<h2 id="docker-driver-kitchen-docker">Docker Driver (kitchen-docker)</h2>
+
+<p>If you are using Linux, refer to the Docker installation guide for instructions on how to install and configure Docker in your environment: http://www.docker.com/.</p>
+
+<h3 id="chef-training-environment-setup">Chef Training Environment Setup</h3>
+
+<p>Skip ahead to the next secion if you are using Linux and already have Docker installed.  Otherwise, you’ll need to spin up a virtual machine with Docker installed in order to play around with a container environment.</p>
+
+<p>We’ve created a Chef training environment that has Docker and the Chef Development Kit used in this book preinstalled on a Linux virtual machine.  We use this same instance in official Chef training.  It’s also a handy environment for playing around with containers using Test Kitchen.</p>
+
+<p>First, make sure you install Vagrant and VirtualBox or Vagrant and VMware.</p>
+
+<p>Create a directory for the Chef training environment project called <code>chef</code> and make it the current directory.</p>
+
+<pre><code>$ mkdir chef
+$ cd chef
+</code></pre>
+
+<p>Add Test Kitchen support to the project using the default <code>kitchen-vagrant</code> driver by running <code>kitchen init</code>.  Then run <code>bundle install</code> to install the necessary gems for the Test Kitchen driver.</p>
+
+<pre><code>$ kitchen init --create-gemfile
+      create  .kitchen.yml
+      create  test/integration/default
+      create  Gemfile
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
+
+$ bundle install
+Fetching gem metadata from https://rubygems.org/..........
+Fetching additional metadata from https://rubygems.org/..
+Resolving dependencies...
+Using mixlib-shellout (1.4.0)
+Using net-ssh (2.9.1)
+Using net-scp (1.2.1)
+Using safe_yaml (1.0.3)
+Using thor (0.19.1)
+Using test-kitchen (1.2.1)
+Using kitchen-vagrant (0.15.0)
+Using bundler (1.5.2)
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
+</code></pre>
+
+<p>Modify the <code>.kitchen.yml</code> file to use the Chef training image as shown in the following <code>.kitchen.yml</code>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>chef/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">vagrant</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">learningchef</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">      <span class="ss">box</span><span class="p">:</span> <span class="n">learningchef</span><span class="o">/</span><span class="n">cheftraining</span>
+</span><span class="line">      <span class="n">box_url</span><span class="p">:</span> <span class="n">learningchef</span><span class="o">/</span><span class="n">cheftraining</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Run <code>kitchen create</code> to spin up the image:</p>
+
+<pre><code>$ kitchen create
+-----&gt; Starting Kitchen (v1.2.2.dev)
+-----&gt; Creating &lt;default-learningchef&gt;...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       ==&gt; default: Importing base box 'learningchef/chefdk-box'...
+       ==&gt; default: Matching MAC address for NAT networking...
+       ==&gt; default: Checking if box 'learningchef/chefdk-box' is up to date...
+       ==&gt; default: Setting the name of the VM: default-learningchef_default_1404728110875_23069
+       ==&gt; default: Fixed port collision for 22 =&gt; 2222. Now on port 2200.
+       ==&gt; default: Clearing any previously set network interfaces...
+       ==&gt; default: Preparing network interfaces based on configuration...
+           default: Adapter 1: nat
+       ==&gt; default: Forwarding ports...
+           default: 22 =&gt; 2200 (adapter 1)
+       ==&gt; default: Booting VM...
+       ==&gt; default: Waiting for machine to boot. This may take a few minutes...
+           default: SSH address: 127.0.0.1:2200
+           default: SSH username: vagrant
+           default: SSH auth method: private key
+           default: Warning: Remote connection disconnect. Retrying...
+       ==&gt; default: Machine booted and ready!
+       ==&gt; default: Checking for guest additions in VM...
+       ==&gt; default: Setting hostname...
+       ==&gt; default: Machine not provisioning because `--no-provision` is specified.
+       Vagrant instance &lt;default-learningchef&gt; created.
+       Finished creating &lt;default-learningchef&gt; (0m36.99s).
+-----&gt; Kitchen is finished. (0m37.44s)
+</code></pre>
+
+<p>Then run <code>kitchen login</code> to use Docker!  Note that the image also has the latest Chef Development Kit installed (as of this writing).  You will be running the Test Kitchen Docker driver <em>inside</em> this virtual machine.  It has been pre-populated with all the necessary files to spin up the CentOS 6.5 images used in the exercises for this book:</p>
+
+<pre><code>$ kitchen login
+Welcome to Ubuntu 14.04 LTS (GNU/Linux 3.13.0-24-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Welcome to the Learning Chef training environment
+Last login: Fri May 23 13:49:31 2014 from 10.0.2.2
+vagrant@default-learningchef:~$ docker --version
+Docker version 0.11.1, build fb99f99
+vagrant@default-learningchef:~$ kitchen --version
+Test Kitchen version 1.2.2.dev
+vagrant@default-learningchef:~$
+</code></pre>
+
+<p>NOTE:</p>
+
+<p>Sharp-eyed readers might notice that this is an Ubuntu image.  It is perfectly OK to spin up CentOS images on Ubuntu, as long as you use a version that shares the same kernel!</p>
+
+<p>TIP:</p>
+
+<p>At first, the multiple layers of instances might be a little confusing.  Refer back to the Docker diagram shown previously so that you can keep the big picture of this setup in mind.  Also, modifying the command prompts so they clearly indicate which environment is the VM and which environment is a container instance is strongly recommended.</p>
+
+<h3 id="kitchen-docker-setup">kitchen-docker Setup</h3>
+
+<p>Run the following <code>kitchen init</code> command to add Test Kitchen support to your project using the <code>kitchen-docker</code> driver:</p>
+
+<pre><code>$ kitchen init --driver=kitchen-docker --create-gemfile
+      create  .kitchen.yml
+      create  test/integration/default
+      create  Gemfile
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
+</code></pre>
+
+<p>Run <code>bundle install</code> to download and install any required gems.</p>
+
+<h3 id="kitchen-docker-kitchenyml-example">kitchen-docker .kitchen.yml Example</h3>
+
+<p>The following <code>.kitchen.yml</code> presents an example which spins up a CentOS 6.5 sandbox environment:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>docker/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">docker</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">      <span class="n">image_id</span><span class="p">:</span> <span class="mi">3448641</span>
+</span><span class="line">      <span class="n">region_id</span><span class="p">:</span> <span class="mi">4</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The output of <code>kitchen list</code> should resemble the following:</p>
+
+<pre><code>$ kitchen list
+Instance          Driver  Provisioner  Last Action
+default-centos65  Docker  ChefSolo     &lt;Not Created&gt;
+</code></pre>
+
+<p>Spin up the node with <code>kitchen create</code>:</p>
+
+<pre><code>$ kitchen create
+-----&gt; Starting Kitchen (v1.2.2.dev)
+-----&gt; Creating &lt;default-centos65&gt;...
+       Step 0 : FROM centos:latest
+       Pulling repository centos
+        ---&gt; 0c752394b855
+...
+       Waiting for localhost:49153...
+       Waiting for localhost:49153...
+       Finished creating &lt;default-centos65&gt; (1m19.28s).
+-----&gt; Kitchen is finished. (1m19.34s)
+</code></pre>
+
+<p>At the time of this writing, due to some issues with <code>kitchen-docker</code>, you may be prompted for <code>kitchen@localhost's password</code>.  The password is <code>kitchen</code></p>
+
+<pre><code>$ kitchen login
+kitchen@localhost's password: kitchen
+Last login: Mon Jul  7 11:37:14 2014 from 172.17.42.1
+[kitchen@55f29336b435 ~]$ cat /etc/redhat-release
+CentOS release 6.5 (Final)
+[kitchen@55f29336b435 ~]$ exit
+logout
+Connection to localhost closed.
+</code></pre>
+
+<p>Install Chef Client with <code>kitchen setup</code>.  <code>kitchen destroy</code> will delete container instance.</p>
+
+<p>Refer to the <code>kitchen-docker</code> driver documentation on https://github.com/portertech/kitchen-docker for more information on additional <code>.kitchen.yml</code> settings.</p>
+
+<h1 id="physical-machine-drivers">Physical Machine Drivers</h1>
+
+<p>As of this writing, Test Kitchen does not currently support <code>chef-metal</code>.  It is currently planned to provide robust support for managing sandbox environments running on physical machines using <code>chef-metal</code> (though plans sometimes change).</p>
+
+<p>Until Test Kitchen supports <code>chef-metal</code>, the only way to use Test Kitchen with physical machines currently (other than your local host) is to use the <code>kitchen-ssh</code> driver.  This is actually a generic way to integrate any kind of machine with Test Kitchen, not just physical machines.  As long as the machine accepts <code>ssh</code> connections, it will work.</p>
+
+<p>The following diagram shows an overview of the Test Kitchen instance creation process using <code>kitchen-ssh</code>.  It is similar to the creation process used for cloud instances with the Test Kitchen environment being run on a remote machine, but there is only one step because an isolated sandbox instance is not created.  The <code>kitchen-ssh</code> driver merely links up an SSH communication channel with Test Kitchen in the remote machine’s host environment.</p>
+
+<p><img class="center" src="/images/chapa01/tkdriver.008.png" title="[Sandbox environment creation with kitchen-ssh]" /></p>
+
+<p>It is assumed that you are using some other method outside of Test Kitchen to be able to easily reset the environment.  Also, since it does not spin up a new instance, you will need to make sure the machine that you are linking to has CentOS 6 installed to match the exercises in this book.</p>
+
+<h2 id="driver-for-any-server-with-an-ssh-address-kitchen-ssh">Driver for any server with an SSH address (kitchen-ssh)</h2>
+
+<p>Run the following <code>kitchen init</code> command to add Test Kitchen support to your project using the <code>kitchen-ssh</code> driver:</p>
+
+<pre><code>$ kitchen init --driver=kitchen-ssh --create-gemfile
+      create  .kitchen.yml
+      create  test/integration/default
+      create  Gemfile
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
+</code></pre>
+
+<p>Run <code>bundle install</code> to fetch any required gems.</p>
+
+<h3 id="kitchen-ssh-kitchenyml-example">kitchen-ssh .kitchen.yml Example</h3>
+
+<p>The following <code>.kitchen.yml</code> assumes that you are connecting to an existing CentOS 6.5 environment with an SSH server running.  Change the <code>hostname:</code>, <code>username:</code> and <code>password:</code> fields accordingly to match your remote machine’s settings:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>ssh/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"><span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">ssh</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">    <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">      <span class="ss">hostname</span><span class="p">:</span> <span class="mi">192</span><span class="o">.</span><span class="mi">168</span><span class="o">.</span><span class="mi">33</span><span class="o">.</span><span class="mi">33</span>
+</span><span class="line">      <span class="ss">username</span><span class="p">:</span> <span class="n">alice</span>
+</span><span class="line">      <span class="ss">password</span><span class="p">:</span> <span class="n">averysecretpassword</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">  <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">default</span>
+</span><span class="line">    <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">    <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The output of <code>kitchen list</code> should resemble the following:</p>
+
+<pre><code>Instance          Driver  Provisioner  Last Action
+default-centos65  Ssh     ChefSolo     Created
+</code></pre>
+
+<p>Initiate a connection to the node with <code>kitchen create</code>.  You could also run <code>kitchen login</code> without needing to run <code>kitchen create</code> in this case, as <code>kitchen create</code> does nothing:</p>
+
+<pre><code>$ kitchen create
+-----&gt; Starting Kitchen (v1.2.2.dev)
+-----&gt; Creating &lt;default-centos65&gt;...
+       Kitchen-ssh does not start your server '192.168.33.33' but will look for an ssh connection with user 'alice'
+---
+       Kitchen-ssh found ssh ready on host '192.168.33.33' with user 'alice'
+
+       Finished creating &lt;default-centos65&gt; (0m0.01s).
+-----&gt; Kitchen is finished. (0m0.02s)
+</code></pre>
+
+<p>Install Chef Client with <code>kitchen setup</code>.  For this driver, <code>kitchen destroy</code> does nothing, just like <code>kitchen create</code>, besides updating the status in Test Kitchen.</p>
+
+<p>Refer to the <code>kitchen-ssh</code> driver documentation on https://github.com/neillturner/kitchen-ssh/blob/master/lib/kitchen/driver/ssh.rb for more information on additional <code>.kitchen.yml</code> settings.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-09-21T20:52:00-07:00" pubdate data-updated="true">Sep 21<span>st</span>, 2014</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/chef/'>Chef</a>, <a class='category' href='/blog/categories/test-kitchen/'>Test Kitchen</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2014/09/21/survey-of-test-kitchen-providers/" data-via="" data-counturl="http://misheska.com/blog/2014/09/21/survey-of-test-kitchen-providers/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/" title="Previous Post: Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows">&laquo; Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/09/21/survey-of-test-kitchen-providers/">Survey of Test Kitchen providers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/">Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/28/windows-server-2012-automated-install-settings/">Windows Server 2012 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/27/windows-8-automated-install-settings/">Windows 8 Automated Install Settings</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

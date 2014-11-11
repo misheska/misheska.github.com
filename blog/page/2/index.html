@@ -1,0 +1,1232 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Mac OS X Install RVM and Ruby 1.9.x - Mac OS X Install Ruby 1.8.7 - Mac OS X Install Ruby 2.0.0 - Mac OS X Remove RVM - Mac OS X Linux Install RVM &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.com/blog/page/2/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/">Using RVM to Manage Multiple Versions of Ruby</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-16T00:35:00-07:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#mac-os-x">Mac OS X</a>    <ul>
+      <li><a href="#install-rvm-and-ruby-19x---mac-os-x">Install RVM and Ruby 1.9.x - Mac OS X</a></li>
+      <li><a href="#install-ruby-187---mac-os-x">Install Ruby 1.8.7 - Mac OS X</a></li>
+      <li><a href="#install-ruby-200---mac-os-x">Install Ruby 2.0.0 - Mac OS X</a></li>
+      <li><a href="#remove-rvm---mac-os-x">Remove RVM - Mac OS X</a></li>
+    </ul>
+  </li>
+  <li><a href="#linux">Linux</a>    <ul>
+      <li><a href="#install-rvm-and-ruby-19x---linux">Install RVM and Ruby 1.9.x - Linux</a></li>
+      <li><a href="#install-ruby-200---linux">Install Ruby 2.0.0 - Linux</a></li>
+      <li><a href="#remove-rvm---linux">Remove RVM - Linux</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>Out of the box, Ruby does not provide a mechanism to support multiple
+installed versions.  Compounding this issue, the default system-installed
+version of Ruby for most versions of Linux/Mac OS X tend to be quite old.
+For example, even in the latest version of Mac OS X Mountain Lion, the
+system-wide version of Ruby is over five years old (ruby 1.8.7).  Most
+developers prefer to use a newer version of Ruby installed in their home
+directory and to leave the default systemwide version of Ruby untouched.</p>
+
+<p><a href="http://rvm.io">Ruby Version Manager (RVM)</a>  makes installing multiple
+versions of Ruby easy.  It’s a great way to use Ruby 1.9.x for your current
+development while also being able to play with Ruby 2.0 for newer projects.
+RVM also supports partitioning of Ruby gem installs via a feature called
+gemsets in order to avoid versioning conflicts.  However, with the advent of
+<a href="http://gembundler.com">Bundler</a> most developers tend to prefer using Bundler
+as the preferred way for managing gems at the application level.</p>
+
+<p>RVM is supported on Linux and Mac OS X.  RVM doesn’t work on Windows.
+For Windows, <a href="https://github.com/vertiginous/pik">Pik</a> is an RVM alternative.</p>
+
+<h1 id="mac-os-x">Mac OS X</h1>
+
+<h2 id="install-rvm-and-ruby-19x---mac-os-x">Install RVM and Ruby 1.9.x - Mac OS X</h2>
+<p>First, you’ll need to install a C compiler to build Ruby from source.  Just
+download and install the latest version of Xcode from the App Store, if you
+don’t have it already.  Also make sure you install the <em>Command Line Tools</em>
+by choosing the menu item <code>Xcode -&gt; Preferences...</code> and click
+on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
+Command Line Tools.
+<img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
+
+<p>Next, you’ll need to install the Homebrew package manager.  RVM will
+automatically download all dependencies if a package manager is installed.
+Also, the dependencies for installing Ruby are complicated enough that it
+is helpful to use a package manager to install them, so you can uninstall
+them easily if necessary.  Run the following command to install Homebrew:</p>
+
+<pre><code>ruby -e "$(curl -fsSL https://raw.github.com/mxcl/homebrew/go)"
+</code></pre>
+
+<p>Run <code>brew doctor</code> and address any issues it discovers.  When
+all is well, you should see:</p>
+
+<pre><code>$ brew doctor
+Your system is raring to brew.
+</code></pre>
+
+<p>After Xcode and Homebrew are installed, you can install RVM with the following
+commands:</p>
+
+<pre><code>$ \curl -L https://get.rvm.io | bash -s stable
+$ source $HOME/.rvm/scripts/rvm
+</code></pre>
+
+<p>Run <code>rvm requirements</code> to install additional dependencies:</p>
+
+<pre><code>$ rvm requirements
+Installing requirements for osx, might require sudo password.
+Already up-to-date.
+Cloning into '/usr/local/Library/Taps/homebrew-dupes'...
+remote: Counting objects: 906, done.
+remote: Compressing objects: 100% (495/495), done.
+remote: Total 906 (delta 498), reused 803 (delta 411)
+Receiving objects: 100% (906/906), 157.67 KiB | 112 KiB/s, done.
+Resolving deltas: 100% (498/498), done.
+Tapped 41 formula
+Installing required packages: autoconf, automake, libtool, pkg-config, apple-gcc42, libyaml, readline, libxml2, libxslt, libksba, openssl...........................................................................................................................................................
+Updating certificates in '/usr/local/etc/openssl/cert.pem'.
+</code></pre>
+
+<p>Tell rvm to automatically install dependencies via Homebrew with the following command:</p>
+
+<pre><code>$ rvm autolibs osx_brew
+</code></pre>
+
+<p>Next, build and install the latest version of Ruby by running the following
+(this will take a long time):</p>
+
+<pre><code>$ rvm install 1.9.3
+</code></pre>
+
+<p>You may get an error message saying “There was an error while trying to
+resolve rubygems version for ‘latest’.  Halting the installation.” Just
+run the install again like so to fix the issue:</p>
+
+<pre><code>$ rvm reinstall 1.9.3
+</code></pre>
+
+<p>Verify the RVM install by running the following commands:</p>
+
+<pre><code>$ rvm -h
+$ rvm list
+$ rvm use 1.9.3
+$ rvm rubygems latest
+</code></pre>
+
+<p>To ensure that the newer Ruby 1.9.3 is used by default instead of the
+system 1.8.7 version, run the following command:</p>
+
+<pre><code>$ rvm use 1.9.3 --default
+</code></pre>
+
+<p>If you’d like to manage RVM with a GUI, check out <a href="http://jewelrybox.unfiniti.com/">JewelryBox</a>:</p>
+
+<p><img src="/images/jewelrybox.png" alt="Jewelry Box" /></p>
+
+<h2 id="install-ruby-187---mac-os-x">Install Ruby 1.8.7 - Mac OS X</h2>
+<p>For legacy GUI support, Ruby 1.8.7 has some dependencies on tcl/tk, which
+Mountain Lion no longer installs by default (now that X11 is an optional
+install).  To compile Ruby 1.8.7 without tcl/tk support, use the following
+command overrides on <code>rvm install</code>:</p>
+
+<pre><code>$ rvm install 1.8.7 --with-gcc=clang --without-tcl --without-tk
+</code></pre>
+
+<p>To compile Ruby 1.8.7 with tcl/tk support, install X11 via
+<a href="http://xquartz.macosforge.org/landing">http://xquartz.macosforge.org/landing</a>
+then compile Ruby 1.8.7 with the following:</p>
+
+<pre><code>$ export CPPFLAGS=-I/opt/X11/include
+$ CC=/usr/local/bin/gcc-4.2 rvm install 1.8.7
+</code></pre>
+
+<h2 id="install-ruby-200---mac-os-x">Install Ruby 2.0.0 - Mac OS X</h2>
+<p>Installing Ruby 2.0 is very straightforward, just run the following:</p>
+
+<pre><code>$ rvm install 2.0.0
+</code></pre>
+
+<p>Verify the Ruby 2.0 install by running the following commands:</p>
+
+<pre><code>$ rvm use 2.0.0
+$ ruby -v
+ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-darwin12.3.0]
+</code></pre>
+
+<p>If you want to make Ruby 2.0 your default version of ruby, run the following:</p>
+
+<pre><code>$ rvm use 2.0.0 --default
+</code></pre>
+
+<h2 id="remove-rvm---mac-os-x">Remove RVM - Mac OS X</h2>
+<p>Should you want to uninstall/remove RVM, it’s pretty easy.  First, run
+the following commands:</p>
+
+<pre><code>$ rvm implode
+$ gem uninstall rvm
+</code></pre>
+
+<p>Then just follow the instructions from <code>rvm implode</code>:</p>
+
+<ul>
+  <li>
+    <p>Delete the following files, if they exist:
+<code>/etc/rvmrc</code>
+<code>$HOME/.rvmrc</code></p>
+  </li>
+  <li>
+    <p>Also, remove the lines sourcing RVM scripts from 
+<code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and 
+<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn’t hurt
+after you do this, just to make sure).</p>
+  </li>
+</ul>
+
+<p>To uninstall Homebrew, run the following:</p>
+
+<pre><code>cd `brew --prefix`
+brew install libtool
+rm -rf Cellar
+rm `git ls-files`
+rm -r Library/Homebrew Library/Aliases Library/Formula Library/Contributions
+rm -rf .git
+rm -rf ~/Library/Caches/Homebrew
+</code></pre>
+
+<h1 id="linux">Linux</h1>
+
+<h2 id="install-rvm-and-ruby-19x---linux">Install RVM and Ruby 1.9.x - Linux</h2>
+<p>RVM installation is more straightforward on Linux, as the Ruby source was
+designed for the GCC compiler that ships with any Linux distribution.</p>
+
+<p>First install <code>curl</code>, so that you can fetch the RVM script.
+For Ubuntu, run
+the following command:</p>
+
+<pre><code>$ sudo apt-get update
+$ sudo apt-get install -y curl
+</code></pre>
+
+<p>For RedHat/CentOS:</p>
+
+<pre><code>$ sudo yum update
+$ sudo yum install -y curl
+</code></pre>
+
+<p>With curl installed, run the RVM install with the following commands:</p>
+
+<pre><code>$ \curl -L https://get.rvm.io | bash -s stable
+$ source $HOME/.rvm/scripts/rvm
+</code></pre>
+
+<p>On Ubuntu, run <code>rvm requirements</code> to install additional dependencies:</p>
+
+<pre><code>$ rvm requirements
+</code></pre>
+
+<p>For CentOS, <code>rvm requirements</code> will need to download packages from EPEL, so
+add the <code>--verify-downloads 1</code> parameter after the <code>rvm requirements</code> command:</p>
+
+<pre><code>$ rvm requirements --verify-downloads 1
+</code></pre>
+
+<p>Next build and install Ruby 1.9.3 (this will take awhile):</p>
+
+<pre><code>$ rvm install 1.9.3
+$ rvm use 1.9.3
+$ rvm rubygems latest
+</code></pre>
+
+<p>Verify rvm install:</p>
+
+<pre><code>$ rvm -h
+$ rvm list
+$ rvm use 1.9.3
+$ ruby -v
+ruby 1.9.3p429 (2013-05-15 revision 40747) [x86_64-linux]
+</code></pre>
+
+<h2 id="install-ruby-200---linux">Install Ruby 2.0.0 - Linux</h2>
+<p>Installing Ruby 2.0 is very straightforward, just run the following:</p>
+
+<pre><code>$ rvm install 2.0.0
+</code></pre>
+
+<p>Verify the Ruby 2.0 install by running the following commands:</p>
+
+<pre><code>$ rvm use 2.0.0
+$ ruby -v
+ruby 2.0.0p195 (2013-05-14 revision 40734) [x86_64-linux]
+</code></pre>
+
+<p>If you want to make Ruby 2.0 your default version of ruby, run the following:</p>
+
+<pre><code>$ rvm use 2.0.0 --default
+</code></pre>
+
+<h2 id="remove-rvm---linux">Remove RVM - Linux</h2>
+<p>Should you want to uninstall/remove RVM, it’s pretty easy.  First, run
+the following commands:</p>
+
+<pre><code>$ rvm implode
+$ gem uninstall rvm
+</code></pre>
+
+<p>Then just follow the instructions from <code>rvm implode</code>:</p>
+
+<ul>
+  <li>
+    <p>Delete the following files, if they exist:
+<code>/etc/rvmrc</code>
+<code>$HOME/.rvmrc</code></p>
+  </li>
+  <li>
+    <p>Also, remove the lines sourcing RVM scripts from
+<code>$HOME/.bash_profile</code> <code>/etc/zprofile</code> and
+<code>/etc/profile.d/rvm.sh</code> if they exist.  (A reboot doesn’t hurt
+after you do this, just to make sure).</p>
+  </li>
+</ul>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Using Rbenv to Manage Multiple Versions of Ruby</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-15T15:53:00-07:00" pubdate data-updated="true">Jun 15<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#mac-os-x">Mac OS X</a>    <ul>
+      <li><a href="#install-rbenv-and-ruby-19x---mac-os-x">Install Rbenv and Ruby 1.9.x - Mac OS X</a>        <ul>
+          <li><a href="#mac-os-x-mavericks-109">Mac OS X Mavericks 10.9</a></li>
+          <li><a href="#mac-os-x-snow-leopard-108-and-earlier">Mac OS X Snow Leopard 10.8 (and earlier)</a></li>
+        </ul>
+      </li>
+      <li><a href="#install-bundler---mac-os-x">Install Bundler - Mac OS X</a></li>
+      <li><a href="#install-ruby-200---mac-os-x">Install Ruby 2.0.0 - Mac OS X</a></li>
+      <li><a href="#upgrade-rbenv---mac-os-x">Upgrade Rbenv - Mac OS X</a></li>
+      <li><a href="#remove-rbenv---mac-os-x">Remove Rbenv - Mac OS X</a></li>
+    </ul>
+  </li>
+  <li><a href="#linux">Linux</a>    <ul>
+      <li><a href="#install-rbenv-and-ruby-19x---linux">Install Rbenv and Ruby 1.9.x - Linux</a></li>
+      <li><a href="#install-bundler---linux">Install Bundler - Linux</a></li>
+      <li><a href="#install-ruby-200---linux">Install Ruby 2.0.0 - Linux</a></li>
+      <li><a href="#upgrade-rbenv---linux">Upgrade Rbenv - Linux</a></li>
+      <li><a href="#remove-rbenv---linux">Remove Rbenv - Linux</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p><em>Updated December 15th, 2013:</em></p>
+
+<ul>
+  <li><em>Updated install link for homebrew, it has changed</em></li>
+  <li><em>Updated Xcode install instructions for Mac OS X Mavericks</em></li>
+  <li><em>Bumped ruby 1.9.3 version from 1.9.3p448 to 1.9.3p484</em></li>
+  <li><em>Bumped ruby 2.0.0 version from 2.0.0p247 to 2.0.0p353</em></li>
+</ul>
+
+<p><em>Updated July 9th, 2013:</em></p>
+
+<ul>
+  <li><em>Bumped ruby 1.9.3 version from 1.9.3p429 to 1.9.3p448</em></li>
+  <li><em>Bumped ruby 2.0.0 version from 2.0.0p195 to 2.0.0p247</em></li>
+  <li><em>Removed openssl workaround for compiling ruby 2.0.0 on Mac OS X - this has been fixed</em></li>
+</ul>
+
+<p>Out of the box, Ruby does not provide a mechanism to support multiple
+installed versions.  <a href="https://github.com/sstephenson/rbenv/">Rbenv</a> makes
+managing multiple versions of Ruby easy.  It’s a great way to work on
+current development projects using Ruby 1.9.x and be able to switch to
+Ruby 2.0.x for new work.  Rbenv is a lightweight alternative to
+<a href="http://rvm.io">Ruby Version Manager (RVM)</a>.  Rbenv does not include
+a way to manage gems, like with RVM, though most people prefer to use
+<a href="http://bundler.io">Bundler</a> gem management instead.</p>
+
+<p>Rbenv is supported on Linux and Mac OS X.  Rbenv doesn’t work on Windows (and
+isn’t really necessary on Windows as there is no system Ruby on Windows).
+On Windows, the <a href="http://rubyinstaller.org">RubyInstaller</a> and/or
+<a href="https://github.com/vertiginous/pik">Pik</a> are both good alternatives to
+work with multiple versions of Ruby on the same box.</p>
+
+<p>NOTE: Rbenv is incompatible with RVM because RVM overrides the
+<code>gem</code> command with a function.  If you want to switch to Rbenv,
+make sure you uninstall RVM first.  Run the following commands to uninstall
+RVM:</p>
+
+<pre><code>$ rvm implode
+$ gem uninstall rvm
+</code></pre>
+
+<p>Then remove/comment out the RVM loader line in <code>.bash_profile</code>
+and/or <code>.bashrc</code></p>
+
+<h1 id="mac-os-x">Mac OS X</h1>
+
+<h2 id="install-rbenv-and-ruby-19x---mac-os-x">Install Rbenv and Ruby 1.9.x - Mac OS X</h2>
+<p>First you’ll need to install a C compiler and some other command line tools
+to build Ruby from source.  You’ll need to install the Xcode Command Line
+Tools:  </p>
+
+<h3 id="mac-os-x-mavericks-109">Mac OS X Mavericks 10.9</h3>
+
+<p>If you are using the latest version of Mac OS X Mavericks, it has support
+for downloading the Xcode command line tools directly from a Terminal window.
+Run the following on a command line:</p>
+
+<pre><code>$ xcode-select --install
+</code></pre>
+
+<p>You will be prompted to either click on <code>Install</code> to just install the command
+line developer tools or click on <code>Get Xcode</code> to install both Xcode and the
+command line developer tools.  It can be handy to have Xcode as well, but
+it is a rather large multi-gigabyte download and not really necessary for
+Ruby development.  So if you want to get going quickly, just click on the
+<code>Install</code> button:</p>
+
+<p><img src="/images/xcodeselect.png" alt="xcode-select" /></p>
+
+<h3 id="mac-os-x-snow-leopard-108-and-earlier">Mac OS X Snow Leopard 10.8 (and earlier)</h3>
+
+<p>Versions of Mac OS X prior to Mavericks, like Snow Leopard do not have
+built-in support for downloading the Xcode command line developer tools, but you
+can download them directly from the Apple Developer web site
+<a href="http://developer.apple.com/downloads">developer.apple.com/downloads</a>.
+Here are the current direct download links for the Xcode command line tools
+as of this writing.  Download the applicable package for your version of
+Mac OS X:</p>
+
+<ul>
+  <li><a href="http://devimages.apple.com/downloads/xcode/command_line_tools_os_x_mountain_lion_for_xcode_october_2013.dmg">Xcode Command Line Tools for Mac OS X Mountain Lion 10.8</a></li>
+  <li><a href="http://devimages.apple.com/downloads/xcode/command_line_tools_for_xcode_os_x_lion_april_2013.dmg">Xcode Command Line Tools for Mac OS X Lion 10.7</a></li>
+</ul>
+
+<p>Once you have downloaded the .dmg file, double-click on the .dmg to open it,
+then double-click on the .mpkg file to run the Command Line Tools installer:</p>
+
+<p><img src="/images/commandlinetools.png" alt="xcode-select" /></p>
+
+<p>If you have time to install Xcode, it’s handy to have it around, though not
+really required for Ruby development.  If you are running Mac OS X Mountain
+Lion 10.8, you will need to make sure that you have OS X version 10.8.4 or
+later to install Xcode, otherwise the App Store will issue the following
+complaint:</p>
+
+<p><img src="/images/xcode1084.png" alt="xcode-select" /></p>
+
+<p>Download and install the latest version of Xcode from the App Store.
+Then install the <em>Command Line Tools</em> by choosing the menu item
+ <code>Xcode -&gt; Preferences...</code> to display the <code>Downloads</code> dialog.
+Click on the <em>Downloads</em> tab, then click on the download arrow to the right
+of the <code>Command Line Tools</code> component to install.</p>
+
+<p><img src="/images/xcodecommandline2.png" alt="Xcode Command Line Tools" /></p>
+
+<p>Next, you’ll need to install the Homebrew package manager to get all the
+dependencies needed to compile Ruby from source.  While you could manage
+these dependencies by hand, using a package manager is a better idea, as
+package managers know how to uninstall what they install.</p>
+
+<p>Run the following command to install Homebrew:</p>
+
+<pre><code>$ ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+</code></pre>
+
+<p>Run <code>brew doctor</code> and address any issues it discovers.  When
+all is well, you should see:</p>
+
+<pre><code>$ brew doctor
+Your system is raring to brew.
+</code></pre>
+
+<p>Next, install the additional dependencies to compile Ruby from source:</p>
+
+<pre><code># For update-system
+brew update
+brew tap homebrew/dupes
+# For ruby
+brew install apple-gcc42
+</code></pre>
+
+<p>And now install <code>rbenv</code> and the <code>ruby-build</code> plugin:</p>
+
+<pre><code>brew update
+brew install rbenv
+brew install ruby-build
+</code></pre>
+
+<p>Add <code>rbenv init</code> to your shell to enable shims and autocompletion:</p>
+
+<pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bash_profile
+$ source ~/.bash_profile
+</code></pre>
+
+<p>Restart shell as a login shell so that the PATH changes take effect:</p>
+
+<pre><code>$ exec $SHELL -l
+</code></pre>
+
+<p>Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p484)</p>
+
+<pre><code>$ rbenv install 1.9.3-p484
+</code></pre>
+
+<p>Rebuild the shim executable</p>
+
+<pre><code>$ rbenv rehash
+</code></pre>
+
+<p>You’ll need to run <code>rbenv rehash</code> every time you install a new version of Ruby
+or install a new gem.</p>
+
+<p>Set the latest version of ruby to be the default version of ruby</p>
+
+<pre><code>$ rbenv global 1.9.3-p484
+</code></pre>
+
+<p>Verify the ruby install.  If everything was installed correctly, the <code>ruby -v</code>
+command should report that version 1.9.3p484 is installed.</p>
+
+<pre><code>$ ruby -v
+ruby 1.9.3p484 (2013-11-22 revision 43786) [x86_64-darwin13.0.0]
+</code></pre>
+
+<h2 id="install-bundler---mac-os-x">Install Bundler - Mac OS X</h2>
+<p>You’ll need to use <a href="http://gembundler.com/">Bundler</a> to manage gems.  Installing
+a gem is also a good way to ensure that you’ve installed most of the Ruby
+prerequisites.</p>
+
+<p>First, make sure you update to the latest version of Rubygems:</p>
+
+<pre><code>$ gem update --system
+Updating rubygems-update
+Fetching: rubygems-update-2.1.11.gem (100%)
+Successfully installed rubygems-update-2.1.11
+Installing RubyGems 2.1.11
+RubyGems 2.1.11 installed
+...
+</code></pre>
+
+<p>Then install the <code>bundler</code> gem.  If the <code>gem install</code> command reports
+<code>Successfully installed</code> you’re good to go:</p>
+
+<pre><code>$ gem install bundler
+Successfully installed bundler-1.3.5
+Parsing documentation for bundler-1.3.5
+1 gem installed
+$ rbenv rehash
+</code></pre>
+
+<h2 id="install-ruby-200---mac-os-x">Install Ruby 2.0.0 - Mac OS X</h2>
+<p>As of this writing, Ruby 2.0.0-p353 is the latest version of Ruby 2.0.0.
+Use <code>rbenv install --list</code> to print out the available versions.  To install:</p>
+
+<pre><code>$ rbenv install 2.0.0-p353
+</code></pre>
+
+<p>To verify the install:</p>
+
+<pre><code>$ rbenv local 2.0.0-p353
+$ ruby -v
+ruby 2.0.0p353 (2013-11-22 revision 43784) [x86_64-darwin13.0.0]
+</code></pre>
+
+<p>If you want to make Ruby 2.0.0 the global default version of ruby:</p>
+
+<pre><code>$ rbenv global 2.0.0-p353
+</code></pre>
+
+<h2 id="upgrade-rbenv---mac-os-x">Upgrade Rbenv - Mac OS X</h2>
+<p>To upgrade rbenv via homebrew:</p>
+
+<pre><code>$ brew update
+$ brew upgrade rbenv
+$ brew upgrade ruby-build
+</code></pre>
+
+<h2 id="remove-rbenv---mac-os-x">Remove Rbenv - Mac OS X</h2>
+<p>Uninstall the packages you installed via homebrew:</p>
+
+<pre><code>brew uninstall rbenv
+brew uninstall ruby-build
+</code></pre>
+
+<p>Remove the following directory:</p>
+
+<pre><code>rm -rf $HOME/.rbenv
+</code></pre>
+
+<p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
+
+<h1 id="linux">Linux</h1>
+
+<h2 id="install-rbenv-and-ruby-19x---linux">Install Rbenv and Ruby 1.9.x - Linux</h2>
+<p>Make sure the prerequisite packages are installed.</p>
+
+<p>Ubuntu prerequisites:</p>
+
+<pre><code>$ sudo apt-get update
+$ sudo apt-get install -y build-essential git
+$ sudo apt-get install -y libxml2-dev libxslt-dev libssl-dev
+</code></pre>
+
+<p>RHEL/CentOS prerequisites:</p>
+
+<pre><code>$ sudo yum update
+$ sudo yum install -y git
+$ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
+$ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
+$ sudo yum install -y autoconf automake libtool bison
+$ sudo yum install -y libxml2-devel libxslt-devel 
+</code></pre>
+
+<p>Download the rbenv source distribution to
+$HOME/.rbenv:</p>
+
+<pre><code>$ git clone git://github.com/sstephenson/rbenv.git $HOME/.rbenv
+</code></pre>
+
+<p>Add $HOME/.rbenv/bin to your $PATH</p>
+
+<pre><code>$ echo 'export PATH="$HOME/.rbenv/bin:$PATH"' &gt;&gt; $HOME/.bashrc
+</code></pre>
+
+<p>Add <code>rbenv init</code> to your shell to enable shims and autocompletion:</p>
+
+<pre><code>$ echo 'eval "$(rbenv init -)"' &gt;&gt; $HOME/.bashrc
+</code></pre>
+
+<p>Restart shell as a login shell so that the PATH changes take effect:</p>
+
+<pre><code>$ exec $SHELL -l
+</code></pre>
+
+<p>Install the <code>ruby-build</code> plugin, which provides an
+<code>rbenv install</code> command to simplify the process of compiling
+and install new Ruby versions:</p>
+
+<pre><code>$ git clone git://github.com/sstephenson/ruby-build.git $HOME/.rbenv/plugins/ruby-build
+</code></pre>
+
+<p>Install the latest version of ruby 1.9.x (at the time of this writing 1.9.3-p484)</p>
+
+<pre><code>$ rbenv install 1.9.3-p484
+</code></pre>
+
+<p>Rebuild the shim executable</p>
+
+<pre><code>$ rbenv rehash
+</code></pre>
+
+<p>You’ll need to run <code>rbenv rehash</code> every time you install a new
+version of Ruby or install a new gem.</p>
+
+<p>Set the latest version of ruby to be the default version of ruby</p>
+
+<pre><code>$ rbenv global 1.9.3-p484
+</code></pre>
+
+<p>Verify the ruby install.  If everything was installed correctly, the
+<code>ruby -v</code> command should report that version 1.9.3p484 is installed.</p>
+
+<pre><code>$ ruby -v
+ruby 1.9.3p484 (2013-11-22 revision 43786) [x86_64-linux]
+</code></pre>
+
+<h2 id="install-bundler---linux">Install Bundler - Linux</h2>
+
+<p>You’ll need to use <a href="http://gembundler.com/">Bundler</a> to manage gems.
+Installing a gem is also a good way to ensure that you’ve installed most
+of the Ruby prerequisites.</p>
+
+<p>First, make sure you update to the latest version of Rubygems:</p>
+
+<pre><code>$ gem update --system
+</code></pre>
+
+<p>Then install the <code>bundler</code> gem.  If the <code>gem install</code> command reports
+<code>Successfully installed</code> you’re good to go:</p>
+
+<pre><code>$ gem install bundler
+Successfully installed bundler-1.3.5
+Parsing documentation for bundler-1.3.5
+1 gem installed
+$ rbenv rehash
+</code></pre>
+
+<h2 id="install-ruby-200---linux">Install Ruby 2.0.0 - Linux</h2>
+<p>As of this writing, Ruby 2.0.0-p353 is the latest version of Ruby 2.0.0.
+Use <code>rbenv install --list</code> to print out the available versions.  To install:</p>
+
+<pre><code>$ rbenv install 2.0.0-p353
+</code></pre>
+
+<p>To verify the install:</p>
+
+<pre><code>$ rbenv local 2.0.0-p353
+$ ruby -v
+ruby 2.0.0p353 (2013-11-22 revision 43784) [x86_64-linux]
+</code></pre>
+
+<p>If you want to make Ruby 2.0.0 the global default version of ruby (but
+currently Chef requires Ruby 1.9.x):</p>
+
+<pre><code>$ rbenv global 2.0.0-p353
+</code></pre>
+
+<h2 id="upgrade-rbenv---linux">Upgrade Rbenv - Linux</h2>
+<p>Since Rbenv is a Git repository, upgrading is just a matter of refreshing the
+source:</p>
+
+<pre><code>$ cd $HOME/.rbenv
+$ git pull
+</code></pre>
+
+<h2 id="remove-rbenv---linux">Remove Rbenv - Linux</h2>
+<p>To uninstall/remove Rbenv, remove the following directory:</p>
+
+<pre><code>$ rm -rf $HOME/.rbenv
+</code></pre>
+
+<p>And remember to remove whatever you added to <code>$HOME/.bash_profile</code></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/">Using Pik to Manage Multiple Versions of Ruby on Windows</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-10T18:09:00-07:00" pubdate data-updated="true">Mar 10<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Out of the box, Ruby does not provide a mechanism to support multiple installed
+versions.  <code>pik</code> is a third-party tool that can be used to switch
+between multiple versions of the Ruby interpreter on Windows.</p>
+
+<h1 id="install-ruby">Install Ruby</h1>
+<p>Install at least one Ruby interpreter environment using the RubyInstaller
+from <a href="http://rubyinstaller.org">http://rubyinstaller.org</a>.  While pik can
+install some versions of Ruby, the versions of Ruby it knows to install is
+quite limited, and it is just much easier to use RubyInstaller for Windows
+to install them.</p>
+
+<p>The choice of Ruby environments to install is up to you.  I have the latest
+version of 1.9.3 installed as my main development environment, and Ruby 2.0.0 
+to play around with the next generation of the language.  When you install
+Ruby, do not add the Ruby executables to your PATH or associate .rb/.rbw
+files with the Ruby installation (the default choice) - <code>pik</code> will
+manage this setting:</p>
+
+<p><img src="/images/rubyinstaller.png" alt="Ruby Installer" /></p>
+
+<h1 id="installing-pik">Installing pik</h1>
+<p>Download the latest .MSI installer from <a href="https://github.com/vertiginous/pik/downloads">pik downloads on github</a>
+(as of this writing <a href="https://github.com/downloads/vertiginous/pik/pik-0.3.0.pre.msi">0.3.0</a>) and run the Pik Setup Wizard - the default options are fine:</p>
+
+<p><img src="/images/pikinstaller.png" alt="Pik Installer" /></p>
+
+<p>You can verify that <code>pik</code> installed properly by running the
+following in a Command Prompt:</p>
+
+<pre><code>&gt; pik --version
+pik 0.3.0.pre on Microsoft Windows [Version 6.1.7601]
+by Gordon Thiesfeld (gthiesfeld@gmail.com)
+</code></pre>
+
+<h1 id="registering-ruby-environments-with-pik">Registering Ruby environments with pik</h1>
+<p>Use the <code>pik add</code> command to register your installed ruby
+environments with pik.  For example, I have Ruby 1.8.7, 1.9.3, and 2.0.0
+installed on my Windows development box, so I typed the following in a
+Command Prompt:</p>
+
+<pre><code>&gt; pik add C:\Ruby187\bin
+INFO: Adding:  [ruby-]1.8.7-p371
+      Located at:  C:\Ruby187\bin
+
+&gt; pik add C:\Ruby193\bin
+INFO: Adding:  [ruby-]1.9.3-p392
+      Located at:  C:\Ruby193\bin
+
+&gt; pik add C:\Ruby200\bin
+INFO: Adding:  [ruby-]2.0.0-p0
+      Located at:  C:\Ruby2000\bin
+</code></pre>
+
+<p>Use the <code>pik list</code> command to list all the ruby interpreters
+registered with pik:</p>
+
+<pre><code>&gt; pik list
+   ruby-1.8.7-p371
+   ruby-1.9.3-p392
+   ruby-2.0.0-p0
+</code></pre>
+
+<h1 id="set-a-default-ruby">Set a default Ruby</h1>
+<p>The <code>pik use</code> command will allow you to switch between your
+registered ruby interpreters:</p>
+
+<pre><code>&gt; pik use ruby-2.0.0-p0
+&gt; ruby -v
+ruby 2.0.0p0 (2013-02-024) [i386-mingw32]
+</code></pre>
+
+<p>Add the <code>--default</code> parameter to set one version as the default:</p>
+
+<pre><code>&gt; pik use ruby-1.9.3-p392 --default
+</code></pre>
+
+<p>You can use the <code>pik default</code> command to switch to this version:</p>
+
+<pre><code>&gt; pik default
+&gt; ruby -v
+ruby 1.9.3p392 (2013-02-022) [i386-mingw32]
+</code></pre>
+
+<p>Unfortunately when you open a new command prompt, pik is not automatically
+loaded, so you will notice that there is no default ruby loaded:</p>
+
+<p><img src="/images/rubynewcommand.png" alt="Ruby not found'" /></p>
+
+<p>Either run the <code>pik default</code> command to load pik (and the
+default ruby interpreter) or add one particular Ruby interpreter to your
+user or system PATH environment variable (via <code>Control Panel -&gt; System
+-&gt; Advanced -&gt; Environment Variables….</code>):</p>
+
+<p><img class="left" src="/images/environment1.png" width="350" height="394" title="'Environment control panel'" />
+<img class="right" src="/images/environment2.png" width="350" height="394" title="'User PATH'" /></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/">Try Out Sensu Monitoring Using Virtual Box, Vagrant and Chef</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-02-28T22:54:00-08:00" pubdate data-updated="true">Feb 28<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#install-virtualbox">Install VirtualBox</a></li>
+  <li><a href="#install-vagrant">Install Vagrant</a></li>
+  <li><a href="#download-the-sensu-chef-cookbook">Download the sensu-chef cookbook</a></li>
+  <li><a href="#install-ruby--rubygems">Install Ruby &amp; RubyGems</a></li>
+  <li><a href="#install-ruby-devkit-windows">Install Ruby DevKit (Windows)</a></li>
+  <li><a href="#create-the-sensu-chef-virtual-machine">Create the sensu-chef virtual machine</a></li>
+</ul>
+
+<p><em>Updated September 2nd, 2013</em></p>
+
+<ul>
+  <li><em>Updated to use the sensu-chef 0.5.5 cookbook</em></li>
+</ul>
+
+<p>I’ve been using Sensu Monitoring in production for about three to four months
+now.  It’s a nice, lightweight monitoring framework, designed with the cloud
+in mind and for use with modern configuration management frameworks like
+Chef and Puppet.  For more information on Sensu, check out the article
+<a href="http://portertech.ca/2011/11/01/sensu-a-monitoring-framework/">Why Sonian created Sensu (by Sean Porter)</a>
+and the associated articles and links on the <a href="https://github.com/sensu/sensu/wiki">Sensu Wiki</a></p>
+
+<p>In this article, I’m going to present a quick overview on how to test and
+evaluate Sensu using the <a href="https://github.com/sensu/sensu-chef">Sensu Chef Cookbook</a>
+Through the magic of Oracle VirtualBox and Vagrant, combined with Chef, you
+can quickly deploy Sensu to a local virtual machine instance, and kick the
+tires on Sensu to evaluate whether or not it is a good monitoring solution
+for you.  These instructions apply to Mac OS X, Linux, and/or Windows for
+the host operating system.</p>
+
+<h1 id="install-virtualbox">Install VirtualBox</h1>
+<p>VirtualBox is an open source virtualization platform, similar to VMWare
+Fusion/Workstation that runs on Mac OS X, Linux and Windows (and a few more
+platforms).  While I personally prefer VMWare Fusion to VirtualBox (VirtualBox
+can be a bit flakey at times), a lot of automation around VirtualBox has been
+developed within the Chef community, which impossible to ignore.  Fortunately
+on both Mac OS X and Linux, VirtualBox can peacefully coexist with VMWare
+Fusion/Workstation (NOTE: If you use KVM virtualization on Linux, VirtualBox
+can also coexist, but you need to be careful not to run VirtualBox and KVM
+images simultaneously).</p>
+
+<p>Just download and run the VirtualBox installer from the <a href="https://www.virtualbox.org/wiki/Downloads">VirtualBox download
+page</a>.  Just download and install
+the latest 4.2.x version of VirtualBox.  Make sure you save the VirtualBox
+installer as it comes with an uninstall tool, should you wish to remove
+VirtualBox at some point in the future.</p>
+
+<h1 id="install-vagrant">Install Vagrant</h1>
+<p>After installing VirtualBox, next install Vagrant.  Vagrant is an automation
+framework for VirtualBox.  Grab the latest Vagrant installer for your OS from
+the <a href="http://downloads.vagrantup.com/">Vagrant Downloads page</a> and run install.
+The Vagrant install will automatically add the Vagrant binaries to your PATH.</p>
+
+<h1 id="download-the-sensu-chef-cookbook">Download the sensu-chef cookbook</h1>
+<p>Grab the latest version of the sensu-chef cookbook from GitHub by running
+the following command:</p>
+
+<pre><code>git clone https://github.com/sensu/sensu-chef.git
+</code></pre>
+
+<h1 id="install-ruby--rubygems">Install Ruby &amp; RubyGems</h1>
+<p>The sensu-chef cookbook requires Ruby &amp; RubyGems.</p>
+
+<p>On Mac OS X and Linux, I strongly recommend that you use either RVM or Rbenv
+to make sure that you are using the latest version of Ruby instead of whatever
+version of Ruby your system installs by default.</p>
+
+<p>See my previous articles on <a href="http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/">RVM</a> or <a href="http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">Rbenv</a>.  NOTE: If you don’t
+know whether or not to decide between RVM or Rbenv, go with RVM.</p>
+
+<h1 id="install-ruby-devkit-windows">Install Ruby DevKit (Windows)</h1>
+<p>The sensu-chef recipe is dependent on the json gem.  On Windows, you will get
+the following error if you do not have the proper Ruby DevKit installed:</p>
+
+<pre><code>Installing json (1.7.7)
+Gem::InstallError: The 'json' native gem requires installed build tools.
+</code></pre>
+
+<p>Go to <a href="http://rubyinstaller.org/downloads">http://rubyinstaller.org/downloads</a>
+and refer to the <em>Which Development Kit?</em> section of the web page about which
+DevKit you need to install.</p>
+
+<p>Download the appropriate DevKit toolkit, extract it and run the following
+in a Command Prompt:</p>
+
+<pre><code>&gt; ruby dk.rb init
+[INFO] found RubyInstaller v1.9.3 at C:/Ruby193
+
+Initialization complete! Please review and modify the auto-generated
+'config.yml' file to ensure it contains the root directories to all
+of the installed Rubies you want enhanced by the DevKit.
+
+&gt; ruby dk.rb install
+[INFO] Updating convenience notice gem override for 'C:/Ruby193'
+[INFO] Installing 'C:/Ruby193/lib/ruby/site_ruby/devkit.rb'
+</code></pre>
+
+<h1 id="create-the-sensu-chef-virtual-machine">Create the sensu-chef virtual machine</h1>
+
+<p>Run the following commands to create the sensu-chef virtual machine:</p>
+
+<pre><code>cd sensu-chef/examples
+gem install bundler
+# On Windows, restart the command prompt before running 'bundle install' as
+# gem install will reset the PATH
+bundle install
+librarian-chef install
+vagrant up
+</code></pre>
+
+<p>If all goes well, the <code>chef-solo</code> run should have succeeded, and
+you should be able to view the Sensu dashboard by going to the following URL
+with the username <code>admin</code> and the password <code>secret</code>:
+<a href="http://localhost:8080">http://localhost:8080</a></p>
+
+<p><img src="/images/sensudashboard.png" alt="Sensu Dashboard" /></p>
+
+<p>If this is successful, just run the following command to log in to your
+newly-created virtual machine instance:</p>
+
+<pre><code>vagrant ssh
+</code></pre>
+
+<p>And refer to the <a href="https://github.com/sensu/sensu/wiki">Sensu wiki</a> on how 
+to experiment with various configuration options.</p>
+
+<p>When you are done playing with the test VM, run the following command to
+destroy the VM:</p>
+
+<pre><code>vagrant destroy
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/09/21/survey-of-test-kitchen-providers/">Survey of Test Kitchen providers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/">Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/28/windows-server-2012-automated-install-settings/">Windows Server 2012 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/27/windows-8-automated-install-settings/">Windows 8 Automated Install Settings</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

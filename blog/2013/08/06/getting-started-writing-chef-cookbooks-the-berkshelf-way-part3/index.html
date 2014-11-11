@@ -1,0 +1,1854 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3 - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Iteration #13 - Install Test Kitchen Testing Iteration #13 - Show the Test Kitchen version Iteration #14 - Create a Kitchen YAML file Testing &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-06T12:46:00-07:00" pubdate data-updated="true">Aug 6<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#iteration-13---install-test-kitchen">Iteration #13 - Install Test Kitchen</a>    <ul>
+      <li><a href="#testing-iteration-13---show-the-test-kitchen-version">Testing Iteration #13 - Show the Test Kitchen version</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-14---create-a-kitchen-yaml-file">Iteration #14 - Create a Kitchen YAML file</a>    <ul>
+      <li><a href="#testing-iteration-14---provision-with-test-kitchen">Testing Iteration #14 - Provision with Test Kitchen</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-15---provisioning-ubuntu">Iteration #15 - Provisioning Ubuntu</a>    <ul>
+      <li><a href="#testing-iteration-15---deploy-locally-to-ubuntu-1204">Testing Iteration #15 - Deploy locally to Ubuntu 12.04</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-16---writing-your-first-serverspec-test">Iteration #16 - Writing your first Serverspec test</a>    <ul>
+      <li><a href="#testing-iteration-16---running-your-first-serverspec-test">Testing Iteration #16 - Running your first Serverspec test</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-17---completing-the-webserver-test-suite">Iteration #17 - Completing the webserver test suite</a>    <ul>
+      <li><a href="#testing-iteration-17---running-the-suite">Testing Iteration #17 - Running the suite</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-18---completing-the-database-test-suite">Iteration #18 - Completing the database test suite</a>    <ul>
+      <li><a href="#testing-iteration-19---kitchen-test">Testing Iteration #19 - kitchen test</a></li>
+    </ul>
+  </li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<p><em>Update January 7, 2014</em>
+* <em>Note about Michel Goetz’s blog series on ChefSpec</em></p>
+
+<p><em>Updated December 29, 2013</em></p>
+
+<ul>
+  <li><em>Bumped Test Kitchen from 1.0.0.beta.3 to 1.1.1</em></li>
+  <li><em>Bumped CentOS to version 6.5</em></li>
+  <li><em>Per Kelly Setzer, updated os check with recent RSpec updates</em></li>
+</ul>
+
+<p><em>Updated September 10, 2013</em></p>
+
+<ul>
+  <li><em>Bumped VirtualBox images from version 4.2.16 to 4.2.18</em></li>
+  <li><em>Bumped Vagrant from version 1.2.7 to 1.3.1</em></li>
+</ul>
+
+<p><em>Updated September 1, 2013</em></p>
+
+<ul>
+  <li><em>Bumped Test Kitchen from 1.0.0.beta.2 to 1.0.0.beta.3</em></li>
+</ul>
+
+<p>This is the third article in a series on writing Opscode Chef cookbooks the
+Berkshelf Way.  Here’s a link to <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a> and
+<a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>.  The source code examples covered in this
+article can be found on Github: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
+
+<p>In this installment, we’re going to learn how to use Test Kitchen to 
+automate all the verification steps we did by hand for each iteration in
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a> and
+<a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>.  If not anything else, it’s worth learning
+Test Kitchen because OpsCode, the company that makes Chef, has encouraged the
+use of Test Kitchen to verify community cookbooks.</p>
+
+<p>Test Kitchen is built on top of vagrant and supplements the <code>Vagrantfile</code> file
+you have been using so far in this series to do local automated testing.  The
+main benefit to Test Kitchen is that it makes it easy to run tests on multiple
+platforms in parallel, which is more difficult to do with just a <code>Vagrantfile</code>.
+We’ll be showcasing this aspect of Test Kitchen by ensuring that Myface works
+on both the CentOS 6.4 and Ubuntu 12.04 Linux distributions.</p>
+
+<h1 id="iteration-13---install-test-kitchen">Iteration #13 - Install Test Kitchen</h1>
+<p>Edit <code>myface/Gemfile</code> and add the following lines to load the
+Test Kitchen gems:</p>
+
+<pre><code>gem 'test-kitchen'
+gem 'kitchen-vagrant'
+</code></pre>
+
+<p>Depending on when you went through this article series, your <code>Gemfile</code>
+may already have these additions.  After editing, your <code>myface/Gemfile</code>
+should look like the following after editing:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Gemfile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">source</span> <span class="s1">&#39;https://rubygems.org&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;berkshelf&#39;</span>
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;test-kitchen&#39;</span>
+</span><span class="line"><span class="n">gem</span> <span class="s1">&#39;kitchen-vagrant&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>After you have updated the <code>Gemfile</code> run <code>bundle install</code> to download the
+test-kitchen gem and all its dependencies:</p>
+
+<pre><code>$ bundle install
+Fetching gem metadata from https://rubygems.org/........
+Fetching gem metadata from https://rubygems.org/..
+Resolving dependencies...
+Using i18n (0.6.9)
+Using multi_json (1.8.2)
+Using activesupport (3.2.16)
+...
+Installing test-kitchen (1.1.1)
+Using bundler (1.5.1)
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
+</code></pre>
+
+<h2 id="testing-iteration-13---show-the-test-kitchen-version">Testing Iteration #13 - Show the Test Kitchen version</h2>
+
+<p>If everything worked properly you should be able to run the <code>kitchen --version</code>
+command to see your installed Test Kitchen’s version information</p>
+
+<pre><code>$ kitchen --version
+Test Kitchen version 1.1.1
+</code></pre>
+
+<h1 id="iteration-14---create-a-kitchen-yaml-file">Iteration #14 - Create a Kitchen YAML file</h1>
+
+<p>In order to use Test Kitchen on a cookbook, first you need to add a few more
+dependencies and create a template Kitchen YAML file.  Test Kitchen makes this
+easy by providing the <code>kitchen init</code> command to perform all these
+initialization steps automatically </p>
+
+<pre><code>$ kitchen init
+      create  .kitchen.yml
+      append  Thorfile
+      create  test/integration/default
+      append  .gitignore
+      append  .gitignore
+      append  Gemfile
+      append  Gemfile
+You must run 'bundle install' to fetch any new gems.
+</code></pre>
+
+<p>Since <code>kitchen init</code> modified your Gemfile, you need to re-run <code>bundle install</code>
+(as suggested above) to pick up the new gem dependencies:</p>
+
+<pre><code>$ bundle install
+Fetching gem metadata from https://rubygems.org/........
+Fetching additional metadata from https://rubygems.org/..
+Resolving dependencies...
+Using i18n (0.6.9)
+Using multi_json (1.8.2)
+Using activesupport (3.2.16)
+...
+Using safe_yaml (0.9.7)
+Using test-kitchen (1.1.1)
+Installing kitchen-vagrant (0.14.0)
+Using bundler (1.5.1)
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
+</code></pre>
+
+<p>Most importantly, this new <code>bundle install</code> pass installed the
+<code>kitchen-vagrant</code> vagrant driver for Test Kitchen.</p>
+
+<p>Now that you have created a <code>.kitchen.yml</code> Kitchen YAML file and loaded all
+the necessary gems, let’s customize the file so that we’ll use 
+to verify that the Myface cookbook works on CentOS 6.4, like we were doing in
+the previous installments with the <code>Vagrantfile</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/.kitchen.yml </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="nn">---</span>
+</span><span class="line"><span class="l-Scalar-Plain">driver</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vagrant</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">provisioner</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos65</span>
+</span><span class="line">  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos65</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">suites</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
+</span><span class="line">  <span class="l-Scalar-Plain">run_list</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;recipe[myface]&quot;</span><span class="p-Indicator">]</span>
+</span><span class="line">  <span class="l-Scalar-Plain">attributes</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">mysql</span><span class="p-Indicator">:</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_root_password</span><span class="p-Indicator">:</span> <span class="s">&quot;rootpass&quot;</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_debian_password</span><span class="p-Indicator">:</span> <span class="s">&quot;debpass&quot;</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_repl_password</span><span class="p-Indicator">:</span> <span class="s">&quot;replpass&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Everything in the YAML file should be straightforward to understand, except
+perhaps the <code>attributes</code> item in the <code>suites</code> stanza.  These values 
+came from the <code>Vagrantfile</code> we used in the previous installments of this
+series.  Here’s an excerpt from the <code>Vagrantfile</code> - at the end are some
+values that Berkshelf initialzed (which we used in
+<a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>).</p>
+
+<pre><code>...
+  config.vm.provision :chef_solo do |chef|
+    chef.json = {
+      :mysql =&gt; {
+        :server_root_password =&gt; 'rootpass',
+        :server_debian_password =&gt; 'debpass',
+        :server_repl_password =&gt; 'replpass'
+      }
+    }
+
+   chef.run_list = [
+        "recipe[myface::default]"
+    ]
+  end
+end
+</code></pre>
+
+<p>Those <code>Vagrantfile</code> attributes were just converted into a format that the
+Test Kitchen YAML file format finds acceptable.</p>
+
+<p>You can add even more Vagrantfile customizations to your <code>kitchen.yml</code> file
+if you like.  For example, you can assign a host-only network IP so you can
+look at the MyFace website with a browser on your host.  Add the following
+<code>network:</code> block to a platform’s <code>driver_config:</code>:</p>
+
+<pre><code>...
+driver_config:
+  network:
+  - ["private_network", {ip: "33.33.33.10"}]
+...
+</code></pre>
+
+<p>After adding this block your <code>.kitchen.yml</code> should look like this:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/.kitchen.yml </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="nn">---</span>
+</span><span class="line"><span class="l-Scalar-Plain">driver</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vagrant</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">provisioner</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos65</span>
+</span><span class="line">  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos65</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box</span>
+</span><span class="line">    <span class="l-Scalar-Plain">network</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="s">&quot;private_network&quot;</span><span class="p-Indicator">,</span> <span class="p-Indicator">{</span><span class="nv">ip</span><span class="p-Indicator">:</span> <span class="s">&quot;33.33.33.10&quot;</span><span class="p-Indicator">}]</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">suites</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
+</span><span class="line">  <span class="l-Scalar-Plain">run_list</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;recipe[myface]&quot;</span><span class="p-Indicator">]</span>
+</span><span class="line">  <span class="l-Scalar-Plain">attributes</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">mysql</span><span class="p-Indicator">:</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_root_password</span><span class="p-Indicator">:</span> <span class="s">&quot;rootpass&quot;</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_debian_password</span><span class="p-Indicator">:</span> <span class="s">&quot;debpass&quot;</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_repl_password</span><span class="p-Indicator">:</span> <span class="s">&quot;replpass&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>For more information on the <code>kitchen-vagrant</code> settings, refer to the
+README.md file for <code>kitchen-vagrant</code> at <a href="https://github.com/opscode/kitchen-vagrant/blob/master/README.md">https://github.com/opscode/kitchen-vagrant/blob/master/README.md</a></p>
+
+<h2 id="testing-iteration-14---provision-with-test-kitchen">Testing Iteration #14 - Provision with Test Kitchen</h2>
+
+<p>You can do nearly everything that you were doing with vagrant just using Test
+Kitchen.  The Test Kitchen equivalent of the <code>vagrant up</code> command is 
+<code>kitchen converge</code>.  Try running the <code>kitchen converge</code> command now to verify
+that your <code>.kitchen.yml</code> file is valid.  When you run <code>kitchen converge</code> it will
+spin up a CentOS 6.5 vagrant test node instance and use Chef Solo to provision
+the MyFace cookbook on the test node:</p>
+
+<pre><code>$ kitchen converge 
+-----&gt; Starting Kitchen (v1.1.1)
+-----&gt; Creating &lt;default-centos65&gt;...
+       Bringing machine 'default' up with 'virtualbox' provider...
+       [default] Importing base box 'centos65'...
+       [default] Matching MAC address for NAT networking...
+       [default] Setting the name of the VM...
+       [default] Clearing any previously set forwarded ports...
+       [Berkshelf] Skipping Berkshelf with --no-provision
+       [default] Fixed port collision for 22 =&gt; 2222. Now on port 2200.
+       [default] Clearing any previously set network interfaces...
+       [default] Preparing network interfaces based on configuration...
+       [default] Forwarding ports...
+       [default] -- 22 =&gt; 2200 (adapter 1)
+       [default] Running 'pre-boot' VM customizations...
+       [default] Booting VM...
+       [default] Waiting for machine to boot. This may take a few minutes...
+       [default] Machine booted and ready!
+       [default] Setting hostname...
+       Vagrant instance &lt;default-centos65&gt; created.
+       Finished creating &lt;default-centos65&gt; (0m51.76s).
+-----&gt; Converging &lt;default-centos65&gt;...
+       Preparing files for transfer
+       Resolving cookbook dependencies with Berkshelf...
+       Removing non-cookbook files before transfer
+-----&gt; Installing Chef Omnibus (true)
+       downloading https://www.opscode.com/chef/install.sh
+         to file /tmp/install.sh
+       trying wget...
+       Downloading Chef  for el...
+       downloading https://www.opscode.com/chef/metadata?v=&amp;prerelease=false&amp;p=el&amp;pv=6&amp;m=x86_64
+         to file /tmp/install.sh.2158/metadata.txt
+       trying wget...
+       url	https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+       md5	10f3d0da82efa973fe91cc24a6a74549
+       sha256	044558f38d25bbf75dbd5790ccce892a38e5e9f2a091ed55367ab914fbd1cfed
+       downloaded metadata file looks valid...
+       downloading https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+         to file /tmp/install.sh.2158/chef-.x86_64.rpm
+       trying wget...
+       Checksum compare with sha256sum succeeded.
+       Installing Chef
+       installing with rpm...
+       warning: /tmp/install.sh.2158/chef-.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+Preparing...                #####  ########################################### [100%]
+   1:chef                          ########################################### [100%]
+       Thank you for installing Chef!
+       Transfering files to &lt;default-centos65&gt;
+       [2013-12-29T11:44:52-08:00] INFO: Forking chef instance to converge...
+       Starting Chef Client, version 11.8.2
+       [2013-12-29T11:44:52-08:00] INFO: *** Chef 11.8.2 ***
+       [2013-12-29T11:44:52-08:00] INFO: Chef-client pid: 2257
+       [2013-12-29T11:44:53-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+       [2013-12-29T11:44:53-08:00] INFO: Run List is [recipe[myface::default]]
+       ...
+       Recipe: apache2::default
+         * service[apache2] action restart[2013-12-29T11:47:41-08:00] INFO: Processing service[apache2] action restart (apache2::default line 210)
+       [2013-12-29T11:47:43-08:00] INFO: service[apache2] restarted
+
+           - restart service service[apache2]
+
+       [2013-12-29T11:47:43-08:00] INFO: Chef Run complete in 170.575449983 seconds
+       [2013-12-29T11:47:43-08:00] INFO: Running report handlers
+       [2013-12-29T11:47:43-08:00] INFO: Report handlers complete
+       Chef Client finished, 100 resources updated
+       Finished converging &lt;default-centos65&gt; (3m43.06s).
+-----&gt; Kitchen is finished. (4m35.40s)
+</code></pre>
+
+<p>To display the results of the Chef Run, type in the <code>kitchen list</code> command:</p>
+
+<pre><code>$ kitchen list
+Instance           Driver   Provisioner  Last Action
+default-centos65   Vagrant  Chef Solo    Converged
+</code></pre>
+
+<p>If the run succeeded, it should display <code>Converged</code> in the <code>Last Action</code> field.</p>
+
+<p>The Test Kitchen equivalent of the <code>vagrant ssh</code> command is <code>kitchen login</code>.
+Since Test Kitchen supports multiple instances, you will need to pass in
+the instance name for which you wish to login as a parameter (which you can
+get from the <code>kitchen list</code> output).  We want to login to the CentOS 6.5
+instance (the only instance for now), so type in the command
+<code>kitchen login default-centos65</code> to login:</p>
+
+<pre><code>$ kitchen login default-centos65
+Last login: Sun Dec 29 13:16:33 2013 from 10.0.2.2
+Welcome to your Packer-built virtual machine.
+[vagrant@default-centos65 ~]$
+</code></pre>
+
+<p>Now you can poke around in the image the same way you did with <code>vagrant ssh</code>,
+for example, verifying that the httpd server is running:</p>
+
+<pre><code>[vagrant@default-centos65 ~]$ sudo /sbin/service httpd status
+httpd (pid  4410) is running...
+</code></pre>
+
+<p>After you are done working in the test instance, make sure to run the
+<code>exit</code> command to log out so that you return back to your host prompt:</p>
+
+<pre><code>[vagrant@default-centos65 ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+</code></pre>
+
+<p>Should you need it, the Test Kitchen equivalent of <code>vagrant destroy</code> is
+<code>kitchen destroy</code>.  If you make a change to the chef cookbook and
+want to re-deploy, the Test Kitchen equivalent of <code>vagrant provision</code> is
+<code>kitchen converge</code>.</p>
+
+<p>Since you added a private IP for you instance, you can also view the
+MyFace website on your host with your favorite web browser:</p>
+
+<p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
+
+<p><img src="/images/welcometomyface2.png" alt="Welcome to MyFace" /></p>
+
+<h1 id="iteration-15---provisioning-ubuntu">Iteration #15 - Provisioning Ubuntu</h1>
+
+<p>We haven’t really made use of any unique Test Kitchen features yet, let’s
+start now.  We’ll also deploy our cookbook locally to Ubuntu 12.04 for
+testing, in addition to CentOS 6.5.</p>
+
+<p>Edit <code>.kitchen.yml</code> and add a reference to a Ubuntu 12.04 basebox alongside
+the existing CentOS 6.5 basebox in the <code>platforms</code> stanza:</p>
+
+<pre><code>- name: ubuntu1204
+  driver_config:
+    box: ubuntu1204
+    box_url: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/ubuntu1204.box
+    network:
+    - ["private_network", {ip: "33.33.33.11"}]
+</code></pre>
+
+<p>After editing, your <code>.kitchen.yml</code> file should resemble the following:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/.kitchen.yml </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="nn">---</span>
+</span><span class="line"><span class="l-Scalar-Plain">driver</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">vagrant</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">provisioner</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">chef_solo</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">platforms</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos65</span>
+</span><span class="line">  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">centos65</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box</span>
+</span><span class="line">    <span class="l-Scalar-Plain">network</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="s">&quot;private_network&quot;</span><span class="p-Indicator">,</span> <span class="p-Indicator">{</span><span class="nv">ip</span><span class="p-Indicator">:</span> <span class="s">&quot;33.33.33.10&quot;</span><span class="p-Indicator">}]</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu1204</span>
+</span><span class="line">  <span class="l-Scalar-Plain">driver_config</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">ubuntu1204</span>
+</span><span class="line">    <span class="l-Scalar-Plain">box_url</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/ubuntu1204.box</span>
+</span><span class="line">    <span class="l-Scalar-Plain">network</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="p-Indicator">-</span> <span class="p-Indicator">[</span><span class="s">&quot;private_network&quot;</span><span class="p-Indicator">,</span> <span class="p-Indicator">{</span><span class="nv">ip</span><span class="p-Indicator">:</span> <span class="s">&quot;33.33.33.11&quot;</span><span class="p-Indicator">}]</span>
+</span><span class="line">
+</span><span class="line"><span class="l-Scalar-Plain">suites</span><span class="p-Indicator">:</span>
+</span><span class="line"><span class="p-Indicator">-</span> <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
+</span><span class="line">  <span class="l-Scalar-Plain">run_list</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&quot;recipe[myface]&quot;</span><span class="p-Indicator">]</span>
+</span><span class="line">  <span class="l-Scalar-Plain">attributes</span><span class="p-Indicator">:</span>
+</span><span class="line">    <span class="l-Scalar-Plain">mysql</span><span class="p-Indicator">:</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_root_password</span><span class="p-Indicator">:</span> <span class="s">&quot;rootpass&quot;</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_debian_password</span><span class="p-Indicator">:</span> <span class="s">&quot;debpass&quot;</span>
+</span><span class="line">      <span class="l-Scalar-Plain">server_repl_password</span><span class="p-Indicator">:</span> <span class="s">&quot;replpass&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Before we run <code>kitchen converge</code> to do a Chef run, we need to fix our cookbook
+so it will run successfully on Ubuntu 12.04.  If you tried to deploy now you
+would notice that the MyFace cookbook would fail to deploy to Ubuntu 12.04
+successfully due to a reference to the <code>php-mysql</code> package in 
+<code>myface/receipes/webserver.rb</code>.</p>
+
+<pre><code>... 
+include_recipe 'apache2'
+include_recipe 'apache2::mod_php5'
+
+package 'php-mysql' do
+  action :install
+  notifies :restart, 'service[apache2]'
+end
+...
+</code></pre>
+
+<p>On Ubuntu the package name should be <code>php5-mysql</code> instead of <code>php-mysql</code>.</p>
+
+<p>As with most issues in the Chef world, there’s a cookbook for that!
+The Opscode <code>php</code> cookbook has conditionals to reference the correct name
+for the <code>php-mysql</code> package on a number of platforms.</p>
+
+<p>Edit <code>myface/metadata.rb</code> and add a reference to the latest version of the
+<code>php</code> cookbook (currently 1.3.10):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/metadata.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="rb"><span class="line"><span class="nb">name</span>             <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">maintainer</span>       <span class="s1">&#39;Mischa Taylor&#39;</span>
+</span><span class="line"><span class="n">maintainer_email</span> <span class="s1">&#39;mischa@misheska.com&#39;</span>
+</span><span class="line"><span class="n">license</span>          <span class="s1">&#39;Apache 2.0&#39;</span>
+</span><span class="line"><span class="n">description</span>      <span class="s1">&#39;Installs/Configures myface&#39;</span>
+</span><span class="line"><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">version</span>          <span class="s1">&#39;2.0.0&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">depends</span> <span class="s1">&#39;apache2&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.8.0&#39;</span>
+</span><span class="line"><span class="n">depends</span> <span class="s1">&#39;mysql&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 4.0.0&#39;</span>
+</span><span class="line"><span class="n">depends</span> <span class="s1">&#39;database&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.6.0&#39;</span>
+</span><span class="line"><span class="n">depends</span> <span class="s1">&#39;php&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.3.0&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In <code>myface/recipes/webserver.rb</code> replace the <code>package "php-mysql" do ... end</code>
+block with the following reference:</p>
+
+<pre><code>include_recipe 'php::module_mysql'
+</code></pre>
+
+<p>After editing, <code>myface/recipes/webserver.rb</code> should look like this:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/webserver.rb </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+</pre></td><td class="code"><pre><code class="rb"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: webserver</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;user&#39;</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s1">&#39;/bin/bash&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s1">&#39;apache2&#39;</span>
+</span><span class="line"><span class="n">include_recipe</span> <span class="s1">&#39;apache2::mod_php5&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s1">&#39;php::module_mysql&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s1">&#39;000-default&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;apache&#39;</span><span class="o">][</span><span class="s1">&#39;dir&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;config&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s1">&#39;apache2.conf.erb&#39;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;document_root&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s1">&#39;0755&#39;</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write site</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;document_root&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/index.php&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s1">&#39;index.php.erb&#39;</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s1">&#39;0644&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;config&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="testing-iteration-15---deploy-locally-to-ubuntu-1204">Testing Iteration #15 - Deploy locally to Ubuntu 12.04</h2>
+
+<p>Now that we’ve fixed up our cookbook to work on Ubuntu 12.04, let’s test it
+out!  Run <code>kitchen list</code> to display the list of Test Kitchen instances:</p>
+
+<pre><code>Instance             Driver   Provisioner  Last Action
+default-centos65     Vagrant  Chef Solo    Converged
+default-ubuntu1204   Vagrant  Chef Solo    &lt;Not Created&gt;
+</code></pre>
+
+<p>Notice that after editing the <code>.kitchen.yml</code> we now have an Ubuntu 12.04
+instance called <code>default-ubuntu1204</code> and it is in the <code>&lt;Not Created&gt;</code>
+state.</p>
+
+<p>Go ahead setup the Ubuntu 12.04 instance by running <code>kitchen converge</code> again:</p>
+
+<pre><code>$ kitchen converge default-ubuntu1204
+</code></pre>
+
+<p>Note that this time we added an optional instance parameter so that Test
+Kitchen only performs the action against the specified instance.  If you do
+not specify this parameter, it defaults to <code>all</code>, running the command against
+all instances.  After about 5-10 minutes or so, you should observe that Test
+Kitchen downloaded an Ubuntu 12.04 basebox, booted a VM with the basebox, and
+successfully deployed our chef cookbook.</p>
+
+<p>Run the <code>kitchen list</code> command again to verify that the Ubuntu 12.04 instance
+is now in the <code>Set Up</code> state as well, showing that there were no errors:</p>
+
+<pre><code>Instance             Driver   Provisioner  Last Action
+default-centos65     Vagrant  Chef Solo    Converged
+default-ubuntu1204   Vagrant  Chef Solo    Converged
+</code></pre>
+
+<p>You just fixed an error with the MyFace cookbook that prevented deployment to
+Ubuntu 12.04, and verified that the cookbook correctly deploys to both 
+Ubuntu 12.04 and Centos 6.5.</p>
+
+<p>Use the <code>kitchen login</code> command to ssh into each instance and poke around
+if you like.  You now have two local vagrant VMs instantiated to play with!</p>
+
+<pre><code>$ kitchen login default-ubuntu1204
+Welcome to Ubuntu 12.04.3 LTS (GNU/Linux 3.8.0-29-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com/
+Last login: Sun Dec 29 13:30:36 2013 from 10.0.2.2
+$ [...poke around, run some commands...]
+$ exit
+Connection to 127.0.0.1 closed.
+
+$ kitchen login default-centos65
+Last login: Sun Dec 29 13:21:10 2013 from 10.0.2.2
+Welcome to your Packer-built virtual machine.
+[vagrant@default-centos65 ~]$ [...poke around, run some commands...]
+[vagrant@default-centos65 ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+</code></pre>
+
+<p>You can view the websites for each instance by viewing the appropriate
+private IP</p>
+
+<pre><code>CentOS 6.5:   http://33.33.33.10
+Ubuntu 12.04: http://33.33.33.11
+</code></pre>
+
+<h1 id="iteration-16---writing-your-first-serverspec-test">Iteration #16 - Writing your first Serverspec test</h1>
+
+<p>While it’s really helpful to know now that the Myface cookbook will converge on
+both a CentOS 6.5 and Ubuntu 12.04 setup, we haven’t written any tests yet.
+Let’s do that.</p>
+
+<p>It’s helpful to know that Test Kitchen was designed as a framework for
+post-convergence system testing.  You are supposed to set up a bunch of test
+instances, perform a Chef run to apply your cookbook’s changes to them, then
+when this is process is complete your tests can inspect the state of each
+test instance after the Chef run is finished.  This is how we tested our
+nodes by hand in <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>
+and <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>.  Now we are going to automate the process.</p>
+
+<p>NOTE: It is a <a href="http://watirmelon.com/2012/01/31/introducing-the-software-testing-ice-cream-cone/">testing anti-pattern to rely too much on system tests, even if they are automated</a>
+so make sure you are judicious in your use of system tests.  It can be
+difficult to maintain a lot of system tests over time and keep them relevant.
+The tests you performed by hand in <a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>
+and <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>
+to verify MyFace are at just the right level of detail for a system test.
+Do just enough to verify that the system works correctly after it was
+configured.  In a future post, I’ll cover unit tests in more detail using
+<a href="http://acrmp.github.io/chefspec/">Chefspec</a> and
+<a href="https://github.com/guard/guard">Guard</a>.  For now, let’s focus on system tests.</p>
+
+<p>Test Kitchen finds tests by following a directory naming convention.  When
+you installed Test Kitchen, it created the <code>test/integration/default</code>
+subdirectory underneath your main cookbook.  It looks for test code in the
+following directory underneath <code>test/integration</code>:</p>
+
+<pre><code>&lt;COOKBOOOK-PATH&gt;/test/integration/&lt;TEST-SUITE-NAME&gt;/&lt;PLUGIN-NAME&gt;
+</code></pre>
+
+<p>A collection of tests is called a <a href="http://en.wikipedia.org/wiki/Test_suite">test suite</a>.  Following Test Kitchen install’s lead, we’ll just call our first
+suite of tests <code>default</code>.  Test Kitchen has a number of plugins which will
+install and setup any components necessary for running tests.  We’ll be using
+the <code>severspec</code> plugin for our tests.  So you will be placing your test files
+in the following directory:</p>
+
+<pre><code>myface/test/integration/default/serverspec
+</code></pre>
+
+<p>Create the <code>myface/test/integration/default/serverspec</code> subdirectory now.</p>
+
+<p>To start, we need to add a Ruby helper script which loads our Test Kitchen
+plugin.  We’ll call it
+<code>myface/test/integration/default/serverspec/spec_helper.rb</code>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/spec_helper.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;serverspec&#39;</span>
+</span><span class="line"><span class="nb">require</span> <span class="s1">&#39;pathname&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="kp">include</span> <span class="ss">Serverspec</span><span class="p">:</span><span class="ss">:Helper</span><span class="o">::</span><span class="no">Exec</span>
+</span><span class="line"><span class="kp">include</span> <span class="ss">Serverspec</span><span class="p">:</span><span class="ss">:Helper</span><span class="o">::</span><span class="no">DetectOS</span>
+</span><span class="line">
+</span><span class="line"><span class="no">RSpec</span><span class="o">.</span><span class="n">configure</span> <span class="k">do</span> <span class="o">|</span><span class="n">c</span><span class="o">|</span>
+</span><span class="line">  <span class="n">c</span><span class="o">.</span><span class="n">before</span> <span class="ss">:all</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">c</span><span class="o">.</span><span class="n">os</span> <span class="o">=</span> <span class="n">backend</span><span class="p">(</span><span class="ss">Serverspec</span><span class="p">:</span><span class="ss">:Commands</span><span class="o">::</span><span class="no">Base</span><span class="p">)</span><span class="o">.</span><span class="n">check_os</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This code is modeled after the examples provided on the
+<a href="http://serverspec.org/tutorial.html">serverspec</a> website.</p>
+
+<p>Create a subdirectory underneath <code>myface/test/integration/default/serverspec</code>
+called <code>localhost</code>:</p>
+
+<pre><code>myface/test/integration/default/serverspec/localhost
+</code></pre>
+
+<p>It is a serverspec convention to put tests (a.k.a. “specs”) underneath
+<code>spec_helper.rb</code> in a subdirectory denoting the host name to be tested.
+Serverspec supports testing via SSH access to remote hosts.  We won’t
+be using this capability as we will be testing local images, so we’ll just
+use <code>localhost</code> for the host name.</p>
+
+<p>Now, let’s write our first test!  If you recall in 
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/#testing-iteration-1">Testing Iteration #1</a>, we ran
+the following command to verify that the myface user was created:</p>
+
+<pre><code>$ getent password myface
+myface:x:497:503::/home/myface:/bin/bash
+</code></pre>
+
+<p>Create the a file named <code>myface/test/integration/default/serverspec/localhost/webserver_spec.rb</code> that contains a serverspec test to perform the same action:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;getent passwd myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/myface:x:\d+:\d+::\/home\/myface:\/bin\/bash/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Serverspec provides extensions to Rspec to help you more easily test servers.
+If you’re not familiar with Rspec syntax, Code School has an excellent
+tutorial on <a href="http://rspec.codeschool.com/">Testing with Rspec</a>.  Even if you
+don’t know Rspec, you should still be able to follow along with
+provided examples.</p>
+
+<p>You can find a list of serverspec resources at the following link:
+<a href="http://serverspec.org/resource_types.html">http://serverspec.org/resource_types.html</a>.  We’re using the <code>command</code>
+resource to run the command <code>getent password myface</code> and match the
+resultant output with a Ruby regular expression (because the uid and gid
+field could be any number between 100-999, because myface is a system
+account).</p>
+
+<h2 id="testing-iteration-16---running-your-first-serverspec-test">Testing Iteration #16 - Running your first Serverspec test</h2>
+
+<p>OK, let’s run our first test!</p>
+
+<p>To start you need to run <code>kitchen setup</code> so that Test Kitchen loads and
+configures all the required plugins.  In keeping with the restaurant theme,
+the component that manages Test Kitchen plugins is called
+<a href="http://en.wikipedia.org/wiki/Busser">Busser</a>.</p>
+
+<pre><code>$ kitchen setup
+-----&gt; Starting Kitchen (v1.1.1)
+-----&gt; Setting up &lt;default-centos65&gt;...
+Fetching: thor-0.18.1.gem (100%)
+Fetching: busser-0.6.0.gem (100%)
+       Successfully installed thor-0.18.1
+       Successfully installed busser-0.6.0
+       2 gems installed
+-----&gt; Setting up Busser
+       Creating BUSSER_ROOT in /tmp/busser
+       Creating busser binstub
+       Plugin serverspec installed (version 0.2.5)
+-----&gt; Running postinstall for serverspec plugin
+       Finished setting up &lt;default-centos65&gt; (0m52.12s).
+-----&gt; Setting up &lt;default-ubuntu1204&gt;...
+Fetching: thor-0.18.1.gem (100%)
+Fetching: busser-0.6.0.gem (100%)
+Successfully installed thor-0.18.1
+Successfully installed busser-0.6.0
+2 gems installed
+-----&gt; Setting up Busser
+       Creating BUSSER_ROOT in /tmp/busser
+       Creating busser binstub
+       Plugin serverspec installed (version 0.2.5)
+-----&gt; Running postinstall for serverspec plugin
+       Finished setting up &lt;default-ubuntu1204&gt; (0m15.36s).
+-----&gt; Kitchen is finished. (1m7.77s)
+</code></pre>
+
+<p>After running <code>kitchen setup</code>, next run <code>kitchen verify</code> to run your test
+suite.</p>
+
+<pre><code>$ kitchen verify
+-----&gt; Starting Kitchen (v1.1.1)
+-----&gt; Verifying &lt;default-centos65&gt;...
+       Suite path directory /tmp/busser/suites does not exist, skipping.
+       Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+       Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+       /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+       MyFace webserver
+         should have a myface user
+
+       Finished in 0.04293 seconds
+       1 example, 0 failures
+       Finished verifying &lt;default-centos65&gt; (0m1.61s).
+-----&gt; Verifying &lt;default-ubuntu1204&gt;...
+       Suite path directory /tmp/busser/suites does not exist, skipping.
+Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+ /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+MyFace webserver
+  should have a myface user
+
+Finished in 0.11307 seconds
+1 example, 0 failures
+       Finished verifying &lt;default-ubuntu1204&gt; (0m1.66s).
+-----&gt; Kitchen is finished. (0m3.80s)
+</code></pre>
+
+<p>Finally run <code>kitchen list</code> to display the results of your test run.</p>
+
+<pre><code>$ kitchen list
+Instance             Driver   Provisioner  Last Action
+default-centos-64    Vagrant  Chef Solo    Verified
+default-ubuntu-1204  Vagrant  Chef Solo    Verified
+</code></pre>
+
+<p>If Test Kitchen displays the <code>Last Action</code> as <code>Verified</code>, all the tests passed.</p>
+
+<h1 id="iteration-17---completing-the-webserver-test-suite">Iteration #17 - Completing the webserver test suite</h1>
+
+<p>Now let’s dive in and encode all the rest of the tests from
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>.</p>
+
+<p>While we used the <code>command</code> resource to encode our first test, this isn’t
+the optimal way to encode this test as a serverspec.  We can make use of the 
+<code>user</code> resource to encode a test more succinctly:</p>
+
+<pre><code>it 'should have a myface user' do
+  expect(user 'myface').to exist
+end
+</code></pre>
+
+<p>The <code>myface/test/integration/default/serverspec/localhost/webserver_spec.rb</code>
+file should resemble the following:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">user</span> <span class="s1">&#39;myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">exist</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Run <code>kitchen verify</code> and <code>kitchen list</code> to re-run your test.  You should see
+the same result as before - <code>1 example, 0 failures</code>:</p>
+
+<pre><code>$ kitchen verify
+$ kitchen list
+</code></pre>
+
+<p>Only use the <code>command</code> resource as a method of last resort.  First check to
+see if serverspec has a better resource to perform a test.</p>
+
+<p>Let’s move on to the next command from
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/#testing-iteration-3">Testing Iteration #3</a>:</p>
+
+<pre><code>$ vagrant ssh -c "sudo /sbin/service httpd status"
+httpd (pid  4831) is running.
+</code></pre>
+
+<p>Use the servspec <code>service</code> resource to perform a test to ensure that the
+httpd service is running and it automatically starts on bootup:</p>
+
+<pre><code>it 'should be running the httpd server' do
+  expect(service 'httpd').to be_running
+  expect(service 'httpd').to be_enabled
+end
+</code></pre>
+
+<p>Add this statement to your <code>webserver_spec</code> file:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">user</span> <span class="s1">&#39;myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">exist</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should be running the httpd server&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Run <code>kitchen verify</code> and <code>kitchen list</code> again to run this new test:</p>
+
+<pre><code>$ kitchen verify
+-----&gt; Starting Kitchen (v1.1.1)
+-----&gt; Verifying &lt;default-centos65&gt;...
+...
+       MyFace webserver
+         should have a myface user
+         should be running the httpd server
+
+       Finished in 0.04706 seconds
+       2 examples, 0 failures
+       Finished verifying &lt;default-centos65&gt; (0m1.61s).
+-----&gt; Verifying &lt;default-ubuntu1204&gt;...
+       Removing /tmp/busser/suites/serverspec
+Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+/opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+MyFace webserver
+  should have a myface user
+httpd: unrecognized service
+  should be running the httpd server (FAILED - 1)
+
+Failures:
+
+  1) MyFace webserver should be running the httpd server
+     Failure/Error: expect(service 'httpd').to be_running
+       ps aux | grep -w -- httpd | grep -qv grep
+       expected Service "httpd" to be running
+     # /tmp/busser/suites/serverspec/localhost/webserver_spec.rb:10:in `block (2 levels) in &lt;top (required)&gt;'
+
+Finished in 0.05906 seconds
+2 examples, 1 failure
+
+Failed examples:
+
+rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb:9 # MyFace webserver should be running the httpd server
+/opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation failed
+Ruby Script[/tmp/busser/gems/gems/busser-serverspec-0.2.5/lib/busser/runner_plugin/../serverspec/runner.rb /tmp/busser/suites/serverspec] exit code was 1
+&gt;&gt;&gt;&gt;&gt;&gt; Verify failed on instance &lt;default-ubuntu1204&gt;.
+&gt;&gt;&gt;&gt;&gt;&gt; Please see .kitchen/logs/default-ubuntu1204.log for more details
+&gt;&gt;&gt;&gt;&gt;&gt; ------Exception-------
+&gt;&gt;&gt;&gt;&gt;&gt; Class: Kitchen::ActionFailed
+&gt;&gt;&gt;&gt;&gt;&gt; Message: SSH exited (1) for command: [sh -c 'BUSSER_ROOT="/tmp/busser" GEM_HOME="/tmp/busser/gems" GEM_PATH="/tmp/busser/gems" GEM_CACHE="/tmp/busser/gems/cache" ; export BUSSER_ROOT GEM_HOME GEM_PATH GEM_CACHE; sudo -E /tmp/busser/bin/busser test']
+&gt;&gt;&gt;&gt;&gt;&gt; ----------------------
+...
+$ kitchen list
+Instance            Driver   Provisioner  Last Action
+default-centos65    Vagrant  ChefSolo     Verified
+default-ubuntu1204  Vagrant  ChefSolo     Verified
+</code></pre>
+
+<p>Uh oh!  That’s not what we expected! The tests failed on our Ubuntu 12.04
+instance - and yet it still says that it is <code>Verified</code>, but the tests passed
+on CentOS 6.5.  The <code>Last Action</code> field is literally the last action.  It does
+not report success or failure state, so you’ll want to pay attention to the
+output of <code>kitchen verify</code> and note whether or not all the tests passed.</p>
+
+<p>In this case, the reason for the failure is that on Ubuntu, the name of the
+Apache httpd service is <code>apache2</code> not <code>httpd</code>.  Let’s address this by adding a conditional that checks the <code>os</code> custom configuration setting that is set in 
+<code>spec_helper.rb</code>.</p>
+
+<p>I didn’t explain what this did before, but it runs a serverspec helper
+method to check the os type before each spec/test run.  When running under
+Ubuntu (or Debian), the value of <code>RSpec.configuation.os</code> will be <code>Debian</code>,
+otherwise the value will be <code>RedHat</code> if it is running under any RHEL variant,
+including CentOS.  So the following conditional should do the trick:</p>
+
+<pre><code>it 'should be running the httpd server' do
+  case RSpec.configuration.os
+  when "Debian"
+    expect(service 'apache2').to be_running
+    expect(service 'apache2').to be_enabled
+  else
+    expect(service 'httpd').to be_running
+    expect(service 'httpd').to be_enabled
+  end
+end 
+</code></pre>
+
+<p>After this change, your <code>webserver_spec.rb</code> file should resemble the following:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">user</span> <span class="s1">&#39;myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">exist</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should be running the httpd server&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="k">case</span> <span class="no">RSpec</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">os</span><span class="o">[</span><span class="ss">:family</span><span class="o">]</span>
+</span><span class="line">    <span class="k">when</span> <span class="s2">&quot;Ubuntu&quot;</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;apache2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;apache2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Run <code>kitchen verify</code> and <code>kitchen list</code> again - all the tests should pass:</p>
+
+<pre><code>$ kitchen verify
+-----&gt; Starting Kitchen (v1.1.1)
+-----&gt; Verifying &lt;default-centos65&gt;...
+       Removing /tmp/busser/suites/serverspec
+       Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+       Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+       /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+       MyFace webserver
+         should have a myface user
+         should be running the httpd server
+
+       Finished in 0.04858 seconds
+       2 examples, 0 failures
+       Finished verifying &lt;default-centos65&gt; (0m1.58s).
+-----&gt; Verifying &lt;default-ubuntu1204&gt;...
+       Removing /tmp/busser/suites/serverspec
+Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+/opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+MyFace webserver
+  should have a myface user
+  should be running the httpd server
+
+Finished in 0.06551 seconds
+2 examples, 0 failures
+       Finished verifying &lt;default-ubuntu1204&gt; (0m1.59s).
+-----&gt; Kitchen is finished. (0m3.46s)
+
+$ kitchen list
+Instance             Driver   Provisioner  Last Action
+default-centos65     Vagrant  Chef Solo    Verified
+default-ubuntu1204   Vagrant  Chef Solo    Verified
+</code></pre>
+
+<p>The final test that is used for the rest of the Test Iterations in
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Part 1</a>
+basically amounts to visiting http://33.33.33.10 with a web browser
+and eyeballing the results.  That would be difficult to automate with
+serverspec, and one would probably want to use a web automation framework
+like <a href="http://docs.seleniumhq.org/">Selenium</a> to do this.  However, you can
+at least use serverspec to verify that the Apache Server is serving up
+content on port 80 (the default http port).</p>
+
+<p>We can check that the server is listening on port 80 with the <code>port</code> resource:</p>
+
+<pre><code>it 'should be listening on port 80' do
+  expect(port 80).to be_listening
+end
+</code></pre>
+
+<p>We’ll resort to using the <code>command</code> resource to check to see if the server
+accepts an HTTP connections and returns something that looks reasonable, as
+there doesn’t seem to be an obvious higher-level resource to perform this
+action:</p>
+
+<pre><code>it 'should respond to an HTTP request' do
+  expect(command 'curl localhost').to return_stdout /.*&lt;title&gt;MyFace Users&lt;\/title&gt;.*/
+end
+</code></pre>
+
+<p>After adding these two checks, this is what your <code>webserver_spec.rb</code> file should
+look like:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/webserver_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace webserver&#39;</span> <span class="k">do</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have a myface user&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">user</span> <span class="s1">&#39;myface&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">exist</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should be running the httpd server&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="k">case</span> <span class="no">RSpec</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">os</span><span class="o">[</span><span class="ss">:family</span><span class="o">]</span>
+</span><span class="line">    <span class="k">when</span> <span class="s2">&quot;Ubuntu&quot;</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;apache2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;apache2&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;httpd&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should respond to an HTTP request&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;curl localhost&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*&lt;title&gt;MyFace Users&lt;\/title&gt;.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now we have an automated script that performs some basic tests to verify
+that our cookbook enabled the web server properly.  Let the robots do some
+of the grunge work!</p>
+
+<h2 id="testing-iteration-17---running-the-suite">Testing Iteration #17 - Running the suite</h2>
+
+<p>Do a final <code>kitchen verify</code> and <code>kitchen list</code>.  Everything should look good:</p>
+
+<pre><code>$ kitchen verify
+-----&gt; Starting Kitchen (v1.1.1)
+-----&gt; Verifying &lt;default-centos65&gt;...
+       Removing /tmp/busser/suites/serverspec
+       Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+       Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+       /opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+       MyFace webserver
+         should have a myface user
+         should be running the httpd server
+         should respond to an HTTP request
+
+       Finished in 0.05525 seconds
+       3 examples, 0 failures
+       Finished verifying &lt;default-centos65&gt; (0m1.53s).
+-----&gt; Verifying &lt;default-ubuntu1204&gt;...
+       Removing /tmp/busser/suites/serverspec
+Uploading /tmp/busser/suites/serverspec/localhost/webserver_spec.rb (mode=0644)
+Uploading /tmp/busser/suites/serverspec/spec_helper.rb (mode=0644)
+-----&gt; Running serverspec test suite
+/opt/chef/embedded/bin/ruby -I/tmp/busser/suites/serverspec -S /opt/chef/embedded/bin/rspec /tmp/busser/suites/serverspec/localhost/webserver_spec.rb --color --format documentation
+
+MyFace webserver
+  should have a myface user
+  should be running the httpd server
+  should respond to an HTTP request
+
+Finished in 0.15965 seconds
+3 examples, 0 failures
+       Finished verifying &lt;default-ubuntu1204&gt; (0m1.68s).
+-----&gt; Kitchen is finished. (0m3.53s)
+
+$ kitchen list
+Instance             Driver   Provisioner  Last Action
+default-centos65     Vagrant  Chef Solo    Verified
+default-ubuntu1204   Vagrant  Chef Solo    Verified
+</code></pre>
+
+<h1 id="iteration-18---completing-the-database-test-suite">Iteration #18 - Completing the database test suite</h1>
+
+<p>Let’s wrap this up by finishing off the tests for the database portion in
+<a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>
+Create a new file called <code>myface/test/integration/default/serverspec/localhost/database_spec.rb</code> to contain the database tests.</p>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-7">Testing Iteration #7</a>
+we checked to see if the <code>mysqld</code> service was running with the following
+command:</p>
+
+<pre><code>$ sudo /sbin/service mysqld status
+</code></pre>
+
+<p>There is a similar name difference between the Ubuntu and CentOS services as
+there was with the Apache web server.  For Ubuntu, the name of the
+MySQL service is <code>mysql</code>.  For CentOS, the name of the service is <code>mysqld</code>.</p>
+
+<p>This should be a piece of cake to write a serverspec test for now:</p>
+
+<pre><code>it 'should be running the database server' do
+  case RSpec.configuration.os[:family]
+  when "Ubuntu"
+    expect(service 'mysql').to be_running
+    expect(service 'mysql').to be_enabled
+  else
+    expect(service 'mysqld').to be_running
+    expect(service 'mysqld').to be_enabled
+  end
+end
+</code></pre>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-8">Testing Iteration #8</a>
+we ran the following command to verify that the myface database was created:</p>
+
+<pre><code>$ mysqlshow -uroot -prootpass
+</code></pre>
+
+<p>That’s a simple <code>command</code> resource regular expression:</p>
+
+<pre><code>it 'should have created the myface database' do
+  expect(command 'mysqlshow -uroot -prootpass').to return_stdout /.*myface.*/
+end
+</code></pre>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-9">Testing Iteration #9</a>
+we created a myface-app MySQL database user and to check to see if the
+myface_app user only has rights to the myface database with the following
+commands:</p>
+
+<pre><code>$ mysql -uroot -prootpass -e "select user,host from mysql.user;"
+$ mysql -uroot -prootpass -e "show grants for 'myface_app'@'localhost';"
+</code></pre>
+
+<p>Again, these are just more serverspec <code>command</code>s (<code>\s</code> indicates “any
+whitespace character”):</p>
+
+<pre><code>it 'should have created the myface_app user' do
+  expect(command 'mysql -uroot -prootpass -e "select user,host from mysql.user;"').to return_stdout /.*myface_app\s+localhost.*/
+end
+
+it 'should have given the myface_app database user rights to myface' do
+  expect(command 'mysql -uroot -prootpass -e "show grants for \'myface_app\'@\'localhost\';"').to return_stdout /.*GRANT ALL PRIVILEGES ON `myface`.\* TO \'myface_app\'@\'localhost\'.*/
+end
+</code></pre>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#testing-iteration-10">Testing Itegration #10</a>
+we dumped the contents of the <code>users</code> table to verify it got created:</p>
+
+<pre><code>$ mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"'
+</code></pre>
+
+<p>You guessed it, yet another <code>command</code>:</p>
+
+<pre><code>it 'should have created the users table' do
+  expect(command 'mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e "select id,user_name from users;"').to return_stdout /.*mbower.*/
+end
+</code></pre>
+
+<p>In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/#test-iteration-11">Testing Iteration #11</a> we checked
+to see if the php5_module was successfully installed:</p>
+
+<pre><code>$ sudo /usr/sbin/httpd -M | grep php5
+</code></pre>
+
+<p>Note that there is a <code>php_config</code> serverspec resource for checking
+PHP config settings, but that’s not helpful for checking the existence
+of PHP, so another command will do (just remember the service name is
+different between the two different OSes):</p>
+
+<pre><code>it 'should have installed the Apache php5_module' do
+  case RSpec.configuration.os[:family]
+  when "Ubuntu"
+    expect(command 'sudo /usr/sbin/apache2 -M | grep php5').to return_stdout /.*php5_module.*/
+  else
+    expect(command 'sudo /usr/sbin/httpd -M | grep php5').to return_stdout /.*php5_module.*/
+  end
+end
+</code></pre>
+
+<p>And there you have it!  Your final <code>database_spec.rb</code> file should resemble the
+following:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/test/integration/default/serverspec/localhost/database_spec.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">require</span> <span class="s1">&#39;spec_helper&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">describe</span> <span class="s1">&#39;MyFace database&#39;</span> <span class="k">do</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should be running the database server&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="k">case</span> <span class="no">RSpec</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">os</span><span class="o">[</span><span class="ss">:family</span><span class="o">]</span>
+</span><span class="line">    <span class="k">when</span> <span class="s2">&quot;Ubuntu&quot;</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;mysql&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;mysql&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;mysqld&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_running</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">service</span> <span class="s1">&#39;mysqld&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">be_enabled</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have created the myface database&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;mysqlshow -uroot -prootpass&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*myface.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have created the myface_app user&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;mysql -uroot -prootpass -e &quot;select user,host from mysql.user;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*myface_app\s+localhost.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have given the myface_app database user rights to myface&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;mysql -uroot -prootpass -e &quot;show grants for \&#39;myface_app\&#39;@\&#39;localhost\&#39;;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*GRANT ALL PRIVILEGES ON `myface`.\* TO \&#39;myface_app\&#39;@\&#39;localhost\&#39;.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have created the users table&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;mysql -hlocalhost -umyface_app -psupersecret -Dmyface -e &quot;select id,user_name from users;&quot;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*mbower.*/</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">it</span> <span class="s1">&#39;should have installed the Apache php5_module&#39;</span> <span class="k">do</span>
+</span><span class="line">    <span class="k">case</span> <span class="no">RSpec</span><span class="o">.</span><span class="n">configuration</span><span class="o">.</span><span class="n">os</span><span class="o">[</span><span class="ss">:family</span><span class="o">]</span>
+</span><span class="line">    <span class="k">when</span> <span class="s2">&quot;Ubuntu&quot;</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;sudo /usr/sbin/apache2 -M | grep php5&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*php5_module.*/</span>
+</span><span class="line">    <span class="k">else</span>
+</span><span class="line">      <span class="n">expect</span><span class="p">(</span><span class="n">command</span> <span class="s1">&#39;sudo /usr/sbin/httpd -M | grep php5&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">to</span> <span class="n">return_stdout</span> <span class="sr">/.*php5_module.*/</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="testing-iteration-19---kitchen-test">Testing Iteration #19 - kitchen test</h2>
+
+<p>Perform a final <code>kitchen verify</code> and <code>kitchen list</code> to check that there are
+no syntax errors.  9 tests succeeded!</p>
+
+<p>In addition to the <code>kitchen</code> commands that you have used so far, there’s one
+other command that it quite useful - <code>kitchen test</code>.  It runs all the commands
+in the Test Kitchen test lifecycle in order:</p>
+
+<p><code>kitchen create</code> - Creates a vagrant instance.</p>
+
+<p><code>kitchen converge</code> - Provision the vagrant instance with Chef, using the run list specified in the <code>.kitchen.yml</code> file.</p>
+
+<p><code>kitchen setup</code> - Install and configure any necessary Test Kitchen plugins needed to run tests.</p>
+
+<p><code>kitchen verify</code> - Run tests.</p>
+
+<p><code>kitchen destroy</code> - Destroy the vagrant instance, removing it from memory &amp; disk.</p>
+
+<p>When you are in the midst of writing tests, using the above commands
+interactively can save time (like only running <code>kitchen verify</code> after adding
+a new test).  But once the tests are written, normally you will run
+<code>kitchen test</code> to run everything in one shot, preferably running as a “latch”
+triggered when your cookbook changes are committed to source control.  This
+will ensure that your tests are run often.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>So hopefully now you understand how to use Test Kitchen and what it’s useful
+for.  In the next article in this series, we’ll cover writing tests that can
+run before deployment, providing feedback more quickly than with
+Test Kitchen (albeit in more limited circumstances), using Chefspec and Guard.
+(In the meantime check out <a href="https://twitter.com/michaelpgoetz">Michael Geotz’s</a>
+excellent article series on <a href="https://micgo.net/continuous-chefspec-validation-with-guard/">ChefSpec with Guard</a>
+as I’m currently coauthoring upcoming O’Reilly Media book on Chef with
+<a href="https://twitter.com/sethvargo">Seth Vargo</a>
+and probably won’t have time to do further installments in this series
+anytime soon until I help finish the d*mn book!)</p>
+
+<p>Now you should be able to test everything but the kitchen sink!  Wait…
+actually Test Kitchen has got that covered as well:</p>
+
+<pre><code>$ kitchen sink
+
+                     ___
+                    ' _ '.
+                  / /` `\ \
+                 | |   [__]
+                 | |    \{\{
+                 | |    \}\}
+              _  | |  _ \{\{
+  ___________&lt;_&gt;_| |_&lt;_&gt;\}\}________
+      .=======^=(___)=^=\{\{====.
+     / .----------------\}\}---. \
+    / /                 \{\{    \ \
+   / /                  \}\}     \ \
+  (  '========================='  )
+   '-----------------------------'
+</code></pre>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-08-06T12:46:00-07:00" pubdate data-updated="true">Aug 6<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/chef/'>chef</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/" data-via="" data-counturl="http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/28/windows-server-2012-automated-install-settings/" title="Previous Post: Windows Server 2012 Automated Install Settings">&laquo; Windows Server 2012 Automated Install Settings</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/" title="Next Post: Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows">Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/09/21/survey-of-test-kitchen-providers/">Survey of Test Kitchen providers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/">Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/28/windows-server-2012-automated-install-settings/">Windows Server 2012 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/27/windows-8-automated-install-settings/">Windows 8 Automated Install Settings</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

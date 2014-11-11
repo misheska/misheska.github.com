@@ -1,0 +1,356 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Using pik to manage multiple versions of Ruby on Windows - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Out of the box, Ruby does not provide a mechanism to support multiple installed
+versions. pik is a third-party tool that can be used to switch &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.com/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Using Pik to Manage Multiple Versions of Ruby on Windows</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-10T18:09:00-07:00" pubdate data-updated="true">Mar 10<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Out of the box, Ruby does not provide a mechanism to support multiple installed
+versions.  <code>pik</code> is a third-party tool that can be used to switch
+between multiple versions of the Ruby interpreter on Windows.</p>
+
+<h1 id="install-ruby">Install Ruby</h1>
+<p>Install at least one Ruby interpreter environment using the RubyInstaller
+from <a href="http://rubyinstaller.org">http://rubyinstaller.org</a>.  While pik can
+install some versions of Ruby, the versions of Ruby it knows to install is
+quite limited, and it is just much easier to use RubyInstaller for Windows
+to install them.</p>
+
+<p>The choice of Ruby environments to install is up to you.  I have the latest
+version of 1.9.3 installed as my main development environment, and Ruby 2.0.0 
+to play around with the next generation of the language.  When you install
+Ruby, do not add the Ruby executables to your PATH or associate .rb/.rbw
+files with the Ruby installation (the default choice) - <code>pik</code> will
+manage this setting:</p>
+
+<p><img src="/images/rubyinstaller.png" alt="Ruby Installer" /></p>
+
+<h1 id="installing-pik">Installing pik</h1>
+<p>Download the latest .MSI installer from <a href="https://github.com/vertiginous/pik/downloads">pik downloads on github</a>
+(as of this writing <a href="https://github.com/downloads/vertiginous/pik/pik-0.3.0.pre.msi">0.3.0</a>) and run the Pik Setup Wizard - the default options are fine:</p>
+
+<p><img src="/images/pikinstaller.png" alt="Pik Installer" /></p>
+
+<p>You can verify that <code>pik</code> installed properly by running the
+following in a Command Prompt:</p>
+
+<pre><code>&gt; pik --version
+pik 0.3.0.pre on Microsoft Windows [Version 6.1.7601]
+by Gordon Thiesfeld (gthiesfeld@gmail.com)
+</code></pre>
+
+<h1 id="registering-ruby-environments-with-pik">Registering Ruby environments with pik</h1>
+<p>Use the <code>pik add</code> command to register your installed ruby
+environments with pik.  For example, I have Ruby 1.8.7, 1.9.3, and 2.0.0
+installed on my Windows development box, so I typed the following in a
+Command Prompt:</p>
+
+<pre><code>&gt; pik add C:\Ruby187\bin
+INFO: Adding:  [ruby-]1.8.7-p371
+      Located at:  C:\Ruby187\bin
+
+&gt; pik add C:\Ruby193\bin
+INFO: Adding:  [ruby-]1.9.3-p392
+      Located at:  C:\Ruby193\bin
+
+&gt; pik add C:\Ruby200\bin
+INFO: Adding:  [ruby-]2.0.0-p0
+      Located at:  C:\Ruby2000\bin
+</code></pre>
+
+<p>Use the <code>pik list</code> command to list all the ruby interpreters
+registered with pik:</p>
+
+<pre><code>&gt; pik list
+   ruby-1.8.7-p371
+   ruby-1.9.3-p392
+   ruby-2.0.0-p0
+</code></pre>
+
+<h1 id="set-a-default-ruby">Set a default Ruby</h1>
+<p>The <code>pik use</code> command will allow you to switch between your
+registered ruby interpreters:</p>
+
+<pre><code>&gt; pik use ruby-2.0.0-p0
+&gt; ruby -v
+ruby 2.0.0p0 (2013-02-024) [i386-mingw32]
+</code></pre>
+
+<p>Add the <code>--default</code> parameter to set one version as the default:</p>
+
+<pre><code>&gt; pik use ruby-1.9.3-p392 --default
+</code></pre>
+
+<p>You can use the <code>pik default</code> command to switch to this version:</p>
+
+<pre><code>&gt; pik default
+&gt; ruby -v
+ruby 1.9.3p392 (2013-02-022) [i386-mingw32]
+</code></pre>
+
+<p>Unfortunately when you open a new command prompt, pik is not automatically
+loaded, so you will notice that there is no default ruby loaded:</p>
+
+<p><img src="/images/rubynewcommand.png" alt="Ruby not found'" /></p>
+
+<p>Either run the <code>pik default</code> command to load pik (and the
+default ruby interpreter) or add one particular Ruby interpreter to your
+user or system PATH environment variable (via <code>Control Panel -&gt; System
+-&gt; Advanced -&gt; Environment Variables….</code>):</p>
+
+<p><img class="left" src="/images/environment1.png" width="350" height="394" title="'Environment control panel'" />
+<img class="right" src="/images/environment2.png" width="350" height="394" title="'User PATH'" /></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-03-10T18:09:00-07:00" pubdate data-updated="true">Mar 10<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/ruby/'>ruby</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/" data-via="" data-counturl="http://misheska.com/blog/2013/03/10/using-pik-to-manage-multiple-versions-of-ruby-on-windows/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/02/28/try-out-sensu-monitoring-using-virtual-box%2C-vagrant-and-chef/" title="Previous Post: Try out Sensu Monitoring using Virtual Box, Vagrant and Chef">&laquo; Try out Sensu Monitoring using Virtual Box, Vagrant and Chef</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/" title="Next Post: Using Rbenv to Manage Multiple Versions of Ruby">Using Rbenv to Manage Multiple Versions of Ruby &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/09/21/survey-of-test-kitchen-providers/">Survey of Test Kitchen providers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/">Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/28/windows-server-2012-automated-install-settings/">Windows Server 2012 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/27/windows-8-automated-install-settings/">Windows 8 Automated Install Settings</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: 
+
+Sitemap: http://misheska.com/sitemap.xml 

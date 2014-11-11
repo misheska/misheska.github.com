@@ -1,0 +1,1808 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 1 - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Getting Started Upgrade from Berkshelf 1.x Create the MyFace Application Cookbook Prepare a virtual machine for testing Iteration #1: Create an &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 1</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-16T03:49:00-07:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#getting-started">Getting Started</a>    <ul>
+      <li><a href="#upgrade-from-berkshelf-1x">Upgrade from Berkshelf 1.x</a></li>
+    </ul>
+  </li>
+  <li><a href="#create-the-myface-application-cookbook">Create the MyFace Application Cookbook</a></li>
+  <li><a href="#prepare-a-virtual-machine-for-testing">Prepare a virtual machine for testing</a></li>
+  <li><a href="#iteration-1-create-an-application-user">Iteration #1: Create an application user</a>    <ul>
+      <li><a href="#testing-iteration-1">Testing Iteration #1</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-2---refactor-to-attributes">Iteration #2 - Refactor to attributes</a>    <ul>
+      <li><a href="#testing-iteration-2">Testing Iteration #2</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-3---install-the-apache2-web-server">Iteration #3 - Install the Apache2 Web Server</a>    <ul>
+      <li><a href="#testing-iteration-3">Testing Iteration #3</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-4---add-content">Iteration #4 - Add Content</a>    <ul>
+      <li><a href="#testing-iteration-4">Testing Iteration #4</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-5---refactoring-webserver">Iteration #5 - Refactoring webserver</a>    <ul>
+      <li><a href="#testing-iteration-5">Testing Iteration #5</a></li>
+    </ul>
+  </li>
+  <li><a href="#iteration-6---version-bump-and-production-deploy">Iteration #6 - Version Bump and Production Deploy</a>    <ul>
+      <li><a href="#version-bump-to-100">Version Bump to 1.0.0</a></li>
+      <li><a href="#configure-berkshelf">Configure Berkshelf</a></li>
+      <li><a href="#upload-cookbooks">Upload cookbooks</a></li>
+      <li><a href="#converge-node">Converge node</a></li>
+      <li><a href="#testing-iteration-6">Testing Iteration #6</a></li>
+    </ul>
+  </li>
+  <li><a href="#more-to-come">More to Come!</a></li>
+</ul>
+
+<p><em>Updated Jan 29th, 2014</em></p>
+
+<ul>
+  <li><em>Per Seth Vargo,  Note about the future of vagrant-berkshelf</em></li>
+</ul>
+
+<p><em>Updated December 27th, 2013</em></p>
+
+<ul>
+  <li><em>Being more prescriptive about the necessary Ruby 1.9.x environment</em></li>
+  <li><em>Bumped VirtualBox from version 4.3.4 to 4.3.6</em></li>
+  <li><em>Bumped vagrant-berkshelf plugin from version 1.3.6 to 1.3.7</em></li>
+  <li><em>Bumped vagrant-omnibus plugin from version 1.1.2 to 1.2.1</em></li>
+  <li><em>Added alternate command lines for Windows, as necessary</em></li>
+  <li><em>Debate on symbols vs strings is an unnecessary distraction, removed this section</em></li>
+  <li><em>Per Dan Patrick introducing the concept of <code>cookbook_file</code> before <code>template</code>, as this was confusing</em></li>
+</ul>
+
+<p><em>Updated December 15th, 2013</em></p>
+
+<ul>
+  <li><em>Bumped CentOS basebox version from 6.4 to 6.5</em></li>
+  <li><em>Added note about issue with Vagrant 1.4.0</em></li>
+  <li><em>Bumped VirtualBox from version 4.2.18 to 4.3.4</em></li>
+  <li><em>Bumped Vagrant from version 1.3.1 to 1.3.5</em></li>
+  <li><em>Bumped vagrant-berkshelf plugin from version 1.3.3 to 1.3.6</em></li>
+  <li><em>Bumped vagrant-omnibus plugin from version 1.1.1 to 1.1.2</em></li>
+</ul>
+
+<p><em>Updated September 9th, 2013</em></p>
+
+<ul>
+  <li><em>Bumped VirtualBox from version 4.2.16 to 4.2.18</em></li>
+  <li><em>Bumped berkshelf from version 2.0.9 to 2.0.10</em></li>
+  <li><em>Bumped vagrant from version 1.2.7 to 1.3.1</em></li>
+  <li><em>Bumped vagrant-omnibus plugin from version 1.1.0 to 1.1.1</em></li>
+</ul>
+
+<p>NOTE: As of Tuesday, January 28th <a href="https://sethvargo.com/the-future-of-vagrant-berkshelf/">the Berkshelf core team announced the future deprecation and retirement of the vagrant-berkshelf plugin</a>
+It is recommended that new users get started with the Berkshelf Way by 
+using Test Kitchen and its <code>.kitchen.yml</code> covered in <a href="http://misheska.com/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">Part 3</a>
+of this series. </p>
+
+<hr />
+
+<p>Jamie Winsor hasn’t yet updated his <a href="http://vialstudios.com/guide-authoring-cookbooks.html">guide to authoring cookbooks the Berkshelf way</a>
+to match <a href="https://github.com/RiotGames/berkshelf/issues/416">recent changes related to Vagrant 1.x</a> and <a href="http://www.opscode.com/blog/2013/03/11/chef-11-server-up-and-running/">Chef 11</a>
+This post is an attempt to update these instructions, walking through Jamie’s
+and Sean O’Meara’s example app - <a href="https://github.com/someara/myface-cookbook">MyFace</a>.
+For more information on <a href="http://berkshelf.com/">Berkshelf</a>, check out his recent
+<a href="http://www.youtube.com/watch?v=hYt0E84kYUI">talk</a>
+and <a href="http://www.slideshare.net/resetexistence/the-berkshelf-way-21787019?from_search=1">slides</a>
+from ChefConf 2013.</p>
+
+<p>NOTE: The source code examples covered in this article can be found on
+GitHub: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
+
+<h1 id="getting-started">Getting Started</h1>
+<p>You can write Chef Cookbooks with Berkshelf on Mac OS X, Linux or Windows.
+To set up your cookbook-writing environment, make sure you have the following
+installed:</p>
+
+<ul>
+  <li>
+    <p><a href="http://virtualbox.org">Install VirtualBox 4.x</a>.  VirtualBox 4.3.6 was tested
+for this post.</p>
+  </li>
+  <li>
+    <p><a href="http://vagrantup.com">Install Vagrant 1.4.1</a> (or higher).  Vagrant 1.4.1 was tested for this post. </p>
+  </li>
+  <li>
+    <p>Set up a <a href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/">sane Ruby 1.9.x environment</a> for Chef cookbook authoring</p>
+  </li>
+  <li>
+    <p>Install Berkshelf</p>
+  </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ gem install berkshelf --no-ri --no-rdoc
+</span><span class="line">Fetching: berkshelf-2.0.10.gem (100%)
+</span><span class="line">Successfully installed berkshelf-2.0.10
+</span><span class="line">1 gem installed
+</span><span class="line">
+</span><span class="line">$ berks -v
+</span><span class="line">Berkshelf (2.0.10)
+</span><span class="line">
+</span><span class="line">Copyright 2012-2013 Riot Games
+</span><span class="line">
+</span><span class="line">    Jamie Winsor (&lt;jamie@vialstudios.com&gt;)
+</span><span class="line">    Josiah Kiehl (&lt;jkiehl@riotgames.com&gt;)
+</span><span class="line">    Michael Ivey (&lt;michael.ivey@riotgames.com&gt;)
+</span><span class="line">    Justin Campbell (&lt;justin.campbell@riotgames.com&gt;)
+</span><span class="line">    Seth Vargo (&lt;sethvargo@gmail.com&gt;)</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Install the vagrant-berkshelf Plugin (1.3.3 or higher)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install vagrant-berkshelf
+</span><span class="line">Installing the 'vagrant-berkshelf' plugin. This can take a few minutes...
+</span><span class="line">Installed the plugin 'vagrant-berkshelf (1.3.7)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>Install the vagrant-omnibus plugin (1.1.0 or higher)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ vagrant plugin install vagrant-omnibus
+</span><span class="line">Installing the 'vagrant-omnibus' plugin.  This can take a few minutes...
+</span><span class="line">Installed the plugin 'vagrant-omnibus (1.2.1)'!</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="upgrade-from-berkshelf-1x">Upgrade from Berkshelf 1.x</h2>
+<p>NOTE: If you had a previous 1.x version of the berkshelf plugin installed,
+when it was named <code>berkshelf-vagrant</code>, which you can verify by running
+the following command:</p>
+
+<pre><code>$ vagrant plugin list
+berkshelf-vagrant (1.1.3)
+</code></pre>
+
+<p>Make sure you fully uninstall the old <code>berkshelf-vagrant</code> plugin before
+installing the new <code>vagrant-berkshelf</code> plugin, as vagrant will get confused
+by the name change:</p>
+
+<pre><code>$ vagrant plugin uninstall berkshelf-vagrant
+Uninstalling the 'berkshelf-vagrant' plugin...
+$ vagrant plugin install vagrant-berkshelf
+Installing the 'vagrant-berkshelf' plugin.  This can take a few minutes...
+</code></pre>
+
+<h1 id="create-the-myface-application-cookbook">Create the MyFace Application Cookbook</h1>
+<p>Key to the Berkshelf way is the use of the Application Cookbook Pattern.  An
+application cookbook contains the list of recipes needed to build your
+application or service.  As an example, this blog post will walk you through
+the creation of an example service - MyFace - the next killer social web app.</p>
+
+<p>First create a new cookbook for the MyFace application using the
+<code>berks cookbook myface</code> command:</p>
+
+<pre><code>$ berks cookbook myface
+      create  myface/files/default
+      create  myface/templates/default
+      create  myface/attributes
+      create  myface/definitions
+      create  myface/libraries
+      create  myface/providers
+      create  myface/recipes
+      create  myface/resources
+      create  myface/recipes/default.rb
+      create  myface/metadata.rb
+      create  myface/LICENSE
+      create  myface/README.md
+      create  myface/Berksfile
+      create  myface/Thorfile
+      create  myface/chefignore
+      create  myface/.gitignore
+         run  git init from "./myface"
+      create  myface/Gemfile
+      create  .kitchen.yml
+      append  Thorfile
+      create  test/integration/default
+      append  .gitignore
+      append  .gitignore
+      append  Gemfile
+      append  Gemfile
+You must run `bundle install' to fetch any new gems.
+      create  myface/Vagrantfile
+</code></pre>
+
+<p>Run <code>bundle install</code> in the newly created cookbook directory to install the
+necessary Gem dependencies:</p>
+
+<pre><code>$ cd myface
+$ bundle install
+Fetching gem metadata from https://rubygems.org/.......
+Fetching additional metadata from https://rubygems.org/..
+Resolving dependencies...
+Using i18n (0.6.9)
+Using multi_json (1.8.2)
+Using activesupport (3.2.16)
+. . .
+Using berkshelf (2.0.10)
+Using mixlib-shellout (1.3.0)
+Using net-scp (1.1.2)
+Using safe_yaml (0.9.7)
+Using test-kitchen (1.1.1)
+Using kitchen-vagrant (0.14.0)
+Using bundler (1.5.0)
+Your bundle is complete!
+Use `bundle show [gemname]` to see where a bundled gem is installed.
+</code></pre>
+
+<h1 id="prepare-a-virtual-machine-for-testing">Prepare a virtual machine for testing</h1>
+<p>It’s a good idea to develop your cookbook incrementally, testing 
+in short iterations.  Berkshelf integrates with Vagrant to deploy
+your cookbook changes to a virtual machine for testing.</p>
+
+<p>Ensure that the <code>vagrant-omnibus</code> plugin is installed correctly.</p>
+
+<pre><code>$ vagrant plugin list
+...
+vagrant-omnibus (1.2.1)
+...
+</code></pre>
+
+<p>The <code>vagrant-omnibus</code> plugin hooks into Vagrant and allows you to specify
+the version of the Chef Omnibus package you want installed using the
+<code>omnibus.chef_version</code> key</p>
+
+<p>Edit the Vagrantfile generated by the <code>berks cookbook</code> command to use
+a VirtualBox template that does not have a version of Chef provisioned.
+Then, specify that you want your image to always use the latest version
+of Chef via the <code>config.omnibus.chef_version</code> config option and replace the
+legacy <code>config.ssh.max_tries</code> and <code>config.ssh.timeout</code> settings with 
+<code>config.vm.boot_timeout</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/Vagrantfile  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="s2">&quot;2&quot;</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">hostname</span> <span class="o">=</span> <span class="s2">&quot;myface-berkshelf&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;centos65&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box_url</span> <span class="o">=</span> <span class="s2">&quot;https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">omnibus</span><span class="o">.</span><span class="n">chef_version</span> <span class="o">=</span> <span class="ss">:latest</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">network</span> <span class="ss">:private_network</span><span class="p">,</span> <span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;33.33.33.10&quot;</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">boot_timeout</span> <span class="o">=</span> <span class="mi">120</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">berkshelf</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kp">true</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="ss">:chef_solo</span> <span class="k">do</span> <span class="o">|</span><span class="n">chef</span><span class="o">|</span>
+</span><span class="line">    <span class="n">chef</span><span class="o">.</span><span class="n">json</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class="line">      <span class="ss">:mysql</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">        <span class="ss">:server_root_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;rootpass&#39;</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:server_debian_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;debpass&#39;</span><span class="p">,</span>
+</span><span class="line">        <span class="ss">:server_repl_password</span> <span class="o">=&gt;</span> <span class="s1">&#39;replpass&#39;</span>
+</span><span class="line">      <span class="p">}</span>
+</span><span class="line">    <span class="p">}</span>
+</span><span class="line">    <span class="n">chef</span><span class="o">.</span><span class="n">run_list</span> <span class="o">=</span> <span class="o">[</span>
+</span><span class="line">      <span class="s2">&quot;recipe[myface::default]&quot;</span>
+</span><span class="line">    <span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>NOTE: Vagrant 1.3.0 deprecated the <code>config.ssh.max_tries</code> and 
+<code>config.ssh.timeout</code> settings that are inserted in the Vagrantfile by
+Berkshelf.  Until Berkshelf is updated for these changes to vagrant, you’ll
+need to remove these settings from the <code>Vagrantfile</code> and replace them with
+<code>config.vm.boot_timeout</code> as above.  If you are using vagrant 1.2.x, keep the
+<code>config.ssh.max_tries</code> and <code>config.ssh.timeout</code> settings, as the new
+<code>config.vm.boot_timeout</code> setting is not valid in the older version of vagrant.</p>
+
+<p>Run <code>vagrant up</code> to start up the virtual machine and to test the stub MyFace
+cookbook you just created:</p>
+
+<pre><code>$ vagrant up
+Bringing machine 'default' up with 'virtualbox' provider...
+[default] Box 'centos65' was not found. Fetching box from specified URL for
+the provider 'virtualbox'. Note that if the URL does not have
+a box for this provider, you should interrupt Vagrant now and add
+the box yourself. Otherwise Vagrant will attempt to download the
+full box prior to discovering this error.
+Downloading box from URL: https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box
+Extracting box...te: 6881k/s, Estimated time remaining: 0:00:01)
+Successfully added box 'centos65' with provider 'virtualbox'!
+[default] Importing base box 'centos65'...
+[default] Matching MAC address for NAT networking...
+[default] Setting the name of the VM...
+[default] Clearing any previously set forwarded ports...
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131228-44316-176rdqc-default'
+[Berkshelf] Using myface (0.1.0)
+[default] Clearing any previously set network interfaces...
+[default] Preparing network interfaces based on configuration...
+[default] Forwarding ports...
+[default] -- 22 =&gt; 2222 (adapter 1)
+[default] Booting VM...
+[default] Waiting for machine to boot. This may take a few minutes...
+[default] Machine booted and ready!
+[default] Setting hostname...
+[default] Configuring and enabling network interfaces...
+[default] Mounting shared folders...
+[default] -- /vagrant
+[default] -- /tmp/vagrant-chef-1/chef-solo-1/cookbooks
+[default] Installing Chef 11.8.2 Omnibus package...
+[default] Downloading Chef 11.8.2 for el...
+[default] downloading https://www.opscode.com/chef/metadata?v=11.8.2&amp;prerelease=false&amp;p=el&amp;pv=6&amp;m=x86_64
+  to file /tmp/install.sh.2993/metadata.txt
+trying wget...
+[default] url	https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+md5	10f3d0da82efa973fe91cc24a6a74549
+sha256	044558f38d25bbf75dbd5790ccce892a38e5e9f2a091ed55367ab914fbd1cfed
+[default] downloaded metadata file looks valid...
+[default] downloading https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chef-11.8.2-1.el6.x86_64.rpm
+  to file /tmp/install.sh.2993/chef-11.8.2.x86_64.rpm
+trying wget...
+[default] Checksum compare with sha256sum succeeded.
+[default] Installing Chef 11.8.2
+installing with rpm...
+[default] warning:
+[default] /tmp/install.sh.2993/chef-11.8.2.x86_64.rpm: Header V4 DSA/SHA1 Signature, key ID 83ef826a: NOKEY
+[default] Preparing...
+[default] ##################################################
+[default]
+[default] chef
+[default] #
+[default]
+[default] Thank you for installing Chef!
+[default] Running provisioner: chef_solo...
+Generating chef JSON and uploading...
+Running chef-solo...
+[2013-12-28T13:42:49-08:00] INFO: Forking chef instance to converge...
+[2013-12-28T13:42:49-08:00] INFO: *** Chef 11.8.2 ***
+[2013-12-28T13:42:49-08:00] INFO: Chef-client pid: 3368
+[2013-12-28T13:42:50-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+[2013-12-28T13:42:50-08:00] INFO: Run List is [recipe[myface::default]]
+[2013-12-28T13:42:50-08:00] INFO: Run List expands to [myface::default]
+[2013-12-28T13:42:50-08:00] INFO: Starting Chef Run for myface-berkshelf
+[2013-12-28T13:42:50-08:00] INFO: Running start handlers
+[2013-12-28T13:42:50-08:00] INFO: Start handlers complete.
+[2013-12-28T13:42:50-08:00] INFO: Chef Run complete in 0.023677599 seconds
+[2013-12-28T13:42:50-08:00] INFO: Running report handlers
+[2013-12-28T13:42:50-08:00] INFO: Report handlers complete
+[2013-12-28T13:42:49-08:00] INFO: Forking chef instance to converge...
+</code></pre>
+
+<p>If all goes well, you should see <code>Chef Run complete</code> with no errors.</p>
+
+<p>NOTE: The basebox URL comes from my current collection of baseboxes.  The
+following link points to a README file which provides links to all the
+vagrant baseboxes I use (which I normally update frequently):
+<a href="https://github.com/misheska/basebox-packer">https://github.com/misheska/basebox-packer</a></p>
+
+<p>If you would ever like to delete your test virtual machine and start over,
+you can destroy your test virtual machine with the <code>vagrant destroy</code> command:</p>
+
+<pre><code>$ vagrant destroy
+Are you sure you want to destroy the 'default' VM? [y/N] y
+[default] Forcing shutdown of VM...
+[default] Destroying VM and associated drives...
+[Berkshelf] Cleaning Vagrant's berkshelf
+[default] Running cleanup tasks for 'chef_solo' provisioner...
+</code></pre>
+
+<p>Run <code>vagrant up</code> to recreate the test virtual machine.</p>
+
+<p><strong>NOTE:</strong> If you just ran <code>vagrant destroy</code> make sure you run <code>vagrant up</code>
+before proceeding to the next section.</p>
+
+<h1 id="iteration-1-create-an-application-user">Iteration #1: Create an application user</h1>
+<p>For our first short iteration, let’s create a <code>myface</code> user under which
+we’ll run our application.  One best practice is to avoid running
+applications as root and create a user/group under which the application runs
+instead who has just enough rights that the app needs.</p>
+
+<p>Edit <code>myface/recipes/default.rb</code> defining a new <a href="http://docs.opscode.com/resource_group.html">Group Resource</a>
+and <a href="http://docs.opscode.com/resource_user.html">User Resource</a> for myface,
+so it looks like the following:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="s1">&#39;myface&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="s1">&#39;myface&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="s1">&#39;myface&#39;</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s1">&#39;/bin/bash&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Save <code>recipes/default.rb</code> and re-run <code>vagrant provision</code> to create the
+myface user on your test virtual machine:</p>
+
+<pre><code>$ vagrant provision
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131228-44581-4bhc9d-default'
+[Berkshelf] Using myface (0.1.0)
+[default] Chef 11.8.2 Omnibus package is already installed.
+[default] Running provisioner: chef_solo...
+Generating chef JSON and uploading...
+Running chef-solo...
+[2013-12-28T13:57:59-08:00] INFO: Forking chef instance to converge...
+[2013-12-28T13:57:59-08:00] INFO: *** Chef 11.8.2 ***
+[2013-12-28T13:57:59-08:00] INFO: Chef-client pid: 3845
+[2013-12-28T13:57:59-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+[2013-12-28T13:57:59-08:00] INFO: Run List is [recipe[myface::default]]
+[2013-12-28T13:57:59-08:00] INFO: Run List expands to [myface::default]
+[2013-12-28T13:57:59-08:00] INFO: Starting Chef Run for myface-berkshelf
+[2013-12-28T13:57:59-08:00] INFO: Running start handlers
+[2013-12-28T13:57:59-08:00] INFO: Start handlers complete.
+[2013-12-28T13:57:59-08:00] INFO: group[myface] created
+[2013-12-28T13:57:59-08:00] INFO: user[myface] created
+[2013-12-28T13:57:59-08:00] INFO: Chef Run complete in 0.157055758 seconds
+[2013-12-28T13:57:59-08:00] INFO: Running report handlers
+[2013-12-28T13:57:59-08:00] INFO: Report handlers complete
+[2013-12-28T13:57:59-08:00] INFO: Forking chef instance to converge...
+</code></pre>
+
+<p>You should expect to see the Chef run complete with no errors.  Notice
+that it also creates <code>group[myface]</code> and <code>user[myface]</code>.</p>
+
+<h2 id="testing-iteration-1">Testing Iteration #1</h2>
+
+<p>Verify that Chef actually created the myface user on our test virtual
+machine by running the following on Mac OS X/Linux:</p>
+
+<pre><code>$ vagrant ssh -c "getent passwd myface"
+myface:x:497:501::/home/myface:/bin/bash
+</code></pre>
+
+<p>On Windows, add two extra parameters to the ssh invocation to squelch some
+error messages:</p>
+
+<pre><code>&gt; vagrant ssh -c "getent passwd myface" -- -n -T
+myface:x:497:501::/home/myface:/bin/bash
+</code></pre>
+
+<p>The extra <code>-n</code> and <code>-T</code> parameters for Windows are additional ssh parameters
+to prevent trying to read from stdin and to suppress an error message
+that a pseudo terminal can’t be allocated, respectively.  On Windows,
+vagrant runs as a service, and windows services do not have console
+sessions attached which ssh assumes, so you’ll see some errors on Windows
+if you don’t use these extra parameters.</p>
+
+<p>We use <code>vagrant ssh -c</code> to run a command on our test virtual machine.  The
+<code>getent</code> command can be used to query all user databases.  In this
+case we’re looking for <code>myface</code>, and it exists!</p>
+
+<p>Because we are using well-defined resources that are completely
+<a href="http://en.wikipedia.org/wiki/Idempotence">idempotent</a>, you should notice
+that if you run <code>vagrant provision</code> again, the Chef run executes more quickly
+and it does not try to re-create the user/group it already created.</p>
+
+<pre><code>$ vagrant provision
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131228-44581-4bhc9d-default'
+[Berkshelf] Using myface (0.1.0)
+[default] Chef 11.8.2 Omnibus package is already installed.
+[default] Running provisioner: chef_solo...
+Generating chef JSON and uploading...
+Running chef-solo...
+[2013-12-28T14:01:18-08:00] INFO: Forking chef instance to converge...
+[2013-12-28T14:01:18-08:00] INFO: *** Chef 11.8.2 ***
+[2013-12-28T14:01:18-08:00] INFO: Chef-client pid: 4378
+[2013-12-28T14:01:18-08:00] INFO: Setting the run_list to ["recipe[myface::default]"] from JSON
+[2013-12-28T14:01:18-08:00] INFO: Run List is [recipe[myface::default]]
+[2013-12-28T14:01:18-08:00] INFO: Run List expands to [myface::default]
+[2013-12-28T14:01:18-08:00] INFO: Starting Chef Run for myface-berkshelf
+[2013-12-28T14:01:18-08:00] INFO: Running start handlers
+[2013-12-28T14:01:18-08:00] INFO: Start handlers complete.
+[2013-12-28T14:01:18-08:00] INFO: Chef Run complete in 0.023349135 seconds
+[2013-12-28T14:01:18-08:00] INFO: Running report handlers
+[2013-12-28T14:01:18-08:00] INFO: Report handlers complete
+[2013-12-28T14:01:18-08:00] INFO: Forking chef instance to converge...
+</code></pre>
+
+<h1 id="iteration-2---refactor-to-attributes">Iteration #2 - Refactor to attributes</h1>
+<p>What if at some point you wanted to change the name of the <code>myface</code> user/group
+you just created to something else?  At the moment, you would need to edit
+<code>myface/recipes/default.rb</code> in three places.</p>
+
+<p>Let’s create a new file called <code>myface/attributes/default.rb</code> which
+initializes Chef <a href="http://docs.opscode.com/essentials_cookbook_attribute_files.html">attributes</a>
+defining the user name and group name under which our application will run so
+that you <a href="http://en.wikipedia.org/wiki/Don't_repeat_yourself">don’t repeat yourself</a>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">default</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;user&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">default</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;myface&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In Chef, attributes are a hash of a hash used to override the default settings
+on a node.  The first hash is the cookbook name - in our
+case we’ve named our cookbook <code>'myface'</code>. The second hash is the name of
+our attribute - in this case, we’re defining two new attributes: <code>'user'</code> and
+<code>'group'</code>.</p>
+
+<p><code>default</code> implies the use of the <a href="http://docs.opscode.com/chef/essentials_node_object.html">node object</a>
+<code>node.default</code> and is a Chef attribute file shorthand.  The following are
+equivalent definitions to the ones above:</p>
+
+<pre><code>node.default['myface']['user'] = 'myface'
+node.default['myface']['group'] = 'myface'
+</code></pre>
+
+<p>Note that the hash names are defined as strings enclosed by quotes.
+In this case, it doesn’t matter if you use single or double quotes.  In
+Chef source files, double quotes indicate that
+<a href="http://rubymonk.com/learning/books/1/chapters/5-strings/lessons/31-string-basics?section=143">string interpolation</a>
+should be performed, replacing special tokens in a string with their
+values.  If single quotes are used, no string interpolation is performed.
+We’ll see more examples of when string interpolation is necessary later
+in this artile.</p>
+
+<p>Now that you’ve created your attribute definitions, edit
+<code>myface/recipes/default.rb</code> and replace all references to the ‘myface’ user name
+with <code>node['myface']['user']</code> and all references to the ‘myface’ group with
+<code>node['myface']['group']</code>.  <code>myface/recipes/default.rb</code> should now look like
+this:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;user&#39;</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s1">&#39;/bin/bash&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Re-provision with <code>vagrant provision</code> to see how the refactor went:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<p>As long as you didn’t create any syntax errors in your refactoring file edits,
+there should be no net change on the virtual machine test node (as you’ve only
+just moved some strings into a node attribute).  </p>
+
+<h2 id="testing-iteration-2">Testing Iteration #2</h2>
+
+<p>Running  <code>getent</code> on the test virtual machine should also produce the same
+result as when you validated Iteration #1 on Mac OS X/Linux:</p>
+
+<pre><code>$ vagrant ssh -c "getent passwd myface"
+myface:x:497:501::/home/myface:/bin/bash
+</code></pre>
+
+<p>And on Windows:</p>
+
+<pre><code>&gt; vagrant ssh -c "getent passwd myface" -- -n -T
+myface:x:497:501::/home/myface:/bin/bash
+</code></pre>
+
+<h1 id="iteration-3---install-the-apache2-web-server">Iteration #3 - Install the Apache2 Web Server</h1>
+<p>Our hot new social networking application, myface, is a web app, so we need
+to install a web server.  Let’s install the Apache2 web server.</p>
+
+<p>Modify <code>myface/recipes/default.rb</code> to include the apache2 cookbook’s default
+recipe:</p>
+
+<pre><code>include_recipe 'apache2'
+</code></pre>
+
+<p>The resultant <code>myface/recipes/default.rb</code> file should look like so:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;user&#39;</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s1">&#39;/bin/bash&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s1">&#39;apache2&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Since you are loading Apache2 from another cookbook, you need to configure the
+dependency in your metadata.  Edit <code>myface/metadata.rb</code> and add the <code>apache2</code>
+dependency at the bottom:</p>
+
+<pre><code>depends 'apache2', '~&gt; 1.8.0'
+</code></pre>
+
+<p>This tells Chef that the myface cookbook depends on the apache2 cookbook.
+We’ve also specified a version constraint using the optimistic operator
+<code>~&gt;</code> to tell our Chef that we want the latest version of the apache2 cookbook
+that is greater than 1.8.0 but <em>not</em> 1.9.0 or higher.</p>
+
+<p>It is recommended that Chef cookbooks follow a
+<a href="http://semver.org/">Semantic Versioning</a> scheme.  So if you write your
+cookbook to use the latest apache2 1.8.x cookbook, if the apache2 cookbook is
+ever bumped to a 1.9.x version (or 2.x), it has some public API functionality
+that has at least been deprecated.  So you’ll want to review the changes and
+test before automatically using an apache2 cookbook version 1.9.x or higher.
+However, automatic use of any new 1.8.x is perfectly fine, because no
+only backwards-compatible bug fixes has been introduced.  Semantic Versioning
+guarantees there are no changes in the public APIs.</p>
+
+<p>Your <code>myface/metadata.rb</code> file should look like this:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/metadata.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">name</span>             <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">maintainer</span>       <span class="s1">&#39;YOUR_NAME&#39;</span>
+</span><span class="line"><span class="n">maintainer_email</span> <span class="s1">&#39;YOUR_EMAIL&#39;</span>
+</span><span class="line"><span class="n">license</span>          <span class="s1">&#39;All rights reserved&#39;</span>
+</span><span class="line"><span class="n">description</span>      <span class="s1">&#39;Installs/Configures myface&#39;</span>
+</span><span class="line"><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">version</span>          <span class="s1">&#39;0.1.0&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">depends</span> <span class="s1">&#39;apache2&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.8.0&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Now when you re-run <code>vagrant provision</code> it will install apache2 on your
+test virtual machine:</p>
+
+<pre><code>$ vagrant provision
+[Berkshelf] This version of the Berkshelf plugin has not been fully tested on this version of Vagrant.
+[Berkshelf] You should check for a newer version of vagrant-berkshelf.
+[Berkshelf] If you encounter any errors with this version, please report them at https://github.com/RiotGames/vagrant-berkshelf/issues
+[Berkshelf] You can also join the discussion in #berkshelf on Freenode.
+[Berkshelf] Updating Vagrant's berkshelf: '/Users/misheska/.berkshelf/default/vagrant/berkshelf-20131228-44581-4bhc9d-default'
+[Berkshelf] Using myface (0.1.0)
+[Berkshelf] Installing apache2 (1.8.14) from site: 'http://cookbooks.opscode.com/api/v1/cookbooks'
+[default] Chef 11.8.2 Omnibus package is already installed.
+[default] Running provisioner: chef_solo...
+Generating chef JSON and uploading...
+Running chef-solo...
+...
+[2013-12-28T14:10:49-08:00] INFO: service[apache2] started
+[2013-12-28T14:10:49-08:00] INFO: template[/etc/httpd/mods-available/deflate.conf] sending restart action to service[apache2] (delayed)
+[2013-12-28T14:10:51-08:00] INFO: service[apache2] restarted
+[2013-12-28T14:10:51-08:00] INFO: Chef Run complete in 38.225601754 seconds
+[2013-12-28T14:10:51-08:00] INFO: Running report handlers
+[2013-12-28T14:10:51-08:00] INFO: Report handlers complete
+[2013-12-28T14:10:12-08:00] INFO: Forking chef instance to converge...
+</code></pre>
+
+<h2 id="testing-iteration-3">Testing Iteration #3</h2>
+
+<p>You can verify that the apache2 <code>httpd</code> service is running on your berkshelf
+virtual machine with the following command on Mac OS X/Linux:</p>
+
+<pre><code>$ vagrant ssh -c "sudo /sbin/service httpd status"
+httpd (pid  5758) is running.
+</code></pre>
+
+<p>And on Windows:</p>
+
+<pre><code>&gt; vagrant ssh -c "sudo /sbin/service httpd status" -- -n -T
+httpd (pid  5758) is running.
+</code></pre>
+
+<p>Since this is a web server, so you can also check it out in your favorite web
+browser.  The host-only private network address for the virtual machine
+that Berkshelf created is in the <code>Vagrantfile</code>.  Display the IP address with
+the following command:</p>
+
+<pre><code>$ grep ip: Vagrantfile
+config.vm.network :private_network, ip: "33.33.33.10"
+</code></pre>
+
+<p>Check it out with your favorite web browser:</p>
+
+<p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
+
+<p>While you will get a <code>404 Not Found</code> error because we haven’t added any
+content to our web site yet, the important part is that <code>Apache Server
+at 33.33.33.10 Port 80</code> sent the response:</p>
+
+<p><img src="/images/apachewebserver.png" alt="Apache Server Response" /></p>
+
+<p>Wait a second, though.  You never downloaded the <code>apache2</code> cookbook!
+That’s the magic of the Berkshelf Vagrant plugin you installed earlier.  The
+Berkshelf Vagrant plugin will make sure that any changes you make to your
+cookbook and all of your cookbook’s dependencies are made available to your
+virtual machine.  Berkshelf automatically loads all your cookbook dependencies
+much like Bundler automatically loads all your gem dependencies.</p>
+
+<p>Where does the Berkshelf put the cookbooks it downloads?  You can find them
+in <code>~/.berkshelf/default/cookbooks</code> (or
+<code>%USERPROFILE%\.berkshelf\default\cookbooks</code> on Windows)</p>
+
+<pre><code>Users/misheska/.berkshelf/default/cookbooks
+└── apache2-1.8.14
+    ├── attributes
+    ├── definitions
+    ├── files
+    │   └── default
+    │       └── tests
+    │           └── minitest
+    │               └── support
+    ├── recipes
+    └── templates
+        └── default
+            └── mods
+</code></pre>
+
+<p><code>~/.berkshelf</code> (or <code>%USERPROFILE%\.berkshelf</code> on Windows) is just the default
+location where Berkshelf stores data on your local disk.  This location can be
+altered by setting the environment variable <code>BERKSHELF_PATH</code>.</p>
+
+<h1 id="iteration-4---add-content">Iteration #4 - Add Content</h1>
+<p>Let’s add some content to make that 404 go away.  Edit
+<code>myface/recipes/default.rb</code> as follows:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;user&#39;</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s1">&#39;/bin/bash&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s1">&#39;apache2&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s1">&#39;000-default&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;apache&#39;</span><span class="o">][</span><span class="s1">&#39;dir&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s1">&#39;apache2.conf.erb&#39;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s1">&#39;/srv/apache/myface&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write site</span>
+</span><span class="line"><span class="n">cookbook_file</span> <span class="s1">&#39;/srv/apache/myface/index.html&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s1">&#39;0644&#39;</span> <span class="c1"># forget me to create debugging exercise</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s1">&#39;myface.conf&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>If you’re familiar with Chef and configuring a web app via apache2, nothing
+here should be too surprising.  But if not, spend some time reading up on
+the resource references at <a href="http://docs.opscode.com">http://docs.opscode.com</a></p>
+
+<p>Note our first use of <a href="http://rubymonk.com/learning/books/1/chapters/5-strings/lessons/31-string-basics?section=143">string interpolation</a>
+on line 26:</p>
+
+<pre><code>template "#{node['apache']['dir']}/sites-available/myface.conf" do
+</code></pre>
+
+<p>We need to enclose the template string in double-quotes because we’re
+using the Ruby <code>#{}</code> operator to indicate that we want to perform string
+interpolation and evaluate the value of <code>node['apache']['dir']</code> inserting the
+evaluated value in the string.</p>
+
+<p>Create a file to contain our web site content as
+<code>myface/files/default/index.html</code>.<br />
+Chef looks for files in the <code>files</code> subtree by default.  A subdirectory
+level underneath <code>files</code> is used to specify platform-specific files.
+Files in <code>files/default</code> are used with every platform.   During the Chef
+run this file is copied to the target node in the location
+specified in the <a href="http://docs.opscode.com/resource_cookbook_file.html">cookbook_file</a>
+resource (see line 38 of <code>myface/recipes/default.rb</code>).</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/files/default/index.html  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="no">Welcome</span> <span class="n">to</span> <span class="no">MyFace</span><span class="o">!</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>With Chef, you can also create config files from templates using
+<a href="http://ruby-doc.org/stdlib-1.9.3/libdoc/erb/rdoc/ERB.html">ERB</a>, a
+Ruby templating system.  When the template <code>.erb</code> file is processed by Chef,
+it will replace any token bracketed by a <code>&lt;%=</code> <code>%&gt;</code> tag with the value
+of the Ruby expression inside the token (like <code>node[:hostname]</code>).  (Unlike
+with a <code>cookbook_file</code> whose content is static and is never manipulated
+by Chef).</p>
+
+<p>Chef expects ERB template files to be in the <code>templates</code> subirectory of a
+cookbook.  A subdirectory level underneath <code>templates</code> is used to specify
+platorm-specific files.  Files in the <code>templates/default</code> subdirectory are
+used with every platform.</p>
+
+<p>Create a new template file called
+<code>myface/templates/default/apache2.conf.erb</code> which will become the
+file <code>.../sites-available/myface.conf</code> on our test virtual machine
+(refer to <code>myface/recipes/default.rb</code> above):</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/templates/default/apache2.conf.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Managed by Chef for &lt;%= node[&#39;hostname&#39;] %&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="no">Alias</span> <span class="o">/</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">/</span>
+</span><span class="line">
+</span><span class="line"><span class="o">&lt;</span><span class="no">Directory</span> <span class="sr">/srv/</span><span class="n">apache</span><span class="o">/</span><span class="n">myface</span><span class="o">&gt;</span>
+</span><span class="line">	<span class="no">Options</span> <span class="no">FollowSymLinks</span> <span class="o">+</span><span class="no">Indexes</span>
+</span><span class="line">	<span class="no">Allow</span> <span class="n">from</span> <span class="no">All</span>
+</span><span class="line"><span class="o">&lt;</span><span class="sr">/Directory&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>After you have created these three files, run <code>vagrant provision</code> to deploy
+your changes:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<h2 id="testing-iteration-4">Testing Iteration #4</h2>
+
+<p>If the Chef run completed successfully, if you point your web browser at your
+myface web site again:</p>
+
+<p><a href="http://33.33.33.10">http://33.33.33.10</a></p>
+
+<p>You’ll see some lovely content!</p>
+
+<p><img src="/images/welcometomyface.png" alt="Welcome to MyFace" /></p>
+
+<p>Also, note the difference between a <code>cookbook_file</code> and a <code>template</code>.  Run this
+command on Mac OS X/Linux to print out <code>index.html</code> that was copied to the node during the Chef run.</p>
+
+<pre><code>$ vagrant ssh -c "cat /srv/apache/myface/index.html"
+Welcome to MyFace!
+Connection to 127.0.0.1 closed.
+</code></pre>
+
+<p>And on Windows:</p>
+
+<pre><code>&gt; vagrant ssh -c "cat /srv/apache/myface/index.html" -- -n -T
+Welcome to MyFace!
+Connection to 127.0.0.1 closed.
+</code></pre>
+
+<p>Note that <code>index.html</code> is copied verbatim with no changes to the file.</p>
+
+<p>By comparison, in a <code>template</code> any ERB tokens are replaced when they are
+copied to the node.  Look at the resultant <code>myface.conf</code> on the node
+with the following command on Mac OS X/Linux:</p>
+
+<pre><code>$ vagrant ssh -c "cat /etc/httpd/sites-available/myface.conf"
+# Managed by Chef for myface-berkshelf
+
+Alias / /srv/apache/myface/
+
+&lt;Directory /srv/apache/myface&gt;
+ 	Options FollowSymLinks +Indexes
+ 	Allow from All
+&lt;/Directory&gt;
+Connection to 127.0.0.1 closed.
+</code></pre>
+
+<p>and with the following command on Windows:</p>
+
+<pre><code>&gt; vagrant ssh -c "cat /etc/httpd/sites-available/myface.conf" -- -n -T
+</code></pre>
+
+<p>The ERB token <code>&lt;%= node['hostname'] %&gt;</code> was replaced by the evaluated string
+<code>myface-berkshelf</code> during the Chef run.</p>
+
+<h1 id="iteration-5---refactoring-webserver">Iteration #5 - Refactoring webserver</h1>
+<p><code>myface/recipes/default.rb</code> is getting rather large and we’ve got a lot more
+to add to our cookbook.  Let’s go through another refactoring pass.</p>
+
+<p>Let’s move all the webserver-related resources to their own file
+<code>myface/recipes/webserver.rb</code>.  Rename <code>myface/recipes/default.rb</code> to
+<code>myface/recipes/webserver.rb</code>.</p>
+
+<p>Now <code>myface/recipes/webserver.rb</code> should look like this: </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/webserver.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: webserver</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;user&#39;</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s1">&#39;/bin/bash&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s1">&#39;apache2&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s1">&#39;000-default&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;apache&#39;</span><span class="o">][</span><span class="s1">&#39;dir&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/myface.conf&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s1">&#39;apache2.conf.erb&#39;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s1">&#39;/srv/apache/myface&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write site</span>
+</span><span class="line"><span class="n">cookbook_file</span> <span class="s1">&#39;/srv/apache/myface/index.html&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s1">&#39;0644&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s1">&#39;myface.conf&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Create a new <code>myface/recipes/default.rb</code> file which references <code>webserver.rb</code>.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s1">&#39;myface::webserver&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Converge your node again to make sure there are no syntax errors:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<p>Let’s eliminate some more of the duplication that crept in while we were
+working on things.  Edit <code>myface/attributes/default.rb</code></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/attributes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">default</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;user&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">default</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">default</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;name&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">default</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;config&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;myface.conf&#39;</span>
+</span><span class="line"><span class="n">default</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;document_root&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="s1">&#39;/srv/apache/myface&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>NOTE: With Chef 11, it is now possible to nest attributes, like so:</p>
+
+<pre><code>node.default['app']['name'] = 'my_app'
+node.default['app']['document_root'] = "/srv/apache/#{node['app']['name']}"
+</code></pre>
+
+<p>This approach is overkill for MyFace (and is frankly overkill for most
+Chef recipes).  Even though nesting is an option now with Chef 11, you should
+try to keep your attribute files as simple and straightforward to follow as
+possible.</p>
+
+<p>In <code>myface/recipes/webserver.rb</code> replace the corresponding hardcoded references
+to attribute references: </p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/recipes/webserver.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: myface</span>
+</span><span class="line"><span class="c1"># Recipe:: webserver</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Copyright (C) 2013 YOUR_NAME</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># All rights reserved - Do Not Redistribute</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="n">user</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;user&#39;</span><span class="o">]</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">group</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;group&#39;</span><span class="o">]</span>
+</span><span class="line">  <span class="nb">system</span> <span class="kp">true</span>
+</span><span class="line">  <span class="n">shell</span> <span class="s1">&#39;/bin/bash&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">include_recipe</span> <span class="s1">&#39;apache2&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># disable default site</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s1">&#39;000-default&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">false</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create apache config</span>
+</span><span class="line"><span class="n">template</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;apache&#39;</span><span class="o">][</span><span class="s1">&#39;dir&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/sites-available/</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;config&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="s1">&#39;apache2.conf.erb&#39;</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:restart</span><span class="p">,</span> <span class="s1">&#39;service[apache2]&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># create document root</span>
+</span><span class="line"><span class="n">directory</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;document_root&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:create</span>
+</span><span class="line">  <span class="n">recursive</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># write site</span>
+</span><span class="line"><span class="n">cookbook_file</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;document_root&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/index.html&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">mode</span> <span class="s1">&#39;0644&#39;</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># enable myface</span>
+</span><span class="line"><span class="n">apache_site</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;config&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">enable</span> <span class="kp">true</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Converge your node to make sure there are no syntax errors:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<p>Add tokens to the <code>templates/default/apache2.conf.erb</code> ERB template
+file so they will be replaced with the value of the
+<code>node['myface']['document_root']</code> attribute during the Chef run.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/templates/default/apache2.conf.erb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Managed by Chef for &lt;%= node[&#39;hostname&#39;] %&gt;</span>
+</span><span class="line">
+</span><span class="line"><span class="no">Alias</span> <span class="o">/</span> <span class="o">&lt;</span><span class="sx">%= node[&#39;myface&#39;][&#39;document_root&#39;] %&gt;/</span>
+</span><span class="line">
+</span><span class="line"><span class="sx">&lt;Directory &lt;%=</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;myface&#39;</span><span class="o">][</span><span class="s1">&#39;document_root&#39;</span><span class="o">]</span> <span class="sx">%&gt;&gt;</span>
+</span><span class="line">    <span class="no">Options</span> <span class="no">FollowSymLinks</span> <span class="o">+</span><span class="no">Indexes</span>
+</span><span class="line">    <span class="no">Allow</span> <span class="n">from</span> <span class="no">All</span>
+</span><span class="line"><span class="o">&lt;</span><span class="sr">/Directory&gt;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Converge your node one last time to make sure there are no syntax errors:</p>
+
+<pre><code>$ vagrant provision
+</code></pre>
+
+<h2 id="testing-iteration-5">Testing Iteration #5</h2>
+
+<p>Visiting <a href="http://33.33.33.10">http://33.33.33.10</a> should produce the same result as before as you
+have made no net changes, just shuffled things around a bit.</p>
+
+<h1 id="iteration-6---version-bump-and-production-deploy">Iteration #6 - Version Bump and Production Deploy</h1>
+<p>Now that we have tested our cookbook locally and everything seems to work,
+we’re ready to finalize the cookbook and deploy it to production.</p>
+
+<h2 id="version-bump-to-100">Version Bump to 1.0.0</h2>
+
+<p>First you need to “bump” the cookbook version in the <code>metadata.rb</code> file to
+its final version 1.0.0.  As mentioned in Iteration #3, cookbooks (even the
+ones you write), should follow the
+<a href="http://semver.org/">Semantic Versioning scheme</a>.  Since this is the first
+public version of our cookbook, it’s version 1.0.0.</p>
+
+<p><code>myface/metadata.rb</code> should look like this:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>myface/metadata.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="nb">name</span>             <span class="s1">&#39;myface&#39;</span>
+</span><span class="line"><span class="n">maintainer</span>       <span class="s1">&#39;Mischa Taylor&#39;</span>
+</span><span class="line"><span class="n">maintainer_email</span> <span class="s1">&#39;mischa@misheska.com&#39;</span>
+</span><span class="line"><span class="n">license</span>          <span class="s1">&#39;Apache 2.0&#39;</span>
+</span><span class="line"><span class="n">description</span>      <span class="s1">&#39;Installs/Configures myface&#39;</span>
+</span><span class="line"><span class="n">long_description</span> <span class="no">IO</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">),</span> <span class="s1">&#39;README.md&#39;</span><span class="p">))</span>
+</span><span class="line"><span class="n">version</span>          <span class="s1">&#39;1.0.0&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="n">depends</span> <span class="s1">&#39;apache2&#39;</span><span class="p">,</span> <span class="s1">&#39;~&gt; 1.8.0&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="configure-berkshelf">Configure Berkshelf</h2>
+
+<p>In order to deploy to your production server (instead of just locally with
+vagrant), you’ll need to add a section to your Berkshelf config file with
+your production Chef settings.  Run the following command to create a default
+Berkshelf configuration file:</p>
+
+<pre><code>$ berks configure
+</code></pre>
+
+<p>It will prompt you for a bunch of server settings.  Since I’m using hosted Chef
+to manage my servers, my settings are as follows (yours will be 
+slightly different):</p>
+
+<pre><code>$ berks configure
+Enter value for chef.chef_server_url (default: 'http://localhost:4000'):  https://api.opscode.com/organizations/misheska
+Enter value for chef.node_name (default: 'Ruby.local'):  misheska
+Enter value for chef.client_key (default: '/etc/chef/client.pem'):  /Users/misheska/.chef/misheska.pem
+Enter value for chef.validation_client_name (default: 'chef-validator'):  misheska-validator
+Enter value for chef.validation_key_path (default: '/etc/chef/validation.pem'):  /Users/misheska/.chef/misheska-validator.pem
+Enter value for vagrant.vm.box (default: 'Berkshelf-CentOS-6.3-x86_64-minimal'):  centos65
+Enter value for vagrant.vm.box_url (default: 'https://dl.dropbox.com/u/31081437/Berkshelf-CentOS-6.3-x86_64-minimal.box'):  https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box
+Config written to: '/Users/misheska/.berkshelf/config.json'
+</code></pre>
+
+<p>The config file is located in <code>$HOME/.berkshelf/config.json</code> (or inx
+<code>%USERPROFILE%/.berkshelf/config.json</code> on Windows).</p>
+
+<p>Here’s what my <code>$HOME/.berkshelf/config.json</code> file looks like:</p>
+
+<pre><code>{
+  "chef":{
+    "chef_server_url":"https://api.opscode.com/organizations/misheska",
+    "validation_client_name":"misheska-validator",
+    "validation_key_path":"/Users/misheska/.chef/misheska-validator.pem",
+    "client_key":"/Users/misheska/.chef/misheska.pem",
+    "node_name":"misheska"
+  },
+  "cookbook":{
+    "copyright":"Mischa Taylor",
+    "email":"mischa@misheska.com",
+    "license":"Apache 2.0"
+  },
+  "allowed_licenses":[],
+  "raise_license_exception":false,
+  "vagrant":{
+    "vm":{
+      "box":"centos65",
+      "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box",
+      "forward_port":{},
+      "network":{"bridged":false,"hostonly":"33.33.33.10"},
+      "provision":"chef_solo"}
+  },
+  "ssl":{
+    "verify":false
+  }
+}
+
+{
+  "chef":{
+    "chef_server_url": "https://api.opscode.com/organizations/misheska",
+    "validation_client_name": "misheska-validator",
+    "validation_key_path": "/Users/mischa/.chef/misheska-validator.pem",
+    "client_key": "/Users/mischa/.chef/misheska.pem",
+    "node_name":"misheska"
+  },
+  "vagrant":{
+    "vm":{
+      "box": "centos65",
+      "box_url":"https://s3-us-west-2.amazonaws.com/misheska/vagrant/virtualbox4.3.6/centos65.box",
+      "forward_port": {
+      },
+      "network":{
+        "bridged": false,
+        "hostonly": "33.33.33.10"
+      },
+      "provision": "chef_solo"
+    }
+  },
+  "ssl": {
+    "verify":false
+  }
+}
+</code></pre>
+
+<p>I assume you have your own production Chef setup either running 
+<a href="http://www.opscode.com/hosted-chef/">Hosted Chef</a>,
+<a href="http://www.opscode.com/private-chef/">Private Chef</a>, or
+<a href="http://docs.opscode.com/chef/manage_server_open_source.html">Open Source Chef Server</a>.  If you need more help getting your .pem file values, refer to
+the <a href="https://learnchef.opscode.com/quickstart/chef-repo/">QuickStart Guide on LearnChef</a>.</p>
+
+<h2 id="upload-cookbooks">Upload cookbooks</h2>
+
+<p>Edit your <code>$HOME/.berkshelf/config.json</code> file similarly with your .pem file
+values.  Then run <code>berks upload</code> to upload your cookbooks to the chef server:</p>
+
+<pre><code>$ berks upload
+Using myface (1.0.0)
+Using apache2 (1.8.14)
+Uploading myface (1.0.0) to: 'https://api.opscode.com:443/organizations/misheska'
+Uploading apache2 (1.8.14) to: 'https://api.opscode.com:443/organizations/misheska'
+</code></pre>
+
+<p>Similarly to when you ran <code>vagrant up</code>, Berkshelf automatically uploaded all
+the cookbook dependencies.</p>
+
+<h2 id="converge-node">Converge node</h2>
+
+<p>Add the default <code>myface</code> cookbook recipe to your node’s run list.  For example,
+I used the following command to add <code>myface</code> to mine:</p>
+
+<pre><code>$ knife node run_list add mischa-ubuntu 'recipe[myface]'
+mischa-ubuntu:
+  run_list: recipe[myface]
+</code></pre>
+
+<p>Converge the node by running <code>chef-client</code> (if you don’t already have it
+setup to run chef-client automatically).  For example, here’s the command
+I used to run <code>chef-client</code> on my production node:</p>
+
+<pre><code>$ knife ssh name:mischa-ubuntu "sudo chef-client" -x misheska
+Starting Chef Client, version 11.8.2
+resolving cookbooks for run list: ["myface"]
+Synchronizing Cookbooks:
+  - myface
+  - apache2
+...
+Chef Client finished, 20 resources updated 
+</code></pre>
+
+<h2 id="testing-iteration-6">Testing Iteration #6</h2>
+
+<p>Browsing your production node’s URL should produce the same result as when
+you tested Iteration #4.  For example, I visited <a href="http://mischa-ubuntu">http://mischa-ubuntu</a> </p>
+
+<h1 id="more-to-come">More to Come!</h1>
+<p>This is just part one of a multi-part series.  So far you’ve gone through
+several short iteration loops as you evolve the myface cookbook web
+application.  In <a href="http://misheska.com/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/">Part 2</a>,
+we’ll wire up a database to the myface application and explore the use of
+the <code>mysql</code> and <code>database</code> cookbooks.</p>
+
+<p>If you want to see the full source for myface, check out the following
+GitHub link: <a href="https://github.com/misheska/myface">https://github.com/misheska/myface</a></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-16T03:49:00-07:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/chef/'>chef</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/" data-via="" data-counturl="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/" title="Previous Post: Use Opscode Chef Omnibus Ruby for Writing Cookbooks">&laquo; Use Opscode Chef Omnibus Ruby for Writing Cookbooks</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/06/23/getting-started-writing-chef-cookbooks-the-berkshelf-way-part2/" title="Next Post: Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 2">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 2 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/09/21/survey-of-test-kitchen-providers/">Survey of Test Kitchen providers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/">Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/28/windows-server-2012-automated-install-settings/">Windows Server 2012 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/27/windows-8-automated-install-settings/">Windows 8 Automated Install Settings</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

@@ -1,0 +1,769 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Windows 7 Automated Install Settings - Mischa Taylor's Coding Blog</title>
+  <meta name="author" content="Mischa Taylor">
+
+  
+  <meta name="description" content="Disabling the language settings dialog Disabling the Select Operating System dialog Disabling the EULA dialog Disabling the Disk Allocation dialog &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://misheska.com/blog/2013/07/26/windows-7-automated-install-settings/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="Mischa Taylor's Coding Blog" type="application/atom+xml">
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="http://fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="http://fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-38545837-1']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">Mischa Taylor's Coding Blog</a></h1>
+  
+    <h2>On the edge of time and reason</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:misheska.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/contact">Contact</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Windows 7 Automated Install Settings</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-26T10:48:00-07:00" pubdate data-updated="true">Jul 26<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#disabling-the-language-settings-dialog">Disabling the language settings dialog</a></li>
+  <li><a href="#disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</a></li>
+  <li><a href="#disabling-the-eula-dialog">Disabling the EULA dialog</a></li>
+  <li><a href="#disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</a></li>
+  <li><a href="#disabling-the-account-and-computer-name-dialog">Disabling the account and computer name dialog</a></li>
+  <li><a href="#disable-computer-name-dialog">Disable Computer Name dialog</a></li>
+  <li><a href="#disable-protect-computer-dialog">Disable Protect Computer dialog</a></li>
+  <li><a href="#disable-user-account-control-uac">Disable User Account Control (UAC)</a></li>
+  <li><a href="#disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</a></li>
+  <li><a href="#replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</a></li>
+  <li><a href="#enable-remote-desktop">Enable Remote Desktop</a></li>
+  <li><a href="#really-disable-set-network-location-prompt">(Really) Disable Set Network Location Prompt</a></li>
+  <li><a href="#turn-off-computer-password">Turn off computer password</a></li>
+  <li><a href="#turn-off-all-power-saving-and-timeouts">Turn off all power saving and timeouts</a></li>
+</ul>
+
+<p><em>Updated April 03, 2014</em></p>
+
+<ul>
+  <li><em>Updated link to Autounattend.xml</em></li>
+</ul>
+
+<p>I just recently revised all my automated install XML files for the Windows
+System Preparation Tool (Sysprep) that I use for my Windows development
+testbed.  For this go around, I’m documenting the XML answer file settings
+for each version of Microsoft Windows.  This article covers the XML answer
+files settings needed to automate a Windows 7 (64-bit) base
+OS install.</p>
+
+<p>You’ll need to use the Windows System Image Manager tool to edit Sysprep
+XML answer files.  The Windows System Image Manager is packaged with the
+<a href="http://www.microsoft.com/en-us/download/details.aspx?id=30652">Windows Assessment and Deployment Kit</a>
+tool suite.  Download and install the Windows Assessment and Deployment Kit
+to install the Windows System Image Manager (WSIM).</p>
+
+<p><a href="http://technet.microsoft.com/en-us/library/dd744272(v=ws.10).aspx">Settings to Use for an Unattended Installation</a></p>
+
+<p><a href="http://technet.microsoft.com/en-us/library/dd744547(WS.10).aspx">Automate Windows Welcome</a></p>
+
+<p>Link to <a href="https://github.com/misheska/basebox-packer/raw/master/template/windows7/floppy/win7x64-enterprise/Autounattend.xml">Autounattend.xml</a>
+with all the settings in this article.  <em><strong>NOTE:</strong> Right-click and choose “Download Linked File As…” in your web browser, as many web browsers will try to interpret the Xml</em>.</p>
+
+<h1 id="disabling-the-language-settings-dialog">Disabling the language settings dialog</h1>
+
+<p><img src="/images/sysprep/win7x64/language.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/languagecomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component 
+<em>amd64_Microsoft-Windows-International-Core-WinPE_6.1.7600.16385_neutral</em>,
+right-click and choose <em>Add Setting to Pass 1 windowsPE</em>.  Using the
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/languagesettings.png" /></p>
+
+<ul>
+  <li>InputLocale = <strong>en-US</strong></li>
+  <li>SystemLocale = <strong>en-US</strong></li>
+  <li>UILanguage = <strong>en-US</strong></li>
+  <li>UserLocale = <strong>en-US</strong></li>
+</ul>
+
+<h1 id="disabling-the-select-operating-system-dialog">Disabling the Select Operating System dialog</h1>
+
+<p><img src="/images/sysprep/win7x64/operatingsystem.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/operatingsystemcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>ImageInstall/OSImage/InstallFrom/Metadata</em> and choose
+<em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p>For Windows 7 Enterprise:
+<img class="right" src="/images/sysprep/win7x64/operatingsystemsettings.png" /></p>
+
+<ul>
+  <li>Key = <strong>/IMAGE/NAME</strong></li>
+  <li>Value = <strong>Windows 7 ENTERPRISE</strong></li>
+</ul>
+
+<p>For Windows 7 Professional:
+<img class="right" src="/images/sysprep/win7x64/operatingsystemsettingspro.png" /></p>
+
+<ul>
+  <li>Key = <strong>/IMAGE/NAME</strong></li>
+  <li>Value = <strong>Windows 7 PROFESSIONAL</strong></li>
+</ul>
+
+<h1 id="disabling-the-eula-dialog">Disabling the EULA dialog</h1>
+
+<p><img src="/images/sysprep/win7x64/eula.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/eulacomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>UserData</em> and choose
+<em>Add Setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/eulasettings.png" /></p>
+
+<ul>
+  <li>AcceptEula = <strong>true</strong></li>
+</ul>
+
+<h1 id="disabling-the-disk-allocation-dialog">Disabling the Disk Allocation dialog</h1>
+
+<p><img src="/images/sysprep/win7x64/diskallocation.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/diskconfigurationcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>DiskConfiguration</em> and choose
+<em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/diskconfigurationsettings.png" /></p>
+
+<ul>
+  <li>WillShowUI = <strong>OnError</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/diskcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>DiskConfiguration/Disk</em> and choose
+<em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/disksettings.png" /></p>
+
+<ul>
+  <li>DiskID = <strong>0</strong></li>
+  <li>WillWipDisk = <strong>true</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/createpartitioncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>DiskConfiguration/Disk/CreatePartitions/CreatePartition</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/createpartitionsettings.png" /></p>
+
+<ul>
+  <li>Extend = <strong>false</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>Size = <strong>10000</strong></li>
+  <li>Type = <strong>Primary</strong></li>
+</ul>
+
+<p>NOTE: Don’t worry about getting the size exact - just set it to a
+reasonable minimum.  In the next setting, we will extend the partition
+to fill all remaining disk space on the drive.</p>
+
+<p><img src="/images/sysprep/win7x64/modifypartitioncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>DiskConfiguration/Disk/ModifyPartitions/ModifyPartition</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/modifypartitionsettings.png" /></p>
+
+<ul>
+  <li>Active = <strong>true</strong></li>
+  <li>Extend = <strong>true</strong></li>
+  <li>Format = <strong>NTFS</strong></li>
+  <li>Letter = <strong>C</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>PartitionID = <strong>1</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/installtocomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Setup_6.1.7600.16385_neutral</em>,
+right-click on <em>ImageInstall/OSImage/InstallTo</em> and 
+choose <em>Add setting to Pass 1 windowsPE</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/installtosettings.png" /></p>
+
+<ul>
+  <li>DiskID = <strong>0</strong></li>
+  <li>PartitionID = <strong>1</strong></li>
+</ul>
+
+<h1 id="disabling-the-account-and-computer-name-dialog">Disabling the account and computer name dialog</h1>
+
+<p><img src="/images/sysprep/win7x64/account.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/vagrantaccountcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>UserAccounts/LocalAccounts/LocalAccount</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/vagrantaccount.png" /></p>
+
+<ul>
+  <li>Description = <strong>Vagrant User</strong></li>
+  <li>DisplayName = <strong>vagrant</strong></li>
+  <li>Group = <strong>Administrators</strong></li>
+  <li>Name = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/vagrantpasswordcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>UserAccounts/LocalAccounts/LocalAccount/Password</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/vagrantpassword.png" /></p>
+
+<ul>
+  <li>Value = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/vagrantautologoncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>AutoLogon</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/vagrantautologon.png" /></p>
+
+<ul>
+  <li>Enabled = <strong>true</strong></li>
+  <li>Username = <strong>vagrant</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/vagrantimagepasswordcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>AutoLogon/Password</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/vagrantpassword.png" /></p>
+
+<ul>
+  <li>Value = <strong>vagrant</strong></li>
+</ul>
+
+<h1 id="disable-computer-name-dialog">Disable Computer Name dialog</h1>
+
+<p><img src="/images/sysprep/win7x64/computername.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/computernamecomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/computernamesettings.png" /></p>
+
+<ul>
+  <li>Value - <strong>vagrant-win7</strong></li>
+  <li>TimeZone = <strong>Pacific Standard Time</strong></li>
+</ul>
+
+<h1 id="disable-protect-computer-dialog">Disable Protect Computer dialog</h1>
+
+<p><img src="/images/sysprep/win7x64/protect.png" /></p>
+
+<p><img src="/images/sysprep/win7x64/protectcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click on <em>OOBE</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em> and
+<em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/protectsettings.png" /></p>
+
+<ul>
+  <li>NetworkLocation = <strong>Work</strong></li>
+  <li>ProtectYourPC = <strong>3</strong></li>
+</ul>
+
+<h1 id="disable-user-account-control-uac">Disable User Account Control (UAC)</h1>
+
+<p><img src="/images/sysprep/win7x64/uaccomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-LUA-Settings_6.1.7600.16385_neutral</em>,
+right-click and choose <em>Add Setting to Pass 2 offlineServicing</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/uacsettings.png" /></p>
+
+<ul>
+  <li>EnableLUA = <strong>false</strong></li>
+</ul>
+
+<h1 id="disable-internet-explorer-first-run-wizard">Disable Internet Explorer First Run Wizard</h1>
+
+<p><img src="/images/sysprep/win7x64/iefirstruncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-IE-InternetExplorer_8.0.7600.16385_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="/images/sysprep/win7x64/iefirstrunsettings.png" /></p>
+
+<ul>
+  <li>DisableAccelerators = <strong>true</strong></li>
+  <li>DisableFirstRunWizard = <strong>true</strong></li>
+  <li>Home_Page = <strong>about:blank</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/iefirstrunwowcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>wow64_Microsoft-Windows-IE-InternetExplorer_8.0.7601.17514_neutral</em>,
+right-click and choose <em>Add Setting to Pass 4 specialize</em>.  Using the 
+Answer File <em>Properties</em> and <em>Settings</em> panes, configure the following
+settings:</p>
+
+<p><img src="/images/sysprep/win7x64/iefirstrunsettings.png" /></p>
+
+<ul>
+  <li>DisableAccelerators = <strong>true</strong></li>
+  <li>DisableFirstRunWizard = <strong>true</strong></li>
+  <li>Home_Page = <strong>about:blank</strong></li>
+</ul>
+
+<h1 id="replace-internet-explorer-bing-search-with-google">Replace Internet Explorer Bing search with Google</h1>
+
+<p><img src="/images/sysprep/win7x64/googlesearchcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-IE-InternetExplorer_8.0.7600.16385_neutral</em>,
+right-click on <em>SearchScopes/Scope</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/googlesearchsettings.png" /></p>
+
+<ul>
+  <li>ScopeDefault = <strong>true</strong></li>
+  <li>ScopeDisplayName = <strong>Google</strong></li>
+  <li>ScopeKey = <strong>Google</strong></li>
+  <li>ScopeUrl = <strong>http://www.google.com/search?q={searchTerms}</strong></li>
+  <li>ShowSearchSuggestions = <strong>true</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/googlesearchwowcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>wow64_Microsoft-Windows-IE-InternetExplorer_8.0.7601.17514_neutral</em>,
+right-click on <em>SearchScopes/Scope</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/googlesearchsettings.png" /></p>
+
+<ul>
+  <li>ScopeDefault = <strong>true</strong></li>
+  <li>ScopeDisplayName = <strong>Google</strong></li>
+  <li>ScopeKey = <strong>Google</strong></li>
+  <li>ScopeUrl = <strong>http://www.google.com/search?q={searchTerms}</strong></li>
+  <li>ShowSearchSuggestions = <strong>true</strong></li>
+</ul>
+
+<h1 id="enable-remote-desktop">Enable Remote Desktop</h1>
+
+<p><img src="/images/sysprep/win7x64/tsconnectioncomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-TerminalServices-LocalSessionManager_6.1.7601.17514_neutral</em>,
+right-click and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/tsconnectionsettings.png" /></p>
+
+<ul>
+  <li>fDenyTSConnections = <strong>false</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/firewallgroupcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Networking-MPSSVC-Svc_6.1.7601.175414_neutral</em>,
+right-click on <em>FirewallGroups/FirewallGroup</em> and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/firewallgroupsettings.png" /></p>
+
+<ul>
+  <li>Active = <strong>true</strong></li>
+  <li>Group = <strong>Remote Desktop</strong></li>
+  <li>Key = <strong>RemoteDesktop</strong></li>
+  <li>Profile = <strong>all</strong></li>
+</ul>
+
+<p><img src="/images/sysprep/win7x64/rdpsecuritycomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-TerminalServices-RDP-WinStationExtensions_6.1.7601.17514_neutral</em>,
+right-click and choose
+<em>Add Setting to Pass 4 specialize</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img class="right" src="/images/sysprep/win7x64/rdpsecuritysettings.png" /></p>
+
+<ul>
+  <li>SecurityLayer = <strong>1</strong></li>
+  <li>UserAuthentication = <strong>0</strong></li>
+</ul>
+
+<h1 id="really-disable-set-network-location-prompt">(Really) Disable Set Network Location Prompt</h1>
+
+<p><img src="/images/sysprep/win7x64/networklocation.png" /></p>
+
+<pre><code>REG ADD "HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff"
+</code></pre>
+
+<p><img src="/images/sysprep/win7x64/networklocationcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click <em>FirstLogonCommands/SynchronousCommand</em> and choose
+<em>Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/networklocationsettings.png" /></p>
+
+<ul>
+  <li>CommandLine = <strong>REG ADD “HKLM\System\CurrentControlSet\Control\Network\NewNetworkWindowOff”</strong></li>
+  <li>Description = <strong>Disable Set Network Location Prompt</strong></li>
+  <li>Order = <strong>1</strong></li>
+  <li>RequiresUserInput <strong>true</strong></li>
+</ul>
+
+<h1 id="turn-off-computer-password">Turn off computer password</h1>
+
+<p>Prevent the image from changing its computer account password,
+so you can restore old snapshots without being dropped from a domain</p>
+
+<pre><code>REG ADD "HKLM\System\CurrentControlSet\Services\Netlogon\Parameters" /v DisablePasswordChange /t REG_DWORD /d 1 /f
+</code></pre>
+
+<p><img src="/images/sysprep/win7x64/disablepasswordchangecomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click <em>FirstLogonCommands/SynchronousCommand” and choose
+_Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/disablepasswordchangesettings.png" /></p>
+
+<ul>
+  <li>CommandLine = <strong>REG ADD “HKLM\System\CurrentControlSet\Services\Netlogon\Parameters” /v DisablePasswordChange /t REG_DWORD /d 2 /f</strong></li>
+  <li>Description = <strong>Disable computer password change</strong></li>
+  <li>Order = <strong>2</strong></li>
+  <li>RequiresUserInput <strong>true</strong></li>
+</ul>
+
+<h1 id="turn-off-all-power-saving-and-timeouts">Turn off all power saving and timeouts</h1>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>set-power-config.bat </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bat"><span class="line"><span class="c">REM Set power configuration to High Performance</span>
+</span><span class="line">powercfg -setactive <span class="m">8</span>c<span class="m">5</span>e<span class="m">7</span>fda-e<span class="m">8</span>bf<span class="m">-4</span>a<span class="m">96-9</span>a<span class="m">85</span>-a<span class="m">6</span>e<span class="m">23</span>a<span class="m">8</span>c<span class="m">635</span>c
+</span><span class="line"><span class="c">REM Monitor timeout</span>
+</span><span class="line">powercfg -Change -monitor-timeout-ac <span class="m">0</span>
+</span><span class="line">powercfg -Change -monitor-timeout-dc <span class="m">0</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><img src="/images/sysprep/win7x64/powerconfigcomponents.png" /></p>
+
+<p>In the <em>Windows Image</em> pane, select the component
+<em>amd64_Microsoft-Windows-Shell-Setup_6.1.7601.17514_neutral</em>,
+right-click <em>FirstLogonCommands/SynchronousCommand” and choose
+_Add Setting to Pass 7 oobeSystem</em>.  Using the Answer File <em>Properties</em>
+and <em>Settings</em> panes, configure the following settings:</p>
+
+<p><img src="/images/sysprep/win7x64/powerconfigsettings.png" /></p>
+
+<ul>
+  <li>CommandLine = <strong>cmd.exe /c a:set-power-config.bat</strong></li>
+  <li>Description = <strong>Turn off all power saving and timeouts</strong></li>
+  <li>Order = <strong>3</strong></li>
+  <li>RequiresUserInput = <strong>true</strong></li>
+</ul>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Mischa Taylor</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-07-26T10:48:00-07:00" pubdate data-updated="true">Jul 26<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://misheska.com/blog/2013/07/26/windows-7-automated-install-settings/" data-via="" data-counturl="http://misheska.com/blog/2013/07/26/windows-7-automated-install-settings/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2013/07/25/windows-server-2008-r2-automated-install-settings/" title="Previous Post: Windows Server 2008 R2 automated install settings">&laquo; Windows Server 2008 R2 automated install settings</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2013/07/27/windows-8-automated-install-settings/" title="Next Post: Windows 8 Automated Install Settings">Windows 8 Automated Install Settings &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2014/09/21/survey-of-test-kitchen-providers/">Survey of Test Kitchen providers</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/12/26/set-up-a-sane-ruby-cookbook-authoring-environment-for-chef/">Set up a Sane Ruby Cookbook Authoring Environment for Chef on Mac OS X, Linux and Windows</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/08/06/getting-started-writing-chef-cookbooks-the-berkshelf-way-part3/">Getting Started Writing Chef Cookbooks the Berkshelf Way, Part 3</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/28/windows-server-2012-automated-install-settings/">Windows Server 2012 Automated Install Settings</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/07/27/windows-8-automated-install-settings/">Windows 8 Automated Install Settings</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/misheska">@misheska</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'misheska',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Mischa Taylor -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = 'http://platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
