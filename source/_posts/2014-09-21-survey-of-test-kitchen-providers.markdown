@@ -9,6 +9,9 @@ categories: [Chef, Test Kitchen]
 * list element with functor item
 {:toc}
 
+_Update November 10, 2014_
+* _Update for DigitalOcean 0.8x provider using API V2_
+
 # Introduction
 
 Test Kitchen supports a wide variety of different providers via Test Kitchen drivers besides the default `kitchen-vagrant` driver.  In this post, we'll cover several popular alternatives.
@@ -200,17 +203,36 @@ As of this writing, all of the Test Kitchen Cloud drivers do not support synchro
 
 ### kitchen-digitalocean Setup
 
-Go to https://cloud.digitalocean.com/api_access to get your Client ID and API Key, as shown in the following diagram.  As of this writing, the `kitchen-digitalocean` provider still uses the 1.x DigitalOcean API, not the v2.0 API.  So you must use a v1.0 Client ID/API pair to work with the provider, not a v2.0 Personal Access Token. Record both the Client ID and API key values.  Click on the _Generate New Key_ button if your API Key is hidden or unavailable.
+Go to https://cloud.digitalocean.com/settings/applications and click on the
+`Generate new token` button to generate a new Personal Access Token using
+the v2.0 API.  Make sure you check the optional `Write` scope when you
+generate the token.  Write scope is necessary for the DigitalOcean Cloud
+provider to function correctly.
 
-{% img center /images/chapa01/digitalocean_api_access.png [DigitalOcean API Access] %}
+{% img center /images/chapa01/digitalocean_generate_token.png [DigitalOcean New Personal Access Token] %}
 
-Collect SSH public keys from the computers which need access to your sandbox instances.  Visit https://cloud.digitalocean.com/ssh_keys and add the SSH keys.  Once you've added the SSH key(s), visit the URL in the following form to get your SSH Key IDs, replacing _<your_client_id>_ and _<your_api_key>_ with your Client API and API Key, respectively.
+Record the personal access token that is generated when you click on the
+`Generate new token` button, as shown below:
 
-    http://api.digitalocean.com/ssh_keys/?client_id=<your_client_id>&api_key=<your_api_key>
+{% img center /images/chapa01/digitalocean_generate_new_token.png [DigitalOcean Generate new token] %}
 
-The following screenshot shows an example of the output from the site.  Record the SSH Key ID fields.
+Add the new access token to your `~/.bash_profile` (or equivalent for your
+platform) as the environment variable `DIGITALOCEAN_ACCESS_TOKEN`:
 
-{% img center /images/chapa01/digitalocean_ssh_key_ids.png [Digital Ocean SSH Key IDs] %}
+    export DIGITALOCEAN_ACCESS_TOKEN="1234567890abcdefg"
+
+Collect SSH public keys from the computers which need access to your sandbox
+instances.  Visit https://cloud.digitalocean.com/ssh_keys and add the SSH keys.
+Once you've added the SSH keys(s), use the following `curl` command to get the
+DigitalOcean SSH Key IDs:
+
+    curl -X GET https://api.digitalocean.com/v2/account/keys -H "Authorization: Bearer $DIGITALOCEAN_ACCESS_TOKEN"
+
+Record the `id` field for each of your SSH keys.  Add the list of SSH Key IDs
+to the environment variable `DIGITALOCEAN_SSH_KEY_IDS`.  If you have more than
+one SSH key ID, separate each ID by a comma followed by a space:
+
+    export DIGITALOCEAN_SSH_KEY_IDS="12345, 67890"
 
 Run the following `kitchen init` command to add Test Kitchen support to your project using the `kitchen-digitalocean` driver:
 
@@ -226,25 +248,29 @@ Run `bundle install` to download and install any required gems.
 
 ### kitchen-digitalocean .kitchen.yml Example
 
-Since the Client ID, API Key and SSH Key IDs contain sensitive information, it is recommended that you store them in environment variables instead of directly in your `.kitchen.yml` file.  This way, you can share your `.kitchen.yml` file with others and store it in source control.  You can use embedded Ruby templates in a `.kitchen.yml` to load values from the environment.  Here is an example `kitchen.yml` which spins up a CentOS 6.5 sandbox environment, loading the Client ID, API Key and SSH Key IDs from corresponding environment variables:
+As of the 0.8.x release, the `kitchen-digitalocean` provider automatically 
+looks for the access token in the `DIGITAL_ACCESS_TOKEN` and the ssh key
+IDs in the `DIGITALOCEAN_SSH_KEY_IDS` environment variables.  Since the
+access token and SSH key IDs are sensitive information, it is recommended
+that you store them in these environment variables instead of directly in
+your `.kitchen.yml` file.  This way, you can share your `.kitchen.yml` file
+with others and store it in source control.
+
+Here is an example `kitchen.yml` which spins up a CentOS 6.5 sandbox environment, loading the Access Token and SSH Key IDs from corresponding environment variables:
 
 {% codeblock digitalocean/.kitchen.yml lang:ruby %}
  ---
 driver:
-  require_chef_omnibus: true
   name: digitalocean
-  digitalocean_client_id: "<%= ENV['DIGITALOCEAN_CLIENT_ID']%>"
-  digitalocean_api_key: "<%= ENV['DIGITALOCEAN_API_KEY']%>"
-  ssh_key_ids: "<%= ENV['DIGITALOCEAN_SSH_KEY_IDS']%>"
 
 provisioner:
-  name: chef_solo
+  name: chef_zero
 
 platforms:
   - name: centos65
-    driver: digitalocean
-      image_id: 3448641
-      region_id: 4
+    driver:
+      name: digitalocean
+      image: centos-6-5-x64
 
 suites:
   - name: default
@@ -256,40 +282,37 @@ Before running any Test Kitchen commands, make sure you set the appropriate envi
 
 Linux and Mac OS X:
 
-    export DIGITALOCEAN_CLIENT_ID="abcdef01234567890abcdef0123456789"
-    export DIGITALOCEAN_API_KEY="01234567890abcdef01234567890abcdef"
+    export DIGITALOCEAN_ACCESS_TOKEN="01234567890abcdef01234567890abcdef"
     export DIGITALOCEAN_SSH_KEY_IDS="12345, 67890"
 
 Windows Command Prompt:
 
-    set DIGITALOCEAN_CLIENT_ID=abcdef01234567890abcdef0123456789
-    set DIGITALOCEAN_API_KEY=01234567890abcdef01234567890abcdef
+    set DIGITALOCEAN_ACCESS_TOKEN=01234567890abcdef01234567890abcdef
     set DIGITALOCEAN_SSH_KEY_IDS=12345, 67890
 
 Windows Powershell:
 
-    $env:DIGITALOCEAN_CLIENT_ID="abcdef01234567890abcdef0123456789"
-    $env:DIGITALOCEAN_API_KEY="01234567890abcdef01234567890abcdef"
+    $env:DIGITALOCEAN_ACCESS_TOKEN="01234567890abcdef01234567890abcdef"
     $env:DIGITALOCEAN_SSH_KEY_IDS="12345, 67890"
 
 The output of `kitchen list` should resemble the following:
 
     $ kitchen list
     Instance           Driver        Provisioner  Last Action
-    default-centos65  Digitalocean  ChefSolo     <Not Created>
+    default-centos65  Digitalocean   ChefZero     <Not Created>
 
 Spin up the node with `kitchen create`:
 
     $ kitchen create default-centos65
-    -----> Starting Kitchen (v1.2.2.dev)
+    -----> Starting Kitchen (v1.2.1)
     -----> Creating <default-centos65>...
-           Digital Ocean instance 2016149 created.
-    .........................................................................
-           Waiting for 104.131.234.140:22...
+           Digital Ocean instance <3129943> created.
+           Waiting for 192.241.185.202:22...
+           Waiting for 192.241.185.202:22...
            (ssh ready)
-
-           Finished creating <default-centos65> (2m22.61s).
-    -----> Kitchen is finished. (2m23.04s)
+    
+           Finished creating <default-centos65> (2m42.61s).
+    -----> Kitchen is finished. (2m42.82s)
 
 Install Chef Client with `kitchen setup`.  `kitchen destroy` will delete your Droplet on DigitalOcean.
 
