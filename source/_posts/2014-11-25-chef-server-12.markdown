@@ -1,0 +1,448 @@
+---
+layout: post
+title: "Chef Server 12"
+date: 2014-11-25 15:02
+comments: true
+categories: [Chef, Chef Server]
+---
+
+* list element with functor item
+{:toc}
+
+The source code for this article can be found at [https://github.com/learningchef/learningchef-code/tree/master/chefserver12](https://github.com/learningchef/learningchef-code/tree/master/chefserver12).
+
+Make sure you install the latest Chef Development Kit 0.3.5 (or higher) and/or
+Chef Client 11.18 (or higher) before trying to run `knife` commands against
+Chef Server 12.  It appears that some changes were made to the clients for
+administrators to work with Chef Server 12, so these newer versions (at the
+time of this writing) are required that came out since the Learning Chef book
+was published.
+
+# Introduction
+
+In the [Learning Chef book](http://shop.oreilly.com/product/0636920032397.do) 
+we cover Chef Server 11 in Chapters 9 and 10, as that was the version of
+Chef Server available when we were writing the book.  Since then, Chef Server
+12 has been released.  This blog post covers how the material presented
+in Chapter 9 can be adapted for Chef Server 12.  No changes are needed in
+Chapter 10 for Chef Server 12.
+
+Chef Server 12 merges the code bases for what were three separate flavors of
+Chef Server:
+
+* Open Source Chef Server
+* On-Premises Enterprise Chef
+* Hosted Enterprised Chef
+
+Also the [pricing for Chef Server has changed as well to match](https://www.getchef.com/blog/2014/09/08/there-is-one-chef-server-and-it-is-open-source/).  For
+more information on the changes, refer to [Chef plans and pricing](https://www.getchef.com/chef/#plans-and-pricing).
+
+From a technical standpoint, the great thing about Chef Server 12 is that is
+now shares the same core, whether or not you choose to use what used to be the
+open source option or you pay for a subscription to take advantage of Chef
+Server's Premium features. 
+
+# Installing Chef Server 12 Manually
+
+To install Chef Server, go to [https://downloads.getchef.com/](https://downloads.getchef.com/])
+ and click on the "Get It" button, as shown in the following screenshot:
+
+{% img center /images/chefserver12/getit.png [Get Chef Server 12] %}
+
+From there, you are presented with a download link page where you can choose
+to download Chef Server 12.  Chef Server 12 currently provides install packages
+for both the Red Hat Enterprise Linux and Ubuntu Linux platforms (sorry, no
+Windows support for the server piece, only for Windows clients):
+
+{% img center /images/chefserver12/download.png [Download Chef Server 12] %}
+
+To manually replicate a basic Chef Server install in a cookbook, we first need
+to download the Chef Server 12 install package for Red Hat Enterprise Linux 6,
+as we'll be installing on CentOS 6.5.  To match what is being written in this
+article, use [version 12.0.0](https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.0-1.el6.x86_64.rpm).  Use the _Copy Link Address_
+option on the download link to copy the full download URl to your clipboard.
+
+Here's the rest of the steps necessary to install Chef Server:
+
+1. Install the `chef-server` package.
+2. Run `sudo chef-server-ctl reconfigure`.
+
+NOTE: The name of the command line application to configure Chef Server has
+changed from `private-chef-ctl` to `chef-server-ctl` with version 12.
+
+# Install Chef Server 12
+
+Assuming you have sufficient resources to install Chef Server 12 locally along
+with a test node, let's create a `chef-server` cookbook that will install
+Chef Server 12.  To maintain consistency with Hosted Enterprise Chef, create
+the directory `chef-repo/cookbooks` and create the `chef-server` cookbook in
+that directory.  Having a top-level `chef-repo` directory will help you handle
+the additional files necessary to manage Chef Server 12 beyond the cookbooks
+themselves.  You'll definitely be using more than one cookbook in your
+organization, so we suggest putting them in a `chef-repo/coobkooks`
+subdirectory.
+
+Create the `chef-repo/cookbooks` directory and make it the current working
+directory.
+
+Linux/Mac OS X:
+
+    $ mkdir -p chef-repo/cookbooks
+    $ cd chef-repo/cookbooks
+
+Windows:
+
+    > mkdir chef-repo\cookbooks
+    > cd chef-repo\cookbooks
+
+Then generate the `chef-server` cookbook with `chef generate cookbook` or
+`knife cookbook create`, dependening on whether you are using the Chef
+Development Kit or Chef Client.  We're going to go through the cookbook
+creation steps quickly in this article.  If you need a refresher on what each
+of these commands mean and the expected output, refer to Chapter 7 of the
+Learning Chef book.
+
+Chef Development Kit:
+
+    $ chef generate cookbook chef-server
+    $ cd chef-server
+
+Chef Client:
+
+    $ knife cookbook create chef-server --cookbook-path .
+    $ cd chef-server
+    $ kitchen init --create-gemfile
+    $ bundle install
+
+As shown in the code example below, edit the `.kitchen.yml` file to use the
+CentOS 6.5 basebox we prepared specifically for the Learning Chef book.  Also
+assign a private network address like we did in Chapter 7 of Learning Chef.
+This time we're going to use the IP address `192.168.38.34`.  If this conflicts
+with an address already being used on your local network. change it to a
+nonconflicting one.  We also need more memory than the default 512 MB allocated,
+so add a `customize:` block with a `memory:` statement to increase the memory
+to 1.5 GB (memory is specified in megabytes only).
+
+NOTE: We also changed the suite name to `server` as we'll be logging in
+to the virtual machine with Chef Server 12.  This makes it more clear
+that the examples should be run on the Chef Server machine.
+
+{% codeblock chef-repo/cookbooks/chef-server/.kitchen.yml lang:ruby %}
+ ---
+ driver:
+   name: vagrant
+
+ provisioner:
+   name: chef_solo
+
+ platforms:
+   - name: centos65
+     driver:
+       box: learningchef/centos65
+       box_url: learningchef/centos65
+       network:
+       - ["private_network", {ip: "192.168.38.34"}]
+       customize:
+         memory: 1536
+
+ suites:
+   - name: server
+     run_list:
+       - recipe[chef-server::default]
+     attributes:
+{% endcodeblock %}
+
+Generate a default attributes file in `attributes/default.rb`.
+
+Chef Development Kit:
+
+    $ chef generate attribute default
+
+Chef Client:
+
+    $ touch attributes/default.rb
+
+Add an attribute specifying the download URL for the Chef Server package
+that you obtained from the download link page.  We recommend using the 12.0.0
+version URL as shown below, as we wrote the exampels for this article using
+this Version of Chef Server.
+
+{% codeblock vmware/workstation/.kitchen.yml lang:ruby %}
+default['chef-server']['url'] = \
+  'https://web-dl.packagecloud.io/chef/stable/packages/el/6/'\
+  'chef-server-core-12.0.0-1.el6.x86_64.rpm'
+{% endcodeblock %}
+
+From here, we're just going to skip ahead to the final bit of code in the
+"Introducing Idempotence" section of Chapter 9 in Learning Chef, as everything
+remains the same for Chef Server 12.  The only difference is the command
+line app for configuring Chef Server is now called `chef-server-ctl` instead
+of `private-server-ctl`.  Refer to Chapter 9 in Learning Chef for more
+explanation on what this code does.
+
+{% codeblock chefdk/chef-repo/cookbooks/chef-server/recipes/default.rb lang:ruby %}
+#
+# Cookbook Name:: chef-server
+# Recipe:: default
+#
+
+package_url = node['chef-server']['url']
+package_name = ::File.basename(package_url)
+package_local_path = "#{Chef::Config[:file_cache_path]}/#{package_name}"
+
+# package is remote, let's download it
+remote_file package_local_path do
+  source package_url
+end
+
+package package_name do
+  source package_local_path
+  provider Chef::Provider::Package::Rpm
+  notifies :run, 'execute[reconfigure-chef-server]', :immediately
+end
+
+# reconfigure the installation
+execute 'reconfigure-chef-server' do
+  command 'chef-server-ctl reconfigure'
+  action :nothing
+end
+{% endcodeblock %}
+
+Try running `kitchen converge` against this recipe, and note that it reports 
+`0/2 resources updated`, which is the result we are looking for; no resources
+are updated after running kitchen converge for the second time:
+
+    $ kitchen converge
+    -----> Starting Kitchen (v1.2.1)
+    -----> Converging <default-centos65>...
+    ...
+    Converging 3 resources
+           Recipe: chef-server::default
+             * remote_file[/tmp/kitchen/cache/chef-server-core-12.0.0-1.el6.x86_64.rpm] action create[2014-11-26T01:27:20+00:00] INFO: Processing remote_file[/tmp/kitchen/cache/chef-server-core-12.0.0-1.el6.x86_64.rpm] action create (chef-server::default line 11)
+            (up to date)
+             * package[chef-server-core-12.0.0-1.el6.x86_64.rpm] action install[2014-11-26T01:27:27+00:00] INFO: Processing package[chef-server-core-12.0.0-1.el6.x86_64.rpm] action install (chef-server::default line 15)
+            (up to date)
+             * execute[reconfigure-chef-server] action nothing[2014-11-26T01:27:28+00:00] INFO: Processing execute[reconfigure-chef-server] action nothing (chef-server::default line 22)
+            (skipped due to action :nothing)
+           [2014-11-26T01:27:28+00:00] INFO: Chef Run complete in 7.811144016 seconds
+
+           Running handlers:
+           [2014-11-26T01:27:28+00:00] INFO: Running report handlers
+           Running handlers complete
+           [2014-11-26T01:27:28+00:00] INFO: Report handlers complete
+           Chef Client finished, 0/2 resources updated in 10.600168629 seconds
+           Finished converging <default-centos65> (0m12.49s).
+    -----> Kitchen is finished. (0m13.51s)
+
+Always check your recipes to see if they are idempotent before deploying them
+to production. If we had deployed the first version of this recipe in
+production, given that the chef-client usually runs on a periodic timer
+performing Chef runs, all our nodes would have been reinstalling the Chef
+Server package and reconfiguring the server every 30 minutes!
+
+# Configure Chef Server
+
+The configuration of Chef Server has changed considerably with Chef Server 12.
+Now, the server does not enable a web UI by default, and you are expected to
+configure the Chef Server primarily through the command line.
+
+You need to perform two actions in order to configure Chef Server 12:
+
+* Create an admin user
+* Create an organization
+
+Both of these actions are now `chef-server-ctl` subcommands: `user-create`
+and `org-create` respectively.
+
+NOTE: You may be tempted to skip ahead and install the management UI and try
+to configure an admin user/organization in the web UI, just like you did with
+Chef Server 11.  Unfortunately this approach does not work with version 12.0.0.
+You must create one admin user and an initial organization on the command line
+first, then you can create the rest in the web UI.
+
+The `chef-server-ctl user-create` command is used to create a user  The
+help for the command usage follows.  As of this writing the help mistakenly
+displays usage for the legacy `knife opc user create` command, but it is
+really now supposed to be `chef-server-ctl user-create`:
+
+    USAGE: knife opc user create USERNAME FIRST_NAME [MIDDLE_NAME] LAST_NAME EMAIL PASSWORD
+    -f, --filename FILENAME          Write private key to FILENAME rather than STDOUT
+
+The `chef-server-ctl org-create` command is used to create an organization.  The
+help for the command usage follows.  It currently has a similar issue with the
+help referencing the legacy command, similar to `user-create`:
+
+    USAGE: knife opc org create ORG_SHORT_NAME ORG_FULL_NAME (options)
+    -f, --filename FILENAME          Write validator private key to FILENAME rather than STDOUT
+
+In both cases, use the `--filename` parameter to write the `*.pem` files
+containing the user and organization keys.  By default, they are just echoed
+to STDOUT.
+
+Login to the `server-centos65` instance to create the first admin user and the
+first organization.  I created an admin user for myself, just like I did in
+Chapter 9 of Learning Chef.  Here's the results of the commands I ran:
+
+    $ kitchen login server-centos65
+    Last login: Wed Nov 26 01:59:12 2014 from 10.0.2.2
+    Welcome to your Packer-built virtual machine.
+    [vagrant@server-centos65 ~]$ sudo chef-server-ctl user-create misheska Mischa Taylor mischa@misheska.com chefrocks --filename misheska.pem
+    ...
+    [vagrant@server-centos65 ~]$ sudo chef-server-ctl org-create learningchef "Learning Chef" --association misheska --filename learningchef-validator.pem
+    ...
+    [vagrant@server-centos65 ~]$ ls *.pem
+    learningchef-validator.pem  misheska.pem
+    [vagrant@server-centos65 ~]$ exit
+    logout
+    Connection to 127.0.0.1 closed.
+
+NOTE: You'll need `sudo` or `root` access to run the `user-create` and
+`org-create` commands, because they need access to the default superuser key
+owned by `root`.  This key is located in `/etc/opscode/pivotal.pem`.
+
+After you have created the _\<username\>.pem_ and _\<organization\>-validator.pem_
+files to the `chef-repo/.chef` directory on your host.  One way to do this is
+to use the `scp` command to copy the files.  Here's what I did to create these
+files on my host after making `chef-repo` the current working directory:
+
+    $ mkdir .chef
+    $ scp -o stricthostkeychecking=no vagrant@192.168.38.34:/home/vagrant/misheska.pem .chef/misheska.pem
+    vagrant@192.168.38.34's password: vagrant
+    $ scp -o stricthostkeychecking=no vagrant@192.168.38.34:/home/vagrant/learningchef-validator.pem .chef/learningchef-validator.pem
+    vagrant@192.168.38.34's password: vagrant
+
+For the initial organization, you'll need to create your own `knife.rb` file
+by hand.  Here's the `knife.rb` file I used:
+
+{% codeblock chef-repo/.chef/knife.rb lang:ruby %}
+current_dir = File.dirname(__FILE__)
+log_level                :info
+log_location             STDOUT
+node_name                "misheska"
+client_key               "#{current_dir}/misheska.pem"
+validation_client_name   "learningchef-validator"
+validation_key           "#{current_dir}/learningchef-validator.pem"
+chef_server_url          "https://server-centos65.vagrantup.com/\
+organizations/learningchef"
+cache_type               'BasicFile'
+cache_options( :path => "#{ENV['HOME']}/.chef/checksums" )
+cookbook_path            ["#{current_dir}/../cookbooks"]
+{% endcodeblock %}
+
+The `chef_server_url` field in the `knife.rb` uses a fake DNS hostname of
+`server-centos65.vagrantup.com` because that's the hostname vagrant set up.
+If you try to visit the URL _https://server-centos65.vagrantup.com/organization/learningchef_, you will discover that it is not valid.
+
+Chef Server requires that hosts have valid fully qualified domain names set up
+in your local domain name service (DNS).  In production, you would have your
+Chef Server hosntame configured in your Domain Name System (DNS) server before
+installing Chef Server.  Let's add a temporary host entry for
+`server-centos65.vagrantup.com` in your local host database in lieu of making
+a DNS change, as we are just doing a book exercose.
+
+Run one of the following commands to add a host entry.  Following are the
+commands I ran on my machine.  If you used an IP address other than
+`192.168.38.34`, make sure it matches when you run the command.
+
+Linux/Mac OS X:
+
+    $ sudo sh -c "echo '192.168.38.34 server-centos65.vagrantup.com' >> /etc/hosts"
+
+Windows Command Prompt:
+
+    > echo 192.168.38.34 server-centos65.vagrantup.com >> %WINDIR%\System32\Drivers\Etc\Hosts
+
+Windows PowerSHell:
+
+    PS> ac -Encoding UTF8 $env:windor\system32\drivers\etc\hosts "192.168.38.34 server-centos65.vagrantup.com"
+
+Now if you try to visit _https://default-centos65.vagrantup.com_ in your web
+browser, your local host should think that this is a valid hostname.
+
+# Testing the Connection
+
+You should run the following commands from inside the Chef repository.  Open
+your termianl or command prompt, and make `chef-repo` the current working
+directory.  If you placed your `chef-repo` in a different location, use that
+instead:
+
+    $ cd ~/chef-repo
+
+Now you can use `knife`, the command-line tool for Chef Server, to test your
+connection and authentication against Chef Server.  At the time of this writing,
+Chef does not provide a "connection test" command.  However, asking Chef
+Server to list the clients will very
+
+* Your network can connect to Chef Server.
+* The authentication files are in the correct location.
+* The authentication files can be read by Chef.
+* The response from Chef Server is received by your workstation.
+
+Issue the `knife client list` command on your terminal.  You should see the
+following:
+
+    $ knife client list
+    learningchef-validator
+
+If you get an error, checking the following:
+
+1. You can access _https://server-centos65.vagrantup.com:443_ from a web browser.
+2. You are running commands from inside the _chef-repo_ directory.
+3. The _.chef_ directory contains two _.pem_ files and a _knife.rb_.
+4. Your authentication fiels have the correct file permissions (they should be only user-readable).
+5. You are using the Chef Development Kit 0.3.5 and/or chef-client 11.18.0 (or higher).  These tools needed some updates to work properly with Chef Server 12.
+
+If you have confirmed the preceding steps and are still unable to connect
+to Chef Server, please consult the Chef [online documentation](http://docs.getchef.com/).
+
+From this point forward, the steps for bootstrapping a node are the same as
+with Chef Server 11.  Refer to the "Bootstrapping a Node" section in Chapter 9
+of Learning Chef for more information.
+
+# Installing the web UI
+
+The web UI is now a premium feature of Chef Server.  It is not installed by
+default.  To install the web UI on your Chef Server, run the following
+commands to install the `opscode-manage` plugin and reconfigure both the
+web UI configuration and the Chef Server configuration to use the web UI:
+
+    $ cd cookbooks/chef-server
+    $ kitchen login
+    Last login: Wed Nov 26 04:09:56 2014 from 10.0.2.2
+    Welcome to your Packer-built virtual machine.
+    [vagrant@server-centos65 ~]$ sudo chef-server-ctl install opscode-manage
+    ...
+    [vagrant@server-centos65 ~]$ sudo opscode-manage-ctl reconfigure
+    ...
+    [vagrant@server-centos65 ~]$ sudo chef-server-ctl reconfigure
+    ...
+    [vagrant@server-centos65 ~]$ exit
+    logout
+    Connection to 127.0.0.1 closed.
+
+Once you have configured Chef Server to use the web UI, vist 
+_https://server-centos65.vagrantup.com_.  You should see something resembling
+the following screenshot.  Since you already created an admin account,
+click on the _Click here to sign in_ link:
+
+{% img center /images/chefserver12/manage.png [Click to sign in] %}
+
+Clicking on the link will take you to _https://server-centos65.vagrantup.com/login_ where you can sign in with your administrator account, as shown in the following:
+
+{% img center /images/chefserver12/signin.png [Sign in] %}
+
+From there, you can access the management UI for Chef Server 12!
+
+{% img center /images/chefserver12/learningchef.png [Sign in] %}
+
+# Conclusion
+
+This blog post covered all the relevant changes needed to adapt the material
+presented in Chapter 9 of the Learning Chef book for Chef Server 12.
+Thankfully, besides the server configuration steps, not much changed.
+
+In addition to the material presented in this article, you might want to
+consider automating the creation of the admin user and organization in your
+Chef cookbook.  To see how this might be done, take a look at the Chef
+cookbook I use to demo Chef Server 12 for clients at
+[https://github.com/misheska-cookbooks/chef-server12](https://github.com/misheska-cookbooks/chef-server12).
