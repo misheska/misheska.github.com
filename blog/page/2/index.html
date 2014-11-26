@@ -9,7 +9,7 @@
   <meta name="author" content="Mischa Taylor">
 
   
-  <meta name="description" content="Mac OS X Install RVM and Ruby 1.9.x - Mac OS X Install Ruby 1.8.7 - Mac OS X Install Ruby 2.0.0 - Mac OS X Remove RVM - Mac OS X Linux Install RVM &hellip;">
+  <meta name="description" content="How to set up Omnibus Chef Ruby on Mac OS X How to set up Omnibus Chef Ruby on Linux How to set up Omnibus Chef Ruby on Windows If your only use of &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -77,6 +77,232 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/16/use-opscode-chef-omnibus-ruby-for-writing-cookbooks/">Use Opscode Chef Omnibus Ruby for Writing Cookbooks</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-16T02:35:00-07:00" pubdate data-updated="true">Jun 16<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul id="markdown-toc">
+  <li><a href="#how-to-set-up-omnibus-chef-ruby-on-mac-os-x">How to set up Omnibus Chef Ruby on Mac OS X</a></li>
+  <li><a href="#how-to-set-up-omnibus-chef-ruby-on-linux">How to set up Omnibus Chef Ruby on Linux</a></li>
+  <li><a href="#how-to-set-up-omnibus-chef-ruby-on-windows">How to set up Omnibus Chef Ruby on Windows</a></li>
+</ul>
+
+<p>If your only use of Ruby is because you want to write cookbooks for Opscode
+Chef, rather than going through the bother of setting up a full Ruby
+development environment via <a href="http://misheska.com/blog/2013/06/16/using-rvm-to-manage-multiple-versions-of-ruby/">rvm</a> or <a href="http://misheska.com/blog/2013/06/15/using-rbenv-to-manage-multiple-versions-of-ruby/">rbenv</a>
+you can just reuse the Ruby 1.9.x environment that is bundled with the
+Opscode Omnibus Chef installer.</p>
+
+<p>In this post, I’ll cover how to configure the Ruby 1.9.x interpreter bundled
+with the Opscode Omnibus Chef installer on Mac OS X, Linux and Windows so
+it can be used for writing cookbooks.</p>
+
+<h1 id="how-to-set-up-omnibus-chef-ruby-on-mac-os-x">How to set up Omnibus Chef Ruby on Mac OS X</h1>
+<p>First install Apple Xcode, which includes a C compiler needed to build the
+tools required for cookbook development from source (like
+<a href="http://misheska.com/blog/2013/06/16/getting-started-writing-chef-cookbooks-the-berkshelf-way/">Berkshelf</a> ).
+Download and install the latest version of Xcode from the App Store, if you
+don’t have it installed already.  Also make sure you install the <em>Command Line
+Tools</em> by choosing the menu item <code>Xcode -&gt; Preferences...</code> and click
+on the <em>Downloads</em> tab.  Click on the <em>Install</em> button to download the
+Command Line Tools.
+<img src="/images/xcodecommandline.png" alt="Xcode Command Line Tools" /></p>
+
+<p>In a web browser, go to the <a href="http://www.opscode.com/chef/install">http://www.opscode.com/chef/install</a> page to
+display the instructions for installing the Chef Client via the Opscode
+Omnibus Chef installer.</p>
+
+<p>As of this writing, the quick install instructions for Mac OS X are as
+follows:</p>
+
+<pre><code>$ curl -L https://www.opscode.com/chef/install.sh | sudo bash
+</code></pre>
+
+<p>The Chef Client installer also installs Ruby 1.9.3 for its own use in
+the directory <code>/opt/chef/embedded</code>.  You can also use this copy of Ruby
+for your own cookbook development.</p>
+
+<p>WARNING: Don’t try to mix and match the Chef Client’s Ruby 1.9.3 together
+with a RVM/rbenv Ruby development setup.  Choose one or the other.  If your
+Ruby needs go beyond Chef and writing Chef cookbooks, set up a “real”
+RVM/rbenv Ruby environment.</p>
+
+<p>Now that you have a Ruby 1.9.3 environment via the Chef Client install, you
+can install any extra gem dependencies needed for writing Chef cookbooks by
+using the <code>/opt/chef/embedded/bin/gem install</code> command.  For example, here’s
+how to install Berkshelf, a popular cookbook authoring support tool:</p>
+
+<pre><code>$ sudo /opt/chef/embedded/bin/gem install berkshelf --no-ri --no-rdoc
+Password:
+Fetching: i18n-0.6.1.gem (100%)
+Fetching: multi_json-1.7.7.gem (100%)
+Fetching: activesupport-3.2.13.gem (100%)
+...
+Successfully installed safe_yaml-0.9.3
+Successfully installed test-kitchen-1.0.0.alpha.7
+Successfully installed berkshelf-2.0.3
+43 gems installed
+</code></pre>
+
+<p>Create a soft link to any gem-installed binaries in an existing PATH directory,
+like <code>/usr/local/bin</code></p>
+
+<pre><code># On Mac OS X, /usr/local/bin is not created by default
+$ sudo mkdir -p /usr/local/bin
+Password:
+$ sudo ln -s /opt/chef/embedded/bin/berks /usr/local/bin/berks
+$ berks -v
+Berkshelf (2.0.3)
+</code></pre>
+
+<p>Don’t be tempted to add <code>/opt/chef/embedded/bin</code> to your PATH.  You still want
+to keep Opscode’s Ruby install separate from your main system Ruby install.</p>
+
+<h1 id="how-to-set-up-omnibus-chef-ruby-on-linux">How to set up Omnibus Chef Ruby on Linux</h1>
+<p>Make sure all the prerequisite packages are installed for the gems you will
+be using.</p>
+
+<p>Ubuntu prerequisites:</p>
+
+<pre><code>$ sudo apt-get update
+$ sudo apt-get install -y curl
+$ sudo apt-get install -y build-essential git
+$ sudo apt-get install -y libxml2-dev libxslt-dev libssl-dev
+</code></pre>
+
+<p>RHEL/CentOS prerequisites:</p>
+
+<pre><code>$ sudo yum update
+$ sudo yum install -y curl
+$ sudo yum install -y git
+$ sudo yum install -y gcc-c++ patch readline readline-devel zlib zlib-devel
+$ sudo yum install -y libyaml-devel libffi-devel openssl-devel make bzip2
+$ sudo yum install -y autoconf automake libtool bison
+$ sudo yum install -y libxml2-devel libxslt-devel
+</code></pre>
+
+<p>In a web browser, go to the <a href="http://www.opscode.com/chef/install">http://www.opscode.com/chef/install</a> page to
+display the instructions for installing the Chef Client via the Opscode
+Omnibus Chef installer for your distribution of Linux.</p>
+
+<p>As of this writing, the quick install instructions for Ubuntu/CentOS are as
+follows:</p>
+
+<pre><code>$ curl -L https://www.opscode.com/chef/install.sh | sudo bash
+</code></pre>
+
+<p>The Chef Client installer also installs Ruby 1.9.3 for its own use in
+the directory <code>/opt/chef/embedded</code>.  You can also use this copy of Ruby
+for your own cookbook development.</p>
+
+<p>WARNING: Don’t try to mix and match the Chef Client’s Ruby 1.9.3 together
+with a RVM/rbenv Ruby development setup.  Choose one or the other.  If your
+Ruby needs go beyond Chef and writing Chef cookbooks, set up a “real”
+RVM/rbenv Ruby environment.</p>
+
+<p>Now that you have a Ruby 1.9.3 environment via the Chef Client install, you
+can install any extra gem dependencies needed for writing Chef cookbooks by
+using the <code>/opt/chef/embedded/bin/gem install</code> command.  For example, here’s
+how to install Berkshelf, a popular cookbook authoring support tool:</p>
+
+<pre><code>$ sudo /opt/chef/embedded/bin/gem install berkshelf --no-ri --no-rdoc
+Password:
+Building native extensions.  This could take a while...
+Fetching: httpclient-2.2.0.2.gem (100%)
+Fetching: rubyntlm-0.1.1.gem (100%)
+Fetching: uuidtools-2.1.4.gem (100%)
+...
+Successfully installed safe_yaml-0.9.3
+Successfully installed test-kitchen-1.0.0.alpha.7
+Successfully installed berkshelf-2.0.3
+25 gems installed
+</code></pre>
+
+<p>Create a soft link to any gem-installed binaries in an existing PATH directory,
+like <code>/usr/local/bin</code></p>
+
+<pre><code>$ sudo ln -s /opt/chef/embedded/bin/berks /usr/local/bin/berks
+$ berks -v
+Berkshelf (2.0.3)
+</code></pre>
+
+<p>Don’t be tempted to add <code>/opt/chef/embedded/bin</code> to your PATH.  You still want
+to keep Opscode’s Ruby install separate from your main system Ruby install.</p>
+
+<h1 id="how-to-set-up-omnibus-chef-ruby-on-windows">How to set up Omnibus Chef Ruby on Windows</h1>
+<p>In a web browser, go to the <a href="http://www.opscode.com/chef/install">http://www.opscode.com/chef/install</a> page to
+display the instructions for installing the Chef Client via the Opscode
+Omnibus Chef installer for your distribution of Linux.</p>
+
+<p>After you select a Chef verison (pick the latest), you will be provided
+a download link to the Omnibus Chef Windows installer.  After downloading
+Run the install, choosing the default options.</p>
+
+<p>The Chef Client installer also installs Ruby 1.9.3 for its own use in
+the directory <code>C:\opscode\chef\embedded</code>.  You can also use this copy of Ruby
+for your own cookbook development.</p>
+
+<p>WARNING: Don’t try to mix and match the Chef Client’s Ruby 1.9.3 together
+with a RVM/rbenv Ruby development setup.  Choose one or the other.  If your
+Ruby needs go beyond Chef and writing Chef cookbooks, set up a “real”
+RVM/rbenv Ruby environment.</p>
+
+<p>Now that you have a Ruby 1.9.3 environment via the Chef Client install, you
+can install any extra gem dependencies needed for writing Chef cookbooks by
+using the <code>c:\opscode\chef\embedded\bin install</code> command.  For example,
+here’s how to install Berkshelf, a popular cookbook authoring support tool:</p>
+
+<pre><code>&gt; c:\opscode\chef\embedded\bin\gem install berkshelf --no-ri --no-rdoc
+Fetching: i18n-0.6.1.gem (100%)
+Fetching: multi_json-1.7.7.gem (100%)
+Fetching: activesupport-3.2.13.gem (100%)
+...
+Successfully installed safe_yaml-0.9.3
+Successfully installed test-kitchen-1.0.0.alpha.7
+Successfully installed berkshelf-2.0.3
+43 gems installed
+</code></pre>
+
+<p>Add <code>c:\opscode\chef\embedded\bin</code> to your PATH environment variable:
+<img src="/images/opscodechefpathwin.png" alt="Environments Control Panel" /></p>
+
+<p>Restart your Command Prompt to pick up the new environment variable setting,
+and then you can run Berkshelf:</p>
+
+<pre><code>&gt; berks -v
+Berkshelf (2.0.3)
+</code></pre>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -1139,6 +1365,10 @@ destroy the VM:</p>
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2014/11/25/chef-server-12/">Chef Server 12</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2014/09/21/survey-of-test-kitchen-providers/">Survey of Test Kitchen providers</a>
       </li>
     
@@ -1152,10 +1382,6 @@ destroy the VM:</p>
     
       <li class="post">
         <a href="/blog/2013/07/28/windows-server-2012-automated-install-settings/">Windows Server 2012 Automated Install Settings</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2013/07/27/windows-8-automated-install-settings/">Windows 8 Automated Install Settings</a>
       </li>
     
   </ul>

@@ -4,7 +4,7 @@
   <title><![CDATA[Mischa Taylor's Coding Blog]]></title>
   <link href="http://misheska.com/atom.xml" rel="self"/>
   <link href="http://misheska.com/"/>
-  <updated>2014-11-11T03:55:24-08:00</updated>
+  <updated>2014-11-25T21:40:26-08:00</updated>
   <id>http://misheska.com/</id>
   <author>
     <name><![CDATA[Mischa Taylor]]></name>
@@ -12,6 +12,550 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Chef Server 12]]></title>
+    <link href="http://misheska.com/blog/2014/11/25/chef-server-12/"/>
+    <updated>2014-11-25T15:02:00-08:00</updated>
+    <id>http://misheska.com/blog/2014/11/25/chef-server-12</id>
+    <content type="html"><![CDATA[<ul id="markdown-toc">
+  <li><a href="#introduction">Introduction</a></li>
+  <li><a href="#installing-chef-server-12-manually">Installing Chef Server 12 Manually</a></li>
+  <li><a href="#install-chef-server-12">Install Chef Server 12</a></li>
+  <li><a href="#configure-chef-server">Configure Chef Server</a></li>
+  <li><a href="#testing-the-connection">Testing the Connection</a></li>
+  <li><a href="#installing-the-web-ui">Installing the web UI</a></li>
+  <li><a href="#conclusion">Conclusion</a></li>
+</ul>
+
+<p>The source code for this article can be found at <a href="https://github.com/learningchef/learningchef-code/tree/master/chefserver12">https://github.com/learningchef/learningchef-code/tree/master/chefserver12</a>.</p>
+
+<p>Make sure you install the latest Chef Development Kit 0.3.5 (or higher) and/or
+Chef Client 11.18 (or higher) before trying to run <code>knife</code> commands against
+Chef Server 12.  It appears that some changes were made to the clients for
+administrators to work with Chef Server 12, so these newer versions (at the
+time of this writing) are required that came out since the Learning Chef book
+was published.</p>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>In the <a href="http://shop.oreilly.com/product/0636920032397.do">Learning Chef book</a> 
+we cover Chef Server 11 in Chapters 9 and 10, as that was the version of
+Chef Server available when we were writing the book.  Since then, Chef Server
+12 has been released.  This blog post covers how the material presented
+in Chapter 9 can be adapted for Chef Server 12.  No changes are needed in
+Chapter 10 for Chef Server 12.</p>
+
+<p>Chef Server 12 merges the code bases for what were three separate flavors of
+Chef Server:</p>
+
+<ul>
+  <li>Open Source Chef Server</li>
+  <li>On-Premises Enterprise Chef</li>
+  <li>Hosted Enterprised Chef</li>
+</ul>
+
+<p>Also the <a href="https://www.getchef.com/blog/2014/09/08/there-is-one-chef-server-and-it-is-open-source/">pricing for Chef Server has changed as well to match</a>.  For
+more information on the changes, refer to <a href="https://www.getchef.com/chef/#plans-and-pricing">Chef plans and pricing</a>.</p>
+
+<p>From a technical standpoint, the great thing about Chef Server 12 is that is
+now shares the same core, whether or not you choose to use what used to be the
+open source option or you pay for a subscription to take advantage of Chef
+Server’s Premium features. </p>
+
+<h1 id="installing-chef-server-12-manually">Installing Chef Server 12 Manually</h1>
+
+<p>To install Chef Server, go to <a href="https://downloads.getchef.com/]">https://downloads.getchef.com/</a>
+ and click on the “Get It” button, as shown in the following screenshot:</p>
+
+<p><img class="center" src="http://misheska.com/images/chefserver12/getit.png" title="[Get Chef Server 12]" /></p>
+
+<p>From there, you are presented with a download link page where you can choose
+to download Chef Server 12.  Chef Server 12 currently provides install packages
+for both the Red Hat Enterprise Linux and Ubuntu Linux platforms (sorry, no
+Windows support for the server piece, only for Windows clients):</p>
+
+<p><img class="center" src="http://misheska.com/images/chefserver12/download.png" title="[Download Chef Server 12]" /></p>
+
+<p>To manually replicate a basic Chef Server install in a cookbook, we first need
+to download the Chef Server 12 install package for Red Hat Enterprise Linux 6,
+as we’ll be installing on CentOS 6.5.  To match what is being written in this
+article, use <a href="https://web-dl.packagecloud.io/chef/stable/packages/el/6/chef-server-core-12.0.0-1.el6.x86_64.rpm">version 12.0.0</a>.  Use the <em>Copy Link Address</em>
+option on the download link to copy the full download URl to your clipboard.</p>
+
+<p>Here’s the rest of the steps necessary to install Chef Server:</p>
+
+<ol>
+  <li>Install the <code>chef-server</code> package.</li>
+  <li>Run <code>sudo chef-server-ctl reconfigure</code>.</li>
+</ol>
+
+<p>NOTE: The name of the command line application to configure Chef Server has
+changed from <code>private-chef-ctl</code> to <code>chef-server-ctl</code> with version 12.</p>
+
+<h1 id="install-chef-server-12">Install Chef Server 12</h1>
+
+<p>Assuming you have sufficient resources to install Chef Server 12 locally along
+with a test node, let’s create a <code>chef-server</code> cookbook that will install
+Chef Server 12.  To maintain consistency with Hosted Enterprise Chef, create
+the directory <code>chef-repo/cookbooks</code> and create the <code>chef-server</code> cookbook in
+that directory.  Having a top-level <code>chef-repo</code> directory will help you handle
+the additional files necessary to manage Chef Server 12 beyond the cookbooks
+themselves.  You’ll definitely be using more than one cookbook in your
+organization, so we suggest putting them in a <code>chef-repo/coobkooks</code>
+subdirectory.</p>
+
+<p>Create the <code>chef-repo/cookbooks</code> directory and make it the current working
+directory.</p>
+
+<p>Linux/Mac OS X:</p>
+
+<pre><code>$ mkdir -p chef-repo/cookbooks
+$ cd chef-repo/cookbooks
+</code></pre>
+
+<p>Windows:</p>
+
+<pre><code>&gt; mkdir chef-repo\cookbooks
+&gt; cd chef-repo\cookbooks
+</code></pre>
+
+<p>Then generate the <code>chef-server</code> cookbook with <code>chef generate cookbook</code> or
+<code>knife cookbook create</code>, dependening on whether you are using the Chef
+Development Kit or Chef Client.  We’re going to go through the cookbook
+creation steps quickly in this article.  If you need a refresher on what each
+of these commands mean and the expected output, refer to Chapter 7 of the
+Learning Chef book.</p>
+
+<p>Chef Development Kit:</p>
+
+<pre><code>$ chef generate cookbook chef-server
+$ cd chef-server
+</code></pre>
+
+<p>Chef Client:</p>
+
+<pre><code>$ knife cookbook create chef-server --cookbook-path .
+$ cd chef-server
+$ kitchen init --create-gemfile
+$ bundle install
+</code></pre>
+
+<p>As shown in the code example below, edit the <code>.kitchen.yml</code> file to use the
+CentOS 6.5 basebox we prepared specifically for the Learning Chef book.  Also
+assign a private network address like we did in Chapter 7 of Learning Chef.
+This time we’re going to use the IP address <code>192.168.38.34</code>.  If this conflicts
+with an address already being used on your local network. change it to a
+nonconflicting one.  We also need more memory than the default 512 MB allocated,
+so add a <code>customize:</code> block with a <code>memory:</code> statement to increase the memory
+to 1.5 GB (memory is specified in megabytes only).</p>
+
+<p>NOTE: We also changed the suite name to <code>server</code> as we’ll be logging in
+to the virtual machine with Chef Server 12.  This makes it more clear
+that the examples should be run on the Chef Server machine.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>chef-repo/cookbooks/chef-server/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"> <span class="o">---</span>
+</span><span class="line"> <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">   <span class="nb">name</span><span class="p">:</span> <span class="n">vagrant</span>
+</span><span class="line">
+</span><span class="line"> <span class="ss">provisioner</span><span class="p">:</span>
+</span><span class="line">   <span class="nb">name</span><span class="p">:</span> <span class="n">chef_solo</span>
+</span><span class="line">
+</span><span class="line"> <span class="ss">platforms</span><span class="p">:</span>
+</span><span class="line">   <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">centos65</span>
+</span><span class="line">     <span class="ss">driver</span><span class="p">:</span>
+</span><span class="line">       <span class="ss">box</span><span class="p">:</span> <span class="n">learningchef</span><span class="o">/</span><span class="n">centos65</span>
+</span><span class="line">       <span class="n">box_url</span><span class="p">:</span> <span class="n">learningchef</span><span class="o">/</span><span class="n">centos65</span>
+</span><span class="line">       <span class="ss">network</span><span class="p">:</span>
+</span><span class="line">       <span class="o">-</span> <span class="o">[</span><span class="s2">&quot;private_network&quot;</span><span class="p">,</span> <span class="p">{</span><span class="ss">ip</span><span class="p">:</span> <span class="s2">&quot;192.168.38.34&quot;</span><span class="p">}</span><span class="o">]</span>
+</span><span class="line">       <span class="ss">customize</span><span class="p">:</span>
+</span><span class="line">         <span class="ss">memory</span><span class="p">:</span> <span class="mi">1536</span>
+</span><span class="line">
+</span><span class="line"> <span class="ss">suites</span><span class="p">:</span>
+</span><span class="line">   <span class="o">-</span> <span class="nb">name</span><span class="p">:</span> <span class="n">server</span>
+</span><span class="line">     <span class="n">run_list</span><span class="p">:</span>
+</span><span class="line">       <span class="o">-</span> <span class="n">recipe</span><span class="o">[</span><span class="n">chef</span><span class="o">-</span><span class="ss">server</span><span class="p">:</span><span class="ss">:default</span><span class="o">]</span>
+</span><span class="line">     <span class="ss">attributes</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Generate a default attributes file in <code>attributes/default.rb</code>.</p>
+
+<p>Chef Development Kit:</p>
+
+<pre><code>$ chef generate attribute default
+</code></pre>
+
+<p>Chef Client:</p>
+
+<pre><code>$ touch attributes/default.rb
+</code></pre>
+
+<p>Add an attribute specifying the download URL for the Chef Server package
+that you obtained from the download link page.  We recommend using the 12.0.0
+version URL as shown below, as we wrote the exampels for this article using
+this Version of Chef Server.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>vmware/workstation/.kitchen.yml  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">default</span><span class="o">[</span><span class="s1">&#39;chef-server&#39;</span><span class="o">][</span><span class="s1">&#39;url&#39;</span><span class="o">]</span> <span class="o">=</span> <span class="p">\</span>
+</span><span class="line">  <span class="s1">&#39;https://web-dl.packagecloud.io/chef/stable/packages/el/6/&#39;</span><span class="p">\</span>
+</span><span class="line">  <span class="s1">&#39;chef-server-core-12.0.0-1.el6.x86_64.rpm&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>From here, we’re just going to skip ahead to the final bit of code in the
+“Introducing Idempotence” section of Chapter 9 in Learning Chef, as everything
+remains the same for Chef Server 12.  The only difference is the command
+line app for configuring Chef Server is now called <code>chef-server-ctl</code> instead
+of <code>private-server-ctl</code>.  Refer to Chapter 9 in Learning Chef for more
+explanation on what this code does.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>chefdk/chef-repo/cookbooks/chef-server/recipes/default.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1">#</span>
+</span><span class="line"><span class="c1"># Cookbook Name:: chef-server</span>
+</span><span class="line"><span class="c1"># Recipe:: default</span>
+</span><span class="line"><span class="c1">#</span>
+</span><span class="line">
+</span><span class="line"><span class="n">package_url</span> <span class="o">=</span> <span class="n">node</span><span class="o">[</span><span class="s1">&#39;chef-server&#39;</span><span class="o">][</span><span class="s1">&#39;url&#39;</span><span class="o">]</span>
+</span><span class="line"><span class="n">package_name</span> <span class="o">=</span> <span class="o">::</span><span class="no">File</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">package_url</span><span class="p">)</span>
+</span><span class="line"><span class="n">package_local_path</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="ss">Chef</span><span class="p">:</span><span class="ss">:Config</span><span class="o">[</span><span class="ss">:file_cache_path</span><span class="o">]</span><span class="si">}</span><span class="s2">/</span><span class="si">#{</span><span class="n">package_name</span><span class="si">}</span><span class="s2">&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># package is remote, let&#39;s download it</span>
+</span><span class="line"><span class="n">remote_file</span> <span class="n">package_local_path</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="n">package_url</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="n">package</span> <span class="n">package_name</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">source</span> <span class="n">package_local_path</span>
+</span><span class="line">  <span class="n">provider</span> <span class="ss">Chef</span><span class="p">:</span><span class="ss">:Provider</span><span class="o">::</span><span class="ss">Package</span><span class="p">:</span><span class="ss">:Rpm</span>
+</span><span class="line">  <span class="n">notifies</span> <span class="ss">:run</span><span class="p">,</span> <span class="s1">&#39;execute[reconfigure-chef-server]&#39;</span><span class="p">,</span> <span class="ss">:immediately</span>
+</span><span class="line"><span class="k">end</span>
+</span><span class="line">
+</span><span class="line"><span class="c1"># reconfigure the installation</span>
+</span><span class="line"><span class="n">execute</span> <span class="s1">&#39;reconfigure-chef-server&#39;</span> <span class="k">do</span>
+</span><span class="line">  <span class="n">command</span> <span class="s1">&#39;chef-server-ctl reconfigure&#39;</span>
+</span><span class="line">  <span class="n">action</span> <span class="ss">:nothing</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Try running <code>kitchen converge</code> against this recipe, and note that it reports 
+<code>0/2 resources updated</code>, which is the result we are looking for; no resources
+are updated after running kitchen converge for the second time:</p>
+
+<pre><code>$ kitchen converge
+-----&gt; Starting Kitchen (v1.2.1)
+-----&gt; Converging &lt;default-centos65&gt;...
+...
+Converging 3 resources
+       Recipe: chef-server::default
+         * remote_file[/tmp/kitchen/cache/chef-server-core-12.0.0-1.el6.x86_64.rpm] action create[2014-11-26T01:27:20+00:00] INFO: Processing remote_file[/tmp/kitchen/cache/chef-server-core-12.0.0-1.el6.x86_64.rpm] action create (chef-server::default line 11)
+        (up to date)
+         * package[chef-server-core-12.0.0-1.el6.x86_64.rpm] action install[2014-11-26T01:27:27+00:00] INFO: Processing package[chef-server-core-12.0.0-1.el6.x86_64.rpm] action install (chef-server::default line 15)
+        (up to date)
+         * execute[reconfigure-chef-server] action nothing[2014-11-26T01:27:28+00:00] INFO: Processing execute[reconfigure-chef-server] action nothing (chef-server::default line 22)
+        (skipped due to action :nothing)
+       [2014-11-26T01:27:28+00:00] INFO: Chef Run complete in 7.811144016 seconds
+
+       Running handlers:
+       [2014-11-26T01:27:28+00:00] INFO: Running report handlers
+       Running handlers complete
+       [2014-11-26T01:27:28+00:00] INFO: Report handlers complete
+       Chef Client finished, 0/2 resources updated in 10.600168629 seconds
+       Finished converging &lt;default-centos65&gt; (0m12.49s).
+-----&gt; Kitchen is finished. (0m13.51s)
+</code></pre>
+
+<p>Always check your recipes to see if they are idempotent before deploying them
+to production. If we had deployed the first version of this recipe in
+production, given that the chef-client usually runs on a periodic timer
+performing Chef runs, all our nodes would have been reinstalling the Chef
+Server package and reconfiguring the server every 30 minutes!</p>
+
+<h1 id="configure-chef-server">Configure Chef Server</h1>
+
+<p>The configuration of Chef Server has changed considerably with Chef Server 12.
+Now, the server does not enable a web UI by default, and you are expected to
+configure the Chef Server primarily through the command line.</p>
+
+<p>You need to perform two actions in order to configure Chef Server 12:</p>
+
+<ul>
+  <li>Create an admin user</li>
+  <li>Create an organization</li>
+</ul>
+
+<p>Both of these actions are now <code>chef-server-ctl</code> subcommands: <code>user-create</code>
+and <code>org-create</code> respectively.</p>
+
+<p>NOTE: You may be tempted to skip ahead and install the management UI and try
+to configure an admin user/organization in the web UI, just like you did with
+Chef Server 11.  Unfortunately this approach does not work with version 12.0.0.
+You must create one admin user and an initial organization on the command line
+first, then you can create the rest in the web UI.</p>
+
+<p>The <code>chef-server-ctl user-create</code> command is used to create a user  The
+help for the command usage follows.  As of this writing the help mistakenly
+displays usage for the legacy <code>knife opc user create</code> command, but it is
+really now supposed to be <code>chef-server-ctl user-create</code>:</p>
+
+<pre><code>USAGE: knife opc user create USERNAME FIRST_NAME [MIDDLE_NAME] LAST_NAME EMAIL PASSWORD
+-f, --filename FILENAME          Write private key to FILENAME rather than STDOUT
+</code></pre>
+
+<p>The <code>chef-server-ctl org-create</code> command is used to create an organization.  The
+help for the command usage follows.  It currently has a similar issue with the
+help referencing the legacy command, similar to <code>user-create</code>:</p>
+
+<pre><code>USAGE: knife opc org create ORG_SHORT_NAME ORG_FULL_NAME (options)
+-f, --filename FILENAME          Write validator private key to FILENAME rather than STDOUT
+</code></pre>
+
+<p>In both cases, use the <code>--filename</code> parameter to write the <code>*.pem</code> files
+containing the user and organization keys.  By default, they are just echoed
+to STDOUT.</p>
+
+<p>Login to the <code>server-centos65</code> instance to create the first admin user and the
+first organization.  I created an admin user for myself, just like I did in
+Chapter 9 of Learning Chef.  Here’s the results of the commands I ran:</p>
+
+<pre><code>$ kitchen login server-centos65
+Last login: Wed Nov 26 01:59:12 2014 from 10.0.2.2
+Welcome to your Packer-built virtual machine.
+[vagrant@server-centos65 ~]$ sudo chef-server-ctl user-create misheska Mischa Taylor mischa@misheska.com chefrocks --filename misheska.pem
+...
+[vagrant@server-centos65 ~]$ sudo chef-server-ctl org-create learningchef "Learning Chef" --association misheska --filename learningchef-validator.pem
+...
+[vagrant@server-centos65 ~]$ ls *.pem
+learningchef-validator.pem  misheska.pem
+[vagrant@server-centos65 ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+</code></pre>
+
+<p>NOTE: You’ll need <code>sudo</code> or <code>root</code> access to run the <code>user-create</code> and
+<code>org-create</code> commands, because they need access to the default superuser key
+owned by <code>root</code>.  This key is located in <code>/etc/opscode/pivotal.pem</code>.</p>
+
+<p>After you have created the <em>&lt;username&gt;.pem</em> and <em>&lt;organization&gt;-validator.pem</em>
+files to the <code>chef-repo/.chef</code> directory on your host.  One way to do this is
+to use the <code>scp</code> command to copy the files.  Here’s what I did to create these
+files on my host after making <code>chef-repo</code> the current working directory:</p>
+
+<pre><code>$ mkdir .chef
+$ scp -o stricthostkeychecking=no vagrant@192.168.38.34:/home/vagrant/misheska.pem .chef/misheska.pem
+vagrant@192.168.38.34's password: vagrant
+$ scp -o stricthostkeychecking=no vagrant@192.168.38.34:/home/vagrant/learningchef-validator.pem .chef/learningchef-validator.pem
+vagrant@192.168.38.34's password: vagrant
+</code></pre>
+
+<p>For the initial organization, you’ll need to create your own <code>knife.rb</code> file
+by hand.  Here’s the <code>knife.rb</code> file I used:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span>chef-repo/.chef/knife.rb  </span></figcaption>
+ <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">current_dir</span> <span class="o">=</span> <span class="no">File</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="bp">__FILE__</span><span class="p">)</span>
+</span><span class="line"><span class="n">log_level</span>                <span class="ss">:info</span>
+</span><span class="line"><span class="n">log_location</span>             <span class="no">STDOUT</span>
+</span><span class="line"><span class="n">node_name</span>                <span class="s2">&quot;misheska&quot;</span>
+</span><span class="line"><span class="n">client_key</span>               <span class="s2">&quot;</span><span class="si">#{</span><span class="n">current_dir</span><span class="si">}</span><span class="s2">/misheska.pem&quot;</span>
+</span><span class="line"><span class="n">validation_client_name</span>   <span class="s2">&quot;learningchef-validator&quot;</span>
+</span><span class="line"><span class="n">validation_key</span>           <span class="s2">&quot;</span><span class="si">#{</span><span class="n">current_dir</span><span class="si">}</span><span class="s2">/learningchef-validator.pem&quot;</span>
+</span><span class="line"><span class="n">chef_server_url</span>          <span class="s2">&quot;https://server-centos65.vagrantup.com/\</span>
+</span><span class="line"><span class="s2">organizations/learningchef&quot;</span>
+</span><span class="line"><span class="n">cache_type</span>               <span class="s1">&#39;BasicFile&#39;</span>
+</span><span class="line"><span class="n">cache_options</span><span class="p">(</span> <span class="ss">:path</span> <span class="o">=&gt;</span> <span class="s2">&quot;</span><span class="si">#{</span><span class="no">ENV</span><span class="o">[</span><span class="s1">&#39;HOME&#39;</span><span class="o">]</span><span class="si">}</span><span class="s2">/.chef/checksums&quot;</span> <span class="p">)</span>
+</span><span class="line"><span class="n">cookbook_path</span>            <span class="o">[</span><span class="s2">&quot;</span><span class="si">#{</span><span class="n">current_dir</span><span class="si">}</span><span class="s2">/../cookbooks&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The <code>chef_server_url</code> field in the <code>knife.rb</code> uses a fake DNS hostname of
+<code>server-centos65.vagrantup.com</code> because that’s the hostname vagrant set up.
+If you try to visit the URL <em>https://server-centos65.vagrantup.com/organization/learningchef</em>, you will discover that it is not valid.</p>
+
+<p>Chef Server requires that hosts have valid fully qualified domain names set up
+in your local domain name service (DNS).  In production, you would have your
+Chef Server hosntame configured in your Domain Name System (DNS) server before
+installing Chef Server.  Let’s add a temporary host entry for
+<code>server-centos65.vagrantup.com</code> in your local host database in lieu of making
+a DNS change, as we are just doing a book exercose.</p>
+
+<p>Run one of the following commands to add a host entry.  Following are the
+commands I ran on my machine.  If you used an IP address other than
+<code>192.168.38.34</code>, make sure it matches when you run the command.</p>
+
+<p>Linux/Mac OS X:</p>
+
+<pre><code>$ sudo sh -c "echo '192.168.38.34 server-centos65.vagrantup.com' &gt;&gt; /etc/hosts"
+</code></pre>
+
+<p>Windows Command Prompt:</p>
+
+<pre><code>&gt; echo 192.168.38.34 server-centos65.vagrantup.com &gt;&gt; %WINDIR%\System32\Drivers\Etc\Hosts
+</code></pre>
+
+<p>Windows PowerSHell:</p>
+
+<pre><code>PS&gt; ac -Encoding UTF8 $env:windor\system32\drivers\etc\hosts "192.168.38.34 server-centos65.vagrantup.com"
+</code></pre>
+
+<p>Now if you try to visit <em>https://default-centos65.vagrantup.com</em> in your web
+browser, your local host should think that this is a valid hostname.</p>
+
+<h1 id="testing-the-connection">Testing the Connection</h1>
+
+<p>You should run the following commands from inside the Chef repository.  Open
+your termianl or command prompt, and make <code>chef-repo</code> the current working
+directory.  If you placed your <code>chef-repo</code> in a different location, use that
+instead:</p>
+
+<pre><code>$ cd ~/chef-repo
+</code></pre>
+
+<p>Now you can use <code>knife</code>, the command-line tool for Chef Server, to test your
+connection and authentication against Chef Server.  At the time of this writing,
+Chef does not provide a “connection test” command.  However, asking Chef
+Server to list the clients will very</p>
+
+<ul>
+  <li>Your network can connect to Chef Server.</li>
+  <li>The authentication files are in the correct location.</li>
+  <li>The authentication files can be read by Chef.</li>
+  <li>The response from Chef Server is received by your workstation.</li>
+</ul>
+
+<p>Issue the <code>knife client list</code> command on your terminal.  You should see the
+following:</p>
+
+<pre><code>$ knife client list
+learningchef-validator
+</code></pre>
+
+<p>If you get an error, checking the following:</p>
+
+<ol>
+  <li>You can access <em>https://server-centos65.vagrantup.com:443</em> from a web browser.</li>
+  <li>You are running commands from inside the <em>chef-repo</em> directory.</li>
+  <li>The <em>.chef</em> directory contains two <em>.pem</em> files and a <em>knife.rb</em>.</li>
+  <li>Your authentication fiels have the correct file permissions (they should be only user-readable).</li>
+  <li>You are using the Chef Development Kit 0.3.5 and/or chef-client 11.18.0 (or higher).  These tools needed some updates to work properly with Chef Server 12.</li>
+</ol>
+
+<p>If you have confirmed the preceding steps and are still unable to connect
+to Chef Server, please consult the Chef <a href="http://docs.getchef.com/">online documentation</a>.</p>
+
+<p>From this point forward, the steps for bootstrapping a node are the same as
+with Chef Server 11.  Refer to the “Bootstrapping a Node” section in Chapter 9
+of Learning Chef for more information.</p>
+
+<h1 id="installing-the-web-ui">Installing the web UI</h1>
+
+<p>The web UI is now a premium feature of Chef Server.  It is not installed by
+default.  To install the web UI on your Chef Server, run the following
+commands to install the <code>opscode-manage</code> plugin and reconfigure both the
+web UI configuration and the Chef Server configuration to use the web UI:</p>
+
+<pre><code>$ cd cookbooks/chef-server
+$ kitchen login
+Last login: Wed Nov 26 04:09:56 2014 from 10.0.2.2
+Welcome to your Packer-built virtual machine.
+[vagrant@server-centos65 ~]$ sudo chef-server-ctl install opscode-manage
+...
+[vagrant@server-centos65 ~]$ sudo opscode-manage-ctl reconfigure
+...
+[vagrant@server-centos65 ~]$ sudo chef-server-ctl reconfigure
+...
+[vagrant@server-centos65 ~]$ exit
+logout
+Connection to 127.0.0.1 closed.
+</code></pre>
+
+<p>Once you have configured Chef Server to use the web UI, vist 
+<em>https://server-centos65.vagrantup.com</em>.  You should see something resembling
+the following screenshot.  Since you already created an admin account,
+click on the <em>Click here to sign in</em> link:</p>
+
+<p><img class="center" src="http://misheska.com/images/chefserver12/manage.png" title="[Click to sign in]" /></p>
+
+<p>Clicking on the link will take you to <em>https://server-centos65.vagrantup.com/login</em> where you can sign in with your administrator account, as shown in the following:</p>
+
+<p><img class="center" src="http://misheska.com/images/chefserver12/signin.png" title="[Sign in]" /></p>
+
+<p>From there, you can access the management UI for Chef Server 12!</p>
+
+<p><img class="center" src="http://misheska.com/images/chefserver12/learningchef.png" title="[Sign in]" /></p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>This blog post covered all the relevant changes needed to adapt the material
+presented in Chapter 9 of the Learning Chef book for Chef Server 12.
+Thankfully, besides the server configuration steps, not much changed.</p>
+
+<p>In addition to the material presented in this article, you might want to
+consider automating the creation of the admin user and organization in your
+Chef cookbook.  To see how this might be done, take a look at the Chef
+cookbook I use to demo Chef Server 12 for clients at
+<a href="https://github.com/misheska-cookbooks/chef-server12">https://github.com/misheska-cookbooks/chef-server12</a>.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Survey of Test Kitchen providers]]></title>
